@@ -1,0 +1,46 @@
+.knowledge-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.knowledge-page.loading,
+.knowledge-page.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.knowledge-content {
+  background: white;
+  padding: 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.knowledge-content h1 {
+  font-size: 32px;
+  margin-bottom: 24px;
+}
+
+.knowledge-content h2 {
+  font-size: 24px;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+.knowledge-content p {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.visualization-area {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+}
