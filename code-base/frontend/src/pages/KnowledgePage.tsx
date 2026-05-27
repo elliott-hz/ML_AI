@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Spin, Alert, Divider } from 'antd';
+import { Typography, Spin, Alert, Tabs } from 'antd';
 import { useParams } from 'react-router-dom';
 import Markdown from 'markdown-to-jsx';
+import { FunctionPlotter } from '../visualizations/MathViz';
 import './KnowledgePage.css';
 
 const { Title, Paragraph } = Typography;
+const { TabPane } = Tabs;
 
 const KnowledgePage: React.FC = () => {
   const { module, topic } = useParams();
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [showVisualization, setShowVisualization] = useState(false);
+
+  // 判断是否需要显示函数可视化
+  const shouldShowFunctionViz = () => {
+    return topic?.includes('Fundamentals of Advanced Math') || 
+           topic?.includes('functions') ||
+           module === 'mathematics';
+  };
 
   useEffect(() => {
     // TODO: 从后端API获取知识点内容
@@ -32,10 +42,15 @@ This is a placeholder for the **${topic}** knowledge module.
 
 The actual content will be loaded from the backend API once implemented.
 
-## Visualization
+## Interactive Visualization
 
-Interactive visualizations will be rendered here based on the topic type.
+Use the visualization tab below to explore function properties with adjustable parameters.
         `);
+        
+        // 如果是数学基础模块，显示可视化
+        if (shouldShowFunctionViz()) {
+          setShowVisualization(true);
+        }
       } catch (err) {
         setError('Failed to load knowledge content');
       } finally {
@@ -64,15 +79,22 @@ Interactive visualizations will be rendered here based on the topic type.
 
   return (
     <div className="knowledge-page">
-      <div className="knowledge-content">
-        <Markdown>{content}</Markdown>
-      </div>
-      
-      {/* TODO: 根据知识点类型渲染不同的可视化组件 */}
-      <div className="visualization-area">
-        {/* <MathViz /> for mathematics topics */}
-        {/* <ModelViz /> for deep learning topics */}
-      </div>
+      {showVisualization ? (
+        <Tabs defaultActiveKey="visualization" className="knowledge-tabs">
+          <TabPane tab="Interactive Visualization" key="visualization">
+            <FunctionPlotter functionType="even" />
+          </TabPane>
+          <TabPane tab="Documentation" key="documentation">
+            <div className="knowledge-content">
+              <Markdown>{content}</Markdown>
+            </div>
+          </TabPane>
+        </Tabs>
+      ) : (
+        <div className="knowledge-content">
+          <Markdown>{content}</Markdown>
+        </div>
+      )}
     </div>
   );
 };
