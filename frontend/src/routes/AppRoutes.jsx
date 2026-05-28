@@ -3,11 +3,16 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import Home from '../pages/Home';
 import BasicFunction from '../pages/BasicFunction';
+import Limit from '../pages/Limit';
 import OddEvenFunctions from '../pages/basic-function/OddEvenFunctions';
 import PeriodicFunctions from '../pages/basic-function/PeriodicFunctions';
 import MonotonicityFunctions from '../pages/basic-function/MonotonicityFunctions';
 import PiecewiseFunctions from '../pages/basic-function/PiecewiseFunctions';
 import InverseFunctions from '../pages/basic-function/InverseFunctions';
+import ConvergentSequence1 from '../pages/limit/ConvergentSequence1';
+import ConvergentSequence2 from '../pages/limit/ConvergentSequence2';
+import DivergentSequence1 from '../pages/limit/DivergentSequence1';
+import DivergentSequence2 from '../pages/limit/DivergentSequence2';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -33,8 +38,16 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/basic-function/periodic" element={<PeriodicFunctions />} />
         <Route path="/mathematics/1-fundamentals/basic-function/monotonicity" element={<MonotonicityFunctions />} />
         
+        {/* 数学模块 - Limit 主页面 */}
+        <Route path="/mathematics/1-fundamentals/limit" element={<Limit />} />
+        
+        {/* 数学模块 - Limit 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/limit/convergent-1" element={<ConvergentSequence1 />} />
+        <Route path="/mathematics/1-fundamentals/limit/convergent-2" element={<ConvergentSequence2 />} />
+        <Route path="/mathematics/1-fundamentals/limit/divergent-1" element={<DivergentSequence1 />} />
+        <Route path="/mathematics/1-fundamentals/limit/divergent-2" element={<DivergentSequence2 />} />
+        
         {/* 其他数学模块路由 - 示例 */}
-        <Route path="/mathematics/1-fundamentals/limit" element={<div>Limit Page - Coming Soon</div>} />
         <Route path="/mathematics/1-fundamentals/continuity" element={<div>Continuity Page - Coming Soon</div>} />
         <Route path="/mathematics/2-calculus/derivative" element={<div>Derivative Page - Coming Soon</div>} />
         
