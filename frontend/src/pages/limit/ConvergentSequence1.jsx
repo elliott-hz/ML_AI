@@ -10,6 +10,13 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
 const BackButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -107,11 +114,13 @@ const ConvergentSequence1 = () => {
 
   return (
     <PageContainer>
-      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
-        ← Back to Limit
-      </BackButton>
-
-      <SectionTitle>Convergent Sequence: Exponential Decay</SectionTitle>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
+          ← Back to Limit
+        </BackButton>
+        <SectionTitle>Convergent Sequence: Exponential Decay</SectionTitle>
+      </Header>
+      
       <SectionDescription>
         This sequence demonstrates exponential decay. As n increases, the terms rapidly approach zero. 
         The larger the base, the faster the convergence.

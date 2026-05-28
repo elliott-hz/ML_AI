@@ -10,6 +10,13 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
 const BackButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -105,11 +112,13 @@ const ConvergentSequence2 = () => {
 
   return (
     <PageContainer>
-      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
-        ← Back to Limit
-      </BackButton>
-
-      <SectionTitle>Convergent Sequence: Rational Approach</SectionTitle>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
+          ← Back to Limit
+        </BackButton>
+        <SectionTitle>Convergent Sequence: Rational Approach</SectionTitle>
+      </Header>
+      
       <SectionDescription>
         This sequence demonstrates how a rational function approaches its horizontal asymptote. 
         The terms approach 1 from below, getting closer but never exceeding it.

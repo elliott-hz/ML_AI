@@ -10,6 +10,13 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
 const BackButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -116,11 +123,13 @@ const OddEvenFunctions = () => {
 
   return (
     <PageContainer>
-      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
-        ← Back to Basic Function
-      </BackButton>
-
-      <SectionTitle>Odd & Even Functions</SectionTitle>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
+          ← Back to Basic Function
+        </BackButton>
+        <SectionTitle>Odd & Even Functions</SectionTitle>
+      </Header>
+      
       <SectionDescription>
         Explore the symmetry properties of functions. An odd function satisfies f(-x) = -f(x) and is symmetric about the origin. 
         An even function satisfies f(-x) = f(x) and is symmetric about the y-axis.

@@ -10,6 +10,13 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
 const BackButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -90,11 +97,13 @@ const PeriodicFunctions = () => {
 
   return (
     <PageContainer>
-      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
-        ← Back to Basic Function
-      </BackButton>
-
-      <SectionTitle>Periodic Functions</SectionTitle>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
+          ← Back to Basic Function
+        </BackButton>
+        <SectionTitle>Periodic Functions</SectionTitle>
+      </Header>
+      
       <SectionDescription>
         Explore periodic behavior in functions. A periodic function repeats its values at regular intervals called the period. 
         The sine function f(x) = a·sin(bx + c) is a classic example of a periodic function.

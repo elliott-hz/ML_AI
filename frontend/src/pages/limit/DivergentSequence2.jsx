@@ -11,6 +11,13 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
 const BackButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -106,11 +113,14 @@ const DivergentSequence2 = () => {
 
   return (
     <PageContainer>
-      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
-        ← Back to Limit
-      </BackButton>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
+          ← Back to Limit
+        </BackButton>
 
-      <SectionTitle>Divergent Sequence: Oscillation</SectionTitle>
+        <SectionTitle>Divergent Sequence: Oscillation</SectionTitle>
+      </Header>
+      
       <SectionDescription>
         This sequence demonstrates oscillatory behavior. The terms follow a sine wave pattern, 
         oscillating between -1 and 1 without settling on a single value. Therefore, the limit does not exist.

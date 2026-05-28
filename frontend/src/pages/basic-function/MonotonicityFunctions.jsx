@@ -10,6 +10,13 @@ const PageContainer = styled.div`
   margin: 0 auto;
 `;
 
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
 const BackButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -120,11 +127,13 @@ const MonotonicityFunctions = () => {
 
   return (
     <PageContainer>
-      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
-        ← Back to Basic Function
-      </BackButton>
-
-      <SectionTitle>Monotonicity</SectionTitle>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
+          ← Back to Basic Function
+        </BackButton>
+        <SectionTitle>Monotonicity</SectionTitle>
+      </Header>
+      
       <SectionDescription>
         Study the monotonic behavior of functions. A function is monotonically increasing if it never decreases as x increases, 
         and monotonically decreasing if it never increases as x increases.
