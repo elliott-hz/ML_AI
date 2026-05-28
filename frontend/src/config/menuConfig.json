@@ -6,23 +6,23 @@
       "children": [
         {
           "id": "math_1",
-          "name": "1_Fundamentals of Advanced Math",
+          "name": "Fundamentals Of Advanced Math",
           "children": [
             {
               "id": "math_1_1",
-              "name": "1_1_basic function",
+              "name": "Function",
               "path": "/mathematics/1-fundamentals/basic-function",
               "component": "BasicFunction"
             },
             {
               "id": "math_1_2",
-              "name": "1_2_limit",
+              "name": "Limit",
               "path": "/mathematics/1-fundamentals/limit",
               "component": "Limit"
             },
             {
               "id": "math_1_3",
-              "name": "1_3_continuity",
+              "name": "Continuity",
               "path": "/mathematics/1-fundamentals/continuity",
               "component": "Continuity"
             }
@@ -30,11 +30,11 @@
         },
         {
           "id": "math_2",
-          "name": "2_calculus",
+          "name": "Calculus",
           "children": [
             {
               "id": "math_2_1",
-              "name": "2_1_derivative",
+              "name": "Derivative",
               "path": "/mathematics/2-calculus/derivative",
               "component": "Derivative"
             }
@@ -48,11 +48,11 @@
       "children": [
         {
           "id": "dl_1",
-          "name": "1_Neural Networks Basics",
+          "name": "Neural Networks Basics",
           "children": [
             {
               "id": "dl_1_1",
-              "name": "1_1_perceptron",
+              "name": "Perceptron",
               "path": "/deep-learning/1-neural-networks/perceptron",
               "component": "Perceptron"
             }
@@ -66,11 +66,11 @@
       "children": [
         {
           "id": "ml_1",
-          "name": "1_Supervised Learning",
+          "name": "Supervised Learning",
           "children": [
             {
               "id": "ml_1_1",
-              "name": "1_1_linear_regression",
+              "name": "Linear Regression",
               "path": "/machine-learning/1-supervised/linear-regression",
               "component": "LinearRegression"
             }
