@@ -12,6 +12,8 @@ export const theme = {
     background: '#0f172a',     // Dark slate
     surface: '#1e293b',        // Slate 800
     surfaceLight: '#334155',   // Slate 700
+    cardBg: '#1e293b',         // Card background (same as surface)
+    inputBg: '#334155',        // Input background (same as surfaceLight)
     
     // 文字颜色
     textPrimary: '#f8fafc',    // Slate 50

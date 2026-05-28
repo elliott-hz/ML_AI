@@ -1,0 +1,147 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import FunctionPlotter from '../../components/visualization/FunctionPlotter';
+import ParameterControls from '../../components/visualization/ParameterControls';
+
+const PageContainer = styled.div`
+  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
+  max-width: 1400px;
+  margin: 0 auto;
+`;
+
+const BackButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.xs || '0.25rem'};
+  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
+  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+
+  &:hover {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    color: white;
+    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+  }
+`;
+
+const SectionTitle = styled.h2`
+  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
+`;
+
+const SectionDescription = styled.p`
+  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
+const FunctionSection = styled.div`
+  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
+  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
+  box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
+`;
+
+/**
+ * 单调性函数子页面 - 展示单调递增和单调递减函数的特性
+ */
+const MonotonicityFunctions = () => {
+  const navigate = useNavigate();
+  
+  // 单调递增函数参数状态
+  const [increasingParams, setIncreasingParams] = useState({ 
+    a: 1,  // 斜率
+    b: 0   // 截距
+  });
+  
+  // 单调递减函数参数状态
+  const [decreasingParams, setDecreasingParams] = useState({ 
+    a: 1,  // 斜率
+    b: 0   // 截距
+  });
+
+  // 单调递增函数参数配置
+  const increasingParamConfig = [
+    { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
+    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  // 单调递减函数参数配置
+  const decreasingParamConfig = [
+    { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
+    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  return (
+    <PageContainer>
+      <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
+        ← Back to Basic Function
+      </BackButton>
+
+      <SectionTitle>Monotonicity</SectionTitle>
+      <SectionDescription>
+        Study the monotonic behavior of functions. A function is monotonically increasing if it never decreases as x increases, 
+        and monotonically decreasing if it never increases as x increases.
+      </SectionDescription>
+
+      {/* 单调递增部分 */}
+      <FunctionSection>
+        <SectionTitle> Monotonically Increasing: f(x) = ax + b</SectionTitle>
+        <SectionDescription>
+          As x increases, y always increases. The slope (a) must be positive. Adjust the slope and y-intercept to see different linear functions.
+        </SectionDescription>
+        
+        <ParameterControls
+          parameters={increasingParams}
+          onChange={setIncreasingParams}
+          config={increasingParamConfig}
+        />
+        
+        <FunctionPlotter
+          functionType="increasing"
+          parameters={increasingParams}
+          xRange={[-10, 10]}
+          yRange={[-20, 20]}
+          title="Monotonically Increasing: f(x) = ax + b"
+          showExportButton={true}
+        />
+      </FunctionSection>
+
+      {/* 单调递减部分 */}
+      <FunctionSection>
+        <SectionTitle> Monotonically Decreasing: f(x) = -ax + b</SectionTitle>
+        <SectionDescription>
+          As x increases, y always decreases. The slope (-a) is negative. Adjust the magnitude of slope and y-intercept.
+        </SectionDescription>
+        
+        <ParameterControls
+          parameters={decreasingParams}
+          onChange={setDecreasingParams}
+          config={decreasingParamConfig}
+        />
+        
+        <FunctionPlotter
+          functionType="decreasing"
+          parameters={decreasingParams}
+          xRange={[-10, 10]}
+          yRange={[-20, 20]}
+          title="Monotonically Decreasing: f(x) = -ax + b"
+          showExportButton={true}
+        />
+      </FunctionSection>
+    </PageContainer>
+  );
+};
+
+export default MonotonicityFunctions;
