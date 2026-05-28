@@ -32,6 +32,11 @@ const SequencePlotter = ({
     return () => clearInterval(intervalId);
   }, []);
 
+  // 根据主题获取辅助线颜色
+  const getAuxiliaryColor = useCallback(() => {
+    return themeMode === 'dark' ? '#ffd700' : '#f59e0b'; // Dark: 亮黄, Light: 琥珀色（更醒目）
+  }, [themeMode]);
+
   // 根据数列类型和参数计算数列值
   const calculateSequenceValues = useCallback((n) => {
     const base = parameters.base || 3;
@@ -138,7 +143,7 @@ const SequencePlotter = ({
           mode: 'lines',
           name: `lim: ${limitValue}`,
           line: { 
-            color: '#ffd700', 
+            color: getAuxiliaryColor(), 
             width: 2, 
             dash: 'dash' 
           }

@@ -33,6 +33,11 @@ const FunctionPlotter = ({
     return () => clearInterval(intervalId);
   }, []);
 
+  // 根据主题获取辅助线颜色
+  const getAuxiliaryColor = useCallback(() => {
+    return themeMode === 'dark' ? '#ffd700' : '#f59e0b'; // Dark: 亮黄, Light: 琥珀色（更醒目）
+  }, [themeMode]);
+
   // 根据函数类型和参数计算函数值
   const calculateFunctionValues = useCallback((x, type = 'original') => {
     // 兼容旧参数名和新参数名
@@ -190,7 +195,7 @@ const FunctionPlotter = ({
         name: `P(${sampleX.toFixed(1)}, ${sampleY.toFixed(1)})`,
         marker: { 
           size: pointSize, 
-          color: '#ffd700', 
+          color: getAuxiliaryColor(), 
           symbol: 'circle',
           line: { color: '#fff', width: 2 }
         }
@@ -205,7 +210,7 @@ const FunctionPlotter = ({
         name: `P'(${oppositeX.toFixed(1)}, ${oppositeY.toFixed(1)})`,
         marker: { 
           size: pointSize, 
-          color: '#ffd700', 
+          color: getAuxiliaryColor(), 
           symbol: 'circle',
           line: { color: '#fff', width: 2 }
         }
@@ -218,7 +223,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Connection Line',
-        line: { color: '#ffd700', width: 1, dash: 'dash' }
+        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' }
       });
 
     } else if (functionType === 'even') {
@@ -255,7 +260,7 @@ const FunctionPlotter = ({
         mode: 'lines',
         name: 'Axis of Symmetry (x=0)',
         line: { 
-          color: '#ffd700', 
+          color: getAuxiliaryColor(), 
           width: axisWidth, 
           dash: axisStyle === 'dashed' ? 'dash' : 'solid' 
         }
@@ -316,7 +321,7 @@ const FunctionPlotter = ({
             mode: 'lines',
             name: `Peak at x=${x.toFixed(2)}`,
             line: { 
-              color: '#ffd700', 
+              color: getAuxiliaryColor(), 
               width: 1.5, 
               dash: lineStyle === 'dashed' ? 'dash' : 'solid' 
             },
@@ -337,7 +342,7 @@ const FunctionPlotter = ({
             mode: 'lines',
             name: `Peak at x=${x.toFixed(2)}`,
             line: { 
-              color: '#ffd700', 
+              color: getAuxiliaryColor(), 
               width: 1.5, 
               dash: lineStyle === 'dashed' ? 'dash' : 'solid' 
             },
@@ -386,13 +391,13 @@ const FunctionPlotter = ({
         name: `P₁(${x1.toFixed(1)}, ${y1.toFixed(1)})`,
         marker: { 
           size: pointSize, 
-          color: '#ffd700', 
+          color: getAuxiliaryColor(), 
           symbol: 'circle',
           line: { color: '#fff', width: 2 }
         },
         text: [`P₁`],
         textposition: 'top center',
-        textfont: { color: '#ffd700', size: 12 }
+        textfont: { color: getAuxiliaryColor(), size: 12 }
       });
       
       // P2点
@@ -404,13 +409,13 @@ const FunctionPlotter = ({
         name: `P₂(${x2.toFixed(1)}, ${y2.toFixed(1)})`,
         marker: { 
           size: pointSize, 
-          color: '#ffd700', 
+          color: getAuxiliaryColor(), 
           symbol: 'circle',
           line: { color: '#fff', width: 2 }
         },
         text: [`P₂`],
         textposition: 'top center',
-        textfont: { color: '#ffd700', size: 12 }
+        textfont: { color: getAuxiliaryColor(), size: 12 }
       });
       
       // P1到x轴的垂线
@@ -420,7 +425,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₁',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
         showlegend: false
       });
       
@@ -431,7 +436,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₁',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
         showlegend: false
       });
       
@@ -442,7 +447,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₂',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
         showlegend: false
       });
       
@@ -453,7 +458,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₂',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
         showlegend: false
       });
       
@@ -488,7 +493,7 @@ const FunctionPlotter = ({
         mode: 'lines',
         name: 'Break Point (x=0)',
         line: { 
-          color: '#ffd700', 
+          color: getAuxiliaryColor(), 
           width: 2, 
           dash: 'dash' 
         }
