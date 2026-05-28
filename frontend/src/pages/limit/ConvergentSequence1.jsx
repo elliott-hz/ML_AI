@@ -117,51 +117,49 @@ const ConvergentSequence1 = () => {
         The larger the base, the faster the convergence.
       </SectionDescription>
 
-      <FunctionSection>
-        <SectionTitle>Sequence: u<sub>n</sub> = 1/a<sup>n</sup></SectionTitle>
+      <SectionTitle>Sequence: u<sub>n</sub> = 1/a<sup>n</sup></SectionTitle>
+      
+      <FormulaBox>
+        <Formula>
+          lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>1/a<sup>n</sup></span> = 0
+        </Formula>
+      </FormulaBox>
+      
+      <SectionDescription>
+        Adjust the base (a) to see how it affects the rate of convergence. 
+        Larger bases result in faster decay toward zero.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={params}
+            onChange={setParams}
+            config={paramConfig}
+          />
+        </ControlsPanel>
         
-        <FormulaBox>
-          <Formula>
-            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>1/a<sup>n</sup></span> = 0
-          </Formula>
-        </FormulaBox>
-        
-        <SectionDescription>
-          Adjust the base (a) to see how it affects the rate of convergence. 
-          Larger bases result in faster decay toward zero.
-        </SectionDescription>
-        
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={paramConfig}
-            />
-          </ControlsPanel>
+        <PlotPanel>
+          <SequencePlotter
+            sequenceType="convergent1"
+            parameters={params}
+            title={`Sequence: u<sub>n</sub> = 1/${params.base}<sup>n</sup>`}
+            showLimitLine={true}
+            limitValue={0}
+          />
           
-          <PlotPanel>
+          {/* 原函数图像 */}
+          <div style={{ marginTop: '1rem' }}>
             <SequencePlotter
-              sequenceType="convergent1"
-              parameters={params}
-              title={`Sequence: u<sub>n</sub> = 1/${params.base}<sup>n</sup>`}
-              showLimitLine={true}
-              limitValue={0}
+              sequenceType="original_function"
+              parameters={{ funcName: 'exponential_decay', base: params.base, maxN: Math.min(params.maxN, 20) }}
+              xRange={[0, Math.min(params.maxN, 20)]}
+              yRange={[0, 1]}
+              title={`Original Function: f(x) = 1/${params.base}<sup>x</sup>`}
             />
-            
-            {/* 原函数图像 */}
-            <div style={{ marginTop: '1rem' }}>
-              <SequencePlotter
-                sequenceType="original_function"
-                parameters={{ funcName: 'exponential_decay', base: params.base, maxN: Math.min(params.maxN, 20) }}
-                xRange={[0, Math.min(params.maxN, 20)]}
-                yRange={[0, 1]}
-                title={`Original Function: f(x) = 1/${params.base}<sup>x</sup>`}
-              />
-            </div>
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+          </div>
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

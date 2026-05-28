@@ -115,50 +115,48 @@ const DivergentSequence1 = () => {
         and approach infinity. There is no finite limit.
       </SectionDescription>
 
-      <FunctionSection>
-        <SectionTitle>Sequence: u<sub>n</sub> = n²</SectionTitle>
+      <SectionTitle>Sequence: u<sub>n</sub> = n²</SectionTitle>
+      
+      <FormulaBox>
+        <Formula>
+          lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n²</span> = +∞
+        </Formula>
+      </FormulaBox>
+      
+      <SectionDescription>
+        Observe how rapidly the sequence grows. The quadratic nature means each term 
+        increases much faster than the previous one, leading to divergence.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={params}
+            onChange={setParams}
+            config={paramConfig}
+          />
+        </ControlsPanel>
         
-        <FormulaBox>
-          <Formula>
-            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n²</span> = +∞
-          </Formula>
-        </FormulaBox>
-        
-        <SectionDescription>
-          Observe how rapidly the sequence grows. The quadratic nature means each term 
-          increases much faster than the previous one, leading to divergence.
-        </SectionDescription>
-        
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={paramConfig}
-            />
-          </ControlsPanel>
+        <PlotPanel>
+          <SequencePlotter
+            sequenceType="divergent1"
+            parameters={params}
+            title="Sequence: u<sub>n</sub> = n²"
+            showLimitLine={false}
+          />
           
-          <PlotPanel>
+          {/* 原函数图像 */}
+          <div style={{ marginTop: '1rem' }}>
             <SequencePlotter
-              sequenceType="divergent1"
-              parameters={params}
-              title="Sequence: u<sub>n</sub> = n²"
-              showLimitLine={false}
+              sequenceType="original_function"
+              parameters={{ funcName: 'quadratic', maxN: Math.min(params.maxN, 20) }}
+              xRange={[0, Math.min(params.maxN, 20)]}
+              yRange={[0, Math.pow(Math.min(params.maxN, 20), 2)]}
+              title={`Original Function: f(x) = x²`}
             />
-            
-            {/* 原函数图像 */}
-            <div style={{ marginTop: '1rem' }}>
-              <SequencePlotter
-                sequenceType="original_function"
-                parameters={{ funcName: 'quadratic', maxN: Math.min(params.maxN, 20) }}
-                xRange={[0, Math.min(params.maxN, 20)]}
-                yRange={[0, Math.pow(Math.min(params.maxN, 20), 2)]}
-                title={`Original Function: f(x) = x²`}
-              />
-            </div>
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+          </div>
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

@@ -45,14 +45,6 @@ const SectionDescription = styled.p`
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
 `;
 
-const FunctionSection = styled.div`
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
-`;
-
 const ContentLayout = styled.div`
   display: flex;
   gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
@@ -109,33 +101,31 @@ const PeriodicFunctions = () => {
       </SectionDescription>
 
       {/* 周期函数部分 */}
-      <FunctionSection>
-        <SectionTitle> Periodic Function: f(x) = a·sin(bx + c)</SectionTitle>
-        <SectionDescription>
-          Adjust the amplitude (a), frequency (b), and phase (c) to see how they affect the wave pattern. 
-          The period T = 2π/b determines how often the function repeats.
-        </SectionDescription>
+      <SectionTitle> Periodic Function: f(x) = a·sin(bx + c)</SectionTitle>
+      <SectionDescription>
+        Adjust the amplitude (a), frequency (b), and phase (c) to see how they affect the wave pattern. 
+        The period T = 2π/b determines how often the function repeats.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={periodicParams}
+            onChange={setPeriodicParams}
+            config={periodicParamConfig}
+          />
+        </ControlsPanel>
         
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={periodicParams}
-              onChange={setPeriodicParams}
-              config={periodicParamConfig}
-            />
-          </ControlsPanel>
-          
-          <PlotPanel>
-            <FunctionPlotter
-              functionType="periodic"
-              parameters={periodicParams}
-              yRange={[-6, 6]}
-              title="Periodic Function: f(x) = a·sin(bx + c)"
-              showExportButton={false}
-            />
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="periodic"
+            parameters={periodicParams}
+            yRange={[-6, 6]}
+            title="Periodic Function: f(x) = a·sin(bx + c)"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

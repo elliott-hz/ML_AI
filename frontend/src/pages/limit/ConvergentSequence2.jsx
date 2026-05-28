@@ -115,51 +115,49 @@ const ConvergentSequence2 = () => {
         The terms approach 1 from below, getting closer but never exceeding it.
       </SectionDescription>
 
-      <FunctionSection>
-        <SectionTitle>Sequence: u<sub>n</sub> = n/(n+1)</SectionTitle>
+      <SectionTitle>Sequence: u<sub>n</sub> = n/(n+1)</SectionTitle>
+      
+      <FormulaBox>
+        <Formula>
+          lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n/(n+1)</span> = 1
+        </Formula>
+      </FormulaBox>
+      
+      <SectionDescription>
+        Observe how the sequence approaches 1 as n increases. 
+        Each term is slightly less than 1, but the difference becomes negligible for large n.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={params}
+            onChange={setParams}
+            config={paramConfig}
+          />
+        </ControlsPanel>
         
-        <FormulaBox>
-          <Formula>
-            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n/(n+1)</span> = 1
-          </Formula>
-        </FormulaBox>
-        
-        <SectionDescription>
-          Observe how the sequence approaches 1 as n increases. 
-          Each term is slightly less than 1, but the difference becomes negligible for large n.
-        </SectionDescription>
-        
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={paramConfig}
-            />
-          </ControlsPanel>
+        <PlotPanel>
+          <SequencePlotter
+            sequenceType="convergent2"
+            parameters={params}
+            title="Sequence: u<sub>n</sub> = n/(n+1)"
+            showLimitLine={true}
+            limitValue={1}
+          />
           
-          <PlotPanel>
+          {/* 原函数图像 */}
+          <div style={{ marginTop: '1rem' }}>
             <SequencePlotter
-              sequenceType="convergent2"
-              parameters={params}
-              title="Sequence: u<sub>n</sub> = n/(n+1)"
-              showLimitLine={true}
-              limitValue={1}
+              sequenceType="original_function"
+              parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 50) }}
+              xRange={[0, Math.min(params.maxN, 50)]}
+              yRange={[0, 1.2]}
+              title={`Original Function: f(x) = x/(x+1)`}
             />
-            
-            {/* 原函数图像 */}
-            <div style={{ marginTop: '1rem' }}>
-              <SequencePlotter
-                sequenceType="original_function"
-                parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 50) }}
-                xRange={[0, Math.min(params.maxN, 50)]}
-                yRange={[0, 1.2]}
-                title={`Original Function: f(x) = x/(x+1)`}
-              />
-            </div>
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+          </div>
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

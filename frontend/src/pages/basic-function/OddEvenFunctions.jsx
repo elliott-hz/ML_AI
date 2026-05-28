@@ -127,60 +127,56 @@ const OddEvenFunctions = () => {
       </SectionDescription>
 
       {/* 奇函数部分 */}
-      <FunctionSection>
-        <SectionTitle> Odd Function: f(x) = ax³</SectionTitle>
-        <SectionDescription>
-          Odd functions are symmetric about the origin. When you rotate the graph 180° around the origin, it looks the same.
-        </SectionDescription>
+      <SectionTitle> Odd Function: f(x) = ax³</SectionTitle>
+      <SectionDescription>
+        Odd functions are symmetric about the origin. When you rotate the graph 180° around the origin, it looks the same.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={oddParams}
+            onChange={setOddParams}
+            config={oddParamConfig}
+          />
+        </ControlsPanel>
         
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={oddParams}
-              onChange={setOddParams}
-              config={oddParamConfig}
-            />
-          </ControlsPanel>
-          
-          <PlotPanel>
-            <FunctionPlotter
-              functionType="odd"
-              parameters={oddParams}
-              yRange={[-50, 50]}
-              title="Odd Function: f(x) = ax³"
-              showExportButton={false}
-            />
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="odd"
+            parameters={oddParams}
+            yRange={[-50, 50]}
+            title="Odd Function: f(x) = ax³"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
 
       {/* 偶函数部分 */}
-      <FunctionSection>
-        <SectionTitle>🟣 Even Function: f(x) = ax²</SectionTitle>
-        <SectionDescription>
-          Even functions are symmetric about the y-axis. The left side is a mirror image of the right side.
-        </SectionDescription>
+      <SectionTitle style={{ marginTop: '2rem' }}>🟣 Even Function: f(x) = ax²</SectionTitle>
+      <SectionDescription>
+        Even functions are symmetric about the y-axis. The left side is a mirror image of the right side.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={evenParams}
+            onChange={setEvenParams}
+            config={evenParamConfig}
+          />
+        </ControlsPanel>
         
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={evenParams}
-              onChange={setEvenParams}
-              config={evenParamConfig}
-            />
-          </ControlsPanel>
-          
-          <PlotPanel>
-            <FunctionPlotter
-              functionType="even"
-              parameters={evenParams}
-              yRange={[-10, 50]}
-              title="Even Function: f(x) = ax²"
-              showExportButton={false}
-            />
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="even"
+            parameters={evenParams}
+            yRange={[-10, 50]}
+            title="Even Function: f(x) = ax²"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

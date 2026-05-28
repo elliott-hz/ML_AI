@@ -131,61 +131,57 @@ const MonotonicityFunctions = () => {
       </SectionDescription>
 
       {/* 单调递增部分 */}
-      <FunctionSection>
-        <SectionTitle> Monotonically Increasing: f(x) = ax + b</SectionTitle>
-        <SectionDescription>
-          As x increases, y always increases. The slope (a) must be positive. Adjust the slope and y-intercept to see different linear functions.
-        </SectionDescription>
+      <SectionTitle> Monotonically Increasing: f(x) = ax + b</SectionTitle>
+      <SectionDescription>
+        As x increases, y always increases. The slope (a) must be positive. Adjust the slope and y-intercept to see different linear functions.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={increasingParams}
+            onChange={setIncreasingParams}
+            config={increasingParamConfig}
+          />
+        </ControlsPanel>
         
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={increasingParams}
-              onChange={setIncreasingParams}
-              config={increasingParamConfig}
-            />
-          </ControlsPanel>
-          
-          <PlotPanel>
-            <FunctionPlotter
-              functionType="increasing"
-              parameters={increasingParams}
-              yRange={[-20, 20]}
-              title="Monotonically Increasing: f(x) = ax + b"
-              showExportButton={false}
-            />
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="increasing"
+            parameters={increasingParams}
+            yRange={[-20, 20]}
+            title="Monotonically Increasing: f(x) = ax + b"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
 
       {/* 单调递减部分 */}
-      <FunctionSection>
-        <SectionTitle> Monotonically Decreasing: f(x) = -ax + b</SectionTitle>
-        <SectionDescription>
-          As x increases, y always decreases. The slope (-a) is negative. Adjust the magnitude of slope and y-intercept.
-        </SectionDescription>
+      <SectionTitle style={{ marginTop: '2rem' }}> Monotonically Decreasing: f(x) = -ax + b</SectionTitle>
+      <SectionDescription>
+        As x increases, y always decreases. The slope (-a) is negative. Adjust the magnitude of slope and y-intercept.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={decreasingParams}
+            onChange={setDecreasingParams}
+            config={decreasingParamConfig}
+          />
+        </ControlsPanel>
         
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={decreasingParams}
-              onChange={setDecreasingParams}
-              config={decreasingParamConfig}
-            />
-          </ControlsPanel>
-          
-          <PlotPanel>
-            <FunctionPlotter
-              functionType="decreasing"
-              parameters={decreasingParams}
-              xRange={decreasingParams.xRange}
-              yRange={[-20, 20]}
-              title="Monotonically Decreasing: f(x) = -ax + b"
-              showExportButton={false}
-            />
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="decreasing"
+            parameters={decreasingParams}
+            xRange={decreasingParams.xRange}
+            yRange={[-20, 20]}
+            title="Monotonically Decreasing: f(x) = -ax + b"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

@@ -116,51 +116,49 @@ const DivergentSequence2 = () => {
         oscillating between -1 and 1 without settling on a single value. Therefore, the limit does not exist.
       </SectionDescription>
 
-      <FunctionSection>
-        <SectionTitle>Sequence: u<sub>n</sub> = sin(n)</SectionTitle>
+      <SectionTitle>Sequence: u<sub>n</sub> = sin(n)</SectionTitle>
+      
+      <FormulaBox>
+        <Formula>
+          lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>sin(n)</span> does not exist
+        </Formula>
+      </FormulaBox>
+      
+      <SectionDescription>
+        Observe how sin(n) oscillates as n increases through integer values. 
+        Since π is irrational, sin(n) never repeats exactly and continues to oscillate indefinitely.
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={params}
+            onChange={setParams}
+            config={paramConfig}
+          />
+        </ControlsPanel>
         
-        <FormulaBox>
-          <Formula>
-            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>sin(n)</span> does not exist
-          </Formula>
-        </FormulaBox>
-        
-        <SectionDescription>
-          Observe how sin(n) oscillates as n increases through integer values. 
-          Since π is irrational, sin(n) never repeats exactly and continues to oscillate indefinitely.
-        </SectionDescription>
-        
-        <ContentLayout>
-          <ControlsPanel>
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={paramConfig}
-            />
-          </ControlsPanel>
+        <PlotPanel>
+          <SequencePlotter
+            sequenceType="divergent2"
+            parameters={params}
+            title="Sequence: u<sub>n</sub> = sin(n)"
+            showLimitLine={false}
+          />
           
-          <PlotPanel>
+          {/* 原函数图像 */}
+          <div style={{ marginTop: '1rem' }}>
             <SequencePlotter
-              sequenceType="divergent2"
-              parameters={params}
-              title="Sequence: u<sub>n</sub> = sin(n)"
-              showLimitLine={false}
+              sequenceType="original_function"
+              parameters={{ funcName: 'sin', maxN: params.maxN }}
+              xRange={[0, Math.min(params.maxN, 30)]}
+              yRange={[-1.5, 1.5]}
+              title={`Original Function: f(x) = sin(x)`}
+              showOriginalFunction={true}
             />
-            
-            {/* 原函数图像 */}
-            <div style={{ marginTop: '1rem' }}>
-              <SequencePlotter
-                sequenceType="original_function"
-                parameters={{ funcName: 'sin', maxN: params.maxN }}
-                xRange={[0, Math.min(params.maxN, 30)]}
-                yRange={[-1.5, 1.5]}
-                title={`Original Function: f(x) = sin(x)`}
-                showOriginalFunction={true}
-              />
-            </div>
-          </PlotPanel>
-        </ContentLayout>
-      </FunctionSection>
+          </div>
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };
