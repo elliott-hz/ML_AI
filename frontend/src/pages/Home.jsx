@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { theme } from '../styles/theme';
 
 const HomeContainer = styled.div`
   max-width: 1200px;
@@ -9,17 +8,17 @@ const HomeContainer = styled.div`
 
 const HeroSection = styled.section`
   text-align: center;
-  padding: ${theme.spacing.xxl} 0;
-  background: ${theme.colors.gradient};
-  border-radius: ${theme.borderRadius.xl};
-  margin-bottom: ${theme.spacing.xxl};
-  box-shadow: ${theme.shadows.glow};
+  padding: ${({ theme }) => theme.spacing.xxl} 0;
+  background: ${({ theme }) => theme.colors.gradient};
+  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  margin-bottom: ${({ theme }) => theme.spacing.xxl};
+  box-shadow: ${({ theme }) => theme.shadows.glow};
 `;
 
 const HeroTitle = styled.h1`
   font-size: 3rem;
-  color: ${theme.colors.textPrimary};
-  margin-bottom: ${theme.spacing.md};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
   
   @media (max-width: 768px) {
     font-size: 2rem;
@@ -28,7 +27,7 @@ const HeroTitle = styled.h1`
 
 const HeroSubtitle = styled.p`
   font-size: 1.2rem;
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   max-width: 600px;
   margin: 0 auto;
 `;
@@ -36,8 +35,8 @@ const HeroSubtitle = styled.p`
 const FeaturesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${theme.spacing.lg};
-  margin-top: ${theme.spacing.xxl};
+  gap: ${({ theme }) => theme.spacing.lg};
+  margin-top: ${({ theme }) => theme.spacing.xxl};
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -45,54 +44,54 @@ const FeaturesGrid = styled.div`
 `;
 
 const FeatureCard = styled.div`
-  background: ${theme.colors.surface};
-  border: 1px solid ${theme.colors.border};
-  border-radius: ${theme.borderRadius.lg};
-  padding: ${theme.spacing.xl};
-  transition: all ${theme.transitions.normal};
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
+  transition: all ${({ theme }) => theme.transitions.normal};
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: ${theme.shadows.lg};
-    border-color: ${theme.colors.primary};
+    box-shadow: ${({ theme }) => theme.shadows.lg};
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
 const FeatureIcon = styled.div`
   width: 60px;
   height: 60px;
-  background: ${theme.colors.gradient};
-  border-radius: ${theme.borderRadius.round};
+  background: ${({ theme }) => theme.colors.gradient};
+  border-radius: ${({ theme }) => theme.borderRadius.round};
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  margin-bottom: ${theme.spacing.lg};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
 const FeatureTitle = styled.h3`
   font-size: 1.3rem;
-  color: ${theme.colors.textPrimary};
-  margin-bottom: ${theme.spacing.sm};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
 const FeatureDescription = styled.p`
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   line-height: 1.6;
 `;
 
 const QuickStartSection = styled.section`
-  margin-top: ${theme.spacing.xxl};
-  padding: ${theme.spacing.xl};
-  background: ${theme.colors.surface};
-  border-radius: ${theme.borderRadius.lg};
-  border: 1px solid ${theme.colors.border};
+  margin-top: ${({ theme }) => theme.spacing.xxl};
+  padding: ${({ theme }) => theme.spacing.xl};
+  background: ${({ theme }) => theme.colors.surface};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  border: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const SectionTitle = styled.h2`
   font-size: 1.8rem;
-  color: ${theme.colors.textPrimary};
-  margin-bottom: ${theme.spacing.lg};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
 const StepList = styled.ol`
@@ -102,8 +101,8 @@ const StepList = styled.ol`
 
 const StepItem = styled.li`
   counter-increment: step-counter;
-  padding: ${theme.spacing.lg} 0;
-  border-bottom: 1px solid ${theme.colors.border};
+  padding: ${({ theme }) => theme.spacing.lg} 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
   
   &:last-child {
     border-bottom: none;
@@ -114,13 +113,13 @@ const StepItem = styled.li`
     display: inline-block;
     width: 40px;
     height: 40px;
-    background: ${theme.colors.primary};
-    color: ${theme.colors.textPrimary};
-    border-radius: ${theme.borderRadius.round};
+    background: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.textPrimary};
+    border-radius: ${({ theme }) => theme.borderRadius.round};
     text-align: center;
     line-height: 40px;
     font-weight: bold;
-    margin-right: ${theme.spacing.md};
+    margin-right: ${({ theme }) => theme.spacing.md};
   }
 `;
 
@@ -131,12 +130,12 @@ const StepContent = styled.div`
 
 const StepTitle = styled.h4`
   font-size: 1.1rem;
-  color: ${theme.colors.textPrimary};
-  margin-bottom: ${theme.spacing.xs};
+  color: ${({ theme }) => theme.colors.textPrimary};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
 `;
 
 const StepDescription = styled.p`
-  color: ${theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-size: 0.95rem;
 `;
 

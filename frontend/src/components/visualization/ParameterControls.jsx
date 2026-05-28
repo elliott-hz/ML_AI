@@ -32,72 +32,14 @@ const ParameterControls = ({ parameters, onChange, config }) => {
     onChange({ ...parameters, [paramName]: values });
   };
 
-  // 容器样式
-  const containerStyle = {
-    background: '#1e293b',
-    borderRadius: '8px',
-    padding: '1rem',
-    marginBottom: '1rem',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-  };
-
-  const titleStyle = {
-    color: '#f8fafc',
-    fontSize: '16px',
-    fontWeight: '600',
-    marginBottom: '1rem'
-  };
-
-  const rowStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-    marginBottom: '0.5rem'
-  };
-
-  const labelStyle = {
-    color: '#cbd5e1',
-    fontSize: '14px',
-    fontWeight: '500',
-    minWidth: '80px'
-  };
-
-  const inputStyle = {
-    width: '80px',
-    padding: '0.25rem 0.5rem',
-    background: '#334155',
-    border: '1px solid #334155',
-    borderRadius: '4px',
-    color: '#f8fafc',
-    fontSize: '14px',
-    textAlign: 'center',
-    outline: 'none'
-  };
-
-  const selectStyle = {
-    width: '120px',
-    padding: '0.25rem 0.5rem',
-    background: '#334155',
-    border: '1px solid #334155',
-    borderRadius: '4px',
-    color: '#f8fafc',
-    fontSize: '14px',
-    outline: 'none',
-    cursor: 'pointer'
-  };
-
-  const sliderStyle = {
-    flex: 1,
-    height: '6px',
-    background: '#334155',
-    borderRadius: '3px',
-    outline: 'none',
-    WebkitAppearance: 'none',
-    appearance: 'none'
-  };
-
   return (
-    <>
+    <div style={{
+      background: 'var(--theme-card-bg, #1e293b)',
+      borderRadius: '8px',
+      padding: '1rem',
+      marginBottom: '1rem',
+      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+    }}>
       {/* 自定义滑块样式 */}
       <style>{`
         input[type="range"] {
@@ -105,7 +47,7 @@ const ParameterControls = ({ parameters, onChange, config }) => {
           appearance: none;
           width: 100%;
           height: 6px;
-          background: #334155;
+          background: var(--theme-border, #334155);
           border-radius: 3px;
           outline: none;
         }
@@ -115,7 +57,7 @@ const ParameterControls = ({ parameters, onChange, config }) => {
           appearance: none;
           width: 16px;
           height: 16px;
-          background: #6366f1;
+          background: var(--theme-primary, #6366f1);
           border-radius: 50%;
           cursor: pointer;
           box-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -125,7 +67,7 @@ const ParameterControls = ({ parameters, onChange, config }) => {
         input[type="range"]::-moz-range-thumb {
           width: 16px;
           height: 16px;
-          background: #6366f1;
+          background: var(--theme-primary, #6366f1);
           border: none;
           border-radius: 50%;
           cursor: pointer;
@@ -145,110 +87,157 @@ const ParameterControls = ({ parameters, onChange, config }) => {
         }
       `}</style>
       
-      <div style={containerStyle}>
-        <h3 style={titleStyle}>️ Parameters</h3>
-        {config.map((param) => (
-          <div key={param.name} style={rowStyle}>
-            <label style={labelStyle}>{param.label}</label>
-            
-            {param.type === 'select' ? (
-              // 下拉框类型
-              <select
-                value={parameters[param.name] || param.options[0]}
-                onChange={(e) => handleSelectChange(param.name, e.target.value)}
-                style={selectStyle}
-              >
-                {param.options.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            ) : param.type === 'range' ? (
-              // 范围滑块类型（使用 react-range）
-              <div style={{ flex: 1 }}>
-                <Range
-                  step={param.step}
-                  min={param.min}
-                  max={param.max}
-                  values={parameters[param.name] || param.default}
-                  onChange={(values) => handleRangeChange(param.name, values)}
-                  renderTrack={({ props, children }) => (
-                    <div
-                      {...props}
-                      style={{
-                        ...props.style,
-                        height: '6px',
-                        width: '100%',
-                        background: '#334155',
-                        borderRadius: '3px'
-                      }}
-                    >
-                      {children}
-                    </div>
-                  )}
-                  renderThumb={({ props, index }) => (
-                    <div
-                      {...props}
-                      style={{
-                        ...props.style,
-                        height: '16px',
-                        width: '16px',
-                        borderRadius: '50%',
-                        backgroundColor: '#6366f1',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      }}
-                    />
-                  )}
-                />
-                
-                {/* 显示当前值 */}
-                <div style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: '8px'
+      <h3 style={{
+        color: 'var(--theme-text-primary, #f8fafc)',
+        fontSize: '16px',
+        fontWeight: '600',
+        marginBottom: '1rem'
+      }}>️ Parameters</h3>
+      
+      {config.map((param) => (
+        <div key={param.name} style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          marginBottom: '0.5rem'
+        }}>
+          <label style={{
+            color: 'var(--theme-text-secondary, #cbd5e1)',
+            fontSize: '14px',
+            fontWeight: '500',
+            minWidth: '80px'
+          }}>{param.label}</label>
+          
+          {param.type === 'select' ? (
+            // 下拉框类型
+            <select
+              value={parameters[param.name] || param.options[0]}
+              onChange={(e) => handleSelectChange(param.name, e.target.value)}
+              style={{
+                width: '120px',
+                padding: '0.25rem 0.5rem',
+                background: 'var(--theme-input-bg, #334155)',
+                border: '1px solid var(--theme-border, #334155)',
+                borderRadius: '4px',
+                color: 'var(--theme-text-primary, #f8fafc)',
+                fontSize: '14px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              {param.options.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          ) : param.type === 'range' ? (
+            // 范围滑块类型（使用 react-range）
+            <div style={{ flex: 1 }}>
+              <Range
+                step={param.step}
+                min={param.min}
+                max={param.max}
+                values={parameters[param.name] || param.default}
+                onChange={(values) => handleRangeChange(param.name, values)}
+                renderTrack={({ props, children }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: '6px',
+                      width: '100%',
+                      background: 'var(--theme-border, #334155)',
+                      borderRadius: '3px'
+                    }}
+                  >
+                    {children}
+                  </div>
+                )}
+                renderThumb={({ props, index }) => (
+                  <div
+                    {...props}
+                    style={{
+                      ...props.style,
+                      height: '16px',
+                      width: '16px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--theme-primary, #6366f1)',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                  />
+                )}
+              />
+              
+              {/* 显示当前值 */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '8px'
+              }}>
+                <span style={{ 
+                  color: 'var(--theme-text-primary, #f8fafc)', 
+                  fontSize: '12px', 
+                  minWidth: '40px', 
+                  textAlign: 'center' 
                 }}>
-                  <span style={{ color: '#f8fafc', fontSize: '12px', minWidth: '40px', textAlign: 'center' }}>
-                    {(parameters[param.name] || param.default)[0].toFixed(1)}
-                  </span>
-                  <span style={{ color: '#cbd5e1', fontSize: '12px' }}>↔</span>
-                  <span style={{ color: '#f8fafc', fontSize: '12px', minWidth: '40px', textAlign: 'center' }}>
-                    {(parameters[param.name] || param.default)[1].toFixed(1)}
-                  </span>
-                </div>
+                  {(parameters[param.name] || param.default)[0].toFixed(1)}
+                </span>
+                <span style={{ 
+                  color: 'var(--theme-text-secondary, #cbd5e1)', 
+                  fontSize: '12px' 
+                }}>↔</span>
+                <span style={{ 
+                  color: 'var(--theme-text-primary, #f8fafc)', 
+                  fontSize: '12px', 
+                  minWidth: '40px', 
+                  textAlign: 'center' 
+                }}>
+                  {(parameters[param.name] || param.default)[1].toFixed(1)}
+                </span>
               </div>
+            </div>
 
-            ) : (
-              // 滑块 + 输入框类型
-              <>
-                <input
-                  type="range"
-                  min={param.min}
-                  max={param.max}
-                  step={param.step}
-                  value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
-                  onChange={(e) => handleSliderChange(param.name, e.target.value)}
-                  style={{ ...sliderStyle, flex: 1 }}
-                />
-                <input
-                  type="number"
-                  min={param.min}
-                  max={param.max}
-                  step={param.step}
-                  value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
-                  onChange={(e) => handleInputChange(param.name, e.target.value)}
-                  style={inputStyle}
-                />
-              </>
-            )}
-          </div>
-        ))}
-      </div>
-    </>
+          ) : (
+            // 滑块 + 输入框类型
+            <>
+              <input
+                type="range"
+                min={param.min}
+                max={param.max}
+                step={param.step}
+                value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
+                onChange={(e) => handleSliderChange(param.name, e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <input
+                type="number"
+                min={param.min}
+                max={param.max}
+                step={param.step}
+                value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
+                onChange={(e) => handleInputChange(param.name, e.target.value)}
+                style={{
+                  width: '80px',
+                  padding: '0.25rem 0.5rem',
+                  background: 'var(--theme-input-bg, #334155)',
+                  border: '1px solid var(--theme-border, #334155)',
+                  borderRadius: '4px',
+                  color: 'var(--theme-text-primary, #f8fafc)',
+                  fontSize: '14px',
+                  textAlign: 'center',
+                  outline: 'none'
+                }}
+              />
+            </>
+          )}
+        </div>
+      ))}
+    </div>
   );
 };
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const SidebarContainer = styled.aside`
@@ -9,11 +8,11 @@ const SidebarContainer = styled.aside`
   left: 0;
   width: 280px;
   height: calc(100vh - 60px);
-  background: ${theme.colors.surface};
-  border-right: 1px solid ${theme.colors.border};
+  background: ${({ theme }) => theme.colors.surface};
+  border-right: 1px solid ${({ theme }) => theme.colors.border};
   overflow-y: auto;
-  padding: ${theme.spacing.lg} 0;
-  z-index: ${theme.zIndex.sticky};
+  padding: ${({ theme }) => theme.spacing.lg} 0;
+  z-index: ${({ theme }) => theme.zIndex.sticky};
   
   @media (max-width: 768px) {
     width: 240px;
@@ -21,13 +20,13 @@ const SidebarContainer = styled.aside`
 `;
 
 const SidebarTitle = styled.h3`
-  padding: 0 ${theme.spacing.lg} ${theme.spacing.md};
+  padding: 0 ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.md};
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: ${theme.colors.textMuted};
-  border-bottom: 1px solid ${theme.colors.border};
-  margin-bottom: ${theme.spacing.md};
+  color: ${({ theme }) => theme.colors.textMuted};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
 const MenuItemList = styled.ul`
@@ -35,30 +34,30 @@ const MenuItemList = styled.ul`
 `;
 
 const MenuItem = styled.li`
-  margin-bottom: ${theme.spacing.xs};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
 `;
 
 const MenuLink = styled.button`
   width: 100%;
-  padding: ${theme.spacing.md} ${theme.spacing.lg};
-  background: ${({ $active }) => $active ? `${theme.colors.primary}15` : 'transparent'};
-  color: ${({ $active }) => $active ? theme.colors.primary : theme.colors.textSecondary};
-  border-left: 3px solid ${({ $active }) => $active ? theme.colors.primary : 'transparent'};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  background: ${({ $active, theme }) => $active ? `${theme.colors.primary}15` : 'transparent'};
+  color: ${({ $active, theme }) => $active ? theme.colors.primary : theme.colors.textSecondary};
+  border-left: 3px solid ${({ $active, theme }) => $active ? theme.colors.primary : 'transparent'};
   text-align: left;
   font-size: 0.9rem;
-  transition: all ${theme.transitions.fast};
+  transition: all ${({ theme }) => theme.transitions.fast};
   
   &:hover {
-    background: ${theme.colors.surfaceLight};
-    color: ${theme.colors.textPrimary};
-    border-left-color: ${theme.colors.secondary};
+    background: ${({ theme }) => theme.colors.surfaceLight};
+    color: ${({ theme }) => theme.colors.textPrimary};
+    border-left-color: ${({ theme }) => theme.colors.secondary};
   }
 `;
 
 const EmptyState = styled.div`
-  padding: ${theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.xl};
   text-align: center;
-  color: ${theme.colors.textMuted};
+  color: ${({ theme }) => theme.colors.textMuted};
   font-size: 0.9rem;
 `;
 
