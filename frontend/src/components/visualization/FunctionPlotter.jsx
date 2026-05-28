@@ -520,42 +520,46 @@ const FunctionPlotter = ({
     return traces;
   }, [functionType, parameters, xRange, yRange, title]);
 
-  // 配置 Plotly 布局 - 使用 CSS 变量支持主题切换
-  const layout = useMemo(() => ({
-    title: {
-      text: title,
-      font: {
-        size: 18,
-        color: 'var(--theme-text-primary, #e0e0e0)'
+  // 配置 Plotly 布局 - 根据主题模式动态设置颜色
+  const layout = useMemo(() => {
+    const isDark = themeMode === 'dark';
+    
+    return {
+      title: {
+        text: title,
+        font: {
+          size: 18,
+          color: isDark ? '#e0e0e0' : '#0f172a'
+        }
+      },
+      xaxis: {
+        title: 'x',
+        range: xRange,
+        gridcolor: isDark ? '#334155' : '#cbd5e1',
+        zerolinecolor: isDark ? '#475569' : '#94a3b8',
+        tickfont: { color: isDark ? '#94a3b8' : '#475569' },
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a' }
+      },
+      yaxis: {
+        title: functionType === 'inverse' ? 'h (height)' : 'y',
+        range: yRange,
+        gridcolor: isDark ? '#334155' : '#cbd5e1',
+        zerolinecolor: isDark ? '#475569' : '#94a3b8',
+        tickfont: { color: isDark ? '#94a3b8' : '#475569' },
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a' }
+      },
+      plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
+      paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
+      margin: { l: 60, r: 40, t: 60, b: 60 },
+      showlegend: functionType === 'inverse' ? true : false,
+      legend: {
+        font: { color: isDark ? '#e0e0e0' : '#0f172a' },
+        bgcolor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.8)',
+        bordercolor: isDark ? '#334155' : '#cbd5e1',
+        borderwidth: 1
       }
-    },
-    xaxis: {
-      title: 'x',
-      range: xRange,
-      gridcolor: 'var(--theme-border, #333)',
-      zerolinecolor: 'var(--theme-divider, #666)',
-      tickfont: { color: 'var(--theme-text-secondary, #b0b0b0)' },
-      titlefont: { color: 'var(--theme-text-primary, #e0e0e0)' }
-    },
-    yaxis: {
-      title: functionType === 'inverse' ? 'h (height)' : 'y',
-      range: yRange,
-      gridcolor: 'var(--theme-border, #333)',
-      zerolinecolor: 'var(--theme-divider, #666)',
-      tickfont: { color: 'var(--theme-text-secondary, #b0b0b0)' },
-      titlefont: { color: 'var(--theme-text-primary, #e0e0e0)' }
-    },
-    plot_bgcolor: 'var(--theme-card-bg, #1a1a2e)',
-    paper_bgcolor: 'var(--theme-surface, #1a1a2e)',
-    margin: { l: 60, r: 40, t: 60, b: 60 },
-    showlegend: functionType === 'inverse' ? true : false,
-    legend: {
-      font: { color: 'var(--theme-text-primary, #e0e0e0)' },
-      bgcolor: 'rgba(0,0,0,0.1)',
-      bordercolor: 'var(--theme-border, #333)',
-      borderwidth: 1
-    }
-  }), [title, xRange, yRange, functionType]);
+    };
+  }, [title, xRange, yRange, functionType, themeMode]);
 
   // 配置 Plotly 工具栏
   const config = {
