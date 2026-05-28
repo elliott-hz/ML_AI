@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 
 /**
@@ -13,9 +13,25 @@ const FunctionPlotter = ({
   showExportButton = true
 }) => {
   const plotRef = useRef(null);
+  const [themeMode, setThemeMode] = useState(() => {
+    return localStorage.getItem('themeMode') || 'dark';
+  });
   
   // 使用 parameters.xRange 如果存在，否则使用 props 的 xRange
   const xRange = parameters.xRange || propXRange;
+
+  // 监听主题变化
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const newMode = localStorage.getItem('themeMode') || 'dark';
+      setThemeMode(newMode);
+    };
+
+    // 每 100ms 检查一次主题是否变化
+    const intervalId = setInterval(handleThemeChange, 100);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   // 根据函数类型和参数计算函数值
   const calculateFunctionValues = useCallback((x, type = 'original') => {
@@ -530,7 +546,7 @@ const FunctionPlotter = ({
       titlefont: { color: 'var(--theme-text-primary, #e0e0e0)' }
     },
     plot_bgcolor: 'var(--theme-card-bg, #1a1a2e)',
-    paper_bgcolor: 'var(--theme-background, #1a1a2e)',
+    paper_bgcolor: 'var(--theme-surface, #1a1a2e)',
     margin: { l: 60, r: 40, t: 60, b: 60 },
     showlegend: functionType === 'inverse' ? true : false,
     legend: {
@@ -585,11 +601,11 @@ const FunctionPlotter = ({
     }
   }, [title]);
 
-  // 简单的内联样式
+  // 简单的内联样式 - 使用 CSS 变量支持主题切换
   const containerStyle = {
     width: '100%',
     height: '600px',  // 从 400px 增加到 600px（增加 50%）
-    background: '#1e293b',
+    background: 'var(--theme-card-bg, #1e293b)',
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',

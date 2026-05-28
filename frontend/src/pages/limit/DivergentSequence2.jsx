@@ -149,15 +149,12 @@ const DivergentSequence2 = () => {
             
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
-              <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>
-                Original Function: f(x) = sin(x)
-              </h4>
               <SequencePlotter
                 sequenceType="original_function"
                 parameters={{ funcName: 'sin', maxN: params.maxN }}
                 xRange={[0, Math.min(params.maxN, 30)]}
                 yRange={[-1.5, 1.5]}
-                title=""
+                title={`Original Function: f(x) = sin(x)`}
                 showOriginalFunction={true}
               />
             </div>

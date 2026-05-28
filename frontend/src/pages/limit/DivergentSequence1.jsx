@@ -148,15 +148,12 @@ const DivergentSequence1 = () => {
             
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
-              <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>
-                Original Function: f(x) = x²
-              </h4>
               <SequencePlotter
                 sequenceType="original_function"
                 parameters={{ funcName: 'quadratic', maxN: Math.min(params.maxN, 20) }}
                 xRange={[0, Math.min(params.maxN, 20)]}
                 yRange={[0, Math.pow(Math.min(params.maxN, 20), 2)]}
-                title=""
+                title={`Original Function: f(x) = x²`}
               />
             </div>
           </PlotPanel>

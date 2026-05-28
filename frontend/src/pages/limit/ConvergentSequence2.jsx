@@ -149,15 +149,12 @@ const ConvergentSequence2 = () => {
             
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
-              <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>
-                Original Function: f(x) = x/(x+1)
-              </h4>
               <SequencePlotter
                 sequenceType="original_function"
                 parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 50) }}
                 xRange={[0, Math.min(params.maxN, 50)]}
                 yRange={[0, 1.2]}
-                title=""
+                title={`Original Function: f(x) = x/(x+1)`}
               />
             </div>
           </PlotPanel>

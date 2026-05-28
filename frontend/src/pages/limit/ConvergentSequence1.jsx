@@ -151,15 +151,12 @@ const ConvergentSequence1 = () => {
             
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
-              <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>
-                Original Function: f(x) = 1/{params.base}<sup>x</sup>
-              </h4>
               <SequencePlotter
                 sequenceType="original_function"
                 parameters={{ funcName: 'exponential_decay', base: params.base, maxN: Math.min(params.maxN, 20) }}
                 xRange={[0, Math.min(params.maxN, 20)]}
                 yRange={[0, 1]}
-                title=""
+                title={`Original Function: f(x) = 1/${params.base}<sup>x</sup>`}
               />
             </div>
           </PlotPanel>
