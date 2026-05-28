@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -86,12 +87,18 @@ const PeriodicFunctions = () => {
     xRange: [-10, 10]  // X轴范围
   });
 
-  // 周期函数参数配置
-  const periodicParamConfig = [
+  // 周期函数参数配置 - 分组版本
+  const periodicCoefficientConfig = [
     { name: 'a', label: 'Amplitude (a)', min: 0.1, max: 5, step: 0.1 },
     { name: 'b', label: 'Frequency (b)', min: 0.1, max: 5, step: 0.1 },
-    { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 },
-    { name: 'lineStyle', label: 'Period Line Style', type: 'select', options: ['solid', 'dashed'] },
+    { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 }
+  ];
+
+  const periodicLineStyleConfig = [
+    { name: 'lineStyle', label: 'Period Line Style', type: 'select', options: ['solid', 'dashed'] }
+  ];
+
+  const periodicViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-10, 10] }
   ];
 
@@ -118,11 +125,30 @@ const PeriodicFunctions = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={periodicParams}
-            onChange={setPeriodicParams}
-            config={periodicParamConfig}
-          />
+          {/* 周期函数参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={periodicParams}
+              onChange={setPeriodicParams}
+              config={periodicCoefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Line Style">
+            <ParameterControls
+              parameters={periodicParams}
+              onChange={setPeriodicParams}
+              config={periodicLineStyleConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={periodicParams}
+              onChange={setPeriodicParams}
+              config={periodicViewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>

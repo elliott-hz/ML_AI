@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -99,14 +100,18 @@ const InverseFunctions = () => {
     xRange: [-5, 5]   // X轴范围
   });
 
-  const paramConfig = [
+  // 参数配置 - 分组版本
+  const coefficientConfig = [
     {
       name: 'coefficient',
       label: 'Coefficient (a)',
       min: 0.1,
       max: 5,
       step: 0.1
-    },
+    }
+  ];
+
+  const viewRangeConfig = [
     {
       name: 'xRange',
       label: 'X Range',
@@ -142,11 +147,22 @@ const InverseFunctions = () => {
 
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={params}
-            onChange={setParams}
-            config={paramConfig}
-          />
+          {/* 参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={coefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={viewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SequencePlotter from '../../components/visualization/SequencePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -107,8 +108,12 @@ const ConvergentSequence1 = () => {
     maxN: 20           // 显示的项数
   });
 
-  const paramConfig = [
-    { name: 'base', label: 'Base (a)', min: 2, max: 10, step: 1 },
+  // 参数配置 - 分组版本
+  const coefficientConfig = [
+    { name: 'base', label: 'Base (a)', min: 2, max: 10, step: 1 }
+  ];
+
+  const viewRangeConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 5 }
   ];
 
@@ -141,11 +146,22 @@ const ConvergentSequence1 = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={params}
-            onChange={setParams}
-            config={paramConfig}
-          />
+          {/* 参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={coefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={viewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>

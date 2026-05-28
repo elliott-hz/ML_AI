@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -103,21 +104,33 @@ const OddEvenFunctions = () => {
     xRange: [-5, 5]      // X轴范围
   });
 
-  // 奇函数参数配置
-  const oddParamConfig = [
+  // 奇函数参数配置 - 分组版本
+  const oddCoefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
-    { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  const oddAuxiliaryConfig = [
     { name: 'samplePoint', label: 'Sample Point (x)', min: 0.5, max: 4, step: 0.1 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
+  ];
+
+  const oddViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
   ];
 
-  // 偶函数参数配置
-  const evenParamConfig = [
+  // 偶函数参数配置 - 分组版本
+  const evenCoefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
-    { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  const evenLineStyleConfig = [
     { name: 'axisStyle', label: 'Axis Style', type: 'select', options: ['solid', 'dashed'] },
-    { name: 'axisWidth', label: 'Axis Width', min: 1, max: 5, step: 0.5 },
+    { name: 'axisWidth', label: 'Axis Width', min: 1, max: 5, step: 0.5 }
+  ];
+
+  const evenViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
   ];
 
@@ -143,11 +156,30 @@ const OddEvenFunctions = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={oddParams}
-            onChange={setOddParams}
-            config={oddParamConfig}
-          />
+          {/* 奇函数参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={oddParams}
+              onChange={setOddParams}
+              config={oddCoefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Auxiliary Lines">
+            <ParameterControls
+              parameters={oddParams}
+              onChange={setOddParams}
+              config={oddAuxiliaryConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={oddParams}
+              onChange={setOddParams}
+              config={oddViewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>
@@ -169,11 +201,30 @@ const OddEvenFunctions = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={evenParams}
-            onChange={setEvenParams}
-            config={evenParamConfig}
-          />
+          {/* 偶函数参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={evenParams}
+              onChange={setEvenParams}
+              config={evenCoefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Line Style">
+            <ParameterControls
+              parameters={evenParams}
+              onChange={setEvenParams}
+              config={evenLineStyleConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={evenParams}
+              onChange={setEvenParams}
+              config={evenViewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>

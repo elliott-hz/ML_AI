@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import SequencePlotter from '../../components/visualization/SequencePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -106,7 +107,8 @@ const DivergentSequence1 = () => {
     maxN: 20           // 显示的项数
   });
 
-  const paramConfig = [
+  // 参数配置 - 分组版本
+  const viewRangeConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 50, step: 5 }
   ];
 
@@ -139,11 +141,14 @@ const DivergentSequence1 = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={params}
-            onChange={setParams}
-            config={paramConfig}
-          />
+          {/* 参数分组 */}
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={viewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>

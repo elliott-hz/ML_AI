@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -105,23 +106,35 @@ const MonotonicityFunctions = () => {
     xRange: [-8, 8] // X轴范围
   });
 
-  // 单调递增函数参数配置
-  const increasingParamConfig = [
+  // 单调递增函数参数配置 - 分组版本
+  const increasingCoefficientConfig = [
     { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
-    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  const increasingAuxiliaryConfig = [
     { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
     { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
+  ];
+
+  const increasingViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] }
   ];
 
-  // 单调递减函数参数配置
-  const decreasingParamConfig = [
+  // 单调递减函数参数配置 - 分组版本
+  const decreasingCoefficientConfig = [
     { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
-    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  const decreasingAuxiliaryConfig = [
     { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
     { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
+  ];
+
+  const decreasingViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] }
   ];
 
@@ -147,11 +160,30 @@ const MonotonicityFunctions = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={increasingParams}
-            onChange={setIncreasingParams}
-            config={increasingParamConfig}
-          />
+          {/* 单调递增参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={increasingParams}
+              onChange={setIncreasingParams}
+              config={increasingCoefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Auxiliary Lines">
+            <ParameterControls
+              parameters={increasingParams}
+              onChange={setIncreasingParams}
+              config={increasingAuxiliaryConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={increasingParams}
+              onChange={setIncreasingParams}
+              config={increasingViewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>
@@ -173,11 +205,30 @@ const MonotonicityFunctions = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterControls
-            parameters={decreasingParams}
-            onChange={setDecreasingParams}
-            config={decreasingParamConfig}
-          />
+          {/* 单调递减参数分组 */}
+          <ParameterSection title="Function Coefficients">
+            <ParameterControls
+              parameters={decreasingParams}
+              onChange={setDecreasingParams}
+              config={decreasingCoefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Auxiliary Lines">
+            <ParameterControls
+              parameters={decreasingParams}
+              onChange={setDecreasingParams}
+              config={decreasingAuxiliaryConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={decreasingParams}
+              onChange={setDecreasingParams}
+              config={decreasingViewRangeConfig}
+            />
+          </ParameterSection>
         </ControlsPanel>
         
         <PlotPanel>
