@@ -60,19 +60,39 @@ const OddEvenFunctions = () => {
   const navigate = useNavigate();
   
   // 奇函数参数状态
-  const [oddParams, setOddParams] = useState({ a: 1 });
+  const [oddParams, setOddParams] = useState({ 
+    a: 1,              // 系数
+    b: 0,              // 偏置项
+    samplePoint: 2,    // 采样点位置
+    pointSize: 10,     // 点大小
+    xRange: [-5, 5]    // X轴范围
+  });
   
   // 偶函数参数状态
-  const [evenParams, setEvenParams] = useState({ a: 1 });
+  const [evenParams, setEvenParams] = useState({ 
+    a: 1,              // 系数
+    b: 0,              // 偏置项
+    axisStyle: 'dashed', // 对称轴样式：solid 或 dashed
+    axisWidth: 2,        // 对称轴线宽
+    xRange: [-5, 5]      // X轴范围
+  });
 
   // 奇函数参数配置
   const oddParamConfig = [
-    { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 }
+    { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
+    { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'samplePoint', label: 'Sample Point (x)', min: 0.5, max: 4, step: 0.1 },
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
+    { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
   ];
 
   // 偶函数参数配置
   const evenParamConfig = [
-    { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 }
+    { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
+    { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'axisStyle', label: 'Axis Style', type: 'select', options: ['solid', 'dashed'] },
+    { name: 'axisWidth', label: 'Axis Width', min: 1, max: 5, step: 0.5 },
+    { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
   ];
 
   return (
@@ -103,7 +123,6 @@ const OddEvenFunctions = () => {
         <FunctionPlotter
           functionType="odd"
           parameters={oddParams}
-          xRange={[-5, 5]}
           yRange={[-50, 50]}
           title="Odd Function: f(x) = ax³"
           showExportButton={true}
@@ -126,7 +145,6 @@ const OddEvenFunctions = () => {
         <FunctionPlotter
           functionType="even"
           parameters={evenParams}
-          xRange={[-5, 5]}
           yRange={[-10, 50]}
           title="Even Function: f(x) = ax²"
           showExportButton={true}

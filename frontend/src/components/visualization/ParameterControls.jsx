@@ -1,4 +1,5 @@
 import React from 'react';
+import { Range } from 'react-range';
 
 /**
  * 参数控制面板组件 - 滑块和输入框双联动
@@ -19,6 +20,16 @@ const ParameterControls = ({ parameters, onChange, config }) => {
     if (!isNaN(numValue)) {
       onChange({ ...parameters, [paramName]: numValue });
     }
+  };
+
+  // 处理下拉框变化
+  const handleSelectChange = (paramName, value) => {
+    onChange({ ...parameters, [paramName]: value });
+  };
+
+  // 处理范围滑块变化（双滑块）
+  const handleRangeChange = (paramName, values) => {
+    onChange({ ...parameters, [paramName]: values });
   };
 
   // 容器样式
@@ -51,16 +62,6 @@ const ParameterControls = ({ parameters, onChange, config }) => {
     minWidth: '80px'
   };
 
-  const sliderStyle = {
-    flex: 1,
-    height: '6px',
-    background: '#334155',
-    borderRadius: '3px',
-    outline: 'none',
-    WebkitAppearance: 'none',
-    appearance: 'none'
-  };
-
   const inputStyle = {
     width: '80px',
     padding: '0.25rem 0.5rem',
@@ -73,33 +74,181 @@ const ParameterControls = ({ parameters, onChange, config }) => {
     outline: 'none'
   };
 
+  const selectStyle = {
+    width: '120px',
+    padding: '0.25rem 0.5rem',
+    background: '#334155',
+    border: '1px solid #334155',
+    borderRadius: '4px',
+    color: '#f8fafc',
+    fontSize: '14px',
+    outline: 'none',
+    cursor: 'pointer'
+  };
+
+  const sliderStyle = {
+    flex: 1,
+    height: '6px',
+    background: '#334155',
+    borderRadius: '3px',
+    outline: 'none',
+    WebkitAppearance: 'none',
+    appearance: 'none'
+  };
+
   return (
-    <div style={containerStyle}>
-      <h3 style={titleStyle}>️ Parameters</h3>
-      {config.map((param) => (
-        <div key={param.name} style={rowStyle}>
-          <label style={labelStyle}>{param.label}</label>
-          <input
-            type="range"
-            min={param.min}
-            max={param.max}
-            step={param.step}
-            value={parameters[param.name] || 0}
-            onChange={(e) => handleSliderChange(param.name, e.target.value)}
-            style={sliderStyle}
-          />
-          <input
-            type="number"
-            min={param.min}
-            max={param.max}
-            step={param.step}
-            value={parameters[param.name] || 0}
-            onChange={(e) => handleInputChange(param.name, e.target.value)}
-            style={inputStyle}
-          />
-        </div>
-      ))}
-    </div>
+    <>
+      {/* 自定义滑块样式 */}
+      <style>{`
+        input[type="range"] {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 100%;
+          height: 6px;
+          background: #334155;
+          border-radius: 3px;
+          outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          background: #6366f1;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          margin-top: -5px;
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          background: #6366f1;
+          border: none;
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        input[type="range"]::-webkit-slider-runnable-track {
+          height: 6px;
+          background: transparent;
+          border-radius: 3px;
+        }
+        
+        input[type="range"]::-moz-range-track {
+          height: 6px;
+          background: transparent;
+          border-radius: 3px;
+        }
+      `}</style>
+      
+      <div style={containerStyle}>
+        <h3 style={titleStyle}>️ Parameters</h3>
+        {config.map((param) => (
+          <div key={param.name} style={rowStyle}>
+            <label style={labelStyle}>{param.label}</label>
+            
+            {param.type === 'select' ? (
+              // 下拉框类型
+              <select
+                value={parameters[param.name] || param.options[0]}
+                onChange={(e) => handleSelectChange(param.name, e.target.value)}
+                style={selectStyle}
+              >
+                {param.options.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            ) : param.type === 'range' ? (
+              // 范围滑块类型（使用 react-range）
+              <div style={{ flex: 1 }}>
+                <Range
+                  step={param.step}
+                  min={param.min}
+                  max={param.max}
+                  values={parameters[param.name] || param.default}
+                  onChange={(values) => handleRangeChange(param.name, values)}
+                  renderTrack={({ props, children }) => (
+                    <div
+                      {...props}
+                      style={{
+                        ...props.style,
+                        height: '6px',
+                        width: '100%',
+                        background: '#334155',
+                        borderRadius: '3px'
+                      }}
+                    >
+                      {children}
+                    </div>
+                  )}
+                  renderThumb={({ props, index }) => (
+                    <div
+                      {...props}
+                      style={{
+                        ...props.style,
+                        height: '16px',
+                        width: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: '#6366f1',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    />
+                  )}
+                />
+                
+                {/* 显示当前值 */}
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '8px'
+                }}>
+                  <span style={{ color: '#f8fafc', fontSize: '12px', minWidth: '40px', textAlign: 'center' }}>
+                    {(parameters[param.name] || param.default)[0].toFixed(1)}
+                  </span>
+                  <span style={{ color: '#cbd5e1', fontSize: '12px' }}>↔</span>
+                  <span style={{ color: '#f8fafc', fontSize: '12px', minWidth: '40px', textAlign: 'center' }}>
+                    {(parameters[param.name] || param.default)[1].toFixed(1)}
+                  </span>
+                </div>
+              </div>
+
+            ) : (
+              // 滑块 + 输入框类型
+              <>
+                <input
+                  type="range"
+                  min={param.min}
+                  max={param.max}
+                  step={param.step}
+                  value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
+                  onChange={(e) => handleSliderChange(param.name, e.target.value)}
+                  style={{ ...sliderStyle, flex: 1 }}
+                />
+                <input
+                  type="number"
+                  min={param.min}
+                  max={param.max}
+                  step={param.step}
+                  value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
+                  onChange={(e) => handleInputChange(param.name, e.target.value)}
+                  style={inputStyle}
+                />
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 

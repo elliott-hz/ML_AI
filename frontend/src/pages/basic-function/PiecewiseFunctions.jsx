@@ -76,7 +76,8 @@ const PiecewiseFunctions = () => {
   const navigate = useNavigate();
   
   const [params, setParams] = useState({
-    coefficient: 1
+    coefficient: 1,
+    xRange: [-10, 10]   // X轴范围
   });
 
   const paramConfig = [
@@ -86,6 +87,15 @@ const PiecewiseFunctions = () => {
       min: 0.1,
       max: 5,
       step: 0.1
+    },
+    {
+      name: 'xRange',
+      label: 'X Range',
+      type: 'range',
+      min: -20,
+      max: 20,
+      step: 1,
+      default: [-10, 10]
     }
   ];
 
@@ -122,7 +132,6 @@ const PiecewiseFunctions = () => {
       <FunctionPlotter
         functionType="piecewise"
         parameters={params}
-        xRange={[-5, 5]}
         yRange={[-5, 10]}
         title="Piecewise Function: f(x)"
         showExportButton={true}

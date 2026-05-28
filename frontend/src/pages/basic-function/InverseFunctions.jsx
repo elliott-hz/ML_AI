@@ -76,7 +76,8 @@ const InverseFunctions = () => {
   const navigate = useNavigate();
   
   const [params, setParams] = useState({
-    coefficient: 1
+    coefficient: 1,
+    xRange: [-5, 5]   // X轴范围
   });
 
   const paramConfig = [
@@ -86,6 +87,15 @@ const InverseFunctions = () => {
       min: 0.1,
       max: 5,
       step: 0.1
+    },
+    {
+      name: 'xRange',
+      label: 'X Range',
+      type: 'range',
+      min: -20,
+      max: 20,
+      step: 1,
+      default: [-5, 5]
     }
   ];
 
@@ -120,7 +130,6 @@ const InverseFunctions = () => {
       <FunctionPlotter
         functionType="inverse"
         parameters={params}
-        xRange={[0, 5]}
         yRange={[0, 10]}
         title="Inverse Function: h(t) and t(h)"
         showExportButton={true}

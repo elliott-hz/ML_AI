@@ -61,16 +61,20 @@ const PeriodicFunctions = () => {
   
   // 周期函数参数状态
   const [periodicParams, setPeriodicParams] = useState({ 
-    a: 1,    // 振幅
-    b: 1,    // 频率
-    c: 0     // 相位
+    a: 1,              // 振幅
+    b: 1,              // 频率
+    c: 0,              // 相位
+    lineStyle: 'dashed', // 周期线样式：solid 或 dashed
+    xRange: [-10, 10]  // X轴范围
   });
 
   // 周期函数参数配置
   const periodicParamConfig = [
     { name: 'a', label: 'Amplitude (a)', min: 0.1, max: 5, step: 0.1 },
     { name: 'b', label: 'Frequency (b)', min: 0.1, max: 5, step: 0.1 },
-    { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 }
+    { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 },
+    { name: 'lineStyle', label: 'Period Line Style', type: 'select', options: ['solid', 'dashed'] },
+    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-10, 10] }
   ];
 
   return (
@@ -102,7 +106,6 @@ const PeriodicFunctions = () => {
         <FunctionPlotter
           functionType="periodic"
           parameters={periodicParams}
-          xRange={[-4 * Math.PI, 4 * Math.PI]}
           yRange={[-6, 6]}
           title="Periodic Function: f(x) = a·sin(bx + c)"
           showExportButton={true}

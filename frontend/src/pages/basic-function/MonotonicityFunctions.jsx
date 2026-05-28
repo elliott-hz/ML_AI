@@ -61,26 +61,42 @@ const MonotonicityFunctions = () => {
   
   // 单调递增函数参数状态
   const [increasingParams, setIncreasingParams] = useState({ 
-    a: 1,  // 斜率
-    b: 0   // 截距
+    a: 1,        // 斜率
+    b: 0,        // 截距
+    x1: -3,      // 第一个点的x坐标
+    x2: 3,       // 第二个点的x坐标
+    pointSize: 10, // 点大小
+    xRange: [-8, 8] // X轴范围
   });
   
   // 单调递减函数参数状态
   const [decreasingParams, setDecreasingParams] = useState({ 
-    a: 1,  // 斜率
-    b: 0   // 截距
+    a: 1,        // 斜率
+    b: 0,        // 截距
+    x1: -3,      // 第一个点的x坐标
+    x2: 3,       // 第二个点的x坐标
+    pointSize: 10, // 点大小
+    xRange: [-8, 8] // X轴范围
   });
 
   // 单调递增函数参数配置
   const increasingParamConfig = [
     { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
-    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
+    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
+    { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
+    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] }
   ];
 
   // 单调递减函数参数配置
   const decreasingParamConfig = [
     { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
-    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
+    { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 },
+    { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
+    { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
+    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] }
   ];
 
   return (
@@ -111,7 +127,6 @@ const MonotonicityFunctions = () => {
         <FunctionPlotter
           functionType="increasing"
           parameters={increasingParams}
-          xRange={[-10, 10]}
           yRange={[-20, 20]}
           title="Monotonically Increasing: f(x) = ax + b"
           showExportButton={true}
@@ -134,7 +149,7 @@ const MonotonicityFunctions = () => {
         <FunctionPlotter
           functionType="decreasing"
           parameters={decreasingParams}
-          xRange={[-10, 10]}
+          xRange={decreasingParams.xRange}
           yRange={[-20, 20]}
           title="Monotonically Decreasing: f(x) = -ax + b"
           showExportButton={true}
