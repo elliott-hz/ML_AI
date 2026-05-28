@@ -97,6 +97,10 @@ const PiecewiseFunctions = () => {
   
   const [params, setParams] = useState({
     coefficient: 1,
+    // Function Line 样式
+    lineColor: '#6366f1',  // 函数线颜色
+    lineWidth: 2,          // 函数线粗细
+    lineStyle: 'solid',    // 函数线样式
     xRange: [-10, 10]   // X轴范围
   });
 
@@ -109,6 +113,12 @@ const PiecewiseFunctions = () => {
       max: 5,
       step: 0.1
     }
+  ];
+
+  const functionLineConfig = [
+    { name: 'lineColor', label: 'Line Color', type: 'color' },
+    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
+    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
   ];
 
   const viewRangeConfig = [
@@ -155,6 +165,14 @@ const PiecewiseFunctions = () => {
               parameters={params}
               onChange={setParams}
               config={coefficientConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Function Line">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={functionLineConfig}
             />
           </ParameterSection>
 

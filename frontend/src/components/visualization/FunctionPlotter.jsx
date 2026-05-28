@@ -38,6 +38,11 @@ const FunctionPlotter = ({
     return themeMode === 'dark' ? '#ffd700' : '#f59e0b'; // Dark: 亮黄, Light: 琥珀色（更醒目）
   }, [themeMode]);
 
+  // 根据主题获取函数线颜色
+  const getFunctionLineColor = useCallback(() => {
+    return themeMode === 'dark' ? '#6366f1' : '#4f46e5'; // Dark: Indigo 500, Light: Indigo 600
+  }, [themeMode]);
+
   // 根据函数类型和参数计算函数值
   const calculateFunctionValues = useCallback((x, type = 'original') => {
     // 兼容旧参数名和新参数名

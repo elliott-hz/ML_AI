@@ -37,6 +37,11 @@ const SequencePlotter = ({
     return themeMode === 'dark' ? '#ffd700' : '#f59e0b'; // Dark: 亮黄, Light: 琥珀色（更醒目）
   }, [themeMode]);
 
+  // 根据主题获取函数线颜色
+  const getFunctionLineColor = useCallback(() => {
+    return themeMode === 'dark' ? '#6366f1' : '#4f46e5'; // Dark: Indigo 500, Light: Indigo 600
+  }, [themeMode]);
+
   // 根据数列类型和参数计算数列值
   const calculateSequenceValues = useCallback((n) => {
     const base = parameters.base || 3;
