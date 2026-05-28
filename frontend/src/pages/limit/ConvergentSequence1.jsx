@@ -118,11 +118,11 @@ const ConvergentSequence1 = () => {
       </SectionDescription>
 
       <FunctionSection>
-        <SectionTitle>Sequence: u_n = 1/a^n</SectionTitle>
+        <SectionTitle>Sequence: u<sub>n</sub> = 1/a<sup>n</sup></SectionTitle>
         
         <FormulaBox>
           <Formula>
-            lim<sub>n→∞</sub> 1/a<sup>n</sup> = 0
+            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>1/a<sup>n</sup></span> = 0
           </Formula>
         </FormulaBox>
         
@@ -144,10 +144,11 @@ const ConvergentSequence1 = () => {
             <SequencePlotter
               sequenceType="convergent1"
               parameters={params}
-              title={`Sequence: 1/${params.base}^n`}
+              title={`Sequence: u<sub>n</sub> = 1/${params.base}<sup>n</sup>`}
               showLimitLine={true}
               limitValue={0}
             />
+            
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
               <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>

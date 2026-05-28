@@ -125,21 +125,21 @@ const BasicFunction = () => {
       id: 'odd-even',
       icon: '',
       title: 'Odd & Even Functions',
-      description: 'Explore the symmetry properties of functions. Visualize odd functions (symmetric about origin) and even functions (symmetric about y-axis).',
+      description: 'Explore the symmetry properties of functions. Visualize odd functions (f(-x) = -f(x), symmetric about origin) and even functions (f(-x) = f(x), symmetric about y-axis).',
       path: '/mathematics/1-fundamentals/basic-function/odd-even'
     },
     {
       id: 'periodic',
       icon: '',
       title: 'Periodic Functions',
-      description: 'Understand periodic behavior in functions. Adjust amplitude, frequency, and phase to see how they affect wave patterns.',
+      description: 'Understand periodic behavior in functions. Adjust amplitude, frequency, and phase to see how they affect wave patterns. f(x) = a·sin(bx + c).',
       path: '/mathematics/1-fundamentals/basic-function/periodic'
     },
     {
       id: 'monotonicity',
       icon: '',
       title: 'Monotonicity',
-      description: 'Study increasing and decreasing functions. Visualize how slope and intercept affect the monotonic behavior of linear functions.',
+      description: 'Study increasing and decreasing functions. Visualize how slope affects monotonic behavior: f(x) = ax + b (increasing) or f(x) = -ax + b (decreasing).',
       path: '/mathematics/1-fundamentals/basic-function/monotonicity'
     }
   ];

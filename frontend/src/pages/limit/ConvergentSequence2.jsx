@@ -116,11 +116,11 @@ const ConvergentSequence2 = () => {
       </SectionDescription>
 
       <FunctionSection>
-        <SectionTitle>Sequence: u_n = n/(n+1)</SectionTitle>
+        <SectionTitle>Sequence: u<sub>n</sub> = n/(n+1)</SectionTitle>
         
         <FormulaBox>
           <Formula>
-            lim<sub>n→∞</sub> n/(n+1) = 1
+            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n/(n+1)</span> = 1
           </Formula>
         </FormulaBox>
         
@@ -142,10 +142,11 @@ const ConvergentSequence2 = () => {
             <SequencePlotter
               sequenceType="convergent2"
               parameters={params}
-              title="Sequence: n/(n+1)"
+              title="Sequence: u<sub>n</sub> = n/(n+1)"
               showLimitLine={true}
               limitValue={1}
             />
+            
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
               <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>

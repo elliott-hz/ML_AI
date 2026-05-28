@@ -100,7 +100,7 @@ const SequencePlotter = ({
         y: uValues,
         type: 'scatter',
         mode: 'lines+markers',
-        name: 'u_n',
+        name: 'u<sub>n</sub>',
         line: { 
           color: '#6366f1', 
           width: 2,
@@ -120,7 +120,7 @@ const SequencePlotter = ({
           y: [limitValue, limitValue],
           type: 'scatter',
           mode: 'lines',
-          name: `Limit: ${limitValue}`,
+          name: `lim: ${limitValue}`,
           line: { 
             color: '#ffd700', 
             width: 2, 
@@ -170,7 +170,7 @@ const SequencePlotter = ({
       titlefont: { color: '#e0e0e0' }
     },
     yaxis: {
-      title: 'u_n',
+      title: sequenceType === 'original_function' ? 'f(x)' : 'u<sub>n</sub>',
       range: autoYRange,
       gridcolor: '#333',
       zerolinecolor: '#666',
@@ -187,7 +187,7 @@ const SequencePlotter = ({
       bordercolor: '#333',
       borderwidth: 1
     }
-  }), [title, propXRange, parameters.maxN, autoYRange]);
+  }), [title, propXRange, parameters.maxN, autoYRange, sequenceType]);
 
   // 配置 Plotly 工具栏
   const config = {

@@ -89,10 +89,23 @@ const ButtonTitle = styled.h3`
   margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
 `;
 
+const MathFormula = styled.span`
+  sub, sup {
+    font-size: 0.75em;
+  }
+  sup {
+    vertical-align: super;
+  }
+  sub {
+    vertical-align: sub;
+  }
+`;
+
 const ButtonDescription = styled.p`
   color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
   font-size: 14px;
   line-height: 1.5;
+  margin-top: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
 `;
 
 /**
@@ -106,14 +119,22 @@ const Limit = () => {
     {
       id: 'convergent-1',
       icon: '',
-      title: 'Sequence: 1/3^n → 0',
-      description: 'Explore exponential decay. Visualize how u_n = 1/3^n converges to 0 as n approaches infinity.',
+      title: (
+        <MathFormula>
+          Sequence: u<sub>n</sub> = 1/a<sup>n</sup> → 0
+        </MathFormula>
+      ),
+      description: 'Explore exponential decay. Visualize how u_n = 1/a^n converges to 0 as n approaches infinity.',
       path: '/mathematics/1-fundamentals/limit/convergent-1'
     },
     {
       id: 'convergent-2',
       icon: '',
-      title: 'Sequence: n/(n+1) → 1',
+      title: (
+        <MathFormula>
+          Sequence: u<sub>n</sub> = n/(n+1) → 1
+        </MathFormula>
+      ),
       description: 'Understand rational convergence. See how u_n = n/(n+1) approaches 1 from below.',
       path: '/mathematics/1-fundamentals/limit/convergent-2'
     }
@@ -124,15 +145,23 @@ const Limit = () => {
     {
       id: 'divergent-1',
       icon: '',
-      title: 'Sequence: n² → ∞',
+      title: (
+        <MathFormula>
+          Sequence: u<sub>n</sub> = n² → ∞
+        </MathFormula>
+      ),
       description: 'Study quadratic divergence. Observe how u_n = n² grows without bound.',
       path: '/mathematics/1-fundamentals/limit/divergent-1'
     },
     {
       id: 'divergent-2',
       icon: '',
-      title: 'Sequence: (-1)^n (Oscillating)',
-      description: 'Examine oscillating behavior. Visualize how u_n = (-1)^n alternates between -1 and 1.',
+      title: (
+        <MathFormula>
+          Sequence: u<sub>n</sub> = sin(n) (Oscillating)
+        </MathFormula>
+      ),
+      description: 'Examine oscillating behavior. Visualize how u_n = sin(n) oscillates indefinitely without converging.',
       path: '/mathematics/1-fundamentals/limit/divergent-2'
     }
   ];

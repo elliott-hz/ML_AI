@@ -116,11 +116,11 @@ const DivergentSequence1 = () => {
       </SectionDescription>
 
       <FunctionSection>
-        <SectionTitle>Sequence: u_n = n²</SectionTitle>
+        <SectionTitle>Sequence: u<sub>n</sub> = n²</SectionTitle>
         
         <FormulaBox>
           <Formula>
-            lim<sub>n→∞</sub> n² = +∞
+            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n²</span> = +∞
           </Formula>
         </FormulaBox>
         
@@ -142,9 +142,10 @@ const DivergentSequence1 = () => {
             <SequencePlotter
               sequenceType="divergent1"
               parameters={params}
-              title="Sequence: n²"
+              title="Sequence: u<sub>n</sub> = n²"
               showLimitLine={false}
             />
+            
             {/* 原函数图像 */}
             <div style={{ marginTop: '1rem' }}>
               <h4 style={{ color: '#f8fafc', fontSize: '16px', marginBottom: '0.5rem' }}>

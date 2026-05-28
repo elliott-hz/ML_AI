@@ -117,11 +117,11 @@ const DivergentSequence2 = () => {
       </SectionDescription>
 
       <FunctionSection>
-        <SectionTitle>Sequence: u_n = sin(n)</SectionTitle>
+        <SectionTitle>Sequence: u<sub>n</sub> = sin(n)</SectionTitle>
         
         <FormulaBox>
           <Formula>
-            lim<sub>n→∞</sub> sin(n) does not exist
+            lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>sin(n)</span> does not exist
           </Formula>
         </FormulaBox>
         
@@ -143,7 +143,7 @@ const DivergentSequence2 = () => {
             <SequencePlotter
               sequenceType="divergent2"
               parameters={params}
-              title="Sequence: sin(n)"
+              title="Sequence: u<sub>n</sub> = sin(n)"
               showLimitLine={false}
             />
             
