@@ -50,30 +50,11 @@ const FeatureButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, ${({ theme }) => theme?.colors?.primary || '#6366f1'}, ${({ theme }) => theme?.colors?.secondary || '#06b6d4'});
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
-  }
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
     border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-
-    &::before {
-      transform: scaleX(1);
-    }
   }
 `;
 

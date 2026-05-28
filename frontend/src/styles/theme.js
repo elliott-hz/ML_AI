@@ -88,10 +88,10 @@ export const lightTheme = {
     accent: '#8b5cf6',         // Purple - 强调色
     
     // 背景色 - 浅色主题
-    background: '#ffffff',     // White
-    surface: '#f8fafc',        // Slate 50
-    surfaceLight: '#e2e8f0',   // Slate 200
-    cardBg: '#ffffff',         // White
+    background: '#f8fafc',     // Slate 50 (不再是纯白)
+    surface: '#ffffff',        // White
+    surfaceLight: '#f1f5f9',   // Slate 100
+    cardBg: '#ffffff',         // White (卡片保持白色)
     inputBg: '#f1f5f9',        // Slate 100
     
     // 文字颜色 - 深色文字
@@ -104,9 +104,9 @@ export const lightTheme = {
     warning: '#f59e0b',
     error: '#ef4444',
     
-    // 边框和分割线
-    border: '#e2e8f0',
-    divider: '#cbd5e1',
+    // 边框和分割线 - 增强对比度
+    border: '#cbd5e1',         // Slate 300 (更明显的边框)
+    divider: '#94a3b8',        // Slate 400
     
     // 渐变
     gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%)',

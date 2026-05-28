@@ -140,36 +140,44 @@ const ParameterControls = ({ parameters, onChange, config }) => {
                 max={param.max}
                 values={parameters[param.name] || param.default}
                 onChange={(values) => handleRangeChange(param.name, values)}
-                renderTrack={({ props, children }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '6px',
-                      width: '100%',
-                      background: 'var(--theme-border, #334155)',
-                      borderRadius: '3px'
-                    }}
-                  >
-                    {children}
-                  </div>
-                )}
-                renderThumb={({ props, index }) => (
-                  <div
-                    {...props}
-                    style={{
-                      ...props.style,
-                      height: '16px',
-                      width: '16px',
-                      borderRadius: '50%',
-                      backgroundColor: 'var(--theme-primary, #6366f1)',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center'
-                    }}
-                  />
-                )}
+                renderTrack={({ props, children }) => {
+                  const { key, ...restProps } = props;
+                  return (
+                    <div
+                      key={key}
+                      {...restProps}
+                      style={{
+                        ...restProps.style,
+                        height: '6px',
+                        width: '100%',
+                        background: 'var(--theme-border, #334155)',
+                        borderRadius: '3px'
+                      }}
+                    >
+                      {children}
+                    </div>
+                  );
+                }}
+                renderThumb={({ props, index }) => {
+                  const { key, ...restProps } = props;
+                  return (
+                    <div
+                      key={key}
+                      {...restProps}
+                      style={{
+                        ...restProps.style,
+                        height: '16px',
+                        width: '16px',
+                        borderRadius: '50%',
+                        backgroundColor: 'var(--theme-primary, #6366f1)',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    />
+                  );
+                }}
               />
               
               {/* 显示当前值 */}

@@ -152,39 +152,39 @@ const SequencePlotter = ({
     return [minVal - padding, maxVal + padding];
   }, [sequenceType, parameters, calculateSequenceValues, propYRange]);
 
-  // 配置 Plotly 布局
+  // 配置 Plotly 布局 - 使用 CSS 变量支持主题切换
   const layout = useMemo(() => ({
     title: {
       text: title,
       font: {
         size: 18,
-        color: '#e0e0e0'
+        color: 'var(--theme-text-primary, #e0e0e0)'
       }
     },
     xaxis: {
       title: 'n',
       range: propXRange || [0, parameters.maxN || 50],
-      gridcolor: '#333',
-      zerolinecolor: '#666',
-      tickfont: { color: '#b0b0b0' },
-      titlefont: { color: '#e0e0e0' }
+      gridcolor: 'var(--theme-border, #333)',
+      zerolinecolor: 'var(--theme-divider, #666)',
+      tickfont: { color: 'var(--theme-text-secondary, #b0b0b0)' },
+      titlefont: { color: 'var(--theme-text-primary, #e0e0e0)' }
     },
     yaxis: {
       title: sequenceType === 'original_function' ? 'f(x)' : 'u<sub>n</sub>',
       range: autoYRange,
-      gridcolor: '#333',
-      zerolinecolor: '#666',
-      tickfont: { color: '#b0b0b0' },
-      titlefont: { color: '#e0e0e0' }
+      gridcolor: 'var(--theme-border, #333)',
+      zerolinecolor: 'var(--theme-divider, #666)',
+      tickfont: { color: 'var(--theme-text-secondary, #b0b0b0)' },
+      titlefont: { color: 'var(--theme-text-primary, #e0e0e0)' }
     },
-    plot_bgcolor: '#1a1a2e',
-    paper_bgcolor: '#1a1a2e',
+    plot_bgcolor: 'var(--theme-card-bg, #1a1a2e)',
+    paper_bgcolor: 'var(--theme-background, #1a1a2e)',
     margin: { l: 60, r: 40, t: 60, b: 60 },
     showlegend: true,
     legend: {
-      font: { color: '#e0e0e0' },
-      bgcolor: 'rgba(0,0,0,0.3)',
-      bordercolor: '#333',
+      font: { color: 'var(--theme-text-primary, #e0e0e0)' },
+      bgcolor: 'rgba(0,0,0,0.1)',
+      bordercolor: 'var(--theme-border, #333)',
       borderwidth: 1
     }
   }), [title, propXRange, parameters.maxN, autoYRange, sequenceType]);
