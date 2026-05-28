@@ -19,7 +19,7 @@ const ParameterSection = ({ title, children }) => {
 const SectionContainer = styled.div`
   background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
   border-radius: ${({ theme }) => theme?.borderRadius?.lg || '8px'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  padding: ${({ theme }) => theme?.spacing?.sm || '0.75rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
   margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.75rem'};
   box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
   

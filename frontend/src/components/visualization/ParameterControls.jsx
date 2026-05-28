@@ -34,11 +34,8 @@ const ParameterControls = ({ parameters, onChange, config }) => {
 
   return (
     <div style={{
-      background: 'var(--theme-card-bg, #1e293b)',
-      borderRadius: '8px',
-      padding: '1rem',
-      marginBottom: '1rem',
-      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+      /* 移除了背景、圆角、padding、marginBottom、boxShadow */
+      /* 这些由外层 ParameterSection 提供 */
     }}>
       {/* 自定义滑块样式 */}
       <style>{`
@@ -86,13 +83,6 @@ const ParameterControls = ({ parameters, onChange, config }) => {
           border-radius: 3px;
         }
       `}</style>
-      
-      <h3 style={{
-        color: 'var(--theme-text-primary, #f8fafc)',
-        fontSize: '16px',
-        fontWeight: '600',
-        marginBottom: '1rem'
-      }}>️ Parameters</h3>
       
       {config.map((param) => (
         <div key={param.name} style={{
