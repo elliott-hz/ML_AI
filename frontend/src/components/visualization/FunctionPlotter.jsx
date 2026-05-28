@@ -14,8 +14,11 @@ const FunctionPlotter = ({
 }) => {
   const plotRef = useRef(null);
   // 根据函数类型和参数计算函数值
-  const calculateFunctionValues = useCallback((x) => {
-    const { a = 1, b = 0, c = 0 } = parameters;
+  const calculateFunctionValues = useCallback((x, type = 'original') => {
+    // 兼容旧参数名和新参数名
+    const a = parameters.a || parameters.coefficient || 1;
+    const b = parameters.b || parameters.frequency || 0;
+    const c = parameters.c || parameters.phase || 0;
     
     switch (functionType) {
       case 'odd':
@@ -38,6 +41,29 @@ const FunctionPlotter = ({
         // 单调递减: f(x) = -ax + b
         return -a * x + b;
       
+      case 'piecewise':
+        // 分段函数: f(x) = { a·√x, x ≥ 0; -a·x, x < 0 }
+        if (x >= 0) {
+          return a * Math.sqrt(x);
+        } else {
+          return -a * x;
+        }
+      
+      case 'inverse':
+        // 反函数示例: h = a·t² 和 t = √(h/a)
+        if (type === 'original') {
+          // 原函数: h = a·t²
+          return a * Math.pow(x, 2);
+        } else if (type === 'inverse') {
+          // 反函数: t = √(h/a)，这里交换 x 和 y 轴
+          // 如果 x >= 0，返回 √(x/a)
+          if (x >= 0) {
+            return Math.sqrt(x / a);
+          }
+          return null;
+        }
+        return 0;
+      
       default:
         return 0;
     }
@@ -46,29 +72,100 @@ const FunctionPlotter = ({
   // 生成函数数据点
   const plotData = useMemo(() => {
     const numPoints = 500; // 采样点数
-    const step = (xRange[1] - xRange[0]) / numPoints;
-    const xValues = [];
-    const yValues = [];
-
-    for (let i = 0; i <= numPoints; i++) {
-      const x = xRange[0] + i * step;
-      const y = calculateFunctionValues(x);
-      xValues.push(x);
-      yValues.push(y);
-    }
-
-    return [{
-      x: xValues,
-      y: yValues,
-      type: 'scatter',
-      mode: 'lines',
-      name: title,
-      line: {
-        color: '#6366f1',
-        width: 2
+    
+    if (functionType === 'inverse') {
+      // 反函数需要同时绘制原函数和反函数两条曲线
+      const step = (xRange[1] - xRange[0]) / numPoints;
+      
+      // 原函数: h = a·t²
+      const originalX = [];
+      const originalY = [];
+      for (let i = 0; i <= numPoints; i++) {
+        const x = xRange[0] + i * step;
+        const y = calculateFunctionValues(x, 'original');
+        originalX.push(x);
+        originalY.push(y);
       }
-    }];
-  }, [calculateFunctionValues, xRange, title]);
+      
+      // 反函数: t = √(h/a)
+      const inverseX = [];
+      const inverseY = [];
+      for (let i = 0; i <= numPoints; i++) {
+        const x = xRange[0] + i * step;
+        const y = calculateFunctionValues(x, 'inverse');
+        if (y !== null) {
+          inverseX.push(x);
+          inverseY.push(y);
+        }
+      }
+      
+      // 添加 y=x 对称线
+      const lineX = [xRange[0], xRange[1]];
+      const lineY = [xRange[0], xRange[1]];
+      
+      return [
+        {
+          x: originalX,
+          y: originalY,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'Original: h = at²',
+          line: {
+            color: '#6366f1',
+            width: 2
+          }
+        },
+        {
+          x: inverseX,
+          y: inverseY,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'Inverse: t = √(h/a)',
+          line: {
+            color: '#06b6d4',
+            width: 2,
+            dash: 'dash'
+          }
+        },
+        {
+          x: lineX,
+          y: lineY,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'y = x',
+          line: {
+            color: '#888',
+            width: 1,
+            dash: 'dot'
+          }
+        }
+      ];
+    } else {
+      // 其他函数类型：单条曲线
+      const step = (xRange[1] - xRange[0]) / numPoints;
+      const xValues = [];
+      const yValues = [];
+
+      for (let i = 0; i <= numPoints; i++) {
+        const x = xRange[0] + i * step;
+        const y = calculateFunctionValues(x);
+        xValues.push(x);
+        yValues.push(y);
+      }
+
+      return [{
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: title,
+        line: {
+          color: '#6366f1',
+          width: 2
+        }
+      }];
+    }
+  }, [functionType, parameters, xRange, title]);
 
   // 配置 Plotly 布局
   const layout = useMemo(() => ({
@@ -98,8 +195,14 @@ const FunctionPlotter = ({
     plot_bgcolor: '#1a1a2e',
     paper_bgcolor: '#1a1a2e',
     margin: { l: 60, r: 40, t: 60, b: 60 },
-    showlegend: false
-  }), [title, xRange, yRange]);
+    showlegend: functionType === 'inverse' ? true : false,
+    legend: {
+      font: { color: '#e0e0e0' },
+      bgcolor: 'rgba(0,0,0,0.3)',
+      bordercolor: '#333',
+      borderwidth: 1
+    }
+  }), [title, xRange, yRange, functionType]);
 
   // 配置 Plotly 工具栏
   const config = {

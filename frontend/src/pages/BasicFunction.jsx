@@ -26,11 +26,20 @@ const Subtitle = styled.p`
   line-height: 1.6;
 `;
 
+const GroupTitle = styled.h2`
+  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: ${({ theme }) => theme?.spacing?.xl || '2rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+  padding-left: ${({ theme }) => theme?.spacing?.md || '1rem'};
+`;
+
 const ButtonGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  margin-top: ${({ theme }) => theme?.spacing?.xl || '2rem'};
 `;
 
 const FeatureButton = styled.button`
@@ -87,12 +96,31 @@ const ButtonDescription = styled.p`
 `;
 
 /**
- * Basic Function 主页面 - 展示函数特性的三个主要方向
+ * Basic Function 主页面 - 展示函数特性的五个主要方向
  */
 const BasicFunction = () => {
   const navigate = useNavigate();
 
-  const features = [
+  // Group 1: Function Types
+  const functionTypes = [
+    {
+      id: 'piecewise',
+      icon: '',
+      title: 'Piecewise Function',
+      description: 'Explore functions defined by different expressions on different intervals. Visualize f(x) = {√x, x ≥ 0; -x, x < 0}.',
+      path: '/mathematics/1-fundamentals/basic-function/piecewise'
+    },
+    {
+      id: 'inverse',
+      icon: '',
+      title: 'Inverse Function',
+      description: 'Understand the relationship between a function and its inverse. See how h = ½gt² relates to t = √(2h/g).',
+      path: '/mathematics/1-fundamentals/basic-function/inverse'
+    }
+  ];
+
+  // Group 2: Function Properties
+  const functionProperties = [
     {
       id: 'odd-even',
       icon: '',
@@ -130,8 +158,25 @@ const BasicFunction = () => {
         </Subtitle>
       </Header>
 
+      {/* Group 1: Function Types */}
+      <GroupTitle>Function Types</GroupTitle>
       <ButtonGrid>
-        {features.map((feature) => (
+        {functionTypes.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 2: Function Properties */}
+      <GroupTitle>Function Properties</GroupTitle>
+      <ButtonGrid>
+        {functionProperties.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
