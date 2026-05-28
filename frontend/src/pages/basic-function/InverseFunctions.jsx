@@ -6,7 +6,7 @@ import ParameterControls from '../../components/visualization/ParameterControls'
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 `;
 
