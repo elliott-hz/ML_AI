@@ -53,6 +53,25 @@ const FunctionSection = styled.div`
   box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
 `;
 
+const ContentLayout = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+`;
+
+const ControlsPanel = styled.div`
+  flex: 0 0 350px;
+  min-width: 300px;
+`;
+
+const PlotPanel = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 /**
  * 奇偶性函数子页面 - 展示奇函数和偶函数的特性
  */
@@ -114,19 +133,25 @@ const OddEvenFunctions = () => {
           Odd functions are symmetric about the origin. When you rotate the graph 180° around the origin, it looks the same.
         </SectionDescription>
         
-        <ParameterControls
-          parameters={oddParams}
-          onChange={setOddParams}
-          config={oddParamConfig}
-        />
-        
-        <FunctionPlotter
-          functionType="odd"
-          parameters={oddParams}
-          yRange={[-50, 50]}
-          title="Odd Function: f(x) = ax³"
-          showExportButton={true}
-        />
+        <ContentLayout>
+          <ControlsPanel>
+            <ParameterControls
+              parameters={oddParams}
+              onChange={setOddParams}
+              config={oddParamConfig}
+            />
+          </ControlsPanel>
+          
+          <PlotPanel>
+            <FunctionPlotter
+              functionType="odd"
+              parameters={oddParams}
+              yRange={[-50, 50]}
+              title="Odd Function: f(x) = ax³"
+              showExportButton={false}
+            />
+          </PlotPanel>
+        </ContentLayout>
       </FunctionSection>
 
       {/* 偶函数部分 */}
@@ -136,19 +161,25 @@ const OddEvenFunctions = () => {
           Even functions are symmetric about the y-axis. The left side is a mirror image of the right side.
         </SectionDescription>
         
-        <ParameterControls
-          parameters={evenParams}
-          onChange={setEvenParams}
-          config={evenParamConfig}
-        />
-        
-        <FunctionPlotter
-          functionType="even"
-          parameters={evenParams}
-          yRange={[-10, 50]}
-          title="Even Function: f(x) = ax²"
-          showExportButton={true}
-        />
+        <ContentLayout>
+          <ControlsPanel>
+            <ParameterControls
+              parameters={evenParams}
+              onChange={setEvenParams}
+              config={evenParamConfig}
+            />
+          </ControlsPanel>
+          
+          <PlotPanel>
+            <FunctionPlotter
+              functionType="even"
+              parameters={evenParams}
+              yRange={[-10, 50]}
+              title="Even Function: f(x) = ax²"
+              showExportButton={false}
+            />
+          </PlotPanel>
+        </ContentLayout>
       </FunctionSection>
     </PageContainer>
   );

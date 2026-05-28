@@ -69,6 +69,25 @@ const Formula = styled.code`
   line-height: 1.8;
 `;
 
+const ContentLayout = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+`;
+
+const ControlsPanel = styled.div`
+  flex: 0 0 350px;
+  min-width: 300px;
+`;
+
+const PlotPanel = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 /**
  * Piecewise Functions 页面 - 分段函数可视化
  */
@@ -123,19 +142,25 @@ const PiecewiseFunctions = () => {
         </Formula>
       </FormulaBox>
 
-      <ParameterControls
-        parameters={params}
-        onChange={setParams}
-        config={paramConfig}
-      />
-      
-      <FunctionPlotter
-        functionType="piecewise"
-        parameters={params}
-        yRange={[-5, 10]}
-        title="Piecewise Function: f(x)"
-        showExportButton={true}
-      />
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={params}
+            onChange={setParams}
+            config={paramConfig}
+          />
+        </ControlsPanel>
+        
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="piecewise"
+            parameters={params}
+            yRange={[-5, 10]}
+            title="Piecewise Function: f(x)"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };

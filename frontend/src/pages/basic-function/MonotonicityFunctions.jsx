@@ -53,6 +53,25 @@ const FunctionSection = styled.div`
   box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
 `;
 
+const ContentLayout = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+`;
+
+const ControlsPanel = styled.div`
+  flex: 0 0 350px;
+  min-width: 300px;
+`;
+
+const PlotPanel = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 /**
  * 单调性函数子页面 - 展示单调递增和单调递减函数的特性
  */
@@ -118,19 +137,25 @@ const MonotonicityFunctions = () => {
           As x increases, y always increases. The slope (a) must be positive. Adjust the slope and y-intercept to see different linear functions.
         </SectionDescription>
         
-        <ParameterControls
-          parameters={increasingParams}
-          onChange={setIncreasingParams}
-          config={increasingParamConfig}
-        />
-        
-        <FunctionPlotter
-          functionType="increasing"
-          parameters={increasingParams}
-          yRange={[-20, 20]}
-          title="Monotonically Increasing: f(x) = ax + b"
-          showExportButton={true}
-        />
+        <ContentLayout>
+          <ControlsPanel>
+            <ParameterControls
+              parameters={increasingParams}
+              onChange={setIncreasingParams}
+              config={increasingParamConfig}
+            />
+          </ControlsPanel>
+          
+          <PlotPanel>
+            <FunctionPlotter
+              functionType="increasing"
+              parameters={increasingParams}
+              yRange={[-20, 20]}
+              title="Monotonically Increasing: f(x) = ax + b"
+              showExportButton={false}
+            />
+          </PlotPanel>
+        </ContentLayout>
       </FunctionSection>
 
       {/* 单调递减部分 */}
@@ -140,20 +165,26 @@ const MonotonicityFunctions = () => {
           As x increases, y always decreases. The slope (-a) is negative. Adjust the magnitude of slope and y-intercept.
         </SectionDescription>
         
-        <ParameterControls
-          parameters={decreasingParams}
-          onChange={setDecreasingParams}
-          config={decreasingParamConfig}
-        />
-        
-        <FunctionPlotter
-          functionType="decreasing"
-          parameters={decreasingParams}
-          xRange={decreasingParams.xRange}
-          yRange={[-20, 20]}
-          title="Monotonically Decreasing: f(x) = -ax + b"
-          showExportButton={true}
-        />
+        <ContentLayout>
+          <ControlsPanel>
+            <ParameterControls
+              parameters={decreasingParams}
+              onChange={setDecreasingParams}
+              config={decreasingParamConfig}
+            />
+          </ControlsPanel>
+          
+          <PlotPanel>
+            <FunctionPlotter
+              functionType="decreasing"
+              parameters={decreasingParams}
+              xRange={decreasingParams.xRange}
+              yRange={[-20, 20]}
+              title="Monotonically Decreasing: f(x) = -ax + b"
+              showExportButton={false}
+            />
+          </PlotPanel>
+        </ContentLayout>
       </FunctionSection>
     </PageContainer>
   );

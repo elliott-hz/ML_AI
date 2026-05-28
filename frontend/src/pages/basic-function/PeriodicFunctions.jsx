@@ -53,6 +53,25 @@ const FunctionSection = styled.div`
   box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
 `;
 
+const ContentLayout = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+`;
+
+const ControlsPanel = styled.div`
+  flex: 0 0 350px;
+  min-width: 300px;
+`;
+
+const PlotPanel = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 /**
  * 周期性函数子页面 - 展示正弦函数的周期性特性
  */
@@ -97,19 +116,25 @@ const PeriodicFunctions = () => {
           The period T = 2π/b determines how often the function repeats.
         </SectionDescription>
         
-        <ParameterControls
-          parameters={periodicParams}
-          onChange={setPeriodicParams}
-          config={periodicParamConfig}
-        />
-        
-        <FunctionPlotter
-          functionType="periodic"
-          parameters={periodicParams}
-          yRange={[-6, 6]}
-          title="Periodic Function: f(x) = a·sin(bx + c)"
-          showExportButton={true}
-        />
+        <ContentLayout>
+          <ControlsPanel>
+            <ParameterControls
+              parameters={periodicParams}
+              onChange={setPeriodicParams}
+              config={periodicParamConfig}
+            />
+          </ControlsPanel>
+          
+          <PlotPanel>
+            <FunctionPlotter
+              functionType="periodic"
+              parameters={periodicParams}
+              yRange={[-6, 6]}
+              title="Periodic Function: f(x) = a·sin(bx + c)"
+              showExportButton={false}
+            />
+          </PlotPanel>
+        </ContentLayout>
       </FunctionSection>
     </PageContainer>
   );

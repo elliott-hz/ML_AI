@@ -69,6 +69,25 @@ const Formula = styled.code`
   line-height: 1.8;
 `;
 
+const ContentLayout = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+`;
+
+const ControlsPanel = styled.div`
+  flex: 0 0 350px;
+  min-width: 300px;
+`;
+
+const PlotPanel = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 /**
  * Inverse Functions 页面 - 反函数可视化
  */
@@ -121,19 +140,25 @@ const InverseFunctions = () => {
         </Formula>
       </FormulaBox>
 
-      <ParameterControls
-        parameters={params}
-        onChange={setParams}
-        config={paramConfig}
-      />
-      
-      <FunctionPlotter
-        functionType="inverse"
-        parameters={params}
-        yRange={[0, 10]}
-        title="Inverse Function: h(t) and t(h)"
-        showExportButton={true}
-      />
+      <ContentLayout>
+        <ControlsPanel>
+          <ParameterControls
+            parameters={params}
+            onChange={setParams}
+            config={paramConfig}
+          />
+        </ControlsPanel>
+        
+        <PlotPanel>
+          <FunctionPlotter
+            functionType="inverse"
+            parameters={params}
+            yRange={[0, 10]}
+            title="Inverse Function: h(t) and t(h)"
+            showExportButton={false}
+          />
+        </PlotPanel>
+      </ContentLayout>
     </PageContainer>
   );
 };
