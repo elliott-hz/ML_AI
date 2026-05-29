@@ -168,7 +168,7 @@ const Limit = () => {
           Function: y = a/x → 0 (x→)
         </MathFormula>
       ),
-      description: 'Understand reciprocal function limit. Visualize how y = a/x converges to 0 as x → ±∞.',
+      description: 'Understand reciprocal function limit. Visualize how y = a/x converges to 0 as x → ±.',
       path: '/mathematics/1-fundamentals/limit/reciprocal'
     },
     {
@@ -181,6 +181,32 @@ const Limit = () => {
       ),
       description: 'Study arctangent function limit. Observe how y = a·arctan(x) approaches -a·π/2 as x → -.',
       path: '/mathematics/1-fundamentals/limit/arctan'
+    }
+  ];
+
+  // Group 4: One-Sided & Two-Sided Limits
+  const oneSidedTwoSidedLimits = [
+    {
+      id: 'one-sided',
+      icon: '',
+      title: (
+        <MathFormula>
+          One-Sided Limit: lim<sub>x→0⁻</sub> ≠ lim<sub>x→0</sub>
+        </MathFormula>
+      ),
+      description: 'Piecewise function showing different left and right limits at x=0. Left limit = -1, Right limit = +1.',
+      path: '/mathematics/1-fundamentals/limit/one-sided'
+    },
+    {
+      id: 'two-sided',
+      icon: '',
+      title: (
+        <MathFormula>
+          Two-Sided Limit: lim<sub>x→1⁻</sub> = lim<sub>x→1</sub> = 2
+        </MathFormula>
+      ),
+      description: 'Rational function showing equal left and right limits at x=1. Removable discontinuity with limit = 2.',
+      path: '/mathematics/1-fundamentals/limit/two-sided'
     }
   ];
 
@@ -246,21 +272,16 @@ const Limit = () => {
       {/* Group 4: One-Sided & Two-Sided Limits */}
       <GroupTitle>One-Sided & Two-Sided Limits</GroupTitle>
       <ButtonGrid>
-        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/limit/one-sided')}>
-          {/* <ButtonIcon>↔️</ButtonIcon> */}
-          <ButtonTitle>One-Sided Limit</ButtonTitle>
-          <ButtonDescription>
-            Piecewise function showing lim<sub>x→0⁻</sub> ≠ lim<sub>x→0</sub>
-          </ButtonDescription>
-        </FeatureButton>
-        
-        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/limit/two-sided')}>
-          {/* <ButtonIcon></ButtonIcon> */}
-          <ButtonTitle>Two-Sided Limit</ButtonTitle>
-          <ButtonDescription>
-            Rational function showing lim<sub>x→1⁻</sub> = lim<sub>x→1</sub> = 2
-          </ButtonDescription>
-        </FeatureButton>
+        {oneSidedTwoSidedLimits.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
       </ButtonGrid>
     </PageContainer>
   );
