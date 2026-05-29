@@ -120,26 +120,93 @@ const SequencePlotter = ({
       const xMax = propXRange ? propXRange[1] : maxN;
       
       const numPoints = 200;
-      const xValues = [];
-      const yValues = [];
       
-      for (let i = 0; i <= numPoints; i++) {
-        const x = xMin + ((xMax - xMin) * i) / numPoints;
-        xValues.push(x);
-        yValues.push(calculateSequenceValues(x));
-      }
+      // 对于不连续函数（如 rational a/x），需要分成多个 trace 避免连接渐近线
+      const isDiscontinuous = parameters.funcName === 'rational';
       
-      traces.push({
-        x: xValues,
-        y: yValues,
-        type: 'scatter',
-        mode: 'lines',
-        name: 'f(x)',
-        line: { 
-          color: getFunctionLineColor(), 
-          width: styleConfig.lineWidth * 1.25
+      if (isDiscontinuous && xMin < 0 && xMax > 0) {
+        // 不连续函数跨越 x=0，分成两个独立的 trace
+        
+        // 左侧分支：x < 0
+        const leftNumPoints = Math.floor(numPoints / 2);
+        const leftXValues = [];
+        const leftYValues = [];
+        
+        for (let i = 0; i <= leftNumPoints; i++) {
+          const x = xMin + ((0 - xMin) * i) / leftNumPoints;
+          // 避免太接近 0 导致数值溢出
+          if (Math.abs(x) > 0.001) {
+            leftXValues.push(x);
+            leftYValues.push(calculateSequenceValues(x));
+          }
         }
-      });
+        
+        if (leftXValues.length > 0) {
+          traces.push({
+            x: leftXValues,
+            y: leftYValues,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'f(x)',
+            line: { 
+              color: getFunctionLineColor(), 
+              width: styleConfig.lineWidth * 1.25
+            },
+            showlegend: false  // 只显示一个图例
+          });
+        }
+        
+        // 右侧分支：x > 0
+        const rightNumPoints = numPoints - leftNumPoints;
+        const rightXValues = [];
+        const rightYValues = [];
+        
+        for (let i = 0; i <= rightNumPoints; i++) {
+          const x = 0 + ((xMax - 0) * i) / rightNumPoints;
+          // 避免太接近 0 导致数值溢出
+          if (Math.abs(x) > 0.001) {
+            rightXValues.push(x);
+            rightYValues.push(calculateSequenceValues(x));
+          }
+        }
+        
+        if (rightXValues.length > 0) {
+          traces.push({
+            x: rightXValues,
+            y: rightYValues,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'f(x)',
+            line: { 
+              color: getFunctionLineColor(), 
+              width: styleConfig.lineWidth * 1.25
+            },
+            showlegend: true  // 只在最后一个 trace 显示图例
+          });
+        }
+      } else {
+        // 连续函数或单侧区间，正常绘制
+        const xValues = [];
+        const yValues = [];
+        
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          xValues.push(x);
+          yValues.push(calculateSequenceValues(x));
+        }
+        
+        traces.push({
+          x: xValues,
+          y: yValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'f(x)',
+          line: { 
+            color: getFunctionLineColor(), 
+            width: styleConfig.lineWidth * 1.25
+          }
+        });
+      }
     } else {
       // 序列：使用离散点
       const nValues = [];
