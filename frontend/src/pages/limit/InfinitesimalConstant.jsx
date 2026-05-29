@@ -67,28 +67,22 @@ const Formula = styled.code`
 `;
 
 const ContentLayout = styled.div`
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: ${({ theme }) => theme?.spacing?.xl || '2rem'};
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
   
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 1200px) {
+    flex-direction: column;
   }
 `;
 
 const ControlsPanel = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  height: fit-content;
+  flex: 0 0 350px;
+  min-width: 300px;
 `;
 
 const PlotPanel = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  flex: 1;
+  min-width: 0;
 `;
 
 /**
