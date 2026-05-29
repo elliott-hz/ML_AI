@@ -311,6 +311,21 @@ const SequencePlotter = ({
     }
   }, [plotData, layout, config]);
 
+  // 添加窗口resize监听器，实现自动响应式调整
+  useEffect(() => {
+    const handleResize = () => {
+      if (plotRef.current) {
+        Plotly.Plots.resize(plotRef.current);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   // 简单的内联样式 - 使用 CSS 变量支持主题切换
   const containerStyle = {
     width: '100%',

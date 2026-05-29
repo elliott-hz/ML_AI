@@ -671,6 +671,21 @@ const FunctionPlotter = ({
     }
   }, [plotData, layout, config]);
 
+  // 添加窗口resize监听器，实现自动响应式调整
+  useEffect(() => {
+    const handleResize = () => {
+      if (plotRef.current) {
+        Plotly.Plots.resize(plotRef.current);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   // 处理导出按钮点击
   const handleExport = useCallback(async () => {
     try {
