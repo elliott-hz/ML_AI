@@ -1,0 +1,196 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import LimitPlotter from '../../components/visualization/LimitPlotter';
+import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
+
+const PageContainer = styled.div`
+  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
+  max-width: 1400px;
+  margin: 0 auto;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
+const BackButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme?.spacing?.xs || '0.25rem'};
+  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
+  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+
+  &:hover {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    color: white;
+    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+  }
+`;
+
+const SectionTitle = styled.h2`
+  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
+`;
+
+const SectionDescription = styled.p`
+  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+`;
+
+const ContentLayout = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
+`;
+
+const ControlsPanel = styled.div`
+  flex: 0 0 350px;
+  min-width: 300px;
+`;
+
+const PlotPanel = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const FormulaBox = styled.div`
+  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
+  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
+`;
+
+const Formula = styled.code`
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
+  font-size: 18px;
+  font-family: 'Courier New', monospace;
+  display: block;
+  line-height: 1.8;
+  font-weight: bold;
+`;
+
+/**
+ * Two-Sided Limit - Continuous function showing left and right limits are equal
+ * f(x) = (x²-1)/(x-1), which simplifies to x+1 for x ≠ 1
+ */
+const TwoSidedLimit = () => {
+  const navigate = useNavigate();
+  
+  // 参数状态
+  const [params, setParams] = useState({
+    xRange: [-1, 3],     // X轴范围（围绕x=1）
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+  });
+
+  // 参数配置
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
+  ];
+
+  const viewRangeConfig = [
+    {
+      name: 'xRange',
+      label: 'X Range',
+      type: 'range',
+      min: -2,
+      max: 4,
+      step: 0.5,
+      default: [-1, 3]
+    },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+  ];
+
+  return (
+    <PageContainer>
+      <Header>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
+           Back to Limit
+        </BackButton>
+        <SectionTitle>Two-Sided Limit</SectionTitle>
+      </Header>
+      
+      <SectionDescription>
+        Explore two-sided limits using a continuous rational function. 
+        Observe how the left-hand limit and right-hand limit approach the same value as x → 1.
+      </SectionDescription>
+
+      <SectionTitle>Rational Function Example</SectionTitle>
+      
+      <FormulaBox>
+        <Formula>
+          f(x) = (x² - 1) / (x - 1)<br/><br/>
+          Simplifies to: f(x) = x + 1, &nbsp;&nbsp;x ≠ 1
+        </Formula>
+      </FormulaBox>
+      
+      <SectionDescription>
+        <strong>Left-hand limit:</strong> lim<sub>x→1⁻</sub> f(x) = 2<br/>
+        <strong>Right-hand limit:</strong> lim<sub>x→1</sub> f(x) = 2<br/><br/>
+        Since both limits are <strong>equal</strong>, the two-sided limit exists:<br/>
+        <strong>lim<sub>x→1</sub> f(x) = 2</strong>
+      </SectionDescription>
+      
+      <ContentLayout>
+        <ControlsPanel>
+          {/* 参数分组 */}
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={viewRangeConfig}
+            />
+          </ParameterSection>
+        </ControlsPanel>
+        
+        <PlotPanel>
+          {/* 显示原函数图，带辅助线和关键点 */}
+          <LimitPlotter
+            sequenceType="original_function"
+            parameters={{ ...params, funcName: 'rational_twosided' }}
+            xRange={params.xRange}
+            title={`Rational Function: Left = Right Limit`}
+            plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
+            showAuxiliaryLines={true}
+            auxiliaryX={1}  // Vertical line at x=1 (the hole)
+            auxiliaryY={2}  // Horizontal limit line at y=2
+            showPoints={[
+              { x: 1, y: 2, label: 'Removable discontinuity (hole)' }
+            ]}
+          />
+        </PlotPanel>
+      </ContentLayout>
+    </PageContainer>
+  );
+};
+
+export default TwoSidedLimit;

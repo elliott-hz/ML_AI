@@ -16,6 +16,8 @@ import DivergentSequence2 from '../pages/limit/DivergentSequence2';
 import ExponentialFunctionLimit from '../pages/limit/ExponentialFunctionLimit';
 import ReciprocalFunctionLimit from '../pages/limit/ReciprocalFunctionLimit';
 import ArctanFunctionLimit from '../pages/limit/ArctanFunctionLimit';
+import OneSidedLimit from '../pages/limit/OneSidedLimit';
+import TwoSidedLimit from '../pages/limit/TwoSidedLimit';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -54,6 +56,10 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/limit/exponential" element={<ExponentialFunctionLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/reciprocal" element={<ReciprocalFunctionLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/arctan" element={<ArctanFunctionLimit />} />
+        
+        {/* 数学模块 - One-Sided & Two-Sided Limits 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/limit/one-sided" element={<OneSidedLimit />} />
+        <Route path="/mathematics/1-fundamentals/limit/two-sided" element={<TwoSidedLimit />} />
         
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/1-fundamentals/continuity" element={<div>Continuity Page - Coming Soon</div>} />

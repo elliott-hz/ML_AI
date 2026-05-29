@@ -242,6 +242,26 @@ const Limit = () => {
           </FeatureButton>
         ))}
       </ButtonGrid>
+
+      {/* Group 4: One-Sided & Two-Sided Limits */}
+      <GroupTitle>One-Sided & Two-Sided Limits</GroupTitle>
+      <ButtonGrid>
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/limit/one-sided')}>
+          {/* <ButtonIcon>↔️</ButtonIcon> */}
+          <ButtonTitle>One-Sided Limit</ButtonTitle>
+          <ButtonDescription>
+            Piecewise function showing lim<sub>x→0⁻</sub> ≠ lim<sub>x→0</sub>
+          </ButtonDescription>
+        </FeatureButton>
+        
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/limit/two-sided')}>
+          {/* <ButtonIcon></ButtonIcon> */}
+          <ButtonTitle>Two-Sided Limit</ButtonTitle>
+          <ButtonDescription>
+            Rational function showing lim<sub>x→1⁻</sub> = lim<sub>x→1</sub> = 2
+          </ButtonDescription>
+        </FeatureButton>
+      </ButtonGrid>
     </PageContainer>
   );
 };

@@ -14,7 +14,11 @@ const LimitPlotter = ({
   limitValue,
   plotStyle = 'medium',
   aspectRatio = 'auto', // 新增：显示比例 (auto, 16:9, 4:3)
-  showOriginalFunction = false // 新增：是否显示原函数（用于 Limit 页面的第二个图）
+  showOriginalFunction = false, // 新增：是否显示原函数（用于 Limit 页面的第二个图）
+  showAuxiliaryLines = false, // 新增：是否显示辅助线（垂直线和水平极限线）
+  auxiliaryX = null, // 新增：辅助线 X 位置
+  auxiliaryY = null, // 新增：辅助线 Y 位置（极限值）
+  showPoints = [], // 新增：要显示的点数组 [{x, y, label}]
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -100,6 +104,23 @@ const LimitPlotter = ({
         } else if (parameters.funcName === 'logarithmic') {
           const base = parameters.base || 2;
           return 1 / Math.log(n + 1) / Math.log(base);
+        } else if (parameters.funcName === 'piecewise_onesided') {
+          // 单侧极限分段函数: f(x) = { x-1, x < 0; 0, x = 0; x+1, x > 0 }
+          if (n < 0) {
+            return n - 1;
+          } else if (n === 0) {
+            return 0;
+          } else {
+            return n + 1;
+          }
+        } else if (parameters.funcName === 'rational_twosided') {
+          // 双侧极限有理函数: f(x) = (x²-1)/(x-1) = x+1 (for x ≠ 1)
+          // 在 x=1 处有洞，但极限存在
+          if (Math.abs(n - 1) < 0.001) {
+            // 接近 x=1 时返回极限值 2
+            return 2;
+          }
+          return (n * n - 1) / (n - 1);
         }
         return 0;
       
@@ -121,8 +142,8 @@ const LimitPlotter = ({
       
       const numPoints = 200;
       
-      // 对于不连续函数（如 rational a/x），需要分成多个 trace 避免连接渐近线
-      const isDiscontinuous = parameters.funcName === 'rational';
+      // 对于不连续函数（如 rational a/x 或 piecewise_onesided），需要分成多个 trace 避免连接渐近线
+      const isDiscontinuous = parameters.funcName === 'rational' || parameters.funcName === 'piecewise_onesided';
       
       if (isDiscontinuous && xMin < 0 && xMax > 0) {
         // 不连续函数跨越 x=0，分成两个独立的 trace
@@ -134,7 +155,7 @@ const LimitPlotter = ({
         
         for (let i = 0; i <= leftNumPoints; i++) {
           const x = xMin + ((0 - xMin) * i) / leftNumPoints;
-          // 避免太接近 0 导致数值溢出
+          // 避免太接近 0 导致数值溢出或跳过间断点
           if (Math.abs(x) > 0.001) {
             leftXValues.push(x);
             leftYValues.push(calculateSequenceValues(x));
@@ -163,7 +184,7 @@ const LimitPlotter = ({
         
         for (let i = 0; i <= rightNumPoints; i++) {
           const x = 0 + ((xMax - 0) * i) / rightNumPoints;
-          // 避免太接近 0 导致数值溢出
+          // 避免太接近 0 导致数值溢出或跳过间断点
           if (Math.abs(x) > 0.001) {
             rightXValues.push(x);
             rightYValues.push(calculateSequenceValues(x));
@@ -254,8 +275,76 @@ const LimitPlotter = ({
       }
     }
     
+    // 添加辅助线（垂直线和水平极限线）
+    if (showAuxiliaryLines && propXRange) {
+      const xMin = propXRange[0];
+      const xMax = propXRange[1];
+      
+      // 垂直辅助线（在 critical point 处）
+      if (auxiliaryX !== null && auxiliaryX >= xMin && auxiliaryX <= xMax) {
+        traces.push({
+          x: [auxiliaryX, auxiliaryX],
+          y: [-10000, 10000], // 使用很大的范围确保覆盖整个 Y 轴
+          type: 'scatter',
+          mode: 'lines',
+          name: `x = ${auxiliaryX}`,
+          line: { 
+            color: getAuxiliaryColor(), 
+            width: styleConfig.lineWidth * 0.8, 
+            dash: 'dot' 
+          },
+          showlegend: false
+        });
+      }
+      
+      // 水平极限线
+      if (auxiliaryY !== null) {
+        traces.push({
+          x: [xMin, xMax],
+          y: [auxiliaryY, auxiliaryY],
+          type: 'scatter',
+          mode: 'lines',
+          name: `y = ${auxiliaryY} (limit)`,
+          line: { 
+            color: getAuxiliaryColor(), 
+            width: styleConfig.lineWidth, 
+            dash: 'dash' 
+          }
+        });
+      }
+    }
+    
+    // 添加关键点标记
+    if (showPoints && showPoints.length > 0) {
+      showPoints.forEach((point, index) => {
+        traces.push({
+          x: [point.x],
+          y: [point.y],
+          type: 'scatter',
+          mode: 'markers+text',
+          name: point.label || `Point ${index + 1}`,
+          marker: { 
+            size: styleConfig.pointSize * 1.5, 
+            color: '#ef4444', // Red color for key points
+            symbol: 'circle',
+            line: {
+              color: '#ffffff',
+              width: 2
+            }
+          },
+          text: [point.label || ''],
+          textposition: 'top center',
+          textfont: {
+            color: themeMode === 'dark' ? '#f8fafc' : '#0f172a',
+            size: styleConfig.fontSize + 2,
+            family: 'Arial, sans-serif'
+          }
+        });
+      });
+    }
+    
     return traces;
-  }, [sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue, styleConfig, getFunctionLineColor, getAuxiliaryColor]);
+  }, [sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue, styleConfig, getFunctionLineColor, getAuxiliaryColor, showAuxiliaryLines, auxiliaryX, auxiliaryY, showPoints, themeMode]);
 
   // 自动计算 Y 轴范围
   const autoYRange = useMemo(() => {
