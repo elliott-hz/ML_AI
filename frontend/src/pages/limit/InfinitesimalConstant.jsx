@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -41,7 +42,7 @@ const SectionTitle = styled.h1`
   margin: 0;
 `;
 
-const Description = styled.p`
+const SectionDescription = styled.p`
   color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
   font-size: 16px;
   line-height: 1.6;
@@ -49,18 +50,20 @@ const Description = styled.p`
 `;
 
 const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  font-family: 'Courier New', monospace;
+  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
+  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
+`;
+
+const Formula = styled.code`
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
   font-size: 18px;
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  
-  sub, sup {
-    font-size: 0.75em;
-  }
+  font-family: 'Courier New', monospace;
+  display: block;
+  line-height: 1.8;
+  font-weight: bold;
 `;
 
 const ContentLayout = styled.div`
@@ -81,14 +84,6 @@ const ControlsPanel = styled.div`
   height: fit-content;
 `;
 
-const ParameterSection = styled.div`
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
 const PlotPanel = styled.div`
   background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
   border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
@@ -97,28 +92,47 @@ const PlotPanel = styled.div`
 `;
 
 /**
- * Infinitesimal Constant Multiple Property Page
- * Property 3: Constant × infinitesimal is still an infinitesimal
+ * Infinitesimal Property 3: Constant × Infinitesimal
+ * Shows that c·x → 0 as x → 0 for any constant c
  */
 const InfinitesimalConstant = () => {
   const navigate = useNavigate();
   
+  // 参数状态
   const [params, setParams] = useState({
-    constant: 5,
-    xRange: [-2, 2],
-    yRange: [-10, 10],
-    plotStyle: 'medium',
-    aspectRatio: 'auto'
+    constant: 5,         // 常数 c ∈ [1, 10]
+    xRange: [-2, 2],     // X轴范围（围绕x=0）
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 参数配置
   const paramConfig = [
-    { name: 'constant', label: 'Constant c', type: 'slider', min: 1, max: 10, step: 0.5 }
+    {
+      name: 'constant',
+      label: 'Constant c',
+      type: 'slider',
+      min: 1,
+      max: 10,
+      step: 0.5,
+      default: 5
+    }
+  ];
+
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const viewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -5, max: 5, step: 0.5 },
-    { name: 'yRange', label: 'Y Range', type: 'range', min: -20, max: 20, step: 1 },
-    { name: 'plotStyle', label: 'Line Style', type: 'select', options: ['thin', 'medium', 'thick', 'larger'] },
+    {
+      name: 'xRange',
+      label: 'X Range',
+      type: 'range',
+      min: -5,
+      max: 5,
+      step: 0.5,
+      default: [-2, 2]
+    },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
@@ -128,28 +142,26 @@ const InfinitesimalConstant = () => {
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
           ← Back to Limit
         </BackButton>
-        <SectionTitle>Infinitesimal Property 3: Constant Multiple</SectionTitle>
+        <SectionTitle>Infinitesimal Property 3: Constant × Infinitesimal</SectionTitle>
       </Header>
-
-      <Description>
-        <strong>Property:</strong> If c is a constant and α(x) → 0, then c·α(x) → 0.
-      </Description>
+      
+      <SectionDescription>
+        A constant multiple of an infinitesimal is still an infinitesimal. 
+        Adjust the constant c to see how scaling affects the slope, but the limit remains 0.
+      </SectionDescription>
 
       <FormulaBox>
-        <div>α(x) = x is infinitesimal as x → 0</div>
-        <div style={{ marginTop: '1rem' }}>
-          c = {params.constant} (adjustable constant)
-        </div>
-        <div style={{ marginTop: '1rem' }}>
-          Then g(x) = c·x = {params.constant}·x → 0 as x → 0
-        </div>
-        <div style={{ marginTop: '1rem', fontSize: '14px', color: '#94a3b8' }}>
-          Note: Scaling by any finite constant doesn't change the infinitesimal nature
-        </div>
+        <Formula>
+          If α(x) = x is infinitesimal: lim<sub>x→0</sub> x = 0<br/>
+          And c is a constant: c ∈ ℝ<br/><br/>
+          Then g(x) = c·α(x) = c·x<br/><br/>
+          lim<sub>x→0</sub> g(x) = lim<sub>x→0</sub>(c·x) = c·0 = 0
+        </Formula>
       </FormulaBox>
-
+      
       <ContentLayout>
         <ControlsPanel>
+          {/* 参数分组 */}
           <ParameterSection title="Parameters">
             <ParameterControls
               parameters={params}
@@ -158,6 +170,14 @@ const InfinitesimalConstant = () => {
             />
           </ParameterSection>
           
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}

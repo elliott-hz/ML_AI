@@ -155,7 +155,206 @@ const LimitPlotter = ({
       // 对于不连续函数（如 rational a/x 或 piecewise_onesided），需要分成多个 trace 避免连接渐近线
       const isDiscontinuous = parameters.funcName === 'rational' || parameters.funcName === 'piecewise_onesided';
       
-      if (isDiscontinuous && xMin < 0 && xMax > 0) {
+      // 特殊处理：无穷小和 - 绘制 4 条曲线 (x, x², x³, sum)
+      if (parameters.funcName === 'infinitesimal_sum') {
+        const numPoints = 200;
+        
+        // 曲线 1: α₁(x) = x
+        const x1Values = [];
+        const y1Values = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          x1Values.push(x);
+          y1Values.push(x);
+        }
+        traces.push({
+          x: x1Values,
+          y: y1Values,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'α₁(x) = x',
+          line: { 
+            color: '#3b82f6', 
+            width: styleConfig.lineWidth,
+            dash: 'solid'
+          }
+        });
+        
+        // 曲线 2: α₂(x) = x²
+        const x2Values = [];
+        const y2Values = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          x2Values.push(x);
+          y2Values.push(x * x);
+        }
+        traces.push({
+          x: x2Values,
+          y: y2Values,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'α₂(x) = x²',
+          line: { 
+            color: '#10b981', 
+            width: styleConfig.lineWidth,
+            dash: 'solid'
+          }
+        });
+        
+        // 曲线 3: α₃(x) = x³
+        const x3Values = [];
+        const y3Values = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          x3Values.push(x);
+          y3Values.push(x * x * x);
+        }
+        traces.push({
+          x: x3Values,
+          y: y3Values,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'α₃(x) = x³',
+          line: { 
+            color: '#f59e0b', 
+            width: styleConfig.lineWidth,
+            dash: 'solid'
+          }
+        });
+        
+        // 曲线 4: β(x) = x + x² + x³ (sum)
+        const sumXValues = [];
+        const sumYValues = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          sumXValues.push(x);
+          sumYValues.push(x + x * x + x * x * x);
+        }
+        traces.push({
+          x: sumXValues,
+          y: sumYValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'β(x) = x + x² + x³',
+          line: { 
+            color: '#ef4444', 
+            width: styleConfig.lineWidth * 1.5,
+            dash: 'solid'
+          }
+        });
+      } else if (parameters.funcName === 'infinitesimal_bounded') {
+        // 特殊处理：有界函数×无穷小 - 绘制 3 条曲线 (cos(x), x, product)
+        const numPoints = 200;
+        
+        // 曲线 1: f(x) = cos(x) (bounded function)
+        const cosXValues = [];
+        const cosYValues = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          cosXValues.push(x);
+          cosYValues.push(Math.cos(x));
+        }
+        traces.push({
+          x: cosXValues,
+          y: cosYValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'f(x) = cos(x)',
+          line: { 
+            color: '#8b5cf6', 
+            width: styleConfig.lineWidth,
+            dash: 'solid'
+          }
+        });
+        
+        // 曲线 2: α(x) = x (infinitesimal)
+        const xValues = [];
+        const yValues = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          xValues.push(x);
+          yValues.push(x);
+        }
+        traces.push({
+          x: xValues,
+          y: yValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'α(x) = x',
+          line: { 
+            color: '#3b82f6', 
+            width: styleConfig.lineWidth,
+            dash: 'solid'
+          }
+        });
+        
+        // 曲线 3: g(x) = cos(x)·x (product)
+        const prodXValues = [];
+        const prodYValues = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          prodXValues.push(x);
+          prodYValues.push(Math.cos(x) * x);
+        }
+        traces.push({
+          x: prodXValues,
+          y: prodYValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'g(x) = cos(x)·x',
+          line: { 
+            color: '#ef4444', 
+            width: styleConfig.lineWidth * 1.5,
+            dash: 'solid'
+          }
+        });
+      } else if (parameters.funcName === 'infinitesimal_constant') {
+        // 特殊处理：常数×无穷小 - 绘制 2 条曲线 (x, c·x)
+        const numPoints = 200;
+        const c = parameters.constant || 5;
+        
+        // 曲线 1: α(x) = x (infinitesimal)
+        const xValues = [];
+        const yValues = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          xValues.push(x);
+          yValues.push(x);
+        }
+        traces.push({
+          x: xValues,
+          y: yValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'α(x) = x',
+          line: { 
+            color: '#3b82f6', 
+            width: styleConfig.lineWidth,
+            dash: 'solid'
+          }
+        });
+        
+        // 曲线 2: g(x) = c·x (scaled infinitesimal)
+        const scaledXValues = [];
+        const scaledYValues = [];
+        for (let i = 0; i <= numPoints; i++) {
+          const x = xMin + ((xMax - xMin) * i) / numPoints;
+          scaledXValues.push(x);
+          scaledYValues.push(c * x);
+        }
+        traces.push({
+          x: scaledXValues,
+          y: scaledYValues,
+          type: 'scatter',
+          mode: 'lines',
+          name: `g(x) = ${c}·x`,
+          line: { 
+            color: '#ef4444', 
+            width: styleConfig.lineWidth * 1.5,
+            dash: 'solid'
+          }
+        });
+      } else if (isDiscontinuous && xMin < 0 && xMax > 0) {
         // 不连续函数跨越 x=0，分成两个独立的 trace
         
         // 左侧分支：x < 0

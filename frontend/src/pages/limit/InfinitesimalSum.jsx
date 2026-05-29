@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
+import ParameterSection from '../../components/visualization/ParameterSection';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -41,7 +42,7 @@ const SectionTitle = styled.h1`
   margin: 0;
 `;
 
-const Description = styled.p`
+const SectionDescription = styled.p`
   color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
   font-size: 16px;
   line-height: 1.6;
@@ -49,18 +50,20 @@ const Description = styled.p`
 `;
 
 const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  font-family: 'Courier New', monospace;
+  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
+  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
+`;
+
+const Formula = styled.code`
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
   font-size: 18px;
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  
-  sub, sup {
-    font-size: 0.75em;
-  }
+  font-family: 'Courier New', monospace;
+  display: block;
+  line-height: 1.8;
+  font-weight: bold;
 `;
 
 const ContentLayout = styled.div`
@@ -81,14 +84,6 @@ const ControlsPanel = styled.div`
   height: fit-content;
 `;
 
-const ParameterSection = styled.div`
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
 const PlotPanel = styled.div`
   background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
   border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
@@ -97,23 +92,34 @@ const PlotPanel = styled.div`
 `;
 
 /**
- * Infinitesimal Sum Property Page
- * Property 1: The sum of a finite number of infinitesimals is still an infinitesimal
+ * Infinitesimal Property 1: Sum of Finite Infinitesimals
+ * Shows that x + x² + x³ → 0 as x → 0
  */
 const InfinitesimalSum = () => {
   const navigate = useNavigate();
   
+  // 参数状态
   const [params, setParams] = useState({
-    xRange: [-2, 2],
-    yRange: [-2, 2],
-    plotStyle: 'medium',
-    aspectRatio: 'auto'
+    xRange: [-2, 2],     // X轴范围（围绕x=0）
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 参数配置
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
+  ];
+
   const viewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -5, max: 5, step: 0.5 },
-    { name: 'yRange', label: 'Y Range', type: 'range', min: -5, max: 5, step: 0.5 },
-    { name: 'plotStyle', label: 'Line Style', type: 'select', options: ['thin', 'medium', 'thick', 'larger'] },
+    {
+      name: 'xRange',
+      label: 'X Range',
+      type: 'range',
+      min: -5,
+      max: 5,
+      step: 0.5,
+      default: [-2, 2]
+    },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
@@ -125,23 +131,32 @@ const InfinitesimalSum = () => {
         </BackButton>
         <SectionTitle>Infinitesimal Property 1: Sum</SectionTitle>
       </Header>
-
-      <Description>
-        <strong>Property:</strong> The sum of a finite number of infinitesimals is still an infinitesimal.
-      </Description>
+      
+      <SectionDescription>
+        The sum of a finite number of infinitesimals is still an infinitesimal. 
+        Observe how each individual term (x, x², x³) approaches 0 as x → 0, 
+        and their sum also approaches 0.
+      </SectionDescription>
 
       <FormulaBox>
-        <div>If α₁(x), α₂(x), α₃(x) are infinitesimals as x → 0:</div>
-        <div style={{ marginTop: '1rem' }}>
-          α₁(x) = x, &nbsp; α₂(x) = x², &nbsp; α₃(x) = x³
-        </div>
-        <div style={{ marginTop: '1rem' }}>
-          Then β(x) = α₁ + α₂ + α₃ = x + x² + x³ → 0 as x → 0
-        </div>
+        <Formula>
+          If α₁(x) = x, α₂(x) = x², α₃(x) = x³ are infinitesimals:<br/><br/>
+          Then β(x) = α₁ + α₂ + α₃ = x + x² + x³<br/><br/>
+          lim<sub>x→0</sub> β(x) = lim<sub>x→0</sub>(x + x² + x³) = 0
+        </Formula>
       </FormulaBox>
-
+      
       <ContentLayout>
         <ControlsPanel>
+          {/* 参数分组 */}
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
