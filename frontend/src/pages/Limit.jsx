@@ -206,6 +206,43 @@ const Limit = () => {
     }
   ];
 
+  // Group 4: Infinitesimal Properties (Three Still)
+  const infinitesimalProperties = [
+    {
+      id: 'sum-property',
+      icon: '➕',
+      title: (
+        <MathFormula>
+          Sum: α₁ + α₂ + α₃ → 0
+        </MathFormula>
+      ),
+      description: 'Finite sum of infinitesimals is still infinitesimal. Example: x + x² + x³ → 0 as x → 0.',
+      path: '/mathematics/1-fundamentals/limit/infinitesimal-sum'
+    },
+    {
+      id: 'bounded-product',
+      icon: '×',
+      title: (
+        <MathFormula>
+          Bounded × Infinitesimal: f(x)·α(x) → 0
+        </MathFormula>
+      ),
+      description: 'Bounded function times infinitesimal is still infinitesimal. Example: cos(x)·x → 0 as x → 0.',
+      path: '/mathematics/1-fundamentals/limit/infinitesimal-bounded'
+    },
+    {
+      id: 'constant-multiple',
+      icon: 'c·',
+      title: (
+        <MathFormula>
+          Constant × Infinitesimal: c·α(x) → 0
+        </MathFormula>
+      ),
+      description: 'Constant multiple of infinitesimal is still infinitesimal. Adjust c to see scaling effect.',
+      path: '/mathematics/1-fundamentals/limit/infinitesimal-constant'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -254,6 +291,21 @@ const Limit = () => {
       <GroupTitle>One-Sided & Two-Sided Limits</GroupTitle>
       <ButtonGrid>
         {oneSidedTwoSidedLimits.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 4: Infinitesimal Properties (Three Still) */}
+      <GroupTitle>Infinitesimal Properties (Three Still)</GroupTitle>
+      <ButtonGrid>
+        {infinitesimalProperties.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}

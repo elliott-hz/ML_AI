@@ -121,6 +121,16 @@ const LimitPlotter = ({
             return 2;
           }
           return (n * n - 1) / (n - 1);
+        } else if (parameters.funcName === 'infinitesimal_sum') {
+          // 无穷小和: f(x) = x + x² + x³
+          return n + n * n + n * n * n;
+        } else if (parameters.funcName === 'infinitesimal_bounded') {
+          // 有界函数×无穷小: f(x) = cos(x)·x
+          return Math.cos(n) * n;
+        } else if (parameters.funcName === 'infinitesimal_constant') {
+          // 常数×无穷小: f(x) = c·x
+          const c = parameters.constant || 5;
+          return c * n;
         }
         return 0;
       

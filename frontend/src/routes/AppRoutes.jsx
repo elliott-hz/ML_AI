@@ -18,6 +18,9 @@ import ReciprocalFunctionLimit from '../pages/limit/ReciprocalFunctionLimit';
 import ArctanFunctionLimit from '../pages/limit/ArctanFunctionLimit';
 import OneSidedLimit from '../pages/limit/OneSidedLimit';
 import TwoSidedLimit from '../pages/limit/TwoSidedLimit';
+import InfinitesimalSum from '../pages/limit/InfinitesimalSum';
+import InfinitesimalBounded from '../pages/limit/InfinitesimalBounded';
+import InfinitesimalConstant from '../pages/limit/InfinitesimalConstant';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -60,6 +63,11 @@ const AppRoutes = () => {
         {/* 数学模块 - One-Sided & Two-Sided Limits 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/1-fundamentals/limit/one-sided" element={<OneSidedLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/two-sided" element={<TwoSidedLimit />} />
+        
+        {/* 数学模块 - Infinitesimal Properties (Three Still) 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/limit/infinitesimal-sum" element={<InfinitesimalSum />} />
+        <Route path="/mathematics/1-fundamentals/limit/infinitesimal-bounded" element={<InfinitesimalBounded />} />
+        <Route path="/mathematics/1-fundamentals/limit/infinitesimal-constant" element={<InfinitesimalConstant />} />
         
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/1-fundamentals/continuity" element={<div>Continuity Page - Coming Soon</div>} />
