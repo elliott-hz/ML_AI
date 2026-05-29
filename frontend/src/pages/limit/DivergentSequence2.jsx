@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import SequencePlotter from '../../components/visualization/SequencePlotter';
-import FunctionPlotter from '../../components/visualization/FunctionPlotter';
+import LimitPlotter from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -169,18 +168,17 @@ const DivergentSequence2 = () => {
         </ControlsPanel>
         
         <PlotPanel>
-          <SequencePlotter
+          <LimitPlotter
             sequenceType="divergent2"
             parameters={params}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            title="Sequence: u<sub>n</sub> = sin(n)"
-            showLimitLine={false}
+            title={`Sequence: u = sin(n)`}
           />
           
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
-            <SequencePlotter
+            <LimitPlotter
               sequenceType="original_function"
               parameters={{ funcName: 'sin', maxN: params.maxN }}
               xRange={[0, Math.min(params.maxN, 30)]}

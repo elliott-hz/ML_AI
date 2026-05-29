@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import SequencePlotter from '../../components/visualization/SequencePlotter';
+import LimitPlotter from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -167,7 +167,7 @@ const ConvergentSequence2 = () => {
         </ControlsPanel>
         
         <PlotPanel>
-          <SequencePlotter
+          <LimitPlotter
             sequenceType="convergent2"
             parameters={params}
             plotStyle={params.plotStyle}
@@ -179,7 +179,7 @@ const ConvergentSequence2 = () => {
           
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
-            <SequencePlotter
+            <LimitPlotter
               sequenceType="original_function"
               parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 20) }}
               xRange={[0, Math.min(params.maxN, 20)]}

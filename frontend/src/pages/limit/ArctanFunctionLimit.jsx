@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import SequencePlotter from '../../components/visualization/SequencePlotter';
+import LimitPlotter from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -199,7 +199,7 @@ const ArctanFunctionLimit = () => {
         
         <PlotPanel>
           {/* 只显示原函数图 */}
-          <SequencePlotter
+          <LimitPlotter
             sequenceType="original_function"
             parameters={{ ...params, funcName: 'arctan' }}
             xRange={params.xRange}

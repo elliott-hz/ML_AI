@@ -2,9 +2,9 @@ import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react'
 import Plotly from 'plotly.js/dist/plotly.min.js';
 
 /**
- * 序列可视化组件 - 支持收敛和发散数列的展示
+ * Limit Plotter 组件 - 支持极限函数可视化的展示
  */
-const SequencePlotter = ({
+const LimitPlotter = ({
   sequenceType,
   parameters,
   xRange: propXRange,
@@ -423,4 +423,4 @@ const SequencePlotter = ({
   );
 };
 
-export default SequencePlotter;
+export default LimitPlotter;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import SequencePlotter from '../../components/visualization/SequencePlotter';
+import LimitPlotter from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -167,18 +167,17 @@ const DivergentSequence1 = () => {
         </ControlsPanel>
         
         <PlotPanel>
-          <SequencePlotter
+          <LimitPlotter
             sequenceType="divergent1"
             parameters={params}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            title="Sequence: u<sub>n</sub> = n²"
-            showLimitLine={false}
+            title={`Sequence: u = n²`}
           />
           
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
-            <SequencePlotter
+            <LimitPlotter
               sequenceType="original_function"
               parameters={{ funcName: 'quadratic', maxN: Math.min(params.maxN, 20) }}
               xRange={[0, Math.min(params.maxN, 20)]}
