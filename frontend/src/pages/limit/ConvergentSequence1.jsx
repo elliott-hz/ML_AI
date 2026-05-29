@@ -105,12 +105,17 @@ const ConvergentSequence1 = () => {
   
   const [params, setParams] = useState({ 
     base: 3,           // 底数
-    maxN: 20           // 显示的项数
+    maxN: 20,          // 显示的项数
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 参数配置 - 分组版本
   const coefficientConfig = [
     { name: 'base', label: 'Base (a)', min: 2, max: 10, step: 1 }
+  ];
+
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const viewRangeConfig = [
@@ -155,6 +160,14 @@ const ConvergentSequence1 = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
@@ -168,6 +181,7 @@ const ConvergentSequence1 = () => {
           <SequencePlotter
             sequenceType="convergent1"
             parameters={params}
+            plotStyle={params.plotStyle}
             title={`Sequence: u<sub>n</sub> = 1/${params.base}<sup>n</sup>`}
             showLimitLine={true}
             limitValue={0}
@@ -181,6 +195,7 @@ const ConvergentSequence1 = () => {
               xRange={[0, Math.min(params.maxN, 20)]}
               yRange={[0, 1]}
               title={`Original Function: f(x) = 1/${params.base}<sup>x</sup>`}
+              plotStyle={params.plotStyle}
             />
           </div>
         </PlotPanel>

@@ -104,10 +104,15 @@ const DivergentSequence1 = () => {
   const navigate = useNavigate();
   
   const [params, setParams] = useState({ 
-    maxN: 20           // 显示的项数
+    maxN: 20,          // 显示的项数
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 参数配置 - 分组版本
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+  ];
+
   const viewRangeConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 50, step: 5 }
   ];
@@ -142,6 +147,14 @@ const DivergentSequence1 = () => {
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
@@ -155,6 +168,7 @@ const DivergentSequence1 = () => {
           <SequencePlotter
             sequenceType="divergent1"
             parameters={params}
+            plotStyle={params.plotStyle}
             title="Sequence: u<sub>n</sub> = n²"
             showLimitLine={false}
           />
@@ -167,6 +181,7 @@ const DivergentSequence1 = () => {
               xRange={[0, Math.min(params.maxN, 20)]}
               yRange={[0, Math.pow(Math.min(params.maxN, 20), 2)]}
               title={`Original Function: f(x) = x²`}
+              plotStyle={params.plotStyle}
             />
           </div>
         </PlotPanel>

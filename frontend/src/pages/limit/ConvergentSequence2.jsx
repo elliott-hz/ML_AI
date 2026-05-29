@@ -104,10 +104,15 @@ const ConvergentSequence2 = () => {
   const navigate = useNavigate();
   
   const [params, setParams] = useState({ 
-    maxN: 20           // 显示的项数
+    maxN: 20,          // 显示的项数
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 参数配置 - 分组版本
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+  ];
+
   const viewRangeConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 200, step: 10 }
   ];
@@ -142,6 +147,14 @@ const ConvergentSequence2 = () => {
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
@@ -155,6 +168,7 @@ const ConvergentSequence2 = () => {
           <SequencePlotter
             sequenceType="convergent2"
             parameters={params}
+            plotStyle={params.plotStyle}
             title="Sequence: u<sub>n</sub> = n/(n+1)"
             showLimitLine={true}
             limitValue={1}
@@ -168,6 +182,7 @@ const ConvergentSequence2 = () => {
               xRange={[0, Math.min(params.maxN, 50)]}
               yRange={[0, 1.2]}
               title={`Original Function: f(x) = x/(x+1)`}
+              plotStyle={params.plotStyle}
             />
           </div>
         </PlotPanel>

@@ -12,12 +12,25 @@ const SequencePlotter = ({
   title,
   showLimitLine = false,
   limitValue,
-  showOriginalFunction = false  // 是否显示原函数
+  showOriginalFunction = false,
+  plotStyle = 'medium' // 新增：全局样式档位 (thin, medium, thick)
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
     return localStorage.getItem('themeMode') || 'dark';
   });
+
+  // 样式映射配置
+  const styleConfig = useMemo(() => {
+    switch (plotStyle) {
+      case 'thin':
+        return { lineWidth: 1, pointSize: 4, fontSize: 10, dash: 'dot' };
+      case 'thick':
+        return { lineWidth: 4, pointSize: 12, fontSize: 16, dash: 'solid' };
+      default: // medium
+        return { lineWidth: 2, pointSize: 8, fontSize: 12, dash: 'dash' };
+    }
+  }, [plotStyle]);
 
   // 监听主题变化
   useEffect(() => {
@@ -107,7 +120,7 @@ const SequencePlotter = ({
         name: 'f(x)',
         line: { 
           color: '#10b981', 
-          width: 2.5
+          width: styleConfig.lineWidth * 1.25
         }
       });
     } else {
@@ -128,13 +141,14 @@ const SequencePlotter = ({
         mode: 'lines+markers',
         name: 'u<sub>n</sub>',
         line: { 
-          color: '#6366f1', 
-          width: 2,
-          shape: 'spline'
+          color: getFunctionLineColor(), 
+          width: styleConfig.lineWidth,
+          shape: 'spline',
+          dash: styleConfig.dash
         },
         marker: { 
-          size: 6, 
-          color: '#6366f1',
+          size: styleConfig.pointSize, 
+          color: getFunctionLineColor(),
           symbol: 'circle'
         }
       });
@@ -149,15 +163,15 @@ const SequencePlotter = ({
           name: `lim: ${limitValue}`,
           line: { 
             color: getAuxiliaryColor(), 
-            width: 2, 
-            dash: 'dash' 
+            width: styleConfig.lineWidth, 
+            dash: styleConfig.dash 
           }
         });
       }
     }
     
     return traces;
-  }, [sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue]);
+  }, [sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue, styleConfig, getFunctionLineColor, getAuxiliaryColor]);
 
   // 自动计算 Y 轴范围
   const autoYRange = useMemo(() => {
@@ -186,7 +200,7 @@ const SequencePlotter = ({
       title: {
         text: title,
         font: {
-          size: 18,
+          size: styleConfig.fontSize + 6, // 标题字体稍大
           color: isDark ? '#e0e0e0' : '#0f172a'
         }
       },
@@ -195,29 +209,29 @@ const SequencePlotter = ({
         range: propXRange || [0, parameters.maxN || 50],
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569' },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a' }
+        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 }
       },
       yaxis: {
         title: sequenceType === 'original_function' ? 'f(x)' : 'u<sub>n</sub>',
         range: autoYRange,
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569' },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a' }
+        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 }
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
       margin: { l: 60, r: 40, t: 60, b: 60 },
       showlegend: true,
       legend: {
-        font: { color: isDark ? '#e0e0e0' : '#0f172a' },
+        font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
         bgcolor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.8)',
         bordercolor: isDark ? '#334155' : '#cbd5e1',
         borderwidth: 1
       }
     };
-  }, [title, propXRange, parameters.maxN, autoYRange, sequenceType, themeMode]);
+  }, [title, propXRange, parameters.maxN, autoYRange, sequenceType, themeMode, styleConfig]);
 
   // 配置 Plotly 工具栏
   const config = {
