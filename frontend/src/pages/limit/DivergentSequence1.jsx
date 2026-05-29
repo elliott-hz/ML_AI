@@ -110,7 +110,7 @@ const DivergentSequence1 = () => {
 
   // 参数配置 - 分组版本
   const plotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const viewRangeConfig = [

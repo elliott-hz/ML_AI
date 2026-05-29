@@ -116,7 +116,7 @@ const OddEvenFunctions = () => {
   ];
 
   const oddPlotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const oddViewRangeConfig = [
@@ -130,7 +130,7 @@ const OddEvenFunctions = () => {
   ];
 
   const evenPlotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const evenViewRangeConfig = [

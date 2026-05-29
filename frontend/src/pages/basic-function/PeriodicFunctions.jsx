@@ -95,7 +95,7 @@ const PeriodicFunctions = () => {
   ];
 
   const periodicPlotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const periodicViewRangeConfig = [

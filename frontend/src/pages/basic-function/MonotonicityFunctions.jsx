@@ -121,7 +121,7 @@ const MonotonicityFunctions = () => {
   ];
 
   const increasingPlotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const increasingViewRangeConfig = [
@@ -141,7 +141,7 @@ const MonotonicityFunctions = () => {
   ];
 
   const decreasingPlotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const decreasingViewRangeConfig = [

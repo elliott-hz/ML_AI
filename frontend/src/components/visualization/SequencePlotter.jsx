@@ -27,6 +27,8 @@ const SequencePlotter = ({
         return { lineWidth: 1, pointSize: 4, fontSize: 10, dash: 'dot' };
       case 'thick':
         return { lineWidth: 4, pointSize: 12, fontSize: 16, dash: 'solid' };
+      case 'extra-thick':
+        return { lineWidth: 6, pointSize: 16, fontSize: 18, dash: 'solid' };
       default: // medium
         return { lineWidth: 2, pointSize: 8, fontSize: 12, dash: 'dash' };
     }
