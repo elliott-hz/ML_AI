@@ -184,7 +184,6 @@ const DivergentSequence2 = () => {
               sequenceType="original_function"
               parameters={{ funcName: 'sin', maxN: params.maxN }}
               xRange={[0, Math.min(params.maxN, 30)]}
-              yRange={[-1.5, 1.5]}
               title={`Original Function: f(x) = sin(x)`}
               showOriginalFunction={true}
               plotStyle={params.plotStyle}

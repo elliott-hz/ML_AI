@@ -182,7 +182,6 @@ const DivergentSequence1 = () => {
               sequenceType="original_function"
               parameters={{ funcName: 'quadratic', maxN: Math.min(params.maxN, 20) }}
               xRange={[0, Math.min(params.maxN, 20)]}
-              yRange={[0, Math.pow(Math.min(params.maxN, 20), 2)]}
               title={`Original Function: f(x) = x²`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}

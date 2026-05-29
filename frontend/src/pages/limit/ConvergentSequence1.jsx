@@ -196,7 +196,6 @@ const ConvergentSequence1 = () => {
               sequenceType="original_function"
               parameters={{ funcName: 'exponential', base: params.base, maxN: Math.min(params.maxN, 20) }}
               xRange={[0, 8]}
-              yRange={[0, 1.2]}
               title={`Original Function: f(x) = 1/${params.base}ˣ`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}

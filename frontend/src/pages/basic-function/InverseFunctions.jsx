@@ -184,7 +184,6 @@ const InverseFunctions = () => {
           <FunctionPlotter
             functionType="inverse"
             parameters={params}
-            yRange={[0, 10]}
             title="Inverse Function: h(t) and t(h)"
             showExportButton={false}
             plotStyle={params.plotStyle}

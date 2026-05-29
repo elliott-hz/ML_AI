@@ -183,7 +183,6 @@ const ConvergentSequence2 = () => {
               sequenceType="original_function"
               parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 20) }}
               xRange={[0, Math.min(params.maxN, 20)]}
-              yRange={[0, 1.2]}
               title={`Original Function: f(x) = x/(x+1)`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}

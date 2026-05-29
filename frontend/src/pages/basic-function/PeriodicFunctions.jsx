@@ -157,7 +157,6 @@ const PeriodicFunctions = () => {
           <FunctionPlotter
             functionType="periodic"
             parameters={periodicParams}
-            yRange={[-6, 6]}
             title="Periodic Function: f(x) = a·sin(bx + c)"
             showExportButton={false}
             plotStyle={periodicParams.plotStyle}

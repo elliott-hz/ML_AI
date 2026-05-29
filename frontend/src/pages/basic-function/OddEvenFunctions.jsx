@@ -201,7 +201,6 @@ const OddEvenFunctions = () => {
           <FunctionPlotter
             functionType="odd"
             parameters={oddParams}
-            yRange={[-50, 50]}
             title="Odd Function: f(x) = ax³"
             showExportButton={false}
             plotStyle={oddParams.plotStyle}
@@ -248,7 +247,6 @@ const OddEvenFunctions = () => {
           <FunctionPlotter
             functionType="even"
             parameters={evenParams}
-            yRange={[-10, 50]}
             title="Even Function: f(x) = ax²"
             showExportButton={false}
             plotStyle={evenParams.plotStyle}

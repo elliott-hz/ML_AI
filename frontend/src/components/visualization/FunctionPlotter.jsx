@@ -8,7 +8,7 @@ const FunctionPlotter = ({
   functionType,
   parameters,
   xRange: propXRange = [-10, 10],
-  yRange = [-10, 10],
+  yRange: propYRange, // 改为可选，仅作为 fallback
   title,
   showExportButton = true,
   plotStyle = 'medium', // 新增：全局样式档位 (thin, medium, thick)
@@ -114,6 +114,62 @@ const FunctionPlotter = ({
         return 0;
     }
   }, [functionType, parameters]);
+
+  // 自动计算 Y 轴范围（用于确保函数内容完整显示）
+  const autoYRange = useMemo(() => {
+    // 如果外部传入了 yRange，优先使用它
+    if (propYRange) return propYRange;
+    
+    const numPoints = 150; // 使用较少的采样点进行性能优化
+    const step = (xRange[1] - xRange[0]) / numPoints;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xRange[0] + i * step;
+      
+      // 对于反函数类型，需要计算两种类型的值
+      if (functionType === 'inverse') {
+        const originalY = calculateFunctionValues(x, 'original');
+        const inverseY = calculateFunctionValues(x, 'inverse');
+        
+        if (originalY !== null && !isNaN(originalY) && isFinite(originalY) && Math.abs(originalY) < 10000) {
+          if (originalY < minY) minY = originalY;
+          if (originalY > maxY) maxY = originalY;
+        }
+        
+        if (inverseY !== null && !isNaN(inverseY) && isFinite(inverseY) && Math.abs(inverseY) < 10000) {
+          if (inverseY < minY) minY = inverseY;
+          if (inverseY > maxY) maxY = inverseY;
+        }
+      } else {
+        const y = calculateFunctionValues(x);
+        
+        // 过滤异常值（如垂直渐近线产生的极大值）
+        if (!isNaN(y) && isFinite(y) && Math.abs(y) < 10000) {
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    
+    // 如果没有找到有效值，返回默认范围
+    if (minY === Infinity || maxY === -Infinity) {
+      return [-10, 10];
+    }
+    
+    // 添加边距（10%），并确保最小范围为 2
+    const range = maxY - minY;
+    const padding = Math.max(range * 0.1, 1);
+    
+    // 对于极小范围的函数，强制最小显示范围
+    if (range < 2) {
+      const center = (minY + maxY) / 2;
+      return [center - 1, center + 1];
+    }
+    
+    return [minY - padding, maxY + padding];
+  }, [xRange, functionType, parameters, calculateFunctionValues, propYRange]);
 
   // 生成函数数据点和辅助线
   const plotData = useMemo(() => {
@@ -273,7 +329,7 @@ const FunctionPlotter = ({
       // 对称轴
       traces.push({
         x: [0, 0],
-        y: [yRange[0], yRange[1]],
+        y: [autoYRange[0], autoYRange[1]],
         type: 'scatter',
         mode: 'lines',
         name: 'Axis of Symmetry (x=0)',
@@ -334,7 +390,7 @@ const FunctionPlotter = ({
         if (x >= xRange[0] && x <= xRange[1]) {
           traces.push({
             x: [x, x],
-            y: [yRange[0], yRange[1]],
+            y: [autoYRange[0], autoYRange[1]],
             type: 'scatter',
             mode: 'lines',
             name: `Peak at x=${x.toFixed(2)}`,
@@ -355,7 +411,7 @@ const FunctionPlotter = ({
         if (x >= xRange[0] && x <= xRange[1]) {
           traces.push({
             x: [x, x],
-            y: [yRange[0], yRange[1]],
+            y: [autoYRange[0], autoYRange[1]],
             type: 'scatter',
             mode: 'lines',
             name: `Peak at x=${x.toFixed(2)}`,
@@ -503,7 +559,7 @@ const FunctionPlotter = ({
       // 分段点标记线
       traces.push({
         x: [0, 0],
-        y: [yRange[0], yRange[1]],
+        y: [autoYRange[0], autoYRange[1]],
         type: 'scatter',
         mode: 'lines',
         name: 'Break Point (x=0)',
@@ -538,7 +594,7 @@ const FunctionPlotter = ({
     }
     
     return traces;
-  }, [functionType, parameters, xRange, yRange, title, styleConfig, getFunctionLineColor, getAuxiliaryColor]);
+  }, [functionType, parameters, xRange, autoYRange, title, styleConfig, getFunctionLineColor, getAuxiliaryColor]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
@@ -568,7 +624,7 @@ const FunctionPlotter = ({
       },
       yaxis: {
         title: functionType === 'inverse' ? 'h (height)' : 'y',
-        range: yRange,
+        range: autoYRange,
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
@@ -590,7 +646,7 @@ const FunctionPlotter = ({
         borderwidth: 1
       }
     };
-  }, [title, xRange, yRange, functionType, themeMode, styleConfig]);
+  }, [title, xRange, autoYRange, functionType, themeMode, styleConfig]);
 
   // 配置 Plotly 工具栏
   const config = {

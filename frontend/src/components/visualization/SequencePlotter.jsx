@@ -181,8 +181,46 @@ const SequencePlotter = ({
 
   // 自动计算 Y 轴范围
   const autoYRange = useMemo(() => {
+    // 如果外部传入了 yRange，优先使用它
     if (propYRange) return propYRange;
     
+    // 对于原函数类型，需要根据 xRange 计算
+    if (sequenceType === 'original_function' && propXRange) {
+      const numPoints = 150; // 使用较少的采样点进行性能优化
+      const step = (propXRange[1] - propXRange[0]) / numPoints;
+      let minVal = Infinity;
+      let maxVal = -Infinity;
+      
+      for (let i = 0; i <= numPoints; i++) {
+        const x = propXRange[0] + i * step;
+        const val = calculateSequenceValues(x);
+        
+        // 过滤异常值
+        if (!isNaN(val) && isFinite(val) && Math.abs(val) < 10000) {
+          if (val < minVal) minVal = val;
+          if (val > maxVal) maxVal = val;
+        }
+      }
+      
+      // 如果没有找到有效值，返回默认范围
+      if (minVal === Infinity || maxVal === -Infinity) {
+        return [-10, 10];
+      }
+      
+      // 添加边距（10%），并确保最小范围为 2
+      const range = maxVal - minVal;
+      const padding = Math.max(range * 0.1, 1);
+      
+      // 对于极小范围的函数，强制最小显示范围
+      if (range < 2) {
+        const center = (minVal + maxVal) / 2;
+        return [center - 1, center + 1];
+      }
+      
+      return [minVal - padding, maxVal + padding];
+    }
+    
+    // 对于序列类型，根据 maxN 计算
     const maxN = parameters.maxN || 50;
     let minVal = Infinity;
     let maxVal = -Infinity;
@@ -196,7 +234,7 @@ const SequencePlotter = ({
     // 添加一些边距
     const padding = (maxVal - minVal) * 0.1 || 1;
     return [minVal - padding, maxVal + padding];
-  }, [sequenceType, parameters, calculateSequenceValues, propYRange]);
+  }, [sequenceType, parameters, calculateSequenceValues, propYRange, propXRange]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {

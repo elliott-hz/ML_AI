@@ -186,7 +186,6 @@ const PiecewiseFunctions = () => {
           <FunctionPlotter
             functionType="piecewise"
             parameters={params}
-            yRange={[-5, 10]}
             title="Piecewise Function: f(x)"
             showExportButton={false}
             plotStyle={params.plotStyle}

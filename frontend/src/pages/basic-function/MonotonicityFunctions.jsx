@@ -212,7 +212,6 @@ const MonotonicityFunctions = () => {
           <FunctionPlotter
             functionType="increasing"
             parameters={increasingParams}
-            yRange={[-20, 20]}
             title="Monotonically Increasing: f(x) = ax + b"
             showExportButton={false}
             plotStyle={increasingParams.plotStyle}
@@ -267,8 +266,6 @@ const MonotonicityFunctions = () => {
           <FunctionPlotter
             functionType="decreasing"
             parameters={decreasingParams}
-            xRange={decreasingParams.xRange}
-            yRange={[-20, 20]}
             title="Monotonically Decreasing: f(x) = -ax + b"
             showExportButton={false}
             plotStyle={decreasingParams.plotStyle}
