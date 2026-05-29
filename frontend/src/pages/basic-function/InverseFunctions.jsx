@@ -97,7 +97,8 @@ const InverseFunctions = () => {
   
   const [params, setParams] = useState({
     coefficient: 1,
-    xRange: [-5, 5]   // X轴范围
+    xRange: [-5, 5],
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 参数配置 - 分组版本
@@ -109,6 +110,10 @@ const InverseFunctions = () => {
       max: 5,
       step: 0.1
     }
+  ];
+
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const viewRangeConfig = [
@@ -156,6 +161,14 @@ const InverseFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
@@ -172,6 +185,7 @@ const InverseFunctions = () => {
             yRange={[0, 10]}
             title="Inverse Function: h(t) and t(h)"
             showExportButton={false}
+            plotStyle={params.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>

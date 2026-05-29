@@ -93,7 +93,8 @@ const MonotonicityFunctions = () => {
     x1: -3,      // 第一个点的x坐标
     x2: 3,       // 第二个点的x坐标
     pointSize: 10, // 点大小
-    xRange: [-8, 8] // X轴范围
+    xRange: [-8, 8], // X轴范围
+    plotStyle: 'medium' // Plot 样式档位
   });
   
   // 单调递减函数参数状态
@@ -103,7 +104,8 @@ const MonotonicityFunctions = () => {
     x1: -3,      // 第一个点的x坐标
     x2: 3,       // 第二个点的x坐标
     pointSize: 10, // 点大小
-    xRange: [-8, 8] // X轴范围
+    xRange: [-8, 8], // X轴范围
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 单调递增函数参数配置 - 分组版本
@@ -116,6 +118,10 @@ const MonotonicityFunctions = () => {
     { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
     { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
     { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
+  ];
+
+  const increasingPlotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const increasingViewRangeConfig = [
@@ -132,6 +138,10 @@ const MonotonicityFunctions = () => {
     { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
     { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
     { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
+  ];
+
+  const decreasingPlotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const decreasingViewRangeConfig = [
@@ -177,6 +187,14 @@ const MonotonicityFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={increasingParams}
+              onChange={setIncreasingParams}
+              config={increasingPlotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={increasingParams}
@@ -193,6 +211,7 @@ const MonotonicityFunctions = () => {
             yRange={[-20, 20]}
             title="Monotonically Increasing: f(x) = ax + b"
             showExportButton={false}
+            plotStyle={increasingParams.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>
@@ -222,6 +241,14 @@ const MonotonicityFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={decreasingParams}
+              onChange={setDecreasingParams}
+              config={decreasingPlotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={decreasingParams}
@@ -239,6 +266,7 @@ const MonotonicityFunctions = () => {
             yRange={[-20, 20]}
             title="Monotonically Decreasing: f(x) = -ax + b"
             showExportButton={false}
+            plotStyle={decreasingParams.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>

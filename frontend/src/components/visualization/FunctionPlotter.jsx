@@ -7,10 +7,11 @@ import Plotly from 'plotly.js/dist/plotly.min.js';
 const FunctionPlotter = ({
   functionType,
   parameters,
-  xRange: propXRange = [-10, 10],  // 从 props 传入的 xRange
+  xRange: propXRange = [-10, 10],
   yRange = [-10, 10],
   title,
-  showExportButton = true
+  showExportButton = true,
+  plotStyle = 'medium' // 新增：全局样式档位 (thin, medium, thick)
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -19,6 +20,18 @@ const FunctionPlotter = ({
   
   // 使用 parameters.xRange 如果存在，否则使用 props 的 xRange
   const xRange = parameters.xRange || propXRange;
+
+  // 样式映射配置
+  const styleConfig = useMemo(() => {
+    switch (plotStyle) {
+      case 'thin':
+        return { lineWidth: 1, pointSize: 4, fontSize: 10, dash: 'dot' };
+      case 'thick':
+        return { lineWidth: 4, pointSize: 12, fontSize: 16, dash: 'solid' };
+      default: // medium
+        return { lineWidth: 2, pointSize: 8, fontSize: 12, dash: 'dash' };
+    }
+  }, [plotStyle]);
 
   // 监听主题变化
   useEffect(() => {
@@ -140,7 +153,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Original: h = at²',
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
       
       traces.push({
@@ -149,7 +162,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'Inverse: t = √(h/a)',
-        line: { color: '#06b6d4', width: 2, dash: 'dash' }
+        line: { color: '#06b6d4', width: styleConfig.lineWidth, dash: styleConfig.dash }
       });
       
       traces.push({
@@ -158,7 +171,7 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: 'y = x',
-        line: { color: '#888', width: 1, dash: 'dot' }
+        line: { color: '#888', width: styleConfig.lineWidth * 0.5, dash: styleConfig.dash }
       });
       
     } else if (functionType === 'odd') {
@@ -181,17 +194,17 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: title,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
       
-      // 示例点标记（展示 f(x) 和 f(-x) 的关系）
-      const sampleX = parameters.samplePoint || 2; // 可调整采样点位置
+      // 示例点标记
+      const sampleX = parameters.samplePoint || 2;
       const sampleY = calculateFunctionValues(sampleX);
       const oppositeX = -sampleX;
       const oppositeY = calculateFunctionValues(oppositeX);
-      const pointSize = parameters.pointSize || 10; // 可调整点大小
+      const pointSize = parameters.pointSize || styleConfig.pointSize;
       
-      // P点 (x, f(x))
+      // P点
       traces.push({
         x: [sampleX],
         y: [sampleY],
@@ -202,11 +215,11 @@ const FunctionPlotter = ({
           size: pointSize, 
           color: getAuxiliaryColor(), 
           symbol: 'circle',
-          line: { color: '#fff', width: 2 }
+          line: { color: '#fff', width: styleConfig.lineWidth * 0.5 }
         }
       });
       
-      // P'点 (-x, f(-x))
+      // P'点
       traces.push({
         x: [oppositeX],
         y: [oppositeY],
@@ -217,18 +230,18 @@ const FunctionPlotter = ({
           size: pointSize, 
           color: getAuxiliaryColor(), 
           symbol: 'circle',
-          line: { color: '#fff', width: 2 }
+          line: { color: '#fff', width: styleConfig.lineWidth * 0.5 }
         }
       });
       
-      // 连接线（从 P 到 P'）
+      // 连接线
       traces.push({
         x: [sampleX, oppositeX],
         y: [sampleY, oppositeY],
         type: 'scatter',
         mode: 'lines',
         name: 'Connection Line',
-        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' }
+        line: { color: getAuxiliaryColor(), width: styleConfig.lineWidth * 0.5, dash: styleConfig.dash }
       });
 
     } else if (functionType === 'even') {
@@ -251,13 +264,10 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: title,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
       
-      // 对称轴（y轴）
-      const axisStyle = parameters.axisStyle || 'solid'; // solid 或 dashed
-      const axisWidth = parameters.axisWidth || 2; // 线宽
-      
+      // 对称轴
       traces.push({
         x: [0, 0],
         y: [yRange[0], yRange[1]],
@@ -266,8 +276,8 @@ const FunctionPlotter = ({
         name: 'Axis of Symmetry (x=0)',
         line: { 
           color: getAuxiliaryColor(), 
-          width: axisWidth, 
-          dash: axisStyle === 'dashed' ? 'dash' : 'solid' 
+          width: styleConfig.lineWidth, 
+          dash: styleConfig.dash
         }
       });
       
@@ -291,10 +301,10 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: title,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
       
-      // 周期标记线 - 基于第一个波峰位置
+      // 周期标记线
       const { a: amplitude = 1, b: frequency = 1, c: phase = 0 } = parameters;
       const period = 2 * Math.PI / frequency; // 周期长度
       const lineStyle = parameters.lineStyle || 'dashed'; // solid 或 dashed
@@ -327,8 +337,8 @@ const FunctionPlotter = ({
             name: `Peak at x=${x.toFixed(2)}`,
             line: { 
               color: getAuxiliaryColor(), 
-              width: 1.5, 
-              dash: lineStyle === 'dashed' ? 'dash' : 'solid' 
+              width: styleConfig.lineWidth * 0.75, 
+              dash: styleConfig.dash 
             },
             showlegend: false
           });
@@ -348,8 +358,8 @@ const FunctionPlotter = ({
             name: `Peak at x=${x.toFixed(2)}`,
             line: { 
               color: getAuxiliaryColor(), 
-              width: 1.5, 
-              dash: lineStyle === 'dashed' ? 'dash' : 'solid' 
+              width: styleConfig.lineWidth * 0.75, 
+              dash: styleConfig.dash 
             },
             showlegend: false
           });
@@ -377,15 +387,15 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: title,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
       
-      // 选取两个点（可调整位置）
+      // 选取两个点
       const x1 = parameters.x1 !== undefined ? parameters.x1 : -3;
       const x2 = parameters.x2 !== undefined ? parameters.x2 : 3;
       const y1 = calculateFunctionValues(x1);
       const y2 = calculateFunctionValues(x2);
-      const pointSize = parameters.pointSize || 10;
+      const pointSize = parameters.pointSize || styleConfig.pointSize;
       
       // P1点
       traces.push({
@@ -398,11 +408,11 @@ const FunctionPlotter = ({
           size: pointSize, 
           color: getAuxiliaryColor(), 
           symbol: 'circle',
-          line: { color: '#fff', width: 2 }
+          line: { color: '#fff', width: styleConfig.lineWidth * 0.5 }
         },
         text: [`P₁`],
         textposition: 'top center',
-        textfont: { color: getAuxiliaryColor(), size: 12 }
+        textfont: { color: getAuxiliaryColor(), size: styleConfig.fontSize }
       });
       
       // P2点
@@ -416,54 +426,51 @@ const FunctionPlotter = ({
           size: pointSize, 
           color: getAuxiliaryColor(), 
           symbol: 'circle',
-          line: { color: '#fff', width: 2 }
+          line: { color: '#fff', width: styleConfig.lineWidth * 0.5 }
         },
         text: [`P₂`],
         textposition: 'top center',
-        textfont: { color: getAuxiliaryColor(), size: 12 }
+        textfont: { color: getAuxiliaryColor(), size: styleConfig.fontSize }
       });
       
-      // P1到x轴的垂线
+      // 垂线段
       traces.push({
         x: [x1, x1],
         y: [0, y1],
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₁',
-        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: styleConfig.lineWidth * 0.5, dash: styleConfig.dash },
         showlegend: false
       });
       
-      // P1到y轴的垂线
       traces.push({
         x: [0, x1],
         y: [y1, y1],
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₁',
-        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: styleConfig.lineWidth * 0.5, dash: styleConfig.dash },
         showlegend: false
       });
       
-      // P2到x轴的垂线
       traces.push({
         x: [x2, x2],
         y: [0, y2],
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₂',
-        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: styleConfig.lineWidth * 0.5, dash: styleConfig.dash },
         showlegend: false
       });
       
-      // P2到y轴的垂线
       traces.push({
         x: [0, x2],
         y: [y2, y2],
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₂',
-        line: { color: getAuxiliaryColor(), width: 1, dash: 'dash' },
+        line: { color: getAuxiliaryColor(), width: styleConfig.lineWidth * 0.5, dash: styleConfig.dash },
         showlegend: false
       });
       
@@ -487,10 +494,10 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: title,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
       
-      // 分段点标记线（固定在 x=0）
+      // 分段点标记线
       traces.push({
         x: [0, 0],
         y: [yRange[0], yRange[1]],
@@ -499,8 +506,8 @@ const FunctionPlotter = ({
         name: 'Break Point (x=0)',
         line: { 
           color: getAuxiliaryColor(), 
-          width: 2, 
-          dash: 'dash' 
+          width: styleConfig.lineWidth, 
+          dash: styleConfig.dash 
         }
       });
       
@@ -523,12 +530,12 @@ const FunctionPlotter = ({
         type: 'scatter',
         mode: 'lines',
         name: title,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: getFunctionLineColor(), width: styleConfig.lineWidth }
       });
     }
     
     return traces;
-  }, [functionType, parameters, xRange, yRange, title]);
+  }, [functionType, parameters, xRange, yRange, title, styleConfig, getFunctionLineColor, getAuxiliaryColor]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
@@ -538,7 +545,7 @@ const FunctionPlotter = ({
       title: {
         text: title,
         font: {
-          size: 18,
+          size: styleConfig.fontSize + 6,
           color: isDark ? '#e0e0e0' : '#0f172a'
         }
       },
@@ -547,29 +554,29 @@ const FunctionPlotter = ({
         range: xRange,
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569' },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a' }
+        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 }
       },
       yaxis: {
         title: functionType === 'inverse' ? 'h (height)' : 'y',
         range: yRange,
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569' },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a' }
+        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 }
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
       margin: { l: 60, r: 40, t: 60, b: 60 },
       showlegend: functionType === 'inverse' ? true : false,
       legend: {
-        font: { color: isDark ? '#e0e0e0' : '#0f172a' },
+        font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
         bgcolor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.8)',
         bordercolor: isDark ? '#334155' : '#cbd5e1',
         borderwidth: 1
       }
     };
-  }, [title, xRange, yRange, functionType, themeMode]);
+  }, [title, xRange, yRange, functionType, themeMode, styleConfig]);
 
   // 配置 Plotly 工具栏
   const config = {

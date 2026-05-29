@@ -83,7 +83,8 @@ const PeriodicFunctions = () => {
     a: 1,              // 振幅
     b: 1,              // 频率
     c: 0,              // 相位
-    xRange: [-10, 10]  // X轴范围
+    xRange: [-10, 10], // X轴范围
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 周期函数参数配置 - 分组版本
@@ -91,6 +92,10 @@ const PeriodicFunctions = () => {
     { name: 'a', label: 'Amplitude (a)', min: 0.1, max: 5, step: 0.1 },
     { name: 'b', label: 'Frequency (b)', min: 0.1, max: 5, step: 0.1 },
     { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 }
+  ];
+
+  const periodicPlotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const periodicViewRangeConfig = [
@@ -129,6 +134,14 @@ const PeriodicFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={periodicParams}
+              onChange={setPeriodicParams}
+              config={periodicPlotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={periodicParams}
@@ -145,6 +158,7 @@ const PeriodicFunctions = () => {
             yRange={[-6, 6]}
             title="Periodic Function: f(x) = a·sin(bx + c)"
             showExportButton={false}
+            plotStyle={periodicParams.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>

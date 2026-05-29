@@ -92,14 +92,16 @@ const OddEvenFunctions = () => {
     b: 0,              // 偏置项
     samplePoint: 2,    // 采样点位置
     pointSize: 10,     // 点大小
-    xRange: [-5, 5]    // X轴范围
+    xRange: [-5, 5],   // X轴范围
+    plotStyle: 'medium' // Plot 样式档位
   });
   
   // 偶函数参数状态
   const [evenParams, setEvenParams] = useState({ 
     a: 1,              // 系数
     b: 0,              // 偏置项
-    xRange: [-5, 5]      // X轴范围
+    xRange: [-5, 5],   // X轴范围
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 奇函数参数配置 - 分组版本
@@ -113,6 +115,10 @@ const OddEvenFunctions = () => {
     { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
   ];
 
+  const oddPlotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
+  ];
+
   const oddViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
   ];
@@ -121,6 +127,10 @@ const OddEvenFunctions = () => {
   const evenCoefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
     { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
+  ];
+
+  const evenPlotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const evenViewRangeConfig = [
@@ -166,6 +176,14 @@ const OddEvenFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={oddParams}
+              onChange={setOddParams}
+              config={oddPlotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={oddParams}
@@ -182,6 +200,7 @@ const OddEvenFunctions = () => {
             yRange={[-50, 50]}
             title="Odd Function: f(x) = ax³"
             showExportButton={false}
+            plotStyle={oddParams.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>
@@ -203,6 +222,14 @@ const OddEvenFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={evenParams}
+              onChange={setEvenParams}
+              config={evenPlotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={evenParams}
@@ -219,6 +246,7 @@ const OddEvenFunctions = () => {
             yRange={[-10, 50]}
             title="Even Function: f(x) = ax²"
             showExportButton={false}
+            plotStyle={evenParams.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>

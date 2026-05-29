@@ -97,7 +97,8 @@ const PiecewiseFunctions = () => {
   
   const [params, setParams] = useState({
     coefficient: 1,
-    xRange: [-10, 10]   // X轴范围
+    xRange: [-10, 10],
+    plotStyle: 'medium' // Plot 样式档位
   });
 
   // 参数配置 - 分组版本
@@ -109,6 +110,10 @@ const PiecewiseFunctions = () => {
       max: 5,
       step: 0.1
     }
+  ];
+
+  const plotStyleConfig = [
+    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick'] }
   ];
 
   const viewRangeConfig = [
@@ -158,6 +163,14 @@ const PiecewiseFunctions = () => {
             />
           </ParameterSection>
 
+          <ParameterSection title="Plot Style">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={plotStyleConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
@@ -174,6 +187,7 @@ const PiecewiseFunctions = () => {
             yRange={[-5, 10]}
             title="Piecewise Function: f(x)"
             showExportButton={false}
+            plotStyle={params.plotStyle}
           />
         </PlotPanel>
       </ContentLayout>
