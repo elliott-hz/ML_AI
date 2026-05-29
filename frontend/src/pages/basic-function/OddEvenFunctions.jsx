@@ -92,14 +92,6 @@ const OddEvenFunctions = () => {
     b: 0,              // 偏置项
     samplePoint: 2,    // 采样点位置
     pointSize: 10,     // 点大小
-    // Function Line 样式
-    lineColor: '#6366f1',  // 函数线颜色
-    lineWidth: 2,          // 函数线粗细
-    lineStyle: 'solid',    // 函数线样式
-    // Auxiliary Lines 样式
-    auxLineColor: '#ffd700',  // 辅助线颜色
-    auxLineWidth: 1,          // 辅助线粗细
-    auxLineStyle: 'dashed',   // 辅助线样式
     xRange: [-5, 5]    // X轴范围
   });
   
@@ -107,10 +99,6 @@ const OddEvenFunctions = () => {
   const [evenParams, setEvenParams] = useState({ 
     a: 1,              // 系数
     b: 0,              // 偏置项
-    // Function Line 样式
-    lineColor: '#6366f1',  // 函数线颜色
-    lineWidth: 2,          // 函数线粗细
-    lineStyle: 'solid',    // 函数线样式
     xRange: [-5, 5]      // X轴范围
   });
 
@@ -120,18 +108,9 @@ const OddEvenFunctions = () => {
     { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
   ];
 
-  const oddFunctionLineConfig = [
-    { name: 'lineColor', label: 'Line Color', type: 'color' },
-    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
-    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
-  ];
-
   const oddAuxiliaryConfig = [
     { name: 'samplePoint', label: 'Sample Point (x)', min: 0.5, max: 4, step: 0.1 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
-    { name: 'auxLineColor', label: 'Aux Line Color', type: 'color' },
-    { name: 'auxLineWidth', label: 'Aux Line Width', min: 1, max: 3, step: 0.5 },
-    { name: 'auxLineStyle', label: 'Aux Line Style', type: 'select', options: ['solid', 'dashed'] }
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
   ];
 
   const oddViewRangeConfig = [
@@ -142,12 +121,6 @@ const OddEvenFunctions = () => {
   const evenCoefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
     { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
-  ];
-
-  const evenFunctionLineConfig = [
-    { name: 'lineColor', label: 'Line Color', type: 'color' },
-    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
-    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
   ];
 
   const evenViewRangeConfig = [
@@ -182,14 +155,6 @@ const OddEvenFunctions = () => {
               parameters={oddParams}
               onChange={setOddParams}
               config={oddCoefficientConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="Function Line">
-            <ParameterControls
-              parameters={oddParams}
-              onChange={setOddParams}
-              config={oddFunctionLineConfig}
             />
           </ParameterSection>
 
@@ -235,14 +200,6 @@ const OddEvenFunctions = () => {
               parameters={evenParams}
               onChange={setEvenParams}
               config={evenCoefficientConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="Function Line">
-            <ParameterControls
-              parameters={evenParams}
-              onChange={setEvenParams}
-              config={evenFunctionLineConfig}
             />
           </ParameterSection>
 

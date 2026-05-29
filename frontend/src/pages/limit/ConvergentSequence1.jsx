@@ -105,22 +105,12 @@ const ConvergentSequence1 = () => {
   
   const [params, setParams] = useState({ 
     base: 3,           // 底数
-    maxN: 20,          // 显示的项数
-    // Function Line 样式（用于散点图的连线）
-    lineColor: '#6366f1',  // 线颜色
-    lineWidth: 2,          // 线粗细
-    lineStyle: 'solid'     // 线样式
+    maxN: 20           // 显示的项数
   });
 
   // 参数配置 - 分组版本
   const coefficientConfig = [
     { name: 'base', label: 'Base (a)', min: 2, max: 10, step: 1 }
-  ];
-
-  const functionLineConfig = [
-    { name: 'lineColor', label: 'Line Color', type: 'color' },
-    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
-    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
   ];
 
   const viewRangeConfig = [
@@ -162,14 +152,6 @@ const ConvergentSequence1 = () => {
               parameters={params}
               onChange={setParams}
               config={coefficientConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="Function Line">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={functionLineConfig}
             />
           </ParameterSection>
 

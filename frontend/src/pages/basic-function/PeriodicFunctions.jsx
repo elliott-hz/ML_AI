@@ -83,10 +83,6 @@ const PeriodicFunctions = () => {
     a: 1,              // 振幅
     b: 1,              // 频率
     c: 0,              // 相位
-    // Function Line 样式
-    lineColor: '#6366f1',  // 函数线颜色
-    lineWidth: 2,          // 函数线粗细
-    lineStyle: 'solid',    // 函数线样式
     xRange: [-10, 10]  // X轴范围
   });
 
@@ -95,12 +91,6 @@ const PeriodicFunctions = () => {
     { name: 'a', label: 'Amplitude (a)', min: 0.1, max: 5, step: 0.1 },
     { name: 'b', label: 'Frequency (b)', min: 0.1, max: 5, step: 0.1 },
     { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 }
-  ];
-
-  const periodicFunctionLineConfig = [
-    { name: 'lineColor', label: 'Line Color', type: 'color' },
-    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
-    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
   ];
 
   const periodicViewRangeConfig = [
@@ -136,14 +126,6 @@ const PeriodicFunctions = () => {
               parameters={periodicParams}
               onChange={setPeriodicParams}
               config={periodicCoefficientConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="Function Line">
-            <ParameterControls
-              parameters={periodicParams}
-              onChange={setPeriodicParams}
-              config={periodicFunctionLineConfig}
             />
           </ParameterSection>
 

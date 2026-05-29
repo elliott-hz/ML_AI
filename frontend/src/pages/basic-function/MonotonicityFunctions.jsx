@@ -93,14 +93,6 @@ const MonotonicityFunctions = () => {
     x1: -3,      // 第一个点的x坐标
     x2: 3,       // 第二个点的x坐标
     pointSize: 10, // 点大小
-    // Function Line 样式
-    lineColor: '#6366f1',  // 函数线颜色
-    lineWidth: 2,          // 函数线粗细
-    lineStyle: 'solid',    // 函数线样式
-    // Auxiliary Lines 样式
-    auxLineColor: '#ffd700',  // 辅助线颜色
-    auxLineWidth: 1,          // 辅助线粗细
-    auxLineStyle: 'dashed',   // 辅助线样式
     xRange: [-8, 8] // X轴范围
   });
   
@@ -111,14 +103,6 @@ const MonotonicityFunctions = () => {
     x1: -3,      // 第一个点的x坐标
     x2: 3,       // 第二个点的x坐标
     pointSize: 10, // 点大小
-    // Function Line 样式
-    lineColor: '#6366f1',  // 函数线颜色
-    lineWidth: 2,          // 函数线粗细
-    lineStyle: 'solid',    // 函数线样式
-    // Auxiliary Lines 样式
-    auxLineColor: '#ffd700',  // 辅助线颜色
-    auxLineWidth: 1,          // 辅助线粗细
-    auxLineStyle: 'dashed',   // 辅助线样式
     xRange: [-8, 8] // X轴范围
   });
 
@@ -128,19 +112,10 @@ const MonotonicityFunctions = () => {
     { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
   ];
 
-  const increasingFunctionLineConfig = [
-    { name: 'lineColor', label: 'Line Color', type: 'color' },
-    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
-    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
-  ];
-
   const increasingAuxiliaryConfig = [
     { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
     { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
-    { name: 'auxLineColor', label: 'Aux Line Color', type: 'color' },
-    { name: 'auxLineWidth', label: 'Aux Line Width', min: 1, max: 3, step: 0.5 },
-    { name: 'auxLineStyle', label: 'Aux Line Style', type: 'select', options: ['solid', 'dashed'] }
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
   ];
 
   const increasingViewRangeConfig = [
@@ -153,19 +128,10 @@ const MonotonicityFunctions = () => {
     { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 }
   ];
 
-  const decreasingFunctionLineConfig = [
-    { name: 'lineColor', label: 'Line Color', type: 'color' },
-    { name: 'lineWidth', label: 'Line Width', min: 1, max: 5, step: 0.5 },
-    { name: 'lineStyle', label: 'Line Style', type: 'select', options: ['solid', 'dashed'] }
-  ];
-
   const decreasingAuxiliaryConfig = [
     { name: 'x1', label: 'Point P₁ (x₁)', min: -8, max: 8, step: 0.5 },
     { name: 'x2', label: 'Point P₂ (x₂)', min: -8, max: 8, step: 0.5 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 },
-    { name: 'auxLineColor', label: 'Aux Line Color', type: 'color' },
-    { name: 'auxLineWidth', label: 'Aux Line Width', min: 1, max: 3, step: 0.5 },
-    { name: 'auxLineStyle', label: 'Aux Line Style', type: 'select', options: ['solid', 'dashed'] }
+    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
   ];
 
   const decreasingViewRangeConfig = [
@@ -200,14 +166,6 @@ const MonotonicityFunctions = () => {
               parameters={increasingParams}
               onChange={setIncreasingParams}
               config={increasingCoefficientConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="Function Line">
-            <ParameterControls
-              parameters={increasingParams}
-              onChange={setIncreasingParams}
-              config={increasingFunctionLineConfig}
             />
           </ParameterSection>
 
@@ -253,14 +211,6 @@ const MonotonicityFunctions = () => {
               parameters={decreasingParams}
               onChange={setDecreasingParams}
               config={decreasingCoefficientConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="Function Line">
-            <ParameterControls
-              parameters={decreasingParams}
-              onChange={setDecreasingParams}
-              config={decreasingFunctionLineConfig}
             />
           </ParameterSection>
 
