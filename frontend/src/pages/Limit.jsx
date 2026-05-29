@@ -210,7 +210,7 @@ const Limit = () => {
   const infinitesimalProperties = [
     {
       id: 'sum-property',
-      icon: '➕',
+      icon: '',
       title: (
         <MathFormula>
           Sum: α₁ + α₂ + α₃ → 0
@@ -221,7 +221,7 @@ const Limit = () => {
     },
     {
       id: 'bounded-product',
-      icon: '×',
+      icon: '',
       title: (
         <MathFormula>
           Bounded × Infinitesimal: f(x)·α(x) → 0
@@ -232,7 +232,7 @@ const Limit = () => {
     },
     {
       id: 'constant-multiple',
-      icon: 'c·',
+      icon: '',
       title: (
         <MathFormula>
           Constant × Infinitesimal: c·α(x) → 0
