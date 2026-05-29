@@ -148,8 +148,8 @@ const PiecewiseFunctions = () => {
         <FormulaTitle>Example Function:</FormulaTitle>
         <Formula>
           f(x) = {'{'}<br/>
-          &nbsp;&nbsp;a·√x, &nbsp;x ≥ 0<br/>
-          &nbsp;&nbsp;-a·x, &nbsp;x &lt; 0<br/>
+          &nbsp;&nbsp;a·x, &nbsp;&nbsp;x ≥ 0<br/>
+          &nbsp;&nbsp;0, &nbsp;&nbsp;&nbsp;&nbsp;x &lt; 0<br/>
           {'}'}
         </Formula>
       </FormulaBox>

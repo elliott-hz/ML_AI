@@ -88,11 +88,11 @@ const FunctionPlotter = ({
         return -a * x + b;
       
       case 'piecewise':
-        // 分段函数: f(x) = { a·√x, x ≥ 0; -a·x, x < 0 }
+        // 分段函数: f(x) = { a·x, x ≥ 0; 0, x < 0 }
         if (x >= 0) {
-          return a * Math.sqrt(x);
+          return a * x;
         } else {
-          return -a * x;
+          return 0;
         }
       
       case 'inverse':

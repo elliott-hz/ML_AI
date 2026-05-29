@@ -88,7 +88,7 @@ const BasicFunction = () => {
       id: 'piecewise',
       icon: '',
       title: 'Piecewise Function',
-      description: 'Explore functions defined by different expressions on different intervals. Visualize f(x) = {√x, x ≥ 0; -x, x < 0}.',
+      description: 'Explore functions defined by different expressions on different intervals. Visualize f(x) = {a·x, x ≥ 0; 0, x < 0}.',
       path: '/mathematics/1-fundamentals/basic-function/piecewise'
     },
     {
