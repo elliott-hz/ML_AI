@@ -542,6 +542,7 @@ const FunctionPlotter = ({
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
     const isDark = themeMode === 'dark';
+    const axisColor = isDark ? '#475569' : '#cbd5e1'; // 边框颜色
     
     return {
       title: {
@@ -557,7 +558,12 @@ const FunctionPlotter = ({
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 }
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        // 添加四面边框
+        showline: true,
+        linewidth: 2,
+        linecolor: axisColor,
+        mirror: true // 让轴线在两侧都显示，形成闭合框
       },
       yaxis: {
         title: functionType === 'inverse' ? 'h (height)' : 'y',
@@ -565,7 +571,12 @@ const FunctionPlotter = ({
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 }
+        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        // 添加四面边框
+        showline: true,
+        linewidth: 2,
+        linecolor: axisColor,
+        mirror: true // 让轴线在两侧都显示，形成闭合框
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
