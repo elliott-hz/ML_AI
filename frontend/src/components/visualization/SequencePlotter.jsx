@@ -81,7 +81,7 @@ const SequencePlotter = ({
       
       case 'original_function':
         // 原函数连续曲线（用于对比显示）
-        if (parameters.funcName === 'exponential_decay') {
+        if (parameters.funcName === 'exponential' || parameters.funcName === 'exponential_decay') {
           const base = parameters.base || 3;
           return 1 / Math.pow(base, n);
         } else if (parameters.funcName === 'rational') {
@@ -90,6 +90,9 @@ const SequencePlotter = ({
           return n * n;
         } else if (parameters.funcName === 'sin') {
           return Math.sin(n);
+        } else if (parameters.funcName === 'logarithmic') {
+          const base = parameters.base || 2;
+          return 1 / Math.log(n + 1) / Math.log(base);
         }
         return 0;
       
