@@ -81,11 +81,18 @@ const SequencePlotter = ({
       
       case 'original_function':
         // 原函数连续曲线（用于对比显示）
+        const a = parameters.coefficient || 1;
+        
         if (parameters.funcName === 'exponential' || parameters.funcName === 'exponential_decay') {
-          const base = parameters.base || 3;
+          const base = parameters.base || Math.E;
           return 1 / Math.pow(base, n);
         } else if (parameters.funcName === 'rational') {
-          return n / (n + 1);
+          // 反比例函数: f(x) = a/x
+          if (n === 0) return 0; // 避免除以零
+          return a / n;
+        } else if (parameters.funcName === 'arctan') {
+          // 反正切函数: f(x) = a·arctan(x)
+          return a * Math.atan(n);
         } else if (parameters.funcName === 'quadratic') {
           return n * n;
         } else if (parameters.funcName === 'sin') {
@@ -108,12 +115,16 @@ const SequencePlotter = ({
     
     if (sequenceType === 'original_function') {
       // 原函数：使用连续曲线（更密集的采样点）
+      // 如果传入了 xRange，使用它；否则使用默认的 [0, maxN]
+      const xMin = propXRange ? propXRange[0] : 0;
+      const xMax = propXRange ? propXRange[1] : maxN;
+      
       const numPoints = 200;
       const xValues = [];
       const yValues = [];
       
       for (let i = 0; i <= numPoints; i++) {
-        const x = (maxN * i) / numPoints;
+        const x = xMin + ((xMax - xMin) * i) / numPoints;
         xValues.push(x);
         yValues.push(calculateSequenceValues(x));
       }
@@ -125,7 +136,7 @@ const SequencePlotter = ({
         mode: 'lines',
         name: 'f(x)',
         line: { 
-          color: '#10b981', 
+          color: getFunctionLineColor(), 
           width: styleConfig.lineWidth * 1.25
         }
       });

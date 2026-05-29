@@ -147,6 +147,43 @@ const Limit = () => {
     }
   ];
 
+  // Group 3: Elementary Functions Limits
+  const elementaryFunctions = [
+    {
+      id: 'exponential',
+      icon: '',
+      title: (
+        <MathFormula>
+          Function: y = a·e<sup>-x</sup> → 0 (x→+)
+        </MathFormula>
+      ),
+      description: 'Explore exponential decay limit. See how y = a·e^(-x) approaches 0 as x → +∞.',
+      path: '/mathematics/1-fundamentals/limit/exponential'
+    },
+    {
+      id: 'reciprocal',
+      icon: '',
+      title: (
+        <MathFormula>
+          Function: y = a/x → 0 (x→)
+        </MathFormula>
+      ),
+      description: 'Understand reciprocal function limit. Visualize how y = a/x converges to 0 as x → ±∞.',
+      path: '/mathematics/1-fundamentals/limit/reciprocal'
+    },
+    {
+      id: 'arctan',
+      icon: '',
+      title: (
+        <MathFormula>
+          Function: y = a·arctan(x) → -a·π/2 (x→-)
+        </MathFormula>
+      ),
+      description: 'Study arctangent function limit. Observe how y = a·arctan(x) approaches -a·π/2 as x → -.',
+      path: '/mathematics/1-fundamentals/limit/arctan'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -180,6 +217,21 @@ const Limit = () => {
       <GroupTitle>Sequence's Divergence</GroupTitle>
       <ButtonGrid>
         {divergentSequences.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 3: Elementary Functions Limits */}
+      <GroupTitle>Elementary Functions Limits</GroupTitle>
+      <ButtonGrid>
+        {elementaryFunctions.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
