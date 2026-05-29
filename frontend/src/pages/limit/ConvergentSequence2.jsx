@@ -104,17 +104,24 @@ const ConvergentSequence2 = () => {
   const navigate = useNavigate();
   
   const [params, setParams] = useState({ 
-    maxN: 20,          // 显示的项数
-    plotStyle: 'medium' // Plot 样式档位
+    base: 1.5,         // 底数
+    maxN: 50,          // 显示的项数
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 参数配置 - 分组版本
+  const coefficientConfig = [
+    { name: 'base', label: 'Base (b)', min: 1.1, max: 5, step: 0.1 }
+  ];
+
   const plotStyleConfig = [
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
   const viewRangeConfig = [
-    { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 200, step: 10 }
+    { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -147,6 +154,14 @@ const ConvergentSequence2 = () => {
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
+          <ParameterSection title="Coefficient">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={coefficientConfig}
+            />
+          </ParameterSection>
+
           <ParameterSection title="Plot Style">
             <ParameterControls
               parameters={params}
@@ -169,20 +184,22 @@ const ConvergentSequence2 = () => {
             sequenceType="convergent2"
             parameters={params}
             plotStyle={params.plotStyle}
-            title="Sequence: u<sub>n</sub> = n/(n+1)"
+            aspectRatio={params.aspectRatio}
+            title={`Sequence: u = 1/log(${params.base}, n+1)`}
             showLimitLine={true}
-            limitValue={1}
+            limitValue={0}
           />
           
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <SequencePlotter
               sequenceType="original_function"
-              parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 50) }}
-              xRange={[0, Math.min(params.maxN, 50)]}
-              yRange={[0, 1.2]}
-              title={`Original Function: f(x) = x/(x+1)`}
+              parameters={{ funcName: 'logarithmic', base: params.base, maxN: Math.min(params.maxN, 20) }}
+              xRange={[1, Math.min(params.maxN, 20)]}
+              yRange={[-1, 1]}
+              title={`Original Function: f(x) = 1/log(${params.base}, x)`}
               plotStyle={params.plotStyle}
+              aspectRatio={params.aspectRatio}
             />
           </div>
         </PlotPanel>

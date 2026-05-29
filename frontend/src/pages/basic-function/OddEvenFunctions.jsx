@@ -93,7 +93,8 @@ const OddEvenFunctions = () => {
     samplePoint: 2,    // 采样点位置
     pointSize: 10,     // 点大小
     xRange: [-5, 5],   // X轴范围
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
   
   // 偶函数参数状态
@@ -101,7 +102,8 @@ const OddEvenFunctions = () => {
     a: 1,              // 系数
     b: 0,              // 偏置项
     xRange: [-5, 5],   // X轴范围
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 奇函数参数配置 - 分组版本
@@ -120,7 +122,8 @@ const OddEvenFunctions = () => {
   ];
 
   const oddViewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
+    { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   // 偶函数参数配置 - 分组版本
@@ -134,7 +137,8 @@ const OddEvenFunctions = () => {
   ];
 
   const evenViewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] }
+    { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -201,6 +205,7 @@ const OddEvenFunctions = () => {
             title="Odd Function: f(x) = ax³"
             showExportButton={false}
             plotStyle={oddParams.plotStyle}
+            aspectRatio={oddParams.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>
@@ -247,6 +252,7 @@ const OddEvenFunctions = () => {
             title="Even Function: f(x) = ax²"
             showExportButton={false}
             plotStyle={evenParams.plotStyle}
+            aspectRatio={evenParams.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>

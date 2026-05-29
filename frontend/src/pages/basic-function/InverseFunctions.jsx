@@ -98,7 +98,8 @@ const InverseFunctions = () => {
   const [params, setParams] = useState({
     coefficient: 1,
     xRange: [-5, 5],
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 参数配置 - 分组版本
@@ -125,7 +126,8 @@ const InverseFunctions = () => {
       max: 20,
       step: 1,
       default: [-5, 5]
-    }
+    },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -186,6 +188,7 @@ const InverseFunctions = () => {
             title="Inverse Function: h(t) and t(h)"
             showExportButton={false}
             plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>

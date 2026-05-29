@@ -12,8 +12,9 @@ const SequencePlotter = ({
   title,
   showLimitLine = false,
   limitValue,
-  showOriginalFunction = false,
-  plotStyle = 'medium' // 新增：全局样式档位 (thin, medium, thick)
+  plotStyle = 'medium',
+  aspectRatio = 'auto', // 新增：显示比例 (auto, 16:9, 4:3)
+  showOriginalFunction = false // 新增：是否显示原函数（用于 Limit 页面的第二个图）
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -272,12 +273,13 @@ const SequencePlotter = ({
   // 简单的内联样式 - 使用 CSS 变量支持主题切换
   const containerStyle = {
     width: '100%',
-    height: '600px',
+    height: aspectRatio === 'auto' ? '600px' : 'auto', // Auto 模式使用固定高度，其他模式由 aspect-ratio 决定
     background: 'var(--theme-card-bg, #1e293b)',
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    marginBottom: showOriginalFunction ? '0.5rem' : '1rem'
+    marginBottom: showOriginalFunction ? '0.5rem' : '1rem',
+    aspectRatio: aspectRatio === 'auto' ? 'unset' : aspectRatio.replace(':', '/')
   };
 
   return (

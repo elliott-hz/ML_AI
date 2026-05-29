@@ -106,7 +106,8 @@ const DivergentSequence2 = () => {
   
   const [params, setParams] = useState({ 
     maxN: 20,          // 显示的项数
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 参数配置 - 分组版本
@@ -115,7 +116,8 @@ const DivergentSequence2 = () => {
   ];
 
   const viewRangeConfig = [
-    { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 }
+    { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -171,6 +173,7 @@ const DivergentSequence2 = () => {
             sequenceType="divergent2"
             parameters={params}
             plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
             title="Sequence: u<sub>n</sub> = sin(n)"
             showLimitLine={false}
           />
@@ -185,6 +188,7 @@ const DivergentSequence2 = () => {
               title={`Original Function: f(x) = sin(x)`}
               showOriginalFunction={true}
               plotStyle={params.plotStyle}
+              aspectRatio={params.aspectRatio}
             />
           </div>
         </PlotPanel>

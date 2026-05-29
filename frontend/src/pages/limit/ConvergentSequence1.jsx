@@ -104,14 +104,15 @@ const ConvergentSequence1 = () => {
   const navigate = useNavigate();
   
   const [params, setParams] = useState({ 
-    base: 3,           // 底数
-    maxN: 20,          // 显示的项数
-    plotStyle: 'medium' // Plot 样式档位
+    base: 2,           // 底数
+    maxN: 50,          // 显示的项数
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 参数配置 - 分组版本
   const coefficientConfig = [
-    { name: 'base', label: 'Base (a)', min: 2, max: 10, step: 1 }
+    { name: 'base', label: 'Base (b)', min: 1.1, max: 10, step: 0.1 }
   ];
 
   const plotStyleConfig = [
@@ -119,7 +120,8 @@ const ConvergentSequence1 = () => {
   ];
 
   const viewRangeConfig = [
-    { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 5 }
+    { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -182,7 +184,8 @@ const ConvergentSequence1 = () => {
             sequenceType="convergent1"
             parameters={params}
             plotStyle={params.plotStyle}
-            title={`Sequence: u<sub>n</sub> = 1/${params.base}<sup>n</sup>`}
+            aspectRatio={params.aspectRatio}
+            title={`Sequence: u = 1/${params.base}ⁿ`}
             showLimitLine={true}
             limitValue={0}
           />
@@ -191,11 +194,12 @@ const ConvergentSequence1 = () => {
           <div style={{ marginTop: '1rem' }}>
             <SequencePlotter
               sequenceType="original_function"
-              parameters={{ funcName: 'exponential_decay', base: params.base, maxN: Math.min(params.maxN, 20) }}
+              parameters={{ funcName: 'exponential', base: params.base, maxN: Math.min(params.maxN, 20) }}
               xRange={[0, Math.min(params.maxN, 20)]}
               yRange={[0, 1]}
-              title={`Original Function: f(x) = 1/${params.base}<sup>x</sup>`}
+              title={`Original Function: f(x) = 1/${params.base}ˣ`}
               plotStyle={params.plotStyle}
+              aspectRatio={params.aspectRatio}
             />
           </div>
         </PlotPanel>

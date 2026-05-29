@@ -98,7 +98,8 @@ const PiecewiseFunctions = () => {
   const [params, setParams] = useState({
     coefficient: 1,
     xRange: [-10, 10],
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 参数配置 - 分组版本
@@ -125,7 +126,8 @@ const PiecewiseFunctions = () => {
       max: 20,
       step: 1,
       default: [-10, 10]
-    }
+    },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -188,6 +190,7 @@ const PiecewiseFunctions = () => {
             title="Piecewise Function: f(x)"
             showExportButton={false}
             plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>

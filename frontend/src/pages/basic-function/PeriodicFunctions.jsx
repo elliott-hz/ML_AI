@@ -84,7 +84,8 @@ const PeriodicFunctions = () => {
     b: 1,              // 频率
     c: 0,              // 相位
     xRange: [-10, 10], // X轴范围
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 周期函数参数配置 - 分组版本
@@ -99,7 +100,8 @@ const PeriodicFunctions = () => {
   ];
 
   const periodicViewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-10, 10] }
+    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-10, 10] },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -159,6 +161,7 @@ const PeriodicFunctions = () => {
             title="Periodic Function: f(x) = a·sin(bx + c)"
             showExportButton={false}
             plotStyle={periodicParams.plotStyle}
+            aspectRatio={periodicParams.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>

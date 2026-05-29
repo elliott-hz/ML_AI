@@ -94,7 +94,8 @@ const MonotonicityFunctions = () => {
     x2: 3,       // 第二个点的x坐标
     pointSize: 10, // 点大小
     xRange: [-8, 8], // X轴范围
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
   
   // 单调递减函数参数状态
@@ -105,7 +106,8 @@ const MonotonicityFunctions = () => {
     x2: 3,       // 第二个点的x坐标
     pointSize: 10, // 点大小
     xRange: [-8, 8], // X轴范围
-    plotStyle: 'medium' // Plot 样式档位
+    plotStyle: 'medium', // Plot 样式档位
+    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
   // 单调递增函数参数配置 - 分组版本
@@ -125,7 +127,8 @@ const MonotonicityFunctions = () => {
   ];
 
   const increasingViewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] }
+    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   // 单调递减函数参数配置 - 分组版本
@@ -145,7 +148,8 @@ const MonotonicityFunctions = () => {
   ];
 
   const decreasingViewRangeConfig = [
-    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] }
+    { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
   return (
@@ -212,6 +216,7 @@ const MonotonicityFunctions = () => {
             title="Monotonically Increasing: f(x) = ax + b"
             showExportButton={false}
             plotStyle={increasingParams.plotStyle}
+            aspectRatio={increasingParams.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>
@@ -267,6 +272,7 @@ const MonotonicityFunctions = () => {
             title="Monotonically Decreasing: f(x) = -ax + b"
             showExportButton={false}
             plotStyle={decreasingParams.plotStyle}
+            aspectRatio={decreasingParams.aspectRatio}
           />
         </PlotPanel>
       </ContentLayout>
