@@ -95,8 +95,8 @@ const ButtonDescription = styled.p`
 const Limit = () => {
   const navigate = useNavigate();
 
-  // Group 1: Sequence's Convergence
-  const convergentSequences = [
+  // Group 1 & 2: Sequences (Convergent & Divergent)
+  const sequences = [
     {
       id: 'convergent-1',
       icon: '',
@@ -118,11 +118,7 @@ const Limit = () => {
       ),
       description: 'Understand rational convergence. See how u_n = n/(n+1) approaches 1 from below.',
       path: '/mathematics/1-fundamentals/limit/convergent-2'
-    }
-  ];
-
-  // Group 2: Sequence's Divergence
-  const divergentSequences = [
+    },
     {
       id: 'divergent-1',
       icon: '',
@@ -147,7 +143,7 @@ const Limit = () => {
     }
   ];
 
-  // Group 3: Elementary Functions Limits
+  // Group 2: Elementary Functions Limits
   const elementaryFunctions = [
     {
       id: 'exponential',
@@ -184,7 +180,7 @@ const Limit = () => {
     }
   ];
 
-  // Group 4: One-Sided & Two-Sided Limits
+  // Group 3: One-Sided & Two-Sided Limits
   const oneSidedTwoSidedLimits = [
     {
       id: 'one-sided',
@@ -224,10 +220,10 @@ const Limit = () => {
         </Subtitle>
       </Header>
 
-      {/* Group 1: Sequence's Convergence */}
-      <GroupTitle>Sequence's Convergence</GroupTitle>
+      {/* Group 1: Sequences (Convergent & Divergent) */}
+      <GroupTitle>Sequences (Convergent & Divergent)</GroupTitle>
       <ButtonGrid>
-        {convergentSequences.map((feature) => (
+        {sequences.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
@@ -239,22 +235,7 @@ const Limit = () => {
         ))}
       </ButtonGrid>
 
-      {/* Group 2: Sequence's Divergence */}
-      <GroupTitle>Sequence's Divergence</GroupTitle>
-      <ButtonGrid>
-        {divergentSequences.map((feature) => (
-          <FeatureButton
-            key={feature.id}
-            onClick={() => handleFeatureClick(feature.path)}
-          >
-            <ButtonIcon>{feature.icon}</ButtonIcon>
-            <ButtonTitle>{feature.title}</ButtonTitle>
-            <ButtonDescription>{feature.description}</ButtonDescription>
-          </FeatureButton>
-        ))}
-      </ButtonGrid>
-
-      {/* Group 3: Elementary Functions Limits */}
+      {/* Group 2: Elementary Functions Limits */}
       <GroupTitle>Elementary Functions Limits</GroupTitle>
       <ButtonGrid>
         {elementaryFunctions.map((feature) => (
@@ -269,7 +250,7 @@ const Limit = () => {
         ))}
       </ButtonGrid>
 
-      {/* Group 4: One-Sided & Two-Sided Limits */}
+      {/* Group 3: One-Sided & Two-Sided Limits */}
       <GroupTitle>One-Sided & Two-Sided Limits</GroupTitle>
       <ButtonGrid>
         {oneSidedTwoSidedLimits.map((feature) => (
