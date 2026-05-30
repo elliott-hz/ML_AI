@@ -87,8 +87,57 @@ const FunctionPlotter = ({
   const styledData = useMemo(() => {
     if (!data || data.length === 0) return data;
     
+    // ✅ 获取当前主题的辅助元素颜色
+    const auxiliaryColor = themeMode === 'dark' ? '#ffd700' : '#f59e0b';
+    
     return data.map(trace => {
       const newTrace = { ...trace };
+      
+      // ✅ 检测是否为辅助元素（通过 name 判断）
+      // 包括：辅助线、辅助点、辅助文本等
+      const isAuxiliaryElement = 
+        trace.name && (
+          // 辅助线
+          trace.name.includes('Peak') ||
+          trace.name.includes('Break Point') ||
+          trace.name.includes('Vertical Line') ||
+          trace.name.includes('Horizontal Line') ||
+          trace.name.includes('Connection Line') ||
+          trace.name.includes('Axis of Symmetry') ||
+          trace.name.includes('symmetry axis') ||
+          // 辅助点（示例点、关键点等）
+          trace.name.includes('P(') ||           // P(x, y) 格式的点
+          trace.name.includes("P'") ||           // P'(x, y) 格式的点
+          trace.name.includes('P₁') ||           // P₁(x, y) 格式的点
+          trace.name.includes('P₂')              // P₂(x, y) 格式的点
+        );
+      
+      // ✅ 如果是辅助元素，替换为主题感知的颜色
+      if (isAuxiliaryElement) {
+        // 更新线条颜色
+        if (newTrace.line) {
+          newTrace.line = {
+            ...newTrace.line,
+            color: auxiliaryColor
+          };
+        }
+        
+        // 更新标记点颜色
+        if (newTrace.marker) {
+          newTrace.marker = {
+            ...newTrace.marker,
+            color: auxiliaryColor
+          };
+        }
+        
+        // 更新文本颜色
+        if (newTrace.textfont) {
+          newTrace.textfont = {
+            ...newTrace.textfont,
+            color: auxiliaryColor
+          };
+        }
+      }
       
       // 应用线宽样式
       if (newTrace.line) {
@@ -116,7 +165,7 @@ const FunctionPlotter = ({
       
       return newTrace;
     });
-  }, [data, styleConfig]);
+  }, [data, styleConfig, themeMode]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
