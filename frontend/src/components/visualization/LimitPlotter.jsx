@@ -583,7 +583,9 @@ const LimitPlotter = ({
           trace.name.includes('P(') ||
           trace.name.includes("P'") ||
           trace.name.includes('P₁') ||
-          trace.name.includes('P₂')
+          trace.name.includes('P₂') ||
+          trace.name.startsWith('x=') ||  // ✅ 新增：垂直辅助线
+          trace.name.startsWith('y=')     // ✅ 新增：水平辅助线
         );
       
       // ✅ 如果是辅助元素，替换为主题感知的颜色

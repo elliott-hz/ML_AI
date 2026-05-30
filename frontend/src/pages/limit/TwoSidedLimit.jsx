@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -103,6 +103,146 @@ const TwoSidedLimit = () => {
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 生成连续函数数据（有理函数，在 x=1 处有可去间断点）
+  const generateFunctionData = useCallback(() => {
+    const [xMin, xMax] = params.xRange || [-1, 3];
+    const numPoints = 200;
+    
+    const traces = [];
+    
+    // ✅ 先计算函数的 Y 范围，用于确定垂直辅助线的长度
+    let minY = Infinity;
+    let maxY = -Infinity;
+    
+    // 遍历 X 范围，计算函数的最小和最大值
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      if (Math.abs(x - 1) > 0.01) { // 避免接近 1
+        const y = (x * x - 1) / (x - 1); // f(x) = x+1
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+    
+    // 添加一些边距，确保辅助线稍微超出函数范围
+    const padding = Math.max((maxY - minY) * 0.1, 0.5);
+    const auxYMin = minY - padding;
+    const auxYMax = maxY + padding;
+    
+    // ✅ 将数据分为两部分：x < 1 和 x > 1（避免在 x=1 处连接）
+    // 第一部分：x < 1
+    if (xMin < 1) {
+      const xValuesLeft = [];
+      const yValuesLeft = [];
+      
+      for (let i = 0; i <= numPoints / 2; i++) {
+        const x = xMin + ((Math.min(1, xMax) - xMin) * i) / (numPoints / 2);
+        if (Math.abs(x - 1) > 0.01) { // 避免接近 1
+          xValuesLeft.push(x);
+          // f(x) = (x²-1)/(x-1) = x+1 (for x ≠ 1)
+          yValuesLeft.push((x * x - 1) / (x - 1));
+        }
+      }
+      
+      if (xValuesLeft.length > 0) {
+        traces.push({
+          x: xValuesLeft,
+          y: yValuesLeft,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'f(x)',
+          line: { 
+            color: '#6366f1', 
+            width: 2.5
+          }
+        });
+      }
+    }
+    
+    // 第二部分：x > 1
+    if (xMax > 1) {
+      const xValuesRight = [];
+      const yValuesRight = [];
+      
+      for (let i = 0; i <= numPoints / 2; i++) {
+        const x = Math.max(1, xMin) + ((xMax - Math.max(1, xMin)) * i) / (numPoints / 2);
+        if (Math.abs(x - 1) > 0.01) { // 避免接近 1
+          xValuesRight.push(x);
+          // f(x) = (x²-1)/(x-1) = x+1 (for x ≠ 1)
+          yValuesRight.push((x * x - 1) / (x - 1));
+        }
+      }
+      
+      if (xValuesRight.length > 0) {
+        traces.push({
+          x: xValuesRight,
+          y: yValuesRight,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'f(x)',
+          line: { 
+            color: '#6366f1', 
+            width: 2.5
+          }
+        });
+      }
+    }
+    
+    // ✅ 添加垂直辅助线（x=1，可去间断点）- 使用动态计算的 Y 范围
+    traces.push({
+      x: [1, 1],
+      y: [auxYMin, auxYMax],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'x=1',
+      line: { 
+        color: '#ffd700', // 金黄色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    // ✅ 添加水平辅助线（y=2，极限值）
+    traces.push({
+      x: [xMin, xMax],
+      y: [2, 2],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'lim: 2',
+      line: { 
+        color: '#ffd700', // 金黄色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    // ✅ 添加可去间断点 (1, 2) - 空心点
+    traces.push({
+      x: [1],
+      y: [2],
+      type: 'scatter',
+      mode: 'markers+text',
+      name: 'Hole',
+      marker: { 
+        size: 12, 
+        color: '#ef4444', // 红色
+        symbol: 'circle-open',
+        line: {
+          color: '#ef4444',
+          width: 2
+        }
+      },
+      text: ['Hole at (1, 2)'],
+      textposition: 'top center',
+      textfont: {
+        size: 12,
+        color: '#ef4444'
+      }
+    });
+    
+    return traces;
+  }, [params]);
+
   // 参数配置
   const plotStyleConfig = [
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
@@ -174,18 +314,11 @@ const TwoSidedLimit = () => {
         <PlotPanel>
           {/* 显示原函数图，带辅助线和关键点 */}
           <LimitPlotter
-            sequenceType="original_function"
-            parameters={{ ...params, funcName: 'rational_twosided' }}
+            data={generateFunctionData()}
             xRange={params.xRange}
             title={`Rational Function: Left = Right Limit`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            showAuxiliaryLines={true}
-            auxiliaryX={1}  // Vertical line at x=1 (the hole)
-            auxiliaryY={2}  // Horizontal limit line at y=2
-            showPoints={[
-              { x: 1, y: 2, label: 'Removable discontinuity (hole)' }
-            ]}
           />
         </PlotPanel>
       </ContentLayout>
