@@ -3,23 +3,17 @@ import Plotly from 'plotly.js/dist/plotly.min.js';
 
 /**
  * Limit Plotter 组件 - 支持极限函数可视化的展示
+ * 
+ * 新架构：纯渲染引擎，接收预计算的 data prop
+ * 所有业务逻辑已迁移到子页面层
  */
 const LimitPlotter = ({
-  sequenceType,
-  parameters,
   xRange: propXRange,
   yRange: propYRange,
   title,
-  showLimitLine = false,
-  limitValue,
   plotStyle = 'medium',
-  aspectRatio = 'auto', // 新增：显示比例 (auto, 16:9, 4:3)
-  showOriginalFunction = false, // 新增：是否显示原函数（用于 Limit 页面的第二个图）
-  showAuxiliaryLines = false, // 新增：是否显示辅助线（垂直线和水平极限线）
-  auxiliaryX = null, // 新增：辅助线 X 位置
-  auxiliaryY = null, // 新增：辅助线 Y 位置（极限值）
-  showPoints = [], // 新增：要显示的点数组 [{x, y, label}]
-  data, // 新增：直接传入 Plotly traces 数组（新接口，优先使用）
+  aspectRatio = 'auto', // 显示比例 (auto, 16:9, 4:3)
+  data, // 直接传入 Plotly traces 数组（唯一数据源）
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -58,509 +52,15 @@ const LimitPlotter = ({
     return themeMode === 'dark' ? '#ffd700' : '#f59e0b'; // Dark: 亮黄, Light: 琥珀色（更醒目）
   }, [themeMode]);
 
-  // 根据主题获取函数线颜色
-  const getFunctionLineColor = useCallback(() => {
-    return themeMode === 'dark' ? '#6366f1' : '#4f46e5'; // Dark: Indigo 500, Light: Indigo 600
-  }, [themeMode]);
-
-  // 根据数列类型和参数计算数列值
-  const calculateSequenceValues = useCallback((n) => {
-    const base = parameters.base || 3;
-    
-    switch (sequenceType) {
-      case 'convergent1':
-        // u_n = 1/base^n
-        return 1 / Math.pow(base, n);
-      
-      case 'convergent2':
-        // u_n = n/(n+1)
-        return n / (n + 1);
-      
-      case 'divergent1':
-        // u_n = n²
-        return n * n;
-      
-      case 'divergent2':
-        // u_n = sin(n)
-        return Math.sin(n);
-      
-      case 'original_function':
-        // 原函数连续曲线（用于对比显示）
-        const a = parameters.coefficient || 1;
-        
-        if (parameters.funcName === 'exponential' || parameters.funcName === 'exponential_decay') {
-          const base = parameters.base || Math.E;
-          return 1 / Math.pow(base, n);
-        } else if (parameters.funcName === 'rational') {
-          // 反比例函数: f(x) = a/x
-          if (n === 0) return 0; // 避免除以零
-          return a / n;
-        } else if (parameters.funcName === 'arctan') {
-          // 反正切函数: f(x) = a·arctan(x)
-          return a * Math.atan(n);
-        } else if (parameters.funcName === 'quadratic') {
-          return n * n;
-        } else if (parameters.funcName === 'sin') {
-          return Math.sin(n);
-        } else if (parameters.funcName === 'logarithmic') {
-          const base = parameters.base || 2;
-          return 1 / Math.log(n + 1) / Math.log(base);
-        } else if (parameters.funcName === 'piecewise_onesided') {
-          // 单侧极限分段函数: f(x) = { x-1, x < 0; 0, x = 0; x+1, x > 0 }
-          if (n < 0) {
-            return n - 1;
-          } else if (n === 0) {
-            return 0;
-          } else {
-            return n + 1;
-          }
-        } else if (parameters.funcName === 'rational_twosided') {
-          // 双侧极限有理函数: f(x) = (x²-1)/(x-1) = x+1 (for x ≠ 1)
-          // 在 x=1 处有洞，但极限存在
-          if (Math.abs(n - 1) < 0.001) {
-            // 接近 x=1 时返回极限值 2
-            return 2;
-          }
-          return (n * n - 1) / (n - 1);
-        } else if (parameters.funcName === 'infinitesimal_sum') {
-          // 无穷小和: f(x) = x + x² + x³
-          return n + n * n + n * n * n;
-        } else if (parameters.funcName === 'infinitesimal_bounded') {
-          // 有界函数×无穷小: f(x) = cos(x)·x
-          return Math.cos(n) * n;
-        } else if (parameters.funcName === 'infinitesimal_constant') {
-          // 常数×无穷小: f(x) = c·x
-          const c = parameters.constant || 5;
-          return c * n;
-        }
-        return 0;
-      
-      default:
-        return 0;
-    }
-  }, [sequenceType, parameters]);
-
-  // 生成数列数据点
+  // ✅ 新增：如果外部传入了 data，直接使用（新接口）
   const plotData = useMemo(() => {
-    // 如果外部传入了 data，直接使用（新接口）
     if (data && Array.isArray(data)) {
       return data;
     }
     
-    // 否则使用旧逻辑生成数据（向后兼容）
-    const maxN = parameters.maxN || 50;
-    const traces = [];
-    
-    if (sequenceType === 'original_function') {
-      // 原函数：使用连续曲线（更密集的采样点）
-      // 如果传入了 xRange，使用它；否则使用默认的 [0, maxN]
-      const xMin = propXRange ? propXRange[0] : 0;
-      const xMax = propXRange ? propXRange[1] : maxN;
-      
-      const numPoints = 200;
-      
-      // 对于不连续函数（如 rational a/x 或 piecewise_onesided），需要分成多个 trace 避免连接渐近线
-      const isDiscontinuous = parameters.funcName === 'rational' || parameters.funcName === 'piecewise_onesided';
-      
-      // 特殊处理：无穷小和 - 绘制 4 条曲线 (x, x², x³, sum)
-      if (parameters.funcName === 'infinitesimal_sum') {
-        const numPoints = 200;
-        
-        // 曲线 1: α₁(x) = x
-        const x1Values = [];
-        const y1Values = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          x1Values.push(x);
-          y1Values.push(x);
-        }
-        traces.push({
-          x: x1Values,
-          y: y1Values,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'α₁(x) = x',
-          line: { 
-            color: '#3b82f6', 
-            width: styleConfig.lineWidth,
-            dash: 'solid'
-          }
-        });
-        
-        // 曲线 2: α₂(x) = x²
-        const x2Values = [];
-        const y2Values = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          x2Values.push(x);
-          y2Values.push(x * x);
-        }
-        traces.push({
-          x: x2Values,
-          y: y2Values,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'α₂(x) = x²',
-          line: { 
-            color: '#10b981', 
-            width: styleConfig.lineWidth,
-            dash: 'solid'
-          }
-        });
-        
-        // 曲线 3: α₃(x) = x³
-        const x3Values = [];
-        const y3Values = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          x3Values.push(x);
-          y3Values.push(x * x * x);
-        }
-        traces.push({
-          x: x3Values,
-          y: y3Values,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'α₃(x) = x³',
-          line: { 
-            color: '#f59e0b', 
-            width: styleConfig.lineWidth,
-            dash: 'solid'
-          }
-        });
-        
-        // 曲线 4: β(x) = x + x² + x³ (sum)
-        const sumXValues = [];
-        const sumYValues = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          sumXValues.push(x);
-          sumYValues.push(x + x * x + x * x * x);
-        }
-        traces.push({
-          x: sumXValues,
-          y: sumYValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'β(x) = x + x² + x³',
-          line: { 
-            color: '#ef4444', 
-            width: styleConfig.lineWidth * 1.5,
-            dash: 'solid'
-          }
-        });
-      } else if (parameters.funcName === 'infinitesimal_bounded') {
-        // 特殊处理：有界函数×无穷小 - 绘制 3 条曲线 (cos(x), x, product)
-        const numPoints = 200;
-        
-        // 曲线 1: f(x) = cos(x) (bounded function)
-        const cosXValues = [];
-        const cosYValues = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          cosXValues.push(x);
-          cosYValues.push(Math.cos(x));
-        }
-        traces.push({
-          x: cosXValues,
-          y: cosYValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'f(x) = cos(x)',
-          line: { 
-            color: '#8b5cf6', 
-            width: styleConfig.lineWidth,
-            dash: 'solid'
-          }
-        });
-        
-        // 曲线 2: α(x) = x (infinitesimal)
-        const xValues = [];
-        const yValues = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          xValues.push(x);
-          yValues.push(x);
-        }
-        traces.push({
-          x: xValues,
-          y: yValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'α(x) = x',
-          line: { 
-            color: '#3b82f6', 
-            width: styleConfig.lineWidth,
-            dash: 'solid'
-          }
-        });
-        
-        // 曲线 3: g(x) = cos(x)·x (product)
-        const prodXValues = [];
-        const prodYValues = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          prodXValues.push(x);
-          prodYValues.push(Math.cos(x) * x);
-        }
-        traces.push({
-          x: prodXValues,
-          y: prodYValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'g(x) = cos(x)·x',
-          line: { 
-            color: '#ef4444', 
-            width: styleConfig.lineWidth * 1.5,
-            dash: 'solid'
-          }
-        });
-      } else if (parameters.funcName === 'infinitesimal_constant') {
-        // 特殊处理：常数×无穷小 - 绘制 2 条曲线 (x, c·x)
-        const numPoints = 200;
-        const c = parameters.constant || 5;
-        
-        // 曲线 1: α(x) = x (infinitesimal)
-        const xValues = [];
-        const yValues = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          xValues.push(x);
-          yValues.push(x);
-        }
-        traces.push({
-          x: xValues,
-          y: yValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'α(x) = x',
-          line: { 
-            color: '#3b82f6', 
-            width: styleConfig.lineWidth,
-            dash: 'solid'
-          }
-        });
-        
-        // 曲线 2: g(x) = c·x (scaled infinitesimal)
-        const scaledXValues = [];
-        const scaledYValues = [];
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          scaledXValues.push(x);
-          scaledYValues.push(c * x);
-        }
-        traces.push({
-          x: scaledXValues,
-          y: scaledYValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: `g(x) = ${c}·x`,
-          line: { 
-            color: '#ef4444', 
-            width: styleConfig.lineWidth * 1.5,
-            dash: 'solid'
-          }
-        });
-      } else if (isDiscontinuous && xMin < 0 && xMax > 0) {
-        // 不连续函数跨越 x=0，分成两个独立的 trace
-        
-        // 左侧分支：x < 0
-        const leftNumPoints = Math.floor(numPoints / 2);
-        const leftXValues = [];
-        const leftYValues = [];
-        
-        for (let i = 0; i <= leftNumPoints; i++) {
-          const x = xMin + ((0 - xMin) * i) / leftNumPoints;
-          // 避免太接近 0 导致数值溢出或跳过间断点
-          if (Math.abs(x) > 0.001) {
-            leftXValues.push(x);
-            leftYValues.push(calculateSequenceValues(x));
-          }
-        }
-        
-        if (leftXValues.length > 0) {
-          traces.push({
-            x: leftXValues,
-            y: leftYValues,
-            type: 'scatter',
-            mode: 'lines',
-            name: 'f(x)',
-            line: { 
-              color: getFunctionLineColor(), 
-              width: styleConfig.lineWidth * 1.25
-            },
-            showlegend: false  // 只显示一个图例
-          });
-        }
-        
-        // 右侧分支：x > 0
-        const rightNumPoints = numPoints - leftNumPoints;
-        const rightXValues = [];
-        const rightYValues = [];
-        
-        for (let i = 0; i <= rightNumPoints; i++) {
-          const x = 0 + ((xMax - 0) * i) / rightNumPoints;
-          // 避免太接近 0 导致数值溢出或跳过间断点
-          if (Math.abs(x) > 0.001) {
-            rightXValues.push(x);
-            rightYValues.push(calculateSequenceValues(x));
-          }
-        }
-        
-        if (rightXValues.length > 0) {
-          traces.push({
-            x: rightXValues,
-            y: rightYValues,
-            type: 'scatter',
-            mode: 'lines',
-            name: 'f(x)',
-            line: { 
-              color: getFunctionLineColor(), 
-              width: styleConfig.lineWidth * 1.25
-            },
-            showlegend: true  // 只在最后一个 trace 显示图例
-          });
-        }
-      } else {
-        // 连续函数或单侧区间，正常绘制
-        const xValues = [];
-        const yValues = [];
-        
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + ((xMax - xMin) * i) / numPoints;
-          xValues.push(x);
-          yValues.push(calculateSequenceValues(x));
-        }
-        
-        traces.push({
-          x: xValues,
-          y: yValues,
-          type: 'scatter',
-          mode: 'lines',
-          name: 'f(x)',
-          line: { 
-            color: getFunctionLineColor(), 
-            width: styleConfig.lineWidth * 1.25
-          }
-        });
-      }
-    } else {
-      // 序列：使用离散点
-      const nValues = [];
-      const uValues = [];
-      
-      for (let n = 0; n <= maxN; n++) {
-        nValues.push(n);
-        uValues.push(calculateSequenceValues(n));
-      }
-      
-      // 主数列散点图
-      traces.push({
-        x: nValues,
-        y: uValues,
-        type: 'scatter',
-        mode: 'lines+markers',
-        name: 'u<sub>n</sub>',
-        line: { 
-          color: getFunctionLineColor(), 
-          width: styleConfig.lineWidth,
-          shape: 'spline',
-          dash: styleConfig.dash
-        },
-        marker: { 
-          size: styleConfig.pointSize, 
-          color: getFunctionLineColor(),
-          symbol: 'circle'
-        }
-      });
-      
-      // 如果是收敛数列，添加极限线
-      if (showLimitLine && limitValue !== undefined) {
-        traces.push({
-          x: [0, maxN],
-          y: [limitValue, limitValue],
-          type: 'scatter',
-          mode: 'lines',
-          name: `lim: ${limitValue}`,
-          line: { 
-            color: getAuxiliaryColor(), 
-            width: styleConfig.lineWidth, 
-            dash: styleConfig.dash 
-          }
-        });
-      }
-    }
-    
-    // 添加辅助线（垂直线和水平极限线）
-    if (showAuxiliaryLines && propXRange) {
-      const xMin = propXRange[0];
-      const xMax = propXRange[1];
-      
-      // 垂直辅助线（在 critical point 处）
-      if (auxiliaryX !== null && auxiliaryX >= xMin && auxiliaryX <= xMax) {
-        traces.push({
-          x: [auxiliaryX, auxiliaryX],
-          y: [-10000, 10000], // 使用很大的范围确保覆盖整个 Y 轴
-          type: 'scatter',
-          mode: 'lines',
-          name: `x = ${auxiliaryX}`,
-          line: { 
-            color: getAuxiliaryColor(), 
-            width: styleConfig.lineWidth * 0.8, 
-            dash: 'dot' 
-          },
-          showlegend: false
-        });
-      }
-      
-      // 水平极限线
-      if (auxiliaryY !== null) {
-        traces.push({
-          x: [xMin, xMax],
-          y: [auxiliaryY, auxiliaryY],
-          type: 'scatter',
-          mode: 'lines',
-          name: `y = ${auxiliaryY} (limit)`,
-          line: { 
-            color: getAuxiliaryColor(), 
-            width: styleConfig.lineWidth, 
-            dash: 'dash' 
-          }
-        });
-      }
-    }
-    
-    // 添加关键点标记
-    if (showPoints && showPoints.length > 0) {
-      showPoints.forEach((point, index) => {
-        traces.push({
-          x: [point.x],
-          y: [point.y],
-          type: 'scatter',
-          mode: 'markers+text',
-          name: point.label || `Point ${index + 1}`,
-          marker: { 
-            size: styleConfig.pointSize * 1.5, 
-            color: '#ef4444', // Red color for key points
-            symbol: 'circle',
-            line: {
-              color: '#ffffff',
-              width: 2
-            }
-          },
-          text: [point.label || ''],
-          textposition: 'top center',
-          textfont: {
-            color: themeMode === 'dark' ? '#f8fafc' : '#0f172a',
-            size: styleConfig.fontSize + 2,
-            family: 'Arial, sans-serif'
-          }
-        });
-      });
-    }
-    
-    return traces;
-  }, [data, sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue, styleConfig, getFunctionLineColor, getAuxiliaryColor, showAuxiliaryLines, auxiliaryX, auxiliaryY, showPoints, themeMode]);
+    // 如果没有传入 data，返回空数组（所有业务逻辑已迁移到子页面）
+    return [];
+  }, [data]);
 
   // ✅ 新增：根据 plotStyle 应用样式到所有 traces（参考 FunctionPlotter.jsx）
   const styledData = useMemo(() => {
@@ -638,15 +138,15 @@ const LimitPlotter = ({
       
       return newTrace;
     });
-  }, [plotData, styleConfig, getAuxiliaryColor, themeMode]);
+  }, [data, plotStyle, styleConfig, getAuxiliaryColor, themeMode]);
 
   // 自动计算 Y 轴范围
   const autoYRange = useMemo(() => {
     // 如果外部传入了 yRange，优先使用它
     if (propYRange) return propYRange;
     
-    // 如果使用新的 data 接口（没有 sequenceType），从 data 中提取 Y 范围
-    if (!sequenceType && data && Array.isArray(data)) {
+    // 从 data 中提取 Y 范围
+    if (data && Array.isArray(data)) {
       let minVal = Infinity;
       let maxVal = -Infinity;
       
@@ -683,71 +183,9 @@ const LimitPlotter = ({
       return [minVal - bottomPadding, maxVal + topPadding];
     }
     
-    // 对于原函数类型，需要根据 xRange 计算
-    if (sequenceType === 'original_function' && propXRange) {
-      const numPoints = 200; // 增加采样点以捕捉极值
-      const step = (propXRange[1] - propXRange[0]) / numPoints;
-      let minVal = Infinity;
-      let maxVal = -Infinity;
-      
-      for (let i = 0; i <= numPoints; i++) {
-        const x = propXRange[0] + i * step;
-        const val = calculateSequenceValues(x);
-        
-        // 过滤异常值
-        if (!isNaN(val) && isFinite(val) && Math.abs(val) < 10000) {
-          if (val < minVal) minVal = val;
-          if (val > maxVal) maxVal = val;
-        }
-      }
-      
-      // 如果没有找到有效值，返回默认范围
-      if (minVal === Infinity || maxVal === -Infinity) {
-        return [-10, 10];
-      }
-      
-      // 添加非对称边距（上部多留，下部少留）- 进一步减小边距
-      const range = maxVal - minVal;
-      
-      // 对于极小范围的函数，强制最小显示范围为 1.2（上部留 0.6，下部留 0.6）
-      if (range < 1.2) {
-        const center = (minVal + maxVal) / 2;
-        return [center - 0.6, center + 0.6];
-      }
-      
-      // 正常情况：上部留 8%，下部留 3%
-      const topPadding = range * 0.08;
-      const bottomPadding = range * 0.03;
-      
-      return [minVal - bottomPadding, maxVal + topPadding];
-    }
-    
-    // 对于序列类型，根据 maxN 计算（需要 parameters）
-    const maxN = parameters?.maxN || 50;
-    let minVal = Infinity;
-    let maxVal = -Infinity;
-    
-    for (let n = 0; n <= maxN; n++) {
-      const val = calculateSequenceValues(n);
-      if (val < minVal) minVal = val;
-      if (val > maxVal) maxVal = val;
-    }
-    
-    // 添加非对称边距（上部多留，下部少留）- 进一步减小边距
-    const range = maxVal - minVal;
-    
-    // 对于极小范围的函数，强制最小显示范围为 1.2（上部留 0.6，下部留 0.6）
-    if (range < 1.2) {
-      const center = (minVal + maxVal) / 2;
-      return [center - 0.6, center + 0.6];
-    }
-    
-    // 正常情况：上部留 8%，下部留 3%
-    const topPadding = range * 0.08;
-    const bottomPadding = range * 0.03;
-    
-    return [minVal - bottomPadding, maxVal + topPadding];
-  }, [data, sequenceType, parameters, calculateSequenceValues, propYRange, propXRange]);
+    // 默认返回范围
+    return [-10, 10];
+  }, [data, propYRange]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
@@ -764,7 +202,7 @@ const LimitPlotter = ({
       },
       xaxis: {
         title: 'n',
-        range: propXRange || (data && !sequenceType ? [0, Math.max(...(data[0]?.x || [50]))] : [0, parameters?.maxN || 50]),
+        range: propXRange || (data && data.length > 0 && data[0].x ? [Math.min(...data[0].x), Math.max(...data[0].x)] : [0, 50]),
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
@@ -776,7 +214,7 @@ const LimitPlotter = ({
         mirror: true // 让轴线在两侧都显示，形成闭合框
       },
       yaxis: {
-        title: sequenceType === 'original_function' ? 'f(x)' : 'u<sub>n</sub>',
+        title: 'Value',
         range: autoYRange,
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
@@ -799,7 +237,7 @@ const LimitPlotter = ({
         borderwidth: 1
       }
     };
-  }, [title, propXRange, parameters?.maxN, autoYRange, sequenceType, themeMode, styleConfig, data]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, data]);
 
   // 配置 Plotly 工具栏
   const config = {
@@ -847,7 +285,7 @@ const LimitPlotter = ({
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    marginBottom: showOriginalFunction ? '0.5rem' : '1rem',
+    marginBottom: '1rem',
     aspectRatio: aspectRatio === 'auto' ? 'unset' : aspectRatio.replace(':', '/')
   };
 
