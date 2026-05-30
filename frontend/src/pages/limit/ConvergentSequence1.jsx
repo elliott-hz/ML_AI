@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -110,6 +110,82 @@ const ConvergentSequence1 = () => {
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 生成离散序列数据
+  const generateSequenceData = useCallback(() => {
+    const maxN = params.maxN || 50;
+    const base = params.base || 2;
+    
+    const nValues = [];
+    const uValues = [];
+    
+    for (let n = 0; n <= maxN; n++) {
+      nValues.push(n);
+      uValues.push(1 / Math.pow(base, n));
+    }
+    
+    const traces = [{
+      x: nValues,
+      y: uValues,
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: 'uₙ',
+      line: { 
+        color: '#6366f1', 
+        width: 2,
+        shape: 'spline'
+      },
+      marker: { 
+        size: 8, 
+        color: '#6366f1',
+        symbol: 'circle'
+      }
+    }];
+    
+    // ✅ 添加收敛辅助线（y=0）
+    traces.push({
+      x: [0, maxN],
+      y: [0, 0],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'lim: 0',
+      line: { 
+        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        width: 2, 
+        dash: 'dash' // ✅ 辅助线保持虚线
+      }
+    });
+    
+    return traces;
+  }, [params]);
+
+  // 生成连续原函数数据
+  const generateFunctionData = useCallback(() => {
+    const maxN = Math.min(params.maxN, 20);
+    const base = params.base || 2;
+    const numPoints = 200;
+    
+    const xValues = [];
+    const yValues = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = 0 + (maxN * i) / numPoints;
+      xValues.push(x);
+      yValues.push(1 / Math.pow(base, x));
+    }
+    
+    return [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'f(x)',
+      line: { 
+        color: '#6366f1', 
+        width: 2.5
+      }
+    }];
+  }, [params]);
+
   // 参数配置 - 分组版本
   const coefficientConfig = [
     { name: 'base', label: 'Base (b)', min: 1.1, max: 10, step: 0.1 }
@@ -181,11 +257,11 @@ const ConvergentSequence1 = () => {
         
         <PlotPanel>
           <LimitPlotter
-            sequenceType="convergent1"
-            parameters={params}
+            data={generateSequenceData()}
+            xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            title={`Sequence: u = 1/${params.base}ⁿ`}
+            title={`Sequence: uₙ = 1/${params.base}ⁿ`}
             showLimitLine={true}
             limitValue={0}
           />
@@ -193,9 +269,8 @@ const ConvergentSequence1 = () => {
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
-              sequenceType="original_function"
-              parameters={{ funcName: 'exponential', base: params.base, maxN: Math.min(params.maxN, 20) }}
-              xRange={[0, 8]}
+              data={generateFunctionData()}
+              xRange={[0, Math.min(params.maxN, 20)]}
               title={`Original Function: f(x) = 1/${params.base}ˣ`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}

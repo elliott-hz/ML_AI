@@ -19,6 +19,7 @@ const LimitPlotter = ({
   auxiliaryX = null, // 新增：辅助线 X 位置
   auxiliaryY = null, // 新增：辅助线 Y 位置（极限值）
   showPoints = [], // 新增：要显示的点数组 [{x, y, label}]
+  data, // 新增：直接传入 Plotly traces 数组（新接口，优先使用）
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -141,6 +142,12 @@ const LimitPlotter = ({
 
   // 生成数列数据点
   const plotData = useMemo(() => {
+    // 如果外部传入了 data，直接使用（新接口）
+    if (data && Array.isArray(data)) {
+      return data;
+    }
+    
+    // 否则使用旧逻辑生成数据（向后兼容）
     const maxN = parameters.maxN || 50;
     const traces = [];
     
@@ -553,16 +560,130 @@ const LimitPlotter = ({
     }
     
     return traces;
-  }, [sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue, styleConfig, getFunctionLineColor, getAuxiliaryColor, showAuxiliaryLines, auxiliaryX, auxiliaryY, showPoints, themeMode]);
+  }, [data, sequenceType, parameters, calculateSequenceValues, showLimitLine, limitValue, styleConfig, getFunctionLineColor, getAuxiliaryColor, showAuxiliaryLines, auxiliaryX, auxiliaryY, showPoints, themeMode]);
+
+  // ✅ 新增：根据 plotStyle 应用样式到所有 traces（参考 FunctionPlotter.jsx）
+  const styledData = useMemo(() => {
+    if (!plotData || plotData.length === 0) return plotData;
+    
+    return plotData.map(trace => {
+      const newTrace = { ...trace };
+      
+      // ✅ 检测是否为辅助元素（通过 name 判断）
+      const isAuxiliaryElement = 
+        trace.name && (
+          trace.name.includes('lim:') ||
+          trace.name.includes('Peak') ||
+          trace.name.includes('Break Point') ||
+          trace.name.includes('Vertical Line') ||
+          trace.name.includes('Horizontal Line') ||
+          trace.name.includes('Connection Line') ||
+          trace.name.includes('Axis of Symmetry') ||
+          trace.name.includes('symmetry axis') ||
+          trace.name.includes('P(') ||
+          trace.name.includes("P'") ||
+          trace.name.includes('P₁') ||
+          trace.name.includes('P₂')
+        );
+      
+      // ✅ 如果是辅助元素，替换为主题感知的颜色
+      if (isAuxiliaryElement) {
+        if (newTrace.line) {
+          newTrace.line = {
+            ...newTrace.line,
+            color: getAuxiliaryColor()
+          };
+        }
+        
+        if (newTrace.marker) {
+          newTrace.marker = {
+            ...newTrace.marker,
+            color: getAuxiliaryColor()
+          };
+        }
+        
+        if (newTrace.textfont) {
+          newTrace.textfont = {
+            ...newTrace.textfont,
+            color: getAuxiliaryColor()
+          };
+        }
+      }
+      
+      // 应用线宽样式
+      if (newTrace.line) {
+        newTrace.line = {
+          ...newTrace.line,
+          width: styleConfig.lineWidth
+        };
+      }
+      
+      // 应用点大小样式（如果有 markers）
+      if (newTrace.marker) {
+        newTrace.marker = {
+          ...newTrace.marker,
+          size: styleConfig.pointSize
+        };
+      }
+      
+      // 应用字体大小样式（如果有 text）
+      if (newTrace.textfont) {
+        newTrace.textfont = {
+          ...newTrace.textfont,
+          size: styleConfig.fontSize
+        };
+      }
+      
+      return newTrace;
+    });
+  }, [plotData, styleConfig, getAuxiliaryColor, themeMode]);
 
   // 自动计算 Y 轴范围
   const autoYRange = useMemo(() => {
     // 如果外部传入了 yRange，优先使用它
     if (propYRange) return propYRange;
     
+    // 如果使用新的 data 接口（没有 sequenceType），从 data 中提取 Y 范围
+    if (!sequenceType && data && Array.isArray(data)) {
+      let minVal = Infinity;
+      let maxVal = -Infinity;
+      
+      // 遍历所有 traces，提取 Y 值的范围
+      data.forEach(trace => {
+        if (trace.y && Array.isArray(trace.y)) {
+          trace.y.forEach(val => {
+            if (!isNaN(val) && isFinite(val) && Math.abs(val) < 10000) {
+              if (val < minVal) minVal = val;
+              if (val > maxVal) maxVal = val;
+            }
+          });
+        }
+      });
+      
+      // 如果没有找到有效值，返回默认范围
+      if (minVal === Infinity || maxVal === -Infinity) {
+        return [-10, 10];
+      }
+      
+      // 添加非对称边距（上部多留，下部少留）- 进一步减小边距
+      const range = maxVal - minVal;
+      
+      // 对于极小范围的函数，强制最小显示范围为 1.2（上部留 0.6，下部留 0.6）
+      if (range < 1.2) {
+        const center = (minVal + maxVal) / 2;
+        return [center - 0.6, center + 0.6];
+      }
+      
+      // 正常情况：上部留 8%，下部留 3%
+      const topPadding = range * 0.08;
+      const bottomPadding = range * 0.03;
+      
+      return [minVal - bottomPadding, maxVal + topPadding];
+    }
+    
     // 对于原函数类型，需要根据 xRange 计算
     if (sequenceType === 'original_function' && propXRange) {
-      const numPoints = 150; // 使用较少的采样点进行性能优化
+      const numPoints = 200; // 增加采样点以捕捉极值
       const step = (propXRange[1] - propXRange[0]) / numPoints;
       let minVal = Infinity;
       let maxVal = -Infinity;
@@ -583,21 +704,24 @@ const LimitPlotter = ({
         return [-10, 10];
       }
       
-      // 添加边距（10%），并确保最小范围为 2
+      // 添加非对称边距（上部多留，下部少留）- 进一步减小边距
       const range = maxVal - minVal;
-      const padding = Math.max(range * 0.1, 1);
       
-      // 对于极小范围的函数，强制最小显示范围
-      if (range < 2) {
+      // 对于极小范围的函数，强制最小显示范围为 1.2（上部留 0.6，下部留 0.6）
+      if (range < 1.2) {
         const center = (minVal + maxVal) / 2;
-        return [center - 1, center + 1];
+        return [center - 0.6, center + 0.6];
       }
       
-      return [minVal - padding, maxVal + padding];
+      // 正常情况：上部留 8%，下部留 3%
+      const topPadding = range * 0.08;
+      const bottomPadding = range * 0.03;
+      
+      return [minVal - bottomPadding, maxVal + topPadding];
     }
     
-    // 对于序列类型，根据 maxN 计算
-    const maxN = parameters.maxN || 50;
+    // 对于序列类型，根据 maxN 计算（需要 parameters）
+    const maxN = parameters?.maxN || 50;
     let minVal = Infinity;
     let maxVal = -Infinity;
     
@@ -607,10 +731,21 @@ const LimitPlotter = ({
       if (val > maxVal) maxVal = val;
     }
     
-    // 添加一些边距
-    const padding = (maxVal - minVal) * 0.1 || 1;
-    return [minVal - padding, maxVal + padding];
-  }, [sequenceType, parameters, calculateSequenceValues, propYRange, propXRange]);
+    // 添加非对称边距（上部多留，下部少留）- 进一步减小边距
+    const range = maxVal - minVal;
+    
+    // 对于极小范围的函数，强制最小显示范围为 1.2（上部留 0.6，下部留 0.6）
+    if (range < 1.2) {
+      const center = (minVal + maxVal) / 2;
+      return [center - 0.6, center + 0.6];
+    }
+    
+    // 正常情况：上部留 8%，下部留 3%
+    const topPadding = range * 0.08;
+    const bottomPadding = range * 0.03;
+    
+    return [minVal - bottomPadding, maxVal + topPadding];
+  }, [data, sequenceType, parameters, calculateSequenceValues, propYRange, propXRange]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
@@ -627,7 +762,7 @@ const LimitPlotter = ({
       },
       xaxis: {
         title: 'n',
-        range: propXRange || [0, parameters.maxN || 50],
+        range: propXRange || (data && !sequenceType ? [0, Math.max(...(data[0]?.x || [50]))] : [0, parameters?.maxN || 50]),
         gridcolor: isDark ? '#334155' : '#cbd5e1',
         zerolinecolor: isDark ? '#475569' : '#94a3b8',
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
@@ -662,7 +797,7 @@ const LimitPlotter = ({
         borderwidth: 1
       }
     };
-  }, [title, propXRange, parameters.maxN, autoYRange, sequenceType, themeMode, styleConfig]);
+  }, [title, propXRange, parameters?.maxN, autoYRange, sequenceType, themeMode, styleConfig, data]);
 
   // 配置 Plotly 工具栏
   const config = {
@@ -683,9 +818,9 @@ const LimitPlotter = ({
   // 使用 useEffect 渲染图表
   useEffect(() => {
     if (plotRef.current) {
-      Plotly.newPlot(plotRef.current, plotData, layout, config);
+      Plotly.newPlot(plotRef.current, styledData, layout, config);
     }
-  }, [plotData, layout, config]);
+  }, [styledData, layout, config]);
 
   // 添加窗口resize监听器，实现自动响应式调整
   useEffect(() => {

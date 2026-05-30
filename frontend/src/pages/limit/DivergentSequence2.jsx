@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -98,7 +98,7 @@ const Formula = styled.code`
 `;
 
 /**
- * Divergent Sequence 2 - u_n = (-1)^n (oscillating)
+ * Divergent Sequence 2 - u_n = sin(n) (oscillating)
  */
 const DivergentSequence2 = () => {
   const navigate = useNavigate();
@@ -108,6 +108,64 @@ const DivergentSequence2 = () => {
     plotStyle: 'medium', // Plot 样式档位
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
+
+  // 生成离散序列数据（振荡发散）
+  const generateSequenceData = useCallback(() => {
+    const maxN = params.maxN || 20;
+    
+    const nValues = [];
+    const uValues = [];
+    
+    for (let n = 0; n <= maxN; n++) {
+      nValues.push(n);
+      uValues.push(Math.sin(n));
+    }
+    
+    return [{
+      x: nValues,
+      y: uValues,
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: 'uₙ',
+      line: { 
+        color: '#6366f1', // ✅ 改为蓝色，与收敛序列一致
+        width: 2,
+        shape: 'spline'
+      },
+      marker: { 
+        size: 8, 
+        color: '#6366f1', // ✅ 改为蓝色，与收敛序列一致
+        symbol: 'circle'
+      }
+    }];
+  }, [params]);
+
+  // 生成连续原函数数据
+  const generateFunctionData = useCallback(() => {
+    const maxN = Math.min(params.maxN, 30);
+    const numPoints = 200;
+    
+    const xValues = [];
+    const yValues = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = 0 + (maxN * i) / numPoints;
+      xValues.push(x);
+      yValues.push(Math.sin(x));
+    }
+    
+    return [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'f(x)',
+      line: { 
+        color: '#6366f1', // ✅ 改为蓝色，与收敛序列一致
+        width: 2.5
+      }
+    }];
+  }, [params]);
 
   // 参数配置 - 分组版本
   const plotStyleConfig = [
@@ -169,21 +227,19 @@ const DivergentSequence2 = () => {
         
         <PlotPanel>
           <LimitPlotter
-            sequenceType="divergent2"
-            parameters={params}
+            data={generateSequenceData()}
+            xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            title={`Sequence: u = sin(n)`}
+            title={`Sequence: uₙ = sin(n)`}
           />
           
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
-              sequenceType="original_function"
-              parameters={{ funcName: 'sin', maxN: params.maxN }}
+              data={generateFunctionData()}
               xRange={[0, Math.min(params.maxN, 30)]}
               title={`Original Function: f(x) = sin(x)`}
-              showOriginalFunction={true}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}
             />

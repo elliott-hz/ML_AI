@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -109,6 +109,80 @@ const ConvergentSequence2 = () => {
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 生成离散序列数据
+  const generateSequenceData = useCallback(() => {
+    const maxN = params.maxN || 50;
+    
+    const nValues = [];
+    const uValues = [];
+    
+    for (let n = 0; n <= maxN; n++) {
+      nValues.push(n);
+      uValues.push(n / (n + 1));
+    }
+    
+    const traces = [{
+      x: nValues,
+      y: uValues,
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: 'uₙ',
+      line: { 
+        color: '#6366f1', 
+        width: 2,
+        shape: 'spline'
+      },
+      marker: { 
+        size: 8, 
+        color: '#6366f1',
+        symbol: 'circle'
+      }
+    }];
+    
+    // ✅ 添加收敛辅助线（y=1）
+    traces.push({
+      x: [0, maxN],
+      y: [1, 1],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'lim: 1',
+      line: { 
+        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    return traces;
+  }, [params]);
+
+  // 生成连续原函数数据
+  const generateFunctionData = useCallback(() => {
+    const maxN = Math.min(params.maxN, 20);
+    const numPoints = 200;
+    
+    const xValues = [];
+    const yValues = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = 0 + (maxN * i) / numPoints;
+      xValues.push(x);
+      yValues.push(x / (x + 1));
+    }
+    
+    return [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'f(x)',
+      line: { 
+        color: '#6366f1', 
+        width: 2.5
+      }
+    }];
+  }, [params]);
+
   // 参数配置 - 分组版本
   const plotStyleConfig = [
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
@@ -168,20 +242,17 @@ const ConvergentSequence2 = () => {
         
         <PlotPanel>
           <LimitPlotter
-            sequenceType="convergent2"
-            parameters={params}
+            data={generateSequenceData()}
+            xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            title={`Sequence: u = n/(n+1)`}
-            showLimitLine={true}
-            limitValue={1}
+            title={`Sequence: uₙ = n/(n+1)`}
           />
           
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
-              sequenceType="original_function"
-              parameters={{ funcName: 'rational', maxN: Math.min(params.maxN, 20) }}
+              data={generateFunctionData()}
               xRange={[0, Math.min(params.maxN, 20)]}
               title={`Original Function: f(x) = x/(x+1)`}
               plotStyle={params.plotStyle}
