@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
@@ -130,6 +130,70 @@ const InverseFunctions = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  // ✅ 新增：在页面中定义反函数的数据生成逻辑
+  const generateInverseData = useCallback(() => {
+    const a = params.coefficient;
+    const xMin = params.xRange[0];
+    const xMax = params.xRange[1];
+    const numPoints = 200;
+    
+    // 原函数: h(t) = a·t²（t ≥ 0）
+    const originalT = [];
+    const originalH = [];
+    for (let i = 0; i <= numPoints; i++) {
+      const t = 0 + ((xMax - 0) * i) / numPoints;
+      originalT.push(t);
+      originalH.push(a * t * t);
+    }
+    
+    // 反函数: t(h) = √(h/a)（h ≥ 0）
+    const inverseH = [];
+    const inverseT = [];
+    for (let i = 0; i <= numPoints; i++) {
+      const h = 0 + ((xMax - 0) * i) / numPoints;
+      inverseH.push(h);
+      inverseT.push(Math.sqrt(h / a));
+    }
+    
+    // 对称轴 y = x
+    const lineX = [xMin, xMax];
+    const lineY = [xMin, xMax];
+    
+    return [
+      {
+        x: originalT,
+        y: originalH,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Original: h(t) = at²',
+        line: { color: '#6366f1', width: 2 }
+      },
+      {
+        x: inverseH,
+        y: inverseT,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Inverse: t(h) = √(h/a)',
+        line: { color: '#06b6d4', width: 2 }
+      },
+      {
+        x: lineX,
+        y: lineY,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'y = x (symmetry axis)',
+        line: { 
+          color: '#94a3b8', 
+          width: 1, 
+          dash: 'dash' 
+        }
+      }
+    ];
+  }, [params.coefficient, params.xRange]);
+  
+  // ✅ 使用 useMemo 缓存数据
+  const traces = useMemo(() => generateInverseData(), [generateInverseData]);
+
   return (
     <PageContainer>
       <Header>
@@ -181,9 +245,10 @@ const InverseFunctions = () => {
         </ControlsPanel>
         
         <PlotPanel>
+          {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
-            functionType="inverse"
-            parameters={params}
+            data={traces}
+            xRange={params.xRange}
             title="Inverse Function: h(t) and t(h)"
             showExportButton={false}
             plotStyle={params.plotStyle}

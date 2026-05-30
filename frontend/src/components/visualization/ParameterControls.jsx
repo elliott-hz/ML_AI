@@ -8,6 +8,23 @@ import { Range } from 'react-range';
  * @param {array} config - 参数配置数组 [{name, label, min, max, step}]
  */
 const ParameterControls = ({ parameters, onChange, config }) => {
+  // ✅ 新增：根据 step 计算显示的小数位数
+  const getDecimalPlaces = (step) => {
+    if (!step) return 1;
+    const stepStr = step.toString();
+    if (stepStr.includes('.')) {
+      return stepStr.split('.')[1].length;
+    }
+    return 0;
+  };
+
+  // ✅ 新增：格式化数值显示
+  const formatValue = (value, step) => {
+    if (value === undefined || value === null) return '0';
+    const decimals = getDecimalPlaces(step);
+    return Number(value).toFixed(decimals);
+  };
+
   // 处理滑块变化
   const handleSliderChange = (paramName, value) => {
     const numValue = parseFloat(value);
@@ -183,7 +200,7 @@ const ParameterControls = ({ parameters, onChange, config }) => {
                   minWidth: '40px', 
                   textAlign: 'center' 
                 }}>
-                  {(parameters[param.name] || param.default)[0].toFixed(1)}
+                  {formatValue((parameters[param.name] || param.default)[0], param.step)}
                 </span>
                 <span style={{ 
                   color: 'var(--theme-text-secondary, #cbd5e1)', 
@@ -195,7 +212,7 @@ const ParameterControls = ({ parameters, onChange, config }) => {
                   minWidth: '40px', 
                   textAlign: 'center' 
                 }}>
-                  {(parameters[param.name] || param.default)[1].toFixed(1)}
+                  {formatValue((parameters[param.name] || param.default)[1], param.step)}
                 </span>
               </div>
             </div>
@@ -217,7 +234,7 @@ const ParameterControls = ({ parameters, onChange, config }) => {
                 min={param.min}
                 max={param.max}
                 step={param.step}
-                value={parameters[param.name] !== undefined ? parameters[param.name] : 0}
+                value={parameters[param.name] !== undefined ? formatValue(parameters[param.name], param.step) : '0'}
                 onChange={(e) => handleInputChange(param.name, e.target.value)}
                 style={{
                   width: '80px',

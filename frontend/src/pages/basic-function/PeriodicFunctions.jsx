@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
@@ -104,6 +104,100 @@ const PeriodicFunctions = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  // ✅ 新增：在页面中定义周期函数的数据生成逻辑
+  const generatePeriodicData = useCallback(() => {
+    const { a: amplitude, b: frequency, c: phase } = periodicParams;
+    const xMin = periodicParams.xRange[0];
+    const xMax = periodicParams.xRange[1];
+    const numPoints = 500;
+    
+    // ✅ 新增：格式化数值显示（1位小数）
+    const formatNum = (num) => Number(num).toFixed(1);
+    
+    // 生成主曲线：f(x) = a·sin(bx + c)
+    const xValues = [];
+    const yValues = [];
+    const step = (xMax - xMin) / numPoints;
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + i * step;
+      const y = amplitude * Math.sin(frequency * x + phase);
+      xValues.push(x);
+      yValues.push(y);
+    }
+    
+    // 计算周期长度和波峰位置
+    const period = 2 * Math.PI / frequency;
+    const basePeakX = (Math.PI / 2 - phase) / frequency;
+    
+    // 找到最接近原点的波峰
+    let firstPeakX = basePeakX;
+    if (Math.abs(basePeakX) > period / 2) {
+      const n = Math.round(-basePeakX / period);
+      firstPeakX = basePeakX + n * period;
+    }
+    
+    // 生成周期标记线（垂直辅助线）
+    const auxiliaryLines = [];
+    let x = firstPeakX;
+    
+    // 向左扩展
+    while (x >= xMin - period) {
+      if (x >= xMin && x <= xMax) {
+        auxiliaryLines.push({
+          x: [x, x],
+          y: [-Math.abs(amplitude) - 1, Math.abs(amplitude) + 1],
+          type: 'scatter',
+          mode: 'lines',
+          name: `Peak at x=${formatNum(x)}`,
+          line: { 
+            color: '#ffd700', 
+            width: 1, 
+            dash: 'dash' 
+          },
+          showlegend: false
+        });
+      }
+      x -= period;
+    }
+    
+    // 向右扩展
+    x = firstPeakX + period;
+    while (x <= xMax + period) {
+      if (x >= xMin && x <= xMax) {
+        auxiliaryLines.push({
+          x: [x, x],
+          y: [-Math.abs(amplitude) - 1, Math.abs(amplitude) + 1],
+          type: 'scatter',
+          mode: 'lines',
+          name: `Peak at x=${formatNum(x)}`,
+          line: { 
+            color: '#ffd700', 
+            width: 1, 
+            dash: 'dash' 
+          },
+          showlegend: false
+        });
+      }
+      x += period;
+    }
+    
+    return [
+      {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: `f(x) = ${formatNum(amplitude)}·sin(${formatNum(frequency)}x + ${formatNum(phase)})`,
+        line: { color: '#6366f1', width: 2 }
+      },
+      ...auxiliaryLines
+    ];
+  }, [periodicParams.a, periodicParams.b, periodicParams.c, periodicParams.xRange]);
+  
+  // ✅ 使用 useMemo 缓存数据
+  const traces = useMemo(() => generatePeriodicData(), [generatePeriodicData]);
+
   return (
     <PageContainer>
       <Header>
@@ -154,9 +248,10 @@ const PeriodicFunctions = () => {
         </ControlsPanel>
         
         <PlotPanel>
+          {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
-            functionType="periodic"
-            parameters={periodicParams}
+            data={traces}
+            xRange={periodicParams.xRange}
             title="Periodic Function: f(x) = a·sin(bx + c)"
             showExportButton={false}
             plotStyle={periodicParams.plotStyle}

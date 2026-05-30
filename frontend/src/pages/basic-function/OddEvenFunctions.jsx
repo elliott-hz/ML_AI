@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
@@ -91,7 +91,6 @@ const OddEvenFunctions = () => {
     a: 1,              // 系数
     b: 0,              // 偏置项
     samplePoint: 2,    // 采样点位置
-    pointSize: 10,     // 点大小
     xRange: [-5, 5],   // X轴范围
     plotStyle: 'medium', // Plot 样式档位
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
@@ -113,8 +112,7 @@ const OddEvenFunctions = () => {
   ];
 
   const oddAuxiliaryConfig = [
-    { name: 'samplePoint', label: 'Sample Point (x)', min: 0.5, max: 4, step: 0.1 },
-    { name: 'pointSize', label: 'Point Size', min: 5, max: 20, step: 1 }
+    { name: 'samplePoint', label: 'Sample Point (x)', min: 0.5, max: 4, step: 0.1 }
   ];
 
   const oddPlotStyleConfig = [
@@ -140,6 +138,131 @@ const OddEvenFunctions = () => {
     { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
+
+  // ✅ 新增：奇函数数据生成逻辑
+  const generateOddData = useCallback(() => {
+    const { a, b, samplePoint } = oddParams;
+    const xMin = oddParams.xRange[0];
+    const xMax = oddParams.xRange[1];
+    const numPoints = 500;
+    
+    // ✅ 新增：格式化数值显示（1位小数）
+    const formatNum = (num) => Number(num).toFixed(1);
+    
+    // 生成主曲线：f(x) = ax³ + b
+    const xValues = [];
+    const yValues = [];
+    const step = (xMax - xMin) / numPoints;
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + i * step;
+      const y = a * Math.pow(x, 3) + b;
+      xValues.push(x);
+      yValues.push(y);
+    }
+    
+    // 计算示例点
+    const sampleY = a * Math.pow(samplePoint, 3) + b;
+    const oppositeX = -samplePoint;
+    const oppositeY = a * Math.pow(oppositeX, 3) + b;
+    
+    return [
+      {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: `f(x) = ${formatNum(a)}x³ + ${formatNum(b)}`,
+        line: { color: '#6366f1', width: 2 }
+      },
+      {
+        x: [samplePoint],
+        y: [sampleY],
+        type: 'scatter',
+        mode: 'markers',
+        name: `P(${formatNum(samplePoint)}, ${formatNum(sampleY)})`,
+        marker: { 
+          color: '#ffd700', 
+          symbol: 'circle',
+          line: { color: '#fff', width: 1 }
+        }
+      },
+      {
+        x: [oppositeX],
+        y: [oppositeY],
+        type: 'scatter',
+        mode: 'markers',
+        name: `P'(${formatNum(oppositeX)}, ${formatNum(oppositeY)})`,
+        marker: { 
+          color: '#ffd700', 
+          symbol: 'circle',
+          line: { color: '#fff', width: 1 }
+        }
+      },
+      {
+        x: [samplePoint, oppositeX],
+        y: [sampleY, oppositeY],
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Connection Line',
+        line: { color: '#ffd700', width: 1, dash: 'dash' }
+      }
+    ];
+  }, [oddParams.a, oddParams.b, oddParams.samplePoint, oddParams.xRange]);
+  
+  // ✅ 新增：偶函数数据生成逻辑
+  const generateEvenData = useCallback(() => {
+    const { a, b } = evenParams;
+    const xMin = evenParams.xRange[0];
+    const xMax = evenParams.xRange[1];
+    const numPoints = 500;
+    
+    // ✅ 新增：格式化数值显示（1位小数）
+    const formatNum = (num) => Number(num).toFixed(1);
+    
+    // 生成主曲线：f(x) = ax² + b
+    const xValues = [];
+    const yValues = [];
+    const step = (xMax - xMin) / numPoints;
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + i * step;
+      const y = a * Math.pow(x, 2) + b;
+      xValues.push(x);
+      yValues.push(y);
+    }
+    
+    // 对称轴（y轴）
+    const maxY = Math.max(...yValues);
+    const minY = Math.min(...yValues);
+    
+    return [
+      {
+        x: xValues,
+        y: yValues,
+        type: 'scatter',
+        mode: 'lines',
+        name: `f(x) = ${formatNum(a)}x² + ${formatNum(b)}`,
+        line: { color: '#8b5cf6', width: 2 }
+      },
+      {
+        x: [0, 0],
+        y: [minY - 1, maxY + 1],
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Axis of Symmetry (x=0)',
+        line: { 
+          color: '#ffd700', 
+          width: 1, 
+          dash: 'dash'
+        }
+      }
+    ];
+  }, [evenParams.a, evenParams.b, evenParams.xRange]);
+  
+  // ✅ 使用 useMemo 缓存数据
+  const oddTraces = useMemo(() => generateOddData(), [generateOddData]);
+  const evenTraces = useMemo(() => generateEvenData(), [generateEvenData]);
 
   return (
     <PageContainer>
@@ -198,9 +321,10 @@ const OddEvenFunctions = () => {
         </ControlsPanel>
         
         <PlotPanel>
+          {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
-            functionType="odd"
-            parameters={oddParams}
+            data={oddTraces}
+            xRange={oddParams.xRange}
             title="Odd Function: f(x) = ax³"
             showExportButton={false}
             plotStyle={oddParams.plotStyle}
@@ -244,9 +368,10 @@ const OddEvenFunctions = () => {
         </ControlsPanel>
         
         <PlotPanel>
+          {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
-            functionType="even"
-            parameters={evenParams}
+            data={evenTraces}
+            xRange={evenParams.xRange}
             title="Even Function: f(x) = ax²"
             showExportButton={false}
             plotStyle={evenParams.plotStyle}

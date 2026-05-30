@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../components/visualization/FunctionPlotter';
@@ -130,6 +130,79 @@ const PiecewiseFunctions = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  // ✅ 新增：在页面中定义分段函数的数据生成逻辑
+  const generatePiecewiseData = useCallback(() => {
+    const a = params.coefficient;
+    const xMin = params.xRange[0];
+    const xMax = params.xRange[1];
+    const numPoints = 500;
+    
+    // ✅ 新增：格式化数值显示（1位小数）
+    const formatNum = (num) => Number(num).toFixed(1);
+    
+    // 生成分段函数数据：f(x) = { a·x, x ≥ 0; 0, x < 0 }
+    // 需要分成两个独立的 trace 避免在 x=0 处连接
+    const step = (xMax - xMin) / numPoints;
+    
+    // 左侧分支：x < 0, f(x) = 0
+    const leftX = [];
+    const leftY = [];
+    for (let i = 0; i <= numPoints / 2; i++) {
+      const x = xMin + ((0 - xMin) * i) / (numPoints / 2);
+      if (x < 0) {
+        leftX.push(x);
+        leftY.push(0);
+      }
+    }
+    
+    // 右侧分支：x ≥ 0, f(x) = a·x
+    const rightX = [];
+    const rightY = [];
+    for (let i = 0; i <= numPoints / 2; i++) {
+      const x = 0 + ((xMax - 0) * i) / (numPoints / 2);
+      rightX.push(x);
+      rightY.push(a * x);
+    }
+    
+    // 分段点标记线（x=0）
+    const breakLineY = [-Math.abs(a * xMax), Math.abs(a * xMax)];
+    
+    return [
+      {
+        x: leftX,
+        y: leftY,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'f(x) = 0 (x < 0)',
+        line: { color: '#6366f1', width: 2 },
+        showlegend: false
+      },
+      {
+        x: rightX,
+        y: rightY,
+        type: 'scatter',
+        mode: 'lines',
+        name: `f(x) = ${formatNum(a)}x (x ≥ 0)`,
+        line: { color: '#6366f1', width: 2 }
+      },
+      {
+        x: [0, 0],
+        y: breakLineY,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Break Point (x=0)',
+        line: { 
+          color: '#ffd700', 
+          width: 1, 
+          dash: 'dash' 
+        }
+      }
+    ];
+  }, [params.coefficient, params.xRange]);
+  
+  // ✅ 使用 useMemo 缓存数据
+  const traces = useMemo(() => generatePiecewiseData(), [generatePiecewiseData]);
+
   return (
     <PageContainer>
       <Header>
@@ -183,9 +256,10 @@ const PiecewiseFunctions = () => {
         </ControlsPanel>
         
         <PlotPanel>
+          {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
-            functionType="piecewise"
-            parameters={params}
+            data={traces}
+            xRange={params.xRange}
             title="Piecewise Function: f(x)"
             showExportButton={false}
             plotStyle={params.plotStyle}
