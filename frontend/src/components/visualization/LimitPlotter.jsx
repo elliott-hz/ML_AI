@@ -140,18 +140,21 @@ const LimitPlotter = ({
     });
   }, [data, plotStyle, styleConfig, getAuxiliaryColor, themeMode]);
 
-  // 自动计算 Y 轴范围
+  // 自动计算 Y 轴范围 - 仅考虑可见的 traces
   const autoYRange = useMemo(() => {
     // 如果外部传入了 yRange，优先使用它
     if (propYRange) return propYRange;
     
-    // 从 data 中提取 Y 范围
+    // 从 data 中提取 Y 范围 - 只考虑可见的 traces
     if (data && Array.isArray(data)) {
       let minVal = Infinity;
       let maxVal = -Infinity;
       
-      // 遍历所有 traces，提取 Y 值的范围
+      // 遍历所有 traces，提取 Y 值的范围（仅考虑 visible !== false 的 traces）
       data.forEach(trace => {
+        // ✅ 跳过隐藏的 traces（visible === false）
+        if (trace.visible === false) return;
+        
         if (trace.y && Array.isArray(trace.y)) {
           trace.y.forEach(val => {
             if (!isNaN(val) && isFinite(val) && Math.abs(val) < 10000) {

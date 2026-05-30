@@ -255,6 +255,17 @@ const Limit = () => {
       ),
       description: 'Infinite sum of infinitesimals is not necessarily infinitesimal. Harmonic series example: Σ(1/n) diverges.',
       path: '/mathematics/1-fundamentals/limit/infinite-sum-not-infinitesimal'
+    },
+    {
+      id: 'quotient',
+      icon: '',
+      title: (
+        <MathFormula>
+          Quotient: f(x)/g(x) → ? (Varies)
+        </MathFormula>
+      ),
+      description: 'Quotient of infinitesimals can be 0, , or finite value depending on convergence speed.',
+      path: '/mathematics/1-fundamentals/limit/quotient-of-infinitesimals'
     }
   ];
 
