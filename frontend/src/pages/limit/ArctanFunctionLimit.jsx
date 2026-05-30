@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -98,7 +98,7 @@ const Formula = styled.code`
 `;
 
 /**
- * Arctan Function Limit - y = a·arctan(x), lim(x→-) = -a·π/2
+ * Arctan Function Limit - y = a·arctan(x), lim(x→-∞) = -a·π/2
  */
 const ArctanFunctionLimit = () => {
   const navigate = useNavigate();
@@ -110,6 +110,67 @@ const ArctanFunctionLimit = () => {
     plotStyle: 'medium', // Plot 样式档位
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
+
+  // 生成连续函数数据
+  const generateFunctionData = useCallback(() => {
+    const [xMin, xMax] = params.xRange || [-5, 5];
+    const coefficient = params.coefficient || 1;
+    const numPoints = 200;
+    
+    const xValues = [];
+    const yValues = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      xValues.push(x);
+      yValues.push(coefficient * Math.atan(x));
+    }
+    
+    const traces = [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'f(x)',
+      line: { 
+        color: '#6366f1', 
+        width: 2.5
+      }
+    }];
+    
+    // ✅ 添加水平渐近线辅助线（y = ±a·π/2）
+    const asymptoteValue = coefficient * Math.PI / 2;
+    
+    // 上渐近线
+    traces.push({
+      x: [xMin, xMax],
+      y: [asymptoteValue, asymptoteValue],
+      type: 'scatter',
+      mode: 'lines',
+      name: `lim: ${asymptoteValue.toFixed(2)}`,
+      line: { 
+        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    // 下渐近线
+    traces.push({
+      x: [xMin, xMax],
+      y: [-asymptoteValue, -asymptoteValue],
+      type: 'scatter',
+      mode: 'lines',
+      name: `lim: ${(-asymptoteValue).toFixed(2)}`,
+      line: { 
+        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    return traces;
+  }, [params]);
 
   // 参数配置
   const coefficientConfig = [
@@ -200,8 +261,7 @@ const ArctanFunctionLimit = () => {
         <PlotPanel>
           {/* 只显示原函数图 */}
           <LimitPlotter
-            sequenceType="original_function"
-            parameters={{ ...params, funcName: 'arctan' }}
+            data={generateFunctionData()}
             xRange={params.xRange}
             title={`Function: f(x) = a·arctan(x)`}
             plotStyle={params.plotStyle}

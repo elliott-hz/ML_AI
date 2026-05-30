@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -111,6 +111,88 @@ const ReciprocalFunctionLimit = () => {
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 生成连续函数数据（注意：需要处理 x=0 的不连续点）
+  const generateFunctionData = useCallback(() => {
+    const [xMin, xMax] = params.xRange || [-10, 10];
+    const coefficient = params.coefficient || 1;
+    const numPoints = 200;
+    
+    const traces = [];
+    
+    // ✅ 将数据分为两部分：负半轴和正半轴（避免在 x=0 处连接）
+    // 第一部分：负半轴
+    if (xMin < 0) {
+      const xValuesNeg = [];
+      const yValuesNeg = [];
+      
+      for (let i = 0; i <= numPoints / 2; i++) {
+        const x = xMin + ((Math.min(0, xMax) - xMin) * i) / (numPoints / 2);
+        if (Math.abs(x) > 0.01) { // 避免接近 0
+          xValuesNeg.push(x);
+          yValuesNeg.push(coefficient / x);
+        }
+      }
+      
+      if (xValuesNeg.length > 0) {
+        traces.push({
+          x: xValuesNeg,
+          y: yValuesNeg,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'f(x)',
+          line: { 
+            color: '#6366f1', 
+            width: 2.5
+          }
+        });
+      }
+    }
+    
+    // 第二部分：正半轴
+    if (xMax > 0) {
+      const xValuesPos = [];
+      const yValuesPos = [];
+      
+      for (let i = 0; i <= numPoints / 2; i++) {
+        const x = Math.max(0, xMin) + ((xMax - Math.max(0, xMin)) * i) / (numPoints / 2);
+        if (Math.abs(x) > 0.01) { // 避免接近 0
+          xValuesPos.push(x);
+          yValuesPos.push(coefficient / x);
+        }
+      }
+      
+      if (xValuesPos.length > 0) {
+        traces.push({
+          x: xValuesPos,
+          y: yValuesPos,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'f(x)',
+          line: { 
+            color: '#6366f1', 
+            width: 2.5
+          }
+        });
+      }
+    }
+    
+    // ✅ 添加收敛辅助线（y=0）
+    traces.push({
+      x: [xMin, xMax],
+      y: [0, 0],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'lim: 0',
+      line: { 
+        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    return traces;
+  }, [params]);
+
   // 参数配置
   const coefficientConfig = [
     {
@@ -199,8 +281,7 @@ const ReciprocalFunctionLimit = () => {
         <PlotPanel>
           {/* 只显示原函数图 */}
           <LimitPlotter
-            sequenceType="original_function"
-            parameters={{ ...params, funcName: 'rational' }}
+            data={generateFunctionData()}
             xRange={params.xRange}
             title={`Function: f(x) = a/x`}
             plotStyle={params.plotStyle}

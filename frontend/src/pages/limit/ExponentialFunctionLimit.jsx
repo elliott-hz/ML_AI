@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -98,7 +98,7 @@ const Formula = styled.code`
 `;
 
 /**
- * Exponential Function Limit - y = e^(-x), lim(x→+∞) = 0
+ * Exponential Function Limit - y = a·e^(-x), lim(x→+∞) = 0
  */
 const ExponentialFunctionLimit = () => {
   const navigate = useNavigate();
@@ -110,6 +110,50 @@ const ExponentialFunctionLimit = () => {
     plotStyle: 'medium', // Plot 样式档位
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
+
+  // 生成连续函数数据
+  const generateFunctionData = useCallback(() => {
+    const [xMin, xMax] = params.xRange || [-5, 5];
+    const base = params.base || Math.E;
+    const numPoints = 200;
+    
+    const xValues = [];
+    const yValues = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      xValues.push(x);
+      yValues.push(base * Math.exp(-x));
+    }
+    
+    const traces = [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'f(x)',
+      line: { 
+        color: '#6366f1', 
+        width: 2.5
+      }
+    }];
+    
+    // ✅ 添加收敛辅助线（y=0）
+    traces.push({
+      x: [xMin, xMax],
+      y: [0, 0],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'lim: 0',
+      line: { 
+        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    return traces;
+  }, [params]);
 
   // 参数配置
   const baseConfig = [
@@ -199,8 +243,7 @@ const ExponentialFunctionLimit = () => {
         <PlotPanel>
           {/* 只显示原函数图 */}
           <LimitPlotter
-            sequenceType="original_function"
-            parameters={{ ...params, funcName: 'exponential_decay' }}
+            data={generateFunctionData()}
             xRange={params.xRange}
             title={`Function: f(x) = a·e⁻ˣ`}
             plotStyle={params.plotStyle}
