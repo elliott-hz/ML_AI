@@ -243,6 +243,21 @@ const Limit = () => {
     }
   ];
 
+  // Group 5: Infinitesimal Properties (Not Necessarily)
+  const infinitesimalNotNecessarily = [
+    {
+      id: 'infinite-sum',
+      icon: '',
+      title: (
+        <MathFormula>
+          Infinite Sum: Σ αₙ ≠ 0 (Diverges)
+        </MathFormula>
+      ),
+      description: 'Infinite sum of infinitesimals is not necessarily infinitesimal. Harmonic series example: Σ(1/n) diverges.',
+      path: '/mathematics/1-fundamentals/limit/infinite-sum-not-infinitesimal'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -306,6 +321,21 @@ const Limit = () => {
       <GroupTitle>Infinitesimal Properties (Three Still)</GroupTitle>
       <ButtonGrid>
         {infinitesimalProperties.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 5: Infinitesimal Properties (Not Necessarily) */}
+      <GroupTitle>Infinitesimal Properties (Not Necessarily)</GroupTitle>
+      <ButtonGrid>
+        {infinitesimalNotNecessarily.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}

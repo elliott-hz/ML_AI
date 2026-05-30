@@ -21,6 +21,7 @@ import TwoSidedLimit from '../pages/limit/TwoSidedLimit';
 import InfinitesimalSum from '../pages/limit/InfinitesimalSum';
 import InfinitesimalBounded from '../pages/limit/InfinitesimalBounded';
 import InfinitesimalConstant from '../pages/limit/InfinitesimalConstant';
+import InfiniteSumNotInfinitesimal from '../pages/limit/InfiniteSumNotInfinitesimal';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -68,6 +69,9 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/limit/infinitesimal-sum" element={<InfinitesimalSum />} />
         <Route path="/mathematics/1-fundamentals/limit/infinitesimal-bounded" element={<InfinitesimalBounded />} />
         <Route path="/mathematics/1-fundamentals/limit/infinitesimal-constant" element={<InfinitesimalConstant />} />
+        
+        {/* 数学模块 - Infinitesimal Properties (Not Necessarily) 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/limit/infinite-sum-not-infinitesimal" element={<InfiniteSumNotInfinitesimal />} />
         
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/1-fundamentals/continuity" element={<div>Continuity Page - Coming Soon</div>} />
