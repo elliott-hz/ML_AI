@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import LimitPlotter from '../../components/visualization/LimitPlotter';
@@ -99,6 +99,179 @@ const InfinitesimalSum = () => {
     aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
   });
 
+  // 生成连续函数数据（多条曲线）
+  const generateFunctionData = useCallback(() => {
+    const [xMin, xMax] = params.xRange || [-2, 2];
+    const numPoints = 200;
+    
+    const traces = [];
+    
+    // ✅ 先计算所有曲线的 Y 范围，用于确定辅助线的长度
+    let minY = Infinity;
+    let maxY = -Infinity;
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      const y1 = x;
+      const y2 = x * x;
+      const y3 = x * x * x;
+      const ySum = x + x * x + x * x * x;
+      
+      if (y1 < minY) minY = y1;
+      if (y1 > maxY) maxY = y1;
+      if (y2 < minY) minY = y2;
+      if (y2 > maxY) maxY = y2;
+      if (y3 < minY) minY = y3;
+      if (y3 > maxY) maxY = y3;
+      if (ySum < minY) minY = ySum;
+      if (ySum > maxY) maxY = ySum;
+    }
+    
+    // 添加一些边距，确保辅助线稍微超出函数范围
+    const padding = Math.max((maxY - minY) * 0.1, 0.5);
+    const auxYMin = minY - padding;
+    const auxYMax = maxY + padding;
+    
+    // ✅ 曲线1：无穷小 α₁(x) = x - 蓝色实线
+    const xValues1 = [];
+    const yValues1 = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      xValues1.push(x);
+      yValues1.push(x);
+    }
+    
+    traces.push({
+      x: xValues1,
+      y: yValues1,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'α₁(x) = x',
+      line: { 
+        color: '#6366f1', // 蓝色
+        width: 2.5
+      }
+    });
+    
+    // ✅ 曲线2：无穷小 α₂(x) = x² - 绿色实线
+    const xValues2 = [];
+    const yValues2 = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      xValues2.push(x);
+      yValues2.push(x * x);
+    }
+    
+    traces.push({
+      x: xValues2,
+      y: yValues2,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'α₂(x) = x²',
+      line: { 
+        color: '#10b981', // 绿色
+        width: 2.5
+      }
+    });
+    
+    // ✅ 曲线3：无穷小 α₃(x) = x³ - 橙色实线
+    const xValues3 = [];
+    const yValues3 = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      xValues3.push(x);
+      yValues3.push(x * x * x);
+    }
+    
+    traces.push({
+      x: xValues3,
+      y: yValues3,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'α₃(x) = x³',
+      line: { 
+        color: '#f59e0b', // 橙色
+        width: 2.5
+      }
+    });
+    
+    // ✅ 曲线4：和 β(x) = x + x² + x³ - 红色实线（主要曲线）
+    const xValuesSum = [];
+    const yValuesSum = [];
+    
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      xValuesSum.push(x);
+      yValuesSum.push(x + x * x + x * x * x);
+    }
+    
+    traces.push({
+      x: xValuesSum,
+      y: yValuesSum,
+      type: 'scatter',
+      mode: 'lines',
+      name: 'β(x) = x + x² + x³',
+      line: { 
+        color: '#ef4444', // 红色（突出显示）
+        width: 3
+      }
+    });
+    
+    // ✅ 添加垂直辅助线（x=0）- 使用动态计算的 Y 范围
+    traces.push({
+      x: [0, 0],
+      y: [auxYMin, auxYMax],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'x=0',
+      line: { 
+        color: '#ffd700', // 金黄色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    // ✅ 添加水平辅助线（y=0，极限值）
+    traces.push({
+      x: [xMin, xMax],
+      y: [0, 0],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'lim: 0',
+      line: { 
+        color: '#ffd700', // 金黄色
+        width: 2, 
+        dash: 'dash' 
+      }
+    });
+    
+    // ✅ 添加极限点 (0, 0)
+    traces.push({
+      x: [0],
+      y: [0],
+      type: 'scatter',
+      mode: 'markers+text',
+      name: 'Limit',
+      marker: { 
+        size: 12, 
+        color: '#ef4444', // 红色
+        symbol: 'circle'
+      },
+      text: ['lim = 0'],
+      textposition: 'top center',
+      textfont: {
+        size: 14,
+        color: '#ef4444',
+        family: 'Arial, sans-serif'
+      }
+    });
+    
+    return traces;
+  }, [params]);
+
   // 参数配置
   const plotStyleConfig = [
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
@@ -162,18 +335,11 @@ const InfinitesimalSum = () => {
         
         <PlotPanel>
           <LimitPlotter
-            sequenceType="original_function"
-            parameters={{ ...params, funcName: 'infinitesimal_sum' }}
+            data={generateFunctionData()}
             xRange={params.xRange}
             title={`Sum of Infinitesimals: x + x² + x³`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
-            showAuxiliaryLines={true}
-            auxiliaryX={0}
-            auxiliaryY={0}
-            showPoints={[
-              { x: 0, y: 0, label: 'lim = 0' }
-            ]}
           />
         </PlotPanel>
       </ContentLayout>
