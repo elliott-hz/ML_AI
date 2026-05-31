@@ -212,7 +212,7 @@ const ArctanFunctionLimit = () => {
       
       <SectionDescription>
         Observe how the arctangent function behaves as x approaches different values. 
-        Notice the horizontal asymptotes and how the function approaches -a·π/2 as x → -.
+        Notice the horizontal asymptotes and how the function approaches -a·π/2 as x → -∞.
       </SectionDescription>
 
       <SectionTitle>Function: y = a·arctan(x)</SectionTitle>

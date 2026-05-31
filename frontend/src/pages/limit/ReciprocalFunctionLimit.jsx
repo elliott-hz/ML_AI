@@ -233,7 +233,7 @@ const ReciprocalFunctionLimit = () => {
       
       <SectionDescription>
         Observe how the reciprocal function behaves as x approaches different values. 
-        Notice the vertical asymptote at x = 0 and how the function approaches 0 as x → ±.
+        Notice the vertical asymptote at x = 0 and how the function approaches 0 as x → ±∞.
       </SectionDescription>
 
       <SectionTitle>Function: y = a/x</SectionTitle>

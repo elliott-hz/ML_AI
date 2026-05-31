@@ -286,7 +286,7 @@ const TwoSidedLimit = () => {
       
       <SectionDescription>
         <strong>Left-hand limit:</strong> lim<sub>x→1⁻</sub> f(x) = 2<br/>
-        <strong>Right-hand limit:</strong> lim<sub>x→1</sub> f(x) = 2<br/><br/>
+        <strong>Right-hand limit:</strong> lim<sub>x→1⁺</sub> f(x) = 2<br/><br/>
         Since both limits are <strong>equal</strong>, the two-sided limit exists:<br/>
         <strong>lim<sub>x→1</sub> f(x) = 2</strong>
       </SectionDescription>

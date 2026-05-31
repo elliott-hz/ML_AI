@@ -293,7 +293,7 @@ const OneSidedLimit = () => {
       
       <SectionDescription>
         <strong>Left-hand limit:</strong> lim<sub>x→0⁻</sub> f(x) = -1 (using x - 1)<br/>
-        <strong>Right-hand limit:</strong> lim<sub>x→0</sub> f(x) = +1 (using x + 1)<br/><br/>
+        <strong>Right-hand limit:</strong> lim<sub>x→0⁺</sub> f(x) = +1 (using x + 1)<br/><br/>
         Since the left and right limits are <strong>not equal</strong>, the two-sided limit does not exist at x = 0.
       </SectionDescription>
       

@@ -256,7 +256,7 @@ const QuotientOfInfinitesimals = () => {
       y: yValues3Left,
       type: 'scatter',
       mode: 'lines',
-      name: 'f(x)/g(x) = 2/x → ±∞ (left)',
+      name: 'f(x)/g(x) = 2/x → -∞ (left)',
       line: { width: 3, color: '#ef4444' },
       visible: true
     });
@@ -281,7 +281,7 @@ const QuotientOfInfinitesimals = () => {
       y: yValues3Right,
       type: 'scatter',
       mode: 'lines',
-      name: 'f(x)/g(x) = 2/x → ±∞ (right)',
+      name: 'f(x)/g(x) = 2/x → +∞ (right)',
       line: { width: 3, color: '#ef4444' },
       visible: true
     });
@@ -430,7 +430,7 @@ const QuotientOfInfinitesimals = () => {
             xRange={plot1Params.xRange}
             plotStyle={plot1Params.plotStyle}
             aspectRatio={plot1Params.aspectRatio}
-            title="limₓ→₀ x²/2x = 0 (infinitesimal)"
+            title="lim(x→0) x²/2x = 0 (infinitesimal)"
           />
         </PlotPanel>
       </ContentLayout>
@@ -466,7 +466,7 @@ const QuotientOfInfinitesimals = () => {
             xRange={plot2Params.xRange}
             plotStyle={plot2Params.plotStyle}
             aspectRatio={plot2Params.aspectRatio}
-            title="limₓ→₀ 2x/x² = ∞ (infinity)"
+            title="lim(x→0) 2x/x² = ∞ (infinity)"
           />
         </PlotPanel>
       </ContentLayout>
@@ -502,7 +502,7 @@ const QuotientOfInfinitesimals = () => {
             xRange={plot3Params.xRange}
             plotStyle={plot3Params.plotStyle}
             aspectRatio={plot3Params.aspectRatio}
-            title="limₓ→₀ x/2x = 1/2 (finite value)"
+            title="lim(x→0) x/2x = 1/2 (finite value)"
           />
         </PlotPanel>
       </ContentLayout>
