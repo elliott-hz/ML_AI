@@ -28,6 +28,8 @@ import DiscontinuityJump from '../pages/continuity/DiscontinuityJump';
 import DiscontinuityRemovable from '../pages/continuity/DiscontinuityRemovable';
 import Continuity from '../pages/Continuity';
 import ContinuityOfFunction from '../pages/continuity/ContinuityOfFunction';
+import Derivative from '../pages/Derivative';
+import AverageInstantaneousVelocity from '../pages/derivative/AverageInstantaneousVelocity';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -91,10 +93,16 @@ const AppRoutes = () => {
         {/* 数学模块 - Continuity 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/1-fundamentals/continuity/continuity-of-function" element={<ContinuityOfFunction />} />
 
+        {/* 数学模块 - Derivative 主页面 */}
+        <Route path="/mathematics/1-fundamentals/derivative" element={<Derivative />} />
+
+        {/* 数学模块 - Derivative 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/derivative/avg-instant-velocity" element={<AverageInstantaneousVelocity />} />
+
         {/* 其他数学模块路由 - 示例 */}
-        <Route path="/mathematics/2-calculus/derivative" element={<div>Derivative Page - Coming Soon</div>} />
-        
-        {/* 深度学习模块路由 - 示例 */}
+        <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />
+
+        {/* 其他数学模块路由 - 示例 */}
         <Route path="/deep-learning/1-neural-networks/perceptron" element={<div>Perceptron Page - Coming Soon</div>} />
         
         {/* 机器学习模块路由 - 示例 */}

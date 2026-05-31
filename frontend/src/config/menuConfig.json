@@ -25,6 +25,12 @@
               "name": "Continuity",
               "path": "/mathematics/1-fundamentals/continuity",
               "component": "Continuity"
+            },
+            {
+              "id": "math_1_4",
+              "name": "Derivative",
+              "path": "/mathematics/1-fundamentals/derivative",
+              "component": "Derivative"
             }
           ]
         },
@@ -34,9 +40,9 @@
           "children": [
             {
               "id": "math_2_1",
-              "name": "Derivative",
-              "path": "/mathematics/2-calculus/derivative",
-              "component": "Derivative"
+              "name": "Summation",
+              "path": "/mathematics/2-calculus/summation",
+              "component": "summation"
             }
           ]
         }
