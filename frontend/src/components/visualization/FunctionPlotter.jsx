@@ -220,9 +220,11 @@ const FunctionPlotter = ({
   // 配置 Plotly 工具栏
   const config = {
     displayModeBar: true,
+    modeBarButtonsToAdd: ['fullscreen'], // 添加全屏按钮
     modeBarButtonsToRemove: [
       'zoom2d', 'pan2d', 'select2d', 'lasso2d',
-      'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d'
+      'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
+      'sendDataToCloud' // 移除 Plotly 链接按钮
     ],
     toImageButtonOptions: {
       format: 'png',
@@ -285,7 +287,8 @@ const FunctionPlotter = ({
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
     marginBottom: '1rem',
-    aspectRatio: aspectRatio === 'auto' ? 'unset' : aspectRatio.replace(':', '/')
+    aspectRatio: aspectRatio === 'auto' ? 'unset' : aspectRatio.replace(':', '/'),
+    position: 'relative'
   };
 
   const buttonStyle = {
@@ -300,8 +303,49 @@ const FunctionPlotter = ({
     fontWeight: '500'
   };
 
+  const fullscreenButtonStyle = {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    zIndex: 1000,
+    background: themeMode === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+    border: `1px solid ${themeMode === 'dark' ? '#475569' : '#cbd5e1'}`,
+    borderRadius: '4px',
+    padding: '6px 10px',
+    cursor: 'pointer',
+    color: themeMode === 'dark' ? '#e0e0e0' : '#0f172a',
+    fontSize: '16px',
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  };
+
+  const handleFullscreenToggle = useCallback(() => {
+    if (!document.fullscreenElement) {
+      // Enter fullscreen
+      if (plotRef.current) {
+        plotRef.current.requestFullscreen().catch(err => {
+          console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }, []);
+
   return (
     <div style={containerStyle}>
+      <button 
+        onClick={handleFullscreenToggle}
+        style={fullscreenButtonStyle}
+        title="Toggle Fullscreen"
+      >
+        🔲
+      </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
       {showExportButton && (
         <button onClick={handleExport} style={buttonStyle}>
