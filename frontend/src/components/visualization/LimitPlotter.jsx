@@ -297,17 +297,16 @@ const LimitPlotter = ({
 
   const fullscreenButtonStyle = {
     position: 'absolute',
-    top: '10px',
-    right: '10px',
-    zIndex: 1000,
-    background: themeMode === 'dark' ? 'rgba(30, 41, 59, 0.9)' : 'rgba(255, 255, 255, 0.9)',
-    border: `1px solid ${themeMode === 'dark' ? '#475569' : '#cbd5e1'}`,
+    top: '15px',
+    right: '30px',
+    zIndex: 10,
+    background: '#6366f1',
+    border: 'none',
     borderRadius: '4px',
-    padding: '6px 10px',
+    width: '28px',
+    height: '28px',
     cursor: 'pointer',
-    color: themeMode === 'dark' ? '#e0e0e0' : '#0f172a',
-    fontSize: '16px',
-    transition: 'all 0.2s ease',
+    color: '#ffffff',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -331,12 +330,14 @@ const LimitPlotter = ({
 
   return (
     <div style={containerStyle}>
-      <button 
+      <button
         onClick={handleFullscreenToggle}
         style={fullscreenButtonStyle}
         title="Toggle Fullscreen"
       >
-        🔲
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
       </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
     </div>
