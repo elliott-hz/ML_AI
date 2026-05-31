@@ -232,7 +232,7 @@ const DerivativePowerFunctions = () => {
   const formulaInTitle = `(x${muExp})' = ${mu}x${derivMuExp}`;
 
   const powerConfig = [
-    { name: 'mu', label: 'μ (power exponent)', min: -3, max: 4, step: 0.1 }
+    { name: 'mu', label: 'μ (power exponent)', min: -4, max: 4, step: 1 }
   ];
 
   const plotStyleConfig = [
@@ -242,7 +242,7 @@ const DerivativePowerFunctions = () => {
   const viewRangeConfig = [
     {
       name: 'xRange', label: 'X Range', type: 'range',
-      min: -5, max: 5, step: 0.5, default: [-2, 2]
+      min: -5, max: 5, step: 0.1, default: [-2, 2]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
