@@ -115,7 +115,50 @@ const ParameterControls = ({ parameters, onChange, config }) => {
             minWidth: '80px'
           }}>{param.label}</label>
           
-          {param.type === 'select' ? (
+          {param.type === 'toggle' ? (
+            // Toggle switch type
+            <button
+              onClick={() => handleSelectChange(param.name, !parameters[param.name])}
+              style={{
+                width: '52px',
+                height: '26px',
+                borderRadius: '13px',
+                border: 'none',
+                background: parameters[param.name] !== false
+                  ? 'var(--theme-primary, #6366f1)'
+                  : 'var(--theme-border, #475569)',
+                color: 'white',
+                fontSize: '11px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                position: 'relative',
+                transition: 'background 0.2s ease'
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: '2px',
+                left: parameters[param.name] !== false ? '28px' : '2px',
+                width: '22px',
+                height: '22px',
+                borderRadius: '50%',
+                background: 'white',
+                transition: 'left 0.2s ease',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+              }} />
+              <span style={{
+                position: 'absolute',
+                width: '100%',
+                textAlign: 'center',
+                lineHeight: '26px',
+                fontSize: '10px',
+                fontWeight: '700',
+                letterSpacing: '0.5px'
+              }}>
+                {parameters[param.name] !== false ? 'ON' : 'OFF'}
+              </span>
+            </button>
+          ) : param.type === 'select' ? (
             // 下拉框类型
             <select
               value={parameters[param.name] || param.options[0]}

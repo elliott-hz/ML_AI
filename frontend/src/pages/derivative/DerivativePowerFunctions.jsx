@@ -100,7 +100,8 @@ const DerivativePowerFunctions = () => {
     mu: 2,
     xRange: [-2, 2],
     plotStyle: 'medium',
-    aspectRatio: 'auto'
+    aspectRatio: 'auto',
+    legendPosition: 'top-right'
   });
 
   // Format a number as Unicode superscript
@@ -247,6 +248,10 @@ const DerivativePowerFunctions = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -277,6 +282,10 @@ const DerivativePowerFunctions = () => {
             <ParameterControls parameters={params} onChange={setParams} config={powerConfig} />
           </ParameterSection>
 
+          <ParameterSection title="Legend Position">
+            <ParameterControls parameters={params} onChange={setParams} config={legendPositionConfig} />
+          </ParameterSection>
+
           <ParameterSection title="Plot Style">
             <ParameterControls parameters={params} onChange={setParams} config={plotStyleConfig} />
           </ParameterSection>
@@ -294,6 +303,7 @@ const DerivativePowerFunctions = () => {
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

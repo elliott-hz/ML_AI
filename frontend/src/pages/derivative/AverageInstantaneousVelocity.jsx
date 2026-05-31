@@ -105,7 +105,8 @@ const AverageInstantaneousVelocity = () => {
     dt: 1.0,
     xRange: [0, 4],
     plotStyle: 'medium',
-    aspectRatio: 'auto'
+    aspectRatio: 'auto',
+    legendPosition: 'top-right'
   });
 
   const formatNum = (num) => Number(num).toFixed(2);
@@ -280,6 +281,10 @@ const AverageInstantaneousVelocity = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -315,6 +320,10 @@ const AverageInstantaneousVelocity = () => {
             <ParameterControls parameters={params} onChange={setParams} config={intervalConfig} />
           </ParameterSection>
 
+          <ParameterSection title="Legend Position">
+            <ParameterControls parameters={params} onChange={setParams} config={legendPositionConfig} />
+          </ParameterSection>
+
           <ParameterSection title="Plot Style">
             <ParameterControls parameters={params} onChange={setParams} config={plotStyleConfig} />
           </ParameterSection>
@@ -332,6 +341,7 @@ const AverageInstantaneousVelocity = () => {
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

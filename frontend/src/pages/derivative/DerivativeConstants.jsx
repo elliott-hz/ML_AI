@@ -100,7 +100,8 @@ const DerivativeConstants = () => {
     C: 5,
     xRange: [-5, 5],
     plotStyle: 'medium',
-    aspectRatio: 'auto'
+    aspectRatio: 'auto',
+    legendPosition: 'top-right'
   });
 
   const formatNum = (num) => Number(num).toFixed(1);
@@ -179,6 +180,10 @@ const DerivativeConstants = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -208,6 +213,10 @@ const DerivativeConstants = () => {
             <ParameterControls parameters={params} onChange={setParams} config={constantConfig} />
           </ParameterSection>
 
+          <ParameterSection title="Legend Position">
+            <ParameterControls parameters={params} onChange={setParams} config={legendPositionConfig} />
+          </ParameterSection>
+
           <ParameterSection title="Plot Style">
             <ParameterControls parameters={params} onChange={setParams} config={plotStyleConfig} />
           </ParameterSection>
@@ -225,6 +234,7 @@ const DerivativeConstants = () => {
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

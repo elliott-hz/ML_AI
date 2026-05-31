@@ -22,7 +22,7 @@ const SectionContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.sm || '0.75rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
   margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.75rem'};
   box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
-  
+
   &:last-child {
     margin-bottom: 0;
   }
