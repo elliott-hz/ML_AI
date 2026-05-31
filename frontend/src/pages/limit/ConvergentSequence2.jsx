@@ -106,7 +106,8 @@ const ConvergentSequence2 = () => {
   const [params, setParams] = useState({ 
     maxN: 50,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成离散序列数据
@@ -193,6 +194,16 @@ const ConvergentSequence2 = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -201,54 +212,47 @@ const ConvergentSequence2 = () => {
         </BackButton>
         <SectionTitle>Convergent Sequence: Rational Approach</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        This sequence demonstrates how a rational function approaches its horizontal asymptote. 
+        This sequence demonstrates how a rational function approaches its horizontal asymptote.
         The terms approach 1 from below, getting closer but never exceeding it.
       </SectionDescription>
 
       <SectionTitle>Sequence: u<sub>n</sub> = n/(n+1)</SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
-          lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n/(n+1)</span> = 1
+          lim<sub>n→</sub> <span style={{ fontSize: '24px' }}>n/(n+1)</span> = 1
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
-        Observe how the sequence approaches 1 as n increases. 
+        Observe how the sequence approaches 1 as n increases.
         Each term is slightly less than 1, but the difference becomes negligible for large n.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateSequenceData()}
             xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
             title={`Sequence: uₙ = n/(n+1)`}
           />
-          
+
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
@@ -257,6 +261,7 @@ const ConvergentSequence2 = () => {
               title={`Original Function: f(x) = x/(x+1)`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}
+              legendPosition={params.legendPosition}
             />
           </div>
         </PlotPanel>

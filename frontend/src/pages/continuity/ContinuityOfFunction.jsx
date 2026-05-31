@@ -104,7 +104,8 @@ const ContinuityOfFunction = () => {
     dx: 0.5,
     xRange: [-1, 3],
     plotStyle: 'medium',
-    aspectRatio: 'auto'
+    aspectRatio: 'auto',
+    legendPosition: 'top-right'
   });
 
   // Get theme color for auxiliary elements
@@ -162,6 +163,16 @@ const ContinuityOfFunction = () => {
       default: [-1, 3]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+  ];
+
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
   ];
 
   const generateContinuityData = useCallback(() => {
@@ -354,19 +365,11 @@ const ContinuityOfFunction = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
@@ -379,6 +382,7 @@ const ContinuityOfFunction = () => {
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

@@ -99,19 +99,22 @@ const QuotientOfInfinitesimals = () => {
   const [plot1Params, setPlot1Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 1
     plotStyle: 'medium',   // Plot style
-    aspectRatio: 'auto'    // Aspect ratio
+    aspectRatio: 'auto',    // Aspect ratio
+    legendPosition: 'top-right'
   });
 
   const [plot2Params, setPlot2Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 2
     plotStyle: 'medium',   // Plot style
-    aspectRatio: 'auto'    // Aspect ratio
+    aspectRatio: 'auto',    // Aspect ratio
+    legendPosition: 'top-right'
   });
 
   const [plot3Params, setPlot3Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 3
     plotStyle: 'medium',   // Plot style
-    aspectRatio: 'auto'    // Aspect ratio
+    aspectRatio: 'auto',    // Aspect ratio
+    legendPosition: 'top-right'
   });
 
   // Generate Plot 1 data: x²/2x → 0 (infinitesimal)
@@ -375,6 +378,16 @@ const QuotientOfInfinitesimals = () => {
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -407,29 +420,22 @@ const QuotientOfInfinitesimals = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={plot1Params}
               onChange={setPlot1Params}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={plot1Params}
-              onChange={setPlot1Params}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={plot1Traces}
             xRange={plot1Params.xRange}
             plotStyle={plot1Params.plotStyle}
             aspectRatio={plot1Params.aspectRatio}
+            legendPosition={plot1Params.legendPosition}
             title="lim(x→0) x²/2x = 0 (infinitesimal)"
           />
         </PlotPanel>
@@ -440,32 +446,25 @@ const QuotientOfInfinitesimals = () => {
       <SectionDescription>
         When g(x) approaches 0 faster than f(x), the quotient approaches infinity. Here g(x) = x² approaches 0 faster than f(x) = 2x.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={plot2Params}
               onChange={setPlot2Params}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={plot2Params}
-              onChange={setPlot2Params}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={plot2Traces}
             xRange={plot2Params.xRange}
             plotStyle={plot2Params.plotStyle}
             aspectRatio={plot2Params.aspectRatio}
+            legendPosition={plot2Params.legendPosition}
             title="lim(x→0) 2x/x² = ∞ (infinity)"
           />
         </PlotPanel>
@@ -476,32 +475,25 @@ const QuotientOfInfinitesimals = () => {
       <SectionDescription>
         When f(x) and g(x) approach 0 at the same speed, the quotient approaches a non-zero finite value. Here both are linear functions.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={plot3Params}
               onChange={setPlot3Params}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={plot3Params}
-              onChange={setPlot3Params}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={plot3Traces}
             xRange={plot3Params.xRange}
             plotStyle={plot3Params.plotStyle}
             aspectRatio={plot3Params.aspectRatio}
+            legendPosition={plot3Params.legendPosition}
             title="lim(x→0) x/2x = 1/2 (finite value)"
           />
         </PlotPanel>

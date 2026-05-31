@@ -14,6 +14,7 @@ const LimitPlotter = ({
   plotStyle = 'medium',
   aspectRatio = 'auto', // 显示比例 (auto, 16:9, 4:3)
   data, // 直接传入 Plotly traces 数组（唯一数据源）
+  legendPosition = 'top-right'
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -232,20 +233,19 @@ const LimitPlotter = ({
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
       margin: { l: 60, r: 20, t: 60, b: 60 },
-      showlegend: true,
+      showlegend: legendPosition !== 'None',
       legend: {
         font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
         bgcolor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.85)',
         bordercolor: isDark ? '#334155' : '#cbd5e1',
         borderwidth: 1,
-        // Position inside the plot at top-right corner
-        x: 0.98,
-        y: 0.98,
-        xanchor: 'right',
-        yanchor: 'top'
+        x: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02,
+        y: legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02,
+        xanchor: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 'right' : 'left',
+        yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, data]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, data, legendPosition]);
 
   // 配置 Plotly 工具栏
   const config = {

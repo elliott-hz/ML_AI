@@ -106,7 +106,8 @@ const DivergentSequence1 = () => {
   const [params, setParams] = useState({ 
     maxN: 20,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成离散序列数据（发散序列，不需要辅助线）
@@ -177,6 +178,16 @@ const DivergentSequence1 = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -185,54 +196,47 @@ const DivergentSequence1 = () => {
         </BackButton>
         <SectionTitle>Divergent Sequence: Quadratic Growth</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        This sequence demonstrates unbounded growth. As n increases, the terms grow quadratically 
+        This sequence demonstrates unbounded growth. As n increases, the terms grow quadratically
         and approach infinity. There is no finite limit.
       </SectionDescription>
 
       <SectionTitle>Sequence: u<sub>n</sub> = n²</SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
           lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>n²</span> = +∞
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
-        Observe how rapidly the sequence grows. The quadratic nature means each term 
+        Observe how rapidly the sequence grows. The quadratic nature means each term
         increases much faster than the previous one, leading to divergence.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateSequenceData()}
             xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
             title={`Sequence: uₙ = n²`}
           />
-          
+
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
@@ -241,6 +245,7 @@ const DivergentSequence1 = () => {
               title={`Original Function: f(x) = x²`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}
+              legendPosition={params.legendPosition}
             />
           </div>
         </PlotPanel>

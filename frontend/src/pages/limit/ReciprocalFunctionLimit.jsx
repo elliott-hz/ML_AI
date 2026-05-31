@@ -108,7 +108,8 @@ const ReciprocalFunctionLimit = () => {
     coefficient: 1,      // 系数，用于调整函数缩放
     xRange: [-10, 10],   // X轴范围（根据参考图调整）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据（注意：需要处理 x=0 的不连续点）
@@ -222,6 +223,16 @@ const ReciprocalFunctionLimit = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -230,26 +241,26 @@ const ReciprocalFunctionLimit = () => {
         </BackButton>
         <SectionTitle>Elementary Function: Reciprocal</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        Observe how the reciprocal function behaves as x approaches different values. 
+        Observe how the reciprocal function behaves as x approaches different values.
         Notice the vertical asymptote at x = 0 and how the function approaches 0 as x → ±∞.
       </SectionDescription>
 
       <SectionTitle>Function: y = a/x</SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
           f(x) = a/x<br/>
           As x → ±∞, f(x) → 0
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
-        Adjust the coefficient (a) and X range to explore both branches of the function. 
+        Adjust the coefficient (a) and X range to explore both branches of the function.
         Observe the behavior near the vertical asymptote and at infinity.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
@@ -261,23 +272,15 @@ const ReciprocalFunctionLimit = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* 只显示原函数图 */}
           <LimitPlotter
@@ -286,6 +289,7 @@ const ReciprocalFunctionLimit = () => {
             title={`Function: f(x) = a/x`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

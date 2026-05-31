@@ -93,16 +93,18 @@ const OddEvenFunctions = () => {
     samplePoint: 2,    // 采样点位置
     xRange: [-5, 5],   // X轴范围
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
-  
+
   // 偶函数参数状态
-  const [evenParams, setEvenParams] = useState({ 
+  const [evenParams, setEvenParams] = useState({
     a: 1,              // 系数
     b: 0,              // 偏置项
     xRange: [-5, 5],   // X轴范围
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 奇函数参数配置 - 分组版本
@@ -124,6 +126,16 @@ const OddEvenFunctions = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const oddLegendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const oddCommonConfig = [
+    ...oddLegendPositionConfig,
+    ...oddPlotStyleConfig,
+    ...oddViewRangeConfig
+  ];
+
   // 偶函数参数配置 - 分组版本
   const evenCoefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
@@ -137,6 +149,16 @@ const OddEvenFunctions = () => {
   const evenViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -10, max: 10, step: 0.5, default: [-5, 5] },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+  ];
+
+  const evenLegendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const evenCommonConfig = [
+    ...evenLegendPositionConfig,
+    ...evenPlotStyleConfig,
+    ...evenViewRangeConfig
   ];
 
   // ✅ 新增：奇函数数据生成逻辑
@@ -303,23 +325,15 @@ const OddEvenFunctions = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={oddParams}
               onChange={setOddParams}
-              config={oddPlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={oddParams}
-              onChange={setOddParams}
-              config={oddViewRangeConfig}
+              config={oddCommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
@@ -329,6 +343,7 @@ const OddEvenFunctions = () => {
             showExportButton={false}
             plotStyle={oddParams.plotStyle}
             aspectRatio={oddParams.aspectRatio}
+            legendPosition={oddParams.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>
@@ -338,7 +353,7 @@ const OddEvenFunctions = () => {
       <SectionDescription>
         Even functions are symmetric about the y-axis. The left side is a mirror image of the right side.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 偶函数参数分组 */}
@@ -350,23 +365,15 @@ const OddEvenFunctions = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={evenParams}
               onChange={setEvenParams}
-              config={evenPlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={evenParams}
-              onChange={setEvenParams}
-              config={evenViewRangeConfig}
+              config={evenCommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
@@ -376,6 +383,7 @@ const OddEvenFunctions = () => {
             showExportButton={false}
             plotStyle={evenParams.plotStyle}
             aspectRatio={evenParams.aspectRatio}
+            legendPosition={evenParams.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

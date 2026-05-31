@@ -100,7 +100,8 @@ const TwoSidedLimit = () => {
   const [params, setParams] = useState({
     xRange: [-1, 3],     // X轴范围（围绕x=1）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据（有理函数，在 x=1 处有可去间断点）
@@ -261,6 +262,16 @@ const TwoSidedLimit = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -294,19 +305,11 @@ const TwoSidedLimit = () => {
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
@@ -319,6 +322,7 @@ const TwoSidedLimit = () => {
             title={`Rational Function: Left = Right Limit`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

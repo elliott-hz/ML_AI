@@ -96,7 +96,8 @@ const InfinitesimalBounded = () => {
   const [params, setParams] = useState({
     xRange: [-3, 3],     // X轴范围（围绕x=0）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据（多条曲线）
@@ -266,6 +267,16 @@ const InfinitesimalBounded = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -274,10 +285,10 @@ const InfinitesimalBounded = () => {
         </BackButton>
         <SectionTitle>Infinitesimal Property 2: Bounded × Infinitesimal</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        A bounded function multiplied by an infinitesimal is still an infinitesimal. 
-        Observe how cos(x) oscillates between -1 and 1 (bounded), but when multiplied by x 
+        A bounded function multiplied by an infinitesimal is still an infinitesimal.
+        Observe how cos(x) oscillates between -1 and 1 (bounded), but when multiplied by x
         (which approaches 0), the product also approaches 0.
       </SectionDescription>
 
@@ -289,27 +300,19 @@ const InfinitesimalBounded = () => {
           lim<sub>x→0</sub> g(x) = lim<sub>x→0</sub>(cos(x)·x) = 0
         </Formula>
       </FormulaBox>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateFunctionData()}
@@ -317,6 +320,7 @@ const InfinitesimalBounded = () => {
             title={`Bounded × Infinitesimal: cos(x)·x`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

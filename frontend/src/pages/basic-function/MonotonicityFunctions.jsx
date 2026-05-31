@@ -94,18 +94,20 @@ const MonotonicityFunctions = () => {
     x2: 3,       // 第二个点的x坐标
     xRange: [-8, 8], // X轴范围
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
-  
+
   // 单调递减函数参数状态
-  const [decreasingParams, setDecreasingParams] = useState({ 
+  const [decreasingParams, setDecreasingParams] = useState({
     a: 1,        // 斜率
     b: 0,        // 截距
     x1: -3,      // 第一个点的x坐标
     x2: 3,       // 第二个点的x坐标
     xRange: [-8, 8], // X轴范围
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 单调递增函数参数配置 - 分组版本
@@ -128,6 +130,16 @@ const MonotonicityFunctions = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const increasingLegendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const increasingCommonConfig = [
+    ...increasingLegendPositionConfig,
+    ...increasingPlotStyleConfig,
+    ...increasingViewRangeConfig
+  ];
+
   // 单调递减函数参数配置 - 分组版本
   const decreasingCoefficientConfig = [
     { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
@@ -146,6 +158,16 @@ const MonotonicityFunctions = () => {
   const decreasingViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+  ];
+
+  const decreasingLegendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const decreasingCommonConfig = [
+    ...decreasingLegendPositionConfig,
+    ...decreasingPlotStyleConfig,
+    ...decreasingViewRangeConfig
   ];
 
   // ✅ 新增：单调递增函数数据生成逻辑
@@ -401,23 +423,15 @@ const MonotonicityFunctions = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={increasingParams}
               onChange={setIncreasingParams}
-              config={increasingPlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={increasingParams}
-              onChange={setIncreasingParams}
-              config={increasingViewRangeConfig}
+              config={increasingCommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
@@ -427,6 +441,7 @@ const MonotonicityFunctions = () => {
             showExportButton={false}
             plotStyle={increasingParams.plotStyle}
             aspectRatio={increasingParams.aspectRatio}
+            legendPosition={increasingParams.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>
@@ -436,7 +451,7 @@ const MonotonicityFunctions = () => {
       <SectionDescription>
         As x increases, y always decreases. The slope (-a) is negative. Adjust the magnitude of slope and y-intercept.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 单调递减参数分组 */}
@@ -456,23 +471,15 @@ const MonotonicityFunctions = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={decreasingParams}
               onChange={setDecreasingParams}
-              config={decreasingPlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={decreasingParams}
-              onChange={setDecreasingParams}
-              config={decreasingViewRangeConfig}
+              config={decreasingCommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
@@ -482,6 +489,7 @@ const MonotonicityFunctions = () => {
             showExportButton={false}
             plotStyle={decreasingParams.plotStyle}
             aspectRatio={decreasingParams.aspectRatio}
+            legendPosition={decreasingParams.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

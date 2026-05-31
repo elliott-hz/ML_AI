@@ -122,19 +122,22 @@ const InfiniteSumNotInfinitesimal = () => {
   const [plot1Params, setPlot1Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 1
     plotStyle: 'medium',   // Plot style
-    aspectRatio: 'auto'    // Aspect ratio
+    aspectRatio: 'auto',    // Aspect ratio
+    legendPosition: 'top-right'
   });
 
   const [plot2Params, setPlot2Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 2
     plotStyle: 'medium',   // Plot style
-    aspectRatio: 'auto'    // Aspect ratio
+    aspectRatio: 'auto',    // Aspect ratio
+    legendPosition: 'top-right'
   });
 
   const [plot3Params, setPlot3Params] = useState({ 
     maxN: 50,              // Maximum N for growth curve in Plot 3
     plotStyle: 'medium',   // Plot style
-    aspectRatio: 'auto'    // Aspect ratio
+    aspectRatio: 'auto',    // Aspect ratio
+    legendPosition: 'top-right'
   });
 
   // Generate individual infinitesimals: a_n(x) = x/n
@@ -240,6 +243,16 @@ const InfiniteSumNotInfinitesimal = () => {
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
+  const plot1LegendConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const plot1CommonConfig = [
+    ...plot1LegendConfig,
+    ...plot1PlotStyleConfig,
+    ...plot1ViewRangeConfig
+  ];
+
   // Parameter configurations for Plot 2 (removed maxN - fixed sums)
   const plot2ViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -5, max: 5, step: 0.5, default: [-2, 2] },
@@ -248,6 +261,16 @@ const InfiniteSumNotInfinitesimal = () => {
 
   const plot2PlotStyleConfig = [
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
+  ];
+
+  const plot2LegendConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const plot2CommonConfig = [
+    ...plot2LegendConfig,
+    ...plot2PlotStyleConfig,
+    ...plot2ViewRangeConfig
   ];
 
   // Parameter configurations for Plot 3
@@ -261,6 +284,16 @@ const InfiniteSumNotInfinitesimal = () => {
 
   const plot3PlotStyleConfig = [
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
+  ];
+
+  const plot3LegendConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const plot3CommonConfig = [
+    ...plot3LegendConfig,
+    ...plot3PlotStyleConfig,
+    ...plot3ViewRangeConfig
   ];
 
   return (
@@ -296,29 +329,22 @@ const InfiniteSumNotInfinitesimal = () => {
       
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={plot1Params}
               onChange={setPlot1Params}
-              config={plot1PlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={plot1Params}
-              onChange={setPlot1Params}
-              config={plot1ViewRangeConfig}
+              config={plot1CommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={plot1Traces}
             xRange={plot1Params.xRange}
             plotStyle={plot1Params.plotStyle}
             aspectRatio={plot1Params.aspectRatio}
+            legendPosition={plot1Params.legendPosition}
             title="Each term is an infinitesimal"
           />
         </PlotPanel>
@@ -329,32 +355,25 @@ const InfiniteSumNotInfinitesimal = () => {
       <SectionDescription>
         The partial sums S<sub>N</sub>(x) = H<sub>N</sub>·x have increasing slopes. Even though we're adding smaller terms, the total grows!
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={plot2Params}
               onChange={setPlot2Params}
-              config={plot2PlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={plot2Params}
-              onChange={setPlot2Params}
-              config={plot2ViewRangeConfig}
+              config={plot2CommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={plot2Traces}
             xRange={plot2Params.xRange}
             plotStyle={plot2Params.plotStyle}
             aspectRatio={plot2Params.aspectRatio}
+            legendPosition={plot2Params.legendPosition}
             title="Sum of Infinitesimals"
           />
         </PlotPanel>
@@ -365,7 +384,7 @@ const InfiniteSumNotInfinitesimal = () => {
       <SectionDescription>
         At x=1, the partial sum S<sub>N</sub>(1) grows without bound as N increases. This proves that infinitely many infinitesimals can sum to infinity.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           <ParameterSection title="Function Coefficients">
@@ -376,29 +395,22 @@ const InfiniteSumNotInfinitesimal = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={plot3Params}
               onChange={setPlot3Params}
-              config={plot3PlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={plot3Params}
-              onChange={setPlot3Params}
-              config={plot3ViewRangeConfig}
+              config={plot3CommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={plot3Traces}
             xRange={[1, plot3Params.maxN]}
             plotStyle={plot3Params.plotStyle}
             aspectRatio={plot3Params.aspectRatio}
+            legendPosition={plot3Params.legendPosition}
             title={`Growth of Partial Sum at x=1`}
           />
         </PlotPanel>

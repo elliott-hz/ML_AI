@@ -107,7 +107,8 @@ const ConvergentSequence1 = () => {
     base: 2,           // 底数
     maxN: 50,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成离散序列数据
@@ -200,6 +201,16 @@ const ConvergentSequence1 = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -238,34 +249,27 @@ const ConvergentSequence1 = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateSequenceData()}
             xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
             title={`Sequence: uₙ = 1/${params.base}ⁿ`}
             showLimitLine={true}
             limitValue={0}
           />
-          
+
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
@@ -274,6 +278,7 @@ const ConvergentSequence1 = () => {
               title={`Original Function: f(x) = 1/${params.base}ˣ`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}
+              legendPosition={params.legendPosition}
             />
           </div>
         </PlotPanel>

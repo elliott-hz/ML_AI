@@ -108,7 +108,8 @@ const ExponentialFunctionLimit = () => {
     base: Math.E,        // 底数，默认使用自然常数 e ≈ 2.71828
     xRange: [-5, 5],     // X轴范围（根据参考图调整）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据
@@ -184,6 +185,16 @@ const ExponentialFunctionLimit = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -192,26 +203,26 @@ const ExponentialFunctionLimit = () => {
         </BackButton>
         <SectionTitle>Elementary Function: Exponential Decay</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        Observe how the exponential decay function behaves as x approaches different values. 
+        Observe how the exponential decay function behaves as x approaches different values.
         By examining the graph, you can see that as x → +, the function value approaches 0.
       </SectionDescription>
 
       <SectionTitle>Function: y = a·e<sup>-x</sup></SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
           f(x) = a·e<sup>-x</sup><br/>
           As x → +∞, f(x) → 0
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
-        Adjust the coefficient (a) and X range to explore how the function behaves near different points. 
+        Adjust the coefficient (a) and X range to explore how the function behaves near different points.
         Notice how the curve approaches the horizontal asymptote at y = 0.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
@@ -223,23 +234,15 @@ const ExponentialFunctionLimit = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* 只显示原函数图 */}
           <LimitPlotter
@@ -248,6 +251,7 @@ const ExponentialFunctionLimit = () => {
             title={`Function: f(x) = a·e⁻ˣ`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

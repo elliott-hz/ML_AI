@@ -85,7 +85,8 @@ const PeriodicFunctions = () => {
     c: 0,              // 相位
     xRange: [-10, 10], // X轴范围
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 周期函数参数配置 - 分组版本
@@ -102,6 +103,16 @@ const PeriodicFunctions = () => {
   const periodicViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-10, 10] },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+  ];
+
+  const periodicLegendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const periodicCommonConfig = [
+    ...periodicLegendPositionConfig,
+    ...periodicPlotStyleConfig,
+    ...periodicViewRangeConfig
   ];
 
   // ✅ 新增：在页面中定义周期函数的数据生成逻辑
@@ -230,23 +241,15 @@ const PeriodicFunctions = () => {
             />
           </ParameterSection>
 
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={periodicParams}
               onChange={setPeriodicParams}
-              config={periodicPlotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={periodicParams}
-              onChange={setPeriodicParams}
-              config={periodicViewRangeConfig}
+              config={periodicCommonConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* ✅ 修改：传入 data 而非 functionType */}
           <FunctionPlotter
@@ -256,6 +259,7 @@ const PeriodicFunctions = () => {
             showExportButton={false}
             plotStyle={periodicParams.plotStyle}
             aspectRatio={periodicParams.aspectRatio}
+            legendPosition={periodicParams.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

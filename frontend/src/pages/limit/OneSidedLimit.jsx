@@ -100,7 +100,8 @@ const OneSidedLimit = () => {
   const [params, setParams] = useState({
     xRange: [-2, 2],     // X轴范围（围绕x=0）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据（分段函数，不连接）
@@ -265,6 +266,16 @@ const OneSidedLimit = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -273,14 +284,14 @@ const OneSidedLimit = () => {
         </BackButton>
         <SectionTitle>One-Sided Limit</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        Explore one-sided limits using a piecewise function. 
+        Explore one-sided limits using a piecewise function.
         Observe how the left-hand limit and right-hand limit approach different values as x → 0.
       </SectionDescription>
 
       <SectionTitle>Piecewise Function Example</SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
           f(x) = &#123;<br/>
@@ -290,33 +301,25 @@ const OneSidedLimit = () => {
           &#125;
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
         <strong>Left-hand limit:</strong> lim<sub>x→0⁻</sub> f(x) = -1 (using x - 1)<br/>
         <strong>Right-hand limit:</strong> lim<sub>x→0⁺</sub> f(x) = +1 (using x + 1)<br/><br/>
         Since the left and right limits are <strong>not equal</strong>, the two-sided limit does not exist at x = 0.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           {/* 显示原函数图，带辅助线和关键点（分段函数不连接） */}
           <LimitPlotter
@@ -325,6 +328,7 @@ const OneSidedLimit = () => {
             title={`Piecewise Function: Left ≠ Right Limit`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

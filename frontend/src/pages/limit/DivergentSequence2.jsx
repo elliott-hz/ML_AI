@@ -106,7 +106,8 @@ const DivergentSequence2 = () => {
   const [params, setParams] = useState({ 
     maxN: 20,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成离散序列数据（振荡发散）
@@ -177,6 +178,16 @@ const DivergentSequence2 = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -186,54 +197,47 @@ const DivergentSequence2 = () => {
 
         <SectionTitle>Divergent Sequence: Oscillation</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        This sequence demonstrates oscillatory behavior. The terms follow a sine wave pattern, 
+        This sequence demonstrates oscillatory behavior. The terms follow a sine wave pattern,
         oscillating between -1 and 1 without settling on a single value. Therefore, the limit does not exist.
       </SectionDescription>
 
       <SectionTitle>Sequence: u<sub>n</sub> = sin(n)</SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
-          lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>sin(n)</span> does not exist
+          lim<sub>n→</sub> <span style={{ fontSize: '24px' }}>sin(n)</span> does not exist
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
-        Observe how sin(n) oscillates as n increases through integer values. 
+        Observe how sin(n) oscillates as n increases through integer values.
         Since π is irrational, sin(n) never repeats exactly and continues to oscillate indefinitely.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-          
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateSequenceData()}
             xRange={[0, params.maxN]}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
             title={`Sequence: uₙ = sin(n)`}
           />
-          
+
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>
             <LimitPlotter
@@ -242,6 +246,7 @@ const DivergentSequence2 = () => {
               title={`Original Function: f(x) = sin(x)`}
               plotStyle={params.plotStyle}
               aspectRatio={params.aspectRatio}
+              legendPosition={params.legendPosition}
             />
           </div>
         </PlotPanel>

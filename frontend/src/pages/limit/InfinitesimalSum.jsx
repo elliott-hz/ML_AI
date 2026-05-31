@@ -96,7 +96,8 @@ const InfinitesimalSum = () => {
   const [params, setParams] = useState({
     xRange: [-2, 2],     // X轴范围（围绕x=0）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据（多条曲线）
@@ -290,6 +291,16 @@ const InfinitesimalSum = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -298,10 +309,10 @@ const InfinitesimalSum = () => {
         </BackButton>
         <SectionTitle>Infinitesimal Property 1: Sum</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        The sum of a finite number of infinitesimals is still an infinitesimal. 
-        Observe how each individual term (x, x², x³) approaches 0 as x → 0, 
+        The sum of a finite number of infinitesimals is still an infinitesimal.
+        Observe how each individual term (x, x², x³) approaches 0 as x → 0,
         and their sum also approaches 0.
       </SectionDescription>
 
@@ -312,27 +323,19 @@ const InfinitesimalSum = () => {
           lim<sub>x→0</sub> β(x) = lim<sub>x→0</sub>(x + x² + x³) = 0
         </Formula>
       </FormulaBox>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
-          <ParameterSection title="Plot Style">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateFunctionData()}
@@ -340,6 +343,7 @@ const InfinitesimalSum = () => {
             title={`Sum of Infinitesimals: x + x² + x³`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

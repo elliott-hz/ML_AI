@@ -101,7 +101,8 @@ const DiscontinuityJump = () => {
     x0: 0.0,
     xRange: [-3, 3],
     plotStyle: 'medium',
-    aspectRatio: 'auto'
+    aspectRatio: 'auto',
+    legendPosition: 'top-right'
   });
 
   const generateData = useCallback(() => {
@@ -206,6 +207,16 @@ const DiscontinuityJump = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   const jumpSize = params.L - params.R;
 
   return (
@@ -240,11 +251,8 @@ const DiscontinuityJump = () => {
           <ParameterSection title="Parameters">
             <ParameterControls parameters={params} onChange={setParams} config={paramConfig} />
           </ParameterSection>
-          <ParameterSection title="Plot Style">
-            <ParameterControls parameters={params} onChange={setParams} config={plotStyleConfig} />
-          </ParameterSection>
-          <ParameterSection title="View Range">
-            <ParameterControls parameters={params} onChange={setParams} config={viewRangeConfig} />
+          <ParameterSection title="General Settings">
+            <ParameterControls parameters={params} onChange={setParams} config={commonParamsConfig} />
           </ParameterSection>
         </ControlsPanel>
 
@@ -255,6 +263,7 @@ const DiscontinuityJump = () => {
             title={`Jump Discontinuity at x₀ = ${params.x0.toFixed(1)}`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>

@@ -97,7 +97,8 @@ const InfinitesimalConstant = () => {
     constant: 5,         // 常数 c ∈ [1, 10]
     xRange: [-2, 2],     // X轴范围（围绕x=0）
     plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto'  // 显示比例 (auto, 16:9, 4:3)
+    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    legendPosition: 'top-right'
   });
 
   // 生成连续函数数据（多条曲线）
@@ -254,6 +255,16 @@ const InfinitesimalConstant = () => {
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
   ];
 
+  const legendPositionConfig = [
+    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -262,9 +273,9 @@ const InfinitesimalConstant = () => {
         </BackButton>
         <SectionTitle>Infinitesimal Property 3: Constant × Infinitesimal</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        A constant multiple of an infinitesimal is still an infinitesimal. 
+        A constant multiple of an infinitesimal is still an infinitesimal.
         Adjust the constant c to see how scaling affects the slope, but the limit remains 0.
       </SectionDescription>
 
@@ -276,7 +287,7 @@ const InfinitesimalConstant = () => {
           lim<sub>x→0</sub> g(x) = lim<sub>x→0</sub>(c·x) = c·0 = 0
         </Formula>
       </FormulaBox>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
@@ -287,24 +298,16 @@ const InfinitesimalConstant = () => {
               config={paramConfig}
             />
           </ParameterSection>
-          
-          <ParameterSection title="Plot Style">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={plotStyleConfig}
-            />
-          </ParameterSection>
 
-          <ParameterSection title="View Range">
+          <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={viewRangeConfig}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
-        
+
         <PlotPanel>
           <LimitPlotter
             data={generateFunctionData()}
@@ -312,6 +315,7 @@ const InfinitesimalConstant = () => {
             title={`Constant × Infinitesimal: ${params.constant}·x`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
         </PlotPanel>
       </ContentLayout>
