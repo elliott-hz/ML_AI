@@ -252,6 +252,13 @@ const DerivativePowerFunctions = () => {
     { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
   ];
 
+  // Merge all common controls into one config array
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -282,16 +289,8 @@ const DerivativePowerFunctions = () => {
             <ParameterControls parameters={params} onChange={setParams} config={powerConfig} />
           </ParameterSection>
 
-          <ParameterSection title="Legend Position">
-            <ParameterControls parameters={params} onChange={setParams} config={legendPositionConfig} />
-          </ParameterSection>
-
-          <ParameterSection title="Plot Style">
-            <ParameterControls parameters={params} onChange={setParams} config={plotStyleConfig} />
-          </ParameterSection>
-
-          <ParameterSection title="View Range">
-            <ParameterControls parameters={params} onChange={setParams} config={viewRangeConfig} />
+          <ParameterSection title="General Settings">
+            <ParameterControls parameters={params} onChange={setParams} config={commonParamsConfig} />
           </ParameterSection>
         </ControlsPanel>
 
