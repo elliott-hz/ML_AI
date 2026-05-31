@@ -179,7 +179,7 @@ const DiscontinuityRemovable = () => {
       y: [Math.min(limitValue, c), Math.max(limitValue, c)],
       type: 'scatter', mode: 'lines',
       name: `gap: ${Math.abs(limitValue - c).toFixed(1)}`,
-      line: { color: '#b45309', width: 2, dash: 'dash' }
+      line: { color: '#ffd700', width: 2, dash: 'dash' }
     });
 
     // Hollow circle at (x0, limitValue) — the "true" limit point

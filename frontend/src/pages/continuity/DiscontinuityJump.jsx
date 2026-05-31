@@ -155,7 +155,7 @@ const DiscontinuityJump = () => {
       x: [x0, x0], y: [L, R],
       type: 'scatter', mode: 'lines',
       name: `jump: ${(L - R).toFixed(1)}`,
-      line: { color: '#b45309', width: 2, dash: 'dash' }
+      line: { color: '#ffd700', width: 2, dash: 'dash' }
     });
 
     // Hollow circle at (x0, L) — the left limit value (not the actual point)

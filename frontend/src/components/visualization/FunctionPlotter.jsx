@@ -46,7 +46,7 @@ const FunctionPlotter = ({
 
   // 根据主题获取辅助线颜色
   const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#f59e0b';
+    return themeMode === 'dark' ? '#ffd700' : '#b45309';
   }, [themeMode]);
 
   // 自动计算 Y 轴范围（基于传入的数据）
@@ -83,21 +83,17 @@ const FunctionPlotter = ({
     return [minY - padding, maxY + padding];
   }, [data, propYRange]);
 
-  // ✅ 新增：根据 plotStyle 应用样式到所有 traces
+  // 应用样式并替换辅助元素的主题颜色
   const styledData = useMemo(() => {
     if (!data || data.length === 0) return data;
-    
-    // ✅ 获取当前主题的辅助元素颜色
-    const auxiliaryColor = themeMode === 'dark' ? '#ffd700' : '#f59e0b';
-    
+
+    const auxColor = themeMode === 'dark' ? '#ffd700' : '#b45309';
+
     return data.map(trace => {
       const newTrace = { ...trace };
-      
-      // ✅ 检测是否为辅助元素（通过 name 判断）
-      // 包括：辅助线、辅助点、辅助文本等
-      const isAuxiliaryElement = 
+
+      const isAuxiliaryElement =
         trace.name && (
-          // 辅助线
           trace.name.includes('Peak') ||
           trace.name.includes('Break Point') ||
           trace.name.includes('Vertical Line') ||
@@ -105,64 +101,55 @@ const FunctionPlotter = ({
           trace.name.includes('Connection Line') ||
           trace.name.includes('Axis of Symmetry') ||
           trace.name.includes('symmetry axis') ||
-          // 辅助点（示例点、关键点等）
-          trace.name.includes('P(') ||           // P(x, y) 格式的点
-          trace.name.includes("P'") ||           // P'(x, y) 格式的点
-          trace.name.includes('P₁') ||           // P₁(x, y) 格式的点
-          trace.name.includes('P₂')              // P₂(x, y) 格式的点
+          trace.name.includes('P(') ||
+          trace.name.includes("P'") ||
+          trace.name.includes('P₁') ||
+          trace.name.includes('P₂') ||
+          trace.name.includes('Δx') ||
+          trace.name.includes('Δy') ||
+          trace.name.includes('gap') ||
+          trace.name.includes('jump') ||
+          trace.name.includes('Hole') ||
+          trace.name.includes('x₀') ||
+          trace.name.startsWith('x=') ||
+          trace.name.startsWith('y=') ||
+          trace.name.startsWith('lim') ||
+          trace.name.startsWith('f(x₀)')
         );
-      
-      // ✅ 如果是辅助元素，替换为主题感知的颜色
+
       if (isAuxiliaryElement) {
-        // 更新线条颜色
         if (newTrace.line) {
-          newTrace.line = {
-            ...newTrace.line,
-            color: auxiliaryColor
-          };
+          newTrace.line = { ...newTrace.line, color: auxColor };
         }
-        
-        // 更新标记点颜色
         if (newTrace.marker) {
-          newTrace.marker = {
-            ...newTrace.marker,
-            color: auxiliaryColor
-          };
+          newTrace.marker = { ...newTrace.marker, color: auxColor };
         }
-        
-        // 更新文本颜色
         if (newTrace.textfont) {
-          newTrace.textfont = {
-            ...newTrace.textfont,
-            color: auxiliaryColor
-          };
+          newTrace.textfont = { ...newTrace.textfont, color: auxColor };
         }
       }
-      
-      // 应用线宽样式
+
       if (newTrace.line) {
         newTrace.line = {
           ...newTrace.line,
           width: styleConfig.lineWidth
         };
       }
-      
-      // 应用点大小样式（如果有 markers）
+
       if (newTrace.marker) {
         newTrace.marker = {
           ...newTrace.marker,
           size: styleConfig.pointSize
         };
       }
-      
-      // 应用字体大小样式（如果有 text）
+
       if (newTrace.textfont) {
         newTrace.textfont = {
           ...newTrace.textfont,
           size: styleConfig.fontSize
         };
       }
-      
+
       return newTrace;
     });
   }, [data, styleConfig, themeMode]);

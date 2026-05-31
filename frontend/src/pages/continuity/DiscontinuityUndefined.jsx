@@ -172,7 +172,7 @@ const DiscontinuityUndefined = () => {
       y: [auxYMin, auxYMax],
       type: 'scatter', mode: 'lines',
       name: `x=${holeX.toFixed(1)}`,
-      line: { color: '#b45309', width: 2, dash: 'dash' }
+      line: { color: '#ffd700', width: 2, dash: 'dash' }
     });
 
     // Horizontal auxiliary line at y = 2a (the limit value)
@@ -181,7 +181,7 @@ const DiscontinuityUndefined = () => {
       y: [holeY, holeY],
       type: 'scatter', mode: 'lines',
       name: `lim: ${holeY.toFixed(1)}`,
-      line: { color: '#b45309', width: 2, dash: 'dash' }
+      line: { color: '#ffd700', width: 2, dash: 'dash' }
     });
 
     // Hollow circle at the hole (a, 2a)

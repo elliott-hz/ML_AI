@@ -49,7 +49,7 @@ const LimitPlotter = ({
 
   // 根据主题获取辅助线颜色
   const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#f59e0b'; // Dark: 亮黄, Light: 琥珀色（更醒目）
+    return themeMode === 'dark' ? '#ffd700' : '#b45309'; // Dark: 亮黄, Light: 琥珀色（更醒目）
   }, [themeMode]);
 
   // ✅ 新增：如果外部传入了 data，直接使用（新接口）

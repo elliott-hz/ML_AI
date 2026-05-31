@@ -42,7 +42,7 @@ const ContinuityPlotter = ({
   }, []);
 
   const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#f59e0b';
+    return themeMode === 'dark' ? '#ffd700' : '#b45309';
   }, [themeMode]);
 
   const autoYRange = useMemo(() => {
