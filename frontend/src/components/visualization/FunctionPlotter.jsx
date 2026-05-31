@@ -193,13 +193,18 @@ const FunctionPlotter = ({
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
-      margin: { l: 60, r: 40, t: 60, b: 60 },
+      margin: { l: 60, r: 20, t: 60, b: 60 },
       showlegend: true,
       legend: {
         font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
-        bgcolor: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.8)',
+        bgcolor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.85)',
         bordercolor: isDark ? '#334155' : '#cbd5e1',
-        borderwidth: 1
+        borderwidth: 1,
+        // Position inside the plot at top-right corner
+        x: 0.98,
+        y: 0.98,
+        xanchor: 'right',
+        yanchor: 'top'
       }
     };
   }, [title, propXRange, autoYRange, themeMode, styleConfig]);
