@@ -148,8 +148,8 @@ const InfiniteSumNotInfinitesimal = () => {
       const xValues = [xMin, xMax];
       const yValues = xValues.map(x => x / n);
       
-      // ✅ 使用Unicode下标和简洁的分数形式
-      const formulaText = `a${toSubscript(n)}(x) = x/${n}`;
+      // Use HTML sub tags for proper math formatting in Plotly legends
+      const formulaText = `a<sub>${n}</sub>(x) = x/${n}`;
       
       traces.push({
         x: xValues,
@@ -176,17 +176,17 @@ const InfiniteSumNotInfinitesimal = () => {
       const xValues = [xMin, xMax];
       const yValues = xValues.map(x => H_N * x);
       
-      // ✅ 使用Unicode下标和求和符号，避免长表达式
+      // Use HTML sub/sup tags for proper math formatting in Plotly legends
       let formulaText;
       if (N === 1) {
-        formulaText = 'S₁(x) = x';
+        formulaText = 'S<sub>1</sub>(x) = x';
       } else if (N === 2) {
-        formulaText = 'S₂(x) = x + x/2';
+        formulaText = 'S<sub>2</sub>(x) = x + x/2';
       } else if (N === 3) {
-        formulaText = 'S₃(x) = x + x/2 + x/3';
+        formulaText = 'S<sub>3</sub>(x) = x + x/2 + x/3';
       } else {
-        // 使用求和符号表示，避免过长
-        formulaText = `S${toSubscript(N)}(x) = Σᵏ₌₁ᴺ (x/k), N=${N}`;
+        // Use summation notation with HTML tags
+        formulaText = `S<sub>${N}</sub>(x) = Σ<sup>N</sup><sub>k=1</sub> (x/k)`;
       }
       
       traces.push({
@@ -219,7 +219,7 @@ const InfiniteSumNotInfinitesimal = () => {
       y: sValues,
       type: 'scatter',
       mode: 'lines+markers',
-      name: 'S_N(1)',
+      name: 'S<sub>N</sub>(1)',
       line: { width: 2 },
       marker: { size: 6 }
     }];
@@ -291,7 +291,7 @@ const InfiniteSumNotInfinitesimal = () => {
       {/* Plot 1: Individual Infinitesimals */}
       <SectionTitle>Plot 1: Each term is an infinitesimal</SectionTitle>
       <SectionDescription>
-        Each individual term aₙ(x) = x/n is an infinitesimal as x → 0. The slopes decrease as n increases.
+        Each individual term a<sub>n</sub>(x) = x/n is an infinitesimal as x → 0. The slopes decrease as n increases.
       </SectionDescription>
       
       <ContentLayout>
@@ -327,7 +327,7 @@ const InfiniteSumNotInfinitesimal = () => {
       {/* Plot 2: Partial Sums */}
       <SectionTitle style={{ marginTop: '2rem' }}>Plot 2: Sum of Infinitesimals</SectionTitle>
       <SectionDescription>
-        The partial sums S_N(x) = H_N·x have increasing slopes. Even though we're adding smaller terms, the total grows!
+        The partial sums S<sub>N</sub>(x) = H<sub>N</sub>·x have increasing slopes. Even though we're adding smaller terms, the total grows!
       </SectionDescription>
       
       <ContentLayout>
@@ -363,7 +363,7 @@ const InfiniteSumNotInfinitesimal = () => {
       {/* Plot 3: Growth Curve */}
       <SectionTitle style={{ marginTop: '2rem' }}>Plot 3: Growth of Partial Sum at x=1</SectionTitle>
       <SectionDescription>
-        At x=1, the partial sum S_N(1) grows without bound as N increases. This proves that infinitely many infinitesimals can sum to infinity.
+        At x=1, the partial sum S<sub>N</sub>(1) grows without bound as N increases. This proves that infinitely many infinitesimals can sum to infinity.
       </SectionDescription>
       
       <ContentLayout>
