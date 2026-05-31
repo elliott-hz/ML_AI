@@ -23,6 +23,9 @@ import InfinitesimalBounded from '../pages/limit/InfinitesimalBounded';
 import InfinitesimalConstant from '../pages/limit/InfinitesimalConstant';
 import InfiniteSumNotInfinitesimal from '../pages/limit/InfiniteSumNotInfinitesimal';
 import QuotientOfInfinitesimals from '../pages/limit/QuotientOfInfinitesimals';
+import DiscontinuityUndefined from '../pages/continuity/DiscontinuityUndefined';
+import DiscontinuityJump from '../pages/continuity/DiscontinuityJump';
+import DiscontinuityRemovable from '../pages/continuity/DiscontinuityRemovable';
 import Continuity from '../pages/Continuity';
 import ContinuityOfFunction from '../pages/continuity/ContinuityOfFunction';
 
@@ -77,6 +80,11 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/limit/infinite-sum-not-infinitesimal" element={<InfiniteSumNotInfinitesimal />} />
         <Route path="/mathematics/1-fundamentals/limit/quotient-of-infinitesimals" element={<QuotientOfInfinitesimals />} />
         
+        {/* 数学模块 - Discontinuity Points 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/continuity/discontinuity-undefined" element={<DiscontinuityUndefined />} />
+        <Route path="/mathematics/1-fundamentals/continuity/discontinuity-jump" element={<DiscontinuityJump />} />
+        <Route path="/mathematics/1-fundamentals/continuity/discontinuity-removable" element={<DiscontinuityRemovable />} />
+
         {/* 数学模块 - Continuity 主页面 */}
         <Route path="/mathematics/1-fundamentals/continuity" element={<Continuity />} />
 

@@ -93,6 +93,31 @@ const Continuity = () => {
     }
   ];
 
+  // Group 2: Discontinuity Points
+  const discontinuityPoints = [
+    {
+      id: 'undefined',
+      icon: '',
+      title: 'f(x) Not Defined at x₀',
+      description: 'Removable discontinuity. f(x) = (x²-a²)/(x-a) is undefined at x=a, but the limit exists. Adjust a to move the hole.',
+      path: '/mathematics/1-fundamentals/continuity/discontinuity-undefined'
+    },
+    {
+      id: 'jump',
+      icon: '',
+      title: 'Limit Does Not Exist at x₀ (Jump)',
+      description: 'Jump discontinuity. Piecewise function with different left and right limits at x₀. Adjust L, R, and x₀.',
+      path: '/mathematics/1-fundamentals/continuity/discontinuity-jump'
+    },
+    {
+      id: 'removable-value',
+      icon: '',
+      title: 'lim f(x) ≠ f(x₀)',
+      description: 'Removable discontinuity. The limit exists and f(x₀) is defined, but they differ. Adjust a, b, x₀, and the isolated value c.',
+      path: '/mathematics/1-fundamentals/continuity/discontinuity-removable'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -112,6 +137,21 @@ const Continuity = () => {
       <GroupTitle>Continuity Basics</GroupTitle>
       <ButtonGrid>
         {continuityBasics.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 2: Discontinuity Points */}
+      <GroupTitle>Discontinuity Points</GroupTitle>
+      <ButtonGrid>
+        {discontinuityPoints.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
