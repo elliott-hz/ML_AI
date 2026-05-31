@@ -23,6 +23,8 @@ import InfinitesimalBounded from '../pages/limit/InfinitesimalBounded';
 import InfinitesimalConstant from '../pages/limit/InfinitesimalConstant';
 import InfiniteSumNotInfinitesimal from '../pages/limit/InfiniteSumNotInfinitesimal';
 import QuotientOfInfinitesimals from '../pages/limit/QuotientOfInfinitesimals';
+import Continuity from '../pages/Continuity';
+import ContinuityOfFunction from '../pages/continuity/ContinuityOfFunction';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -75,8 +77,13 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/limit/infinite-sum-not-infinitesimal" element={<InfiniteSumNotInfinitesimal />} />
         <Route path="/mathematics/1-fundamentals/limit/quotient-of-infinitesimals" element={<QuotientOfInfinitesimals />} />
         
+        {/* 数学模块 - Continuity 主页面 */}
+        <Route path="/mathematics/1-fundamentals/continuity" element={<Continuity />} />
+
+        {/* 数学模块 - Continuity 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/continuity/continuity-of-function" element={<ContinuityOfFunction />} />
+
         {/* 其他数学模块路由 - 示例 */}
-        <Route path="/mathematics/1-fundamentals/continuity" element={<div>Continuity Page - Coming Soon</div>} />
         <Route path="/mathematics/2-calculus/derivative" element={<div>Derivative Page - Coming Soon</div>} />
         
         {/* 深度学习模块路由 - 示例 */}
