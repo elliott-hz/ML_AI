@@ -70,18 +70,6 @@ const ButtonTitle = styled.h3`
   margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
 `;
 
-const MathFormula = styled.span`
-  sub, sup {
-    font-size: 0.75em;
-  }
-  sup {
-    vertical-align: super;
-  }
-  sub {
-    vertical-align: sub;
-  }
-`;
-
 const ButtonDescription = styled.p`
   color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
   font-size: 14px;
@@ -95,49 +83,33 @@ const ButtonDescription = styled.p`
 const Limit = () => {
   const navigate = useNavigate();
 
-  // Group 1 & 2: Sequences (Convergent & Divergent)
+  // Group 1: Sequences (Convergent & Divergent)
   const sequences = [
     {
       id: 'convergent-1',
       icon: '',
-      title: (
-        <MathFormula>
-          Sequence: u<sub>n</sub> = 1/a<sup>n</sup> → 0
-        </MathFormula>
-      ),
+      title: 'Exponential Decay Sequence',
       description: 'Explore exponential decay. Visualize how u_n = 1/a^n converges to 0 as n approaches infinity.',
       path: '/mathematics/1-fundamentals/limit/convergent-1'
     },
     {
       id: 'convergent-2',
       icon: '',
-      title: (
-        <MathFormula>
-          Sequence: u<sub>n</sub> = n/(n+1) → 1
-        </MathFormula>
-      ),
+      title: 'Rational Sequence',
       description: 'Understand rational convergence. See how u_n = n/(n+1) approaches 1 from below.',
       path: '/mathematics/1-fundamentals/limit/convergent-2'
     },
     {
       id: 'divergent-1',
       icon: '',
-      title: (
-        <MathFormula>
-          Sequence: u<sub>n</sub> = n² → ∞
-        </MathFormula>
-      ),
+      title: 'Quadratic Divergence',
       description: 'Study quadratic divergence. Observe how u_n = n² grows without bound.',
       path: '/mathematics/1-fundamentals/limit/divergent-1'
     },
     {
       id: 'divergent-2',
       icon: '',
-      title: (
-        <MathFormula>
-          Sequence: u<sub>n</sub> = sin(n) (Oscillating)
-        </MathFormula>
-      ),
+      title: 'Oscillating Sequence',
       description: 'Examine oscillating behavior. Visualize how u_n = sin(n) oscillates indefinitely without converging.',
       path: '/mathematics/1-fundamentals/limit/divergent-2'
     }
@@ -148,33 +120,21 @@ const Limit = () => {
     {
       id: 'exponential',
       icon: '',
-      title: (
-        <MathFormula>
-          Function: y = a·e<sup>-x</sup> → 0 (x→+∞)
-        </MathFormula>
-      ),
+      title: 'Exponential Decay Limit',
       description: 'Explore exponential decay limit. See how y = a·e^(-x) approaches 0 as x → +∞.',
       path: '/mathematics/1-fundamentals/limit/exponential'
     },
     {
       id: 'reciprocal',
       icon: '',
-      title: (
-        <MathFormula>
-          Function: y = a/x → 0 (x→±∞)
-        </MathFormula>
-      ),
+      title: 'Reciprocal Function Limit',
       description: 'Understand reciprocal function limit. Visualize how y = a/x converges to 0 as x → ±∞.',
       path: '/mathematics/1-fundamentals/limit/reciprocal'
     },
     {
       id: 'arctan',
       icon: '',
-      title: (
-        <MathFormula>
-          Function: y = a·arctan(x) → -a·π/2 (x→-∞)
-        </MathFormula>
-      ),
+      title: 'Arctangent Function Limit',
       description: 'Study arctangent function limit. Observe how y = a·arctan(x) approaches -a·π/2 as x → -∞.',
       path: '/mathematics/1-fundamentals/limit/arctan'
     }
@@ -185,85 +145,53 @@ const Limit = () => {
     {
       id: 'one-sided',
       icon: '',
-      title: (
-        <MathFormula>
-          One-Sided Limit: lim<sub>x→0⁻</sub> ≠ lim<sub>x→0</sub>
-        </MathFormula>
-      ),
+      title: 'One-Sided Limit',
       description: 'Piecewise function showing different left and right limits at x=0. Left limit = -1, Right limit = +1.',
       path: '/mathematics/1-fundamentals/limit/one-sided'
     },
     {
       id: 'two-sided',
       icon: '',
-      title: (
-        <MathFormula>
-          Two-Sided Limit: lim<sub>x→1⁻</sub> = lim<sub>x→1</sub> = 2
-        </MathFormula>
-      ),
+      title: 'Two-Sided Limit',
       description: 'Rational function showing equal left and right limits at x=1. Removable discontinuity with limit = 2.',
       path: '/mathematics/1-fundamentals/limit/two-sided'
     }
   ];
 
-  // Group 4: Infinitesimal Properties (Three Still)
+  // Group 4: Infinitesimal Properties (Three Still + Two Not Necessarily)
   const infinitesimalProperties = [
     {
       id: 'sum-property',
       icon: '',
-      title: (
-        <MathFormula>
-          Sum: α₁ + α₂ + α₃ → 0
-        </MathFormula>
-      ),
+      title: 'Finite Sum of Infinitesimals (Still Infinitesimal)',
       description: 'Finite sum of infinitesimals is still infinitesimal. Example: x + x² + x³ → 0 as x → 0.',
       path: '/mathematics/1-fundamentals/limit/infinitesimal-sum'
     },
     {
       id: 'bounded-product',
       icon: '',
-      title: (
-        <MathFormula>
-          Bounded × Infinitesimal: f(x)·α(x) → 0
-        </MathFormula>
-      ),
+      title: 'Bounded × Infinitesimal (Still Infinitesimal)',
       description: 'Bounded function times infinitesimal is still infinitesimal. Example: cos(x)·x → 0 as x → 0.',
       path: '/mathematics/1-fundamentals/limit/infinitesimal-bounded'
     },
     {
       id: 'constant-multiple',
       icon: '',
-      title: (
-        <MathFormula>
-          Constant × Infinitesimal: c·α(x) → 0
-        </MathFormula>
-      ),
+      title: 'Constant × Infinitesimal (Still Infinitesimal)',
       description: 'Constant multiple of infinitesimal is still infinitesimal. Adjust c to see scaling effect.',
       path: '/mathematics/1-fundamentals/limit/infinitesimal-constant'
-    }
-  ];
-
-  // Group 5: Infinitesimal Properties (Not Necessarily)
-  const infinitesimalNotNecessarily = [
+    },
     {
       id: 'infinite-sum',
       icon: '',
-      title: (
-        <MathFormula>
-          Infinite Sum: Σ αₙ ≠ 0 (Diverges)
-        </MathFormula>
-      ),
+      title: 'Infinite Sum (Not Necessarily)',
       description: 'Infinite sum of infinitesimals is not necessarily infinitesimal. Harmonic series example: Σ(1/n) diverges.',
       path: '/mathematics/1-fundamentals/limit/infinite-sum-not-infinitesimal'
     },
     {
       id: 'quotient',
       icon: '',
-      title: (
-        <MathFormula>
-          Quotient: f(x)/g(x) → ? (Varies)
-        </MathFormula>
-      ),
+      title: 'Quotient of Infinitesimals (Not Necessarily)',
       description: 'Quotient of infinitesimals can be 0, ∞, or finite value depending on convergence speed.',
       path: '/mathematics/1-fundamentals/limit/quotient-of-infinitesimals'
     }
@@ -278,7 +206,7 @@ const Limit = () => {
       <Header>
         <Title>Sequence Limits</Title>
         <Subtitle>
-          Explore the behavior of sequences as n approaches infinity. 
+          Explore the behavior of sequences as n approaches infinity.
           Visualize both convergent sequences (approaching a limit) and divergent sequences (growing without bound or oscillating).
         </Subtitle>
       </Header>
@@ -328,25 +256,10 @@ const Limit = () => {
         ))}
       </ButtonGrid>
 
-      {/* Group 4: Infinitesimal Properties (Three Still) */}
-      <GroupTitle>Infinitesimal Properties (Three Still)</GroupTitle>
+      {/* Group 4: Infinitesimal Properties */}
+      <GroupTitle>Infinitesimal Properties</GroupTitle>
       <ButtonGrid>
         {infinitesimalProperties.map((feature) => (
-          <FeatureButton
-            key={feature.id}
-            onClick={() => handleFeatureClick(feature.path)}
-          >
-            <ButtonIcon>{feature.icon}</ButtonIcon>
-            <ButtonTitle>{feature.title}</ButtonTitle>
-            <ButtonDescription>{feature.description}</ButtonDescription>
-          </FeatureButton>
-        ))}
-      </ButtonGrid>
-
-      {/* Group 5: Infinitesimal Properties (Not Necessarily) */}
-      <GroupTitle>Infinitesimal Properties (Not Necessarily)</GroupTitle>
-      <ButtonGrid>
-        {infinitesimalNotNecessarily.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
