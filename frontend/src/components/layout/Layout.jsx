@@ -61,6 +61,10 @@ const Layout = ({ children }) => {
 
   const handleSidebarCollapseChange = (collapsed) => {
     setIsSidebarCollapsed(collapsed);
+    // 等 sidebar transition (0.3s) 完成后再触发 resize，让 Plotly 图表自适应
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 350);
   };
 
   return (
