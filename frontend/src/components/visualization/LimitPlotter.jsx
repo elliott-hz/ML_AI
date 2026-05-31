@@ -297,14 +297,14 @@ const LimitPlotter = ({
 
   const fullscreenButtonStyle = {
     position: 'absolute',
-    top: '15px',
-    right: '30px',
+    top: '20px',
+    right: '10px',
     zIndex: 10,
     background: '#6366f1',
     border: 'none',
     borderRadius: '4px',
-    width: '28px',
-    height: '28px',
+    width: '18px',
+    height: '18px',
     cursor: 'pointer',
     color: '#ffffff',
     display: 'flex',
