@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 
 const MainContent = styled.main`
-  margin-left: 280px;
+  margin-left: ${({ $sidebarCollapsed }) => $sidebarCollapsed ? '50px' : '280px'};
   margin-top: 60px;
   padding: ${({ theme }) => theme.spacing.xl};
   min-height: calc(100vh - 60px);
   background: ${({ theme }) => theme.colors.background};
-  transition: background-color 0.3s ease;
+  transition: margin-left 0.3s ease, background-color 0.3s ease;
   
   @media (max-width: 768px) {
-    margin-left: 240px;
+    margin-left: ${({ $sidebarCollapsed }) => $sidebarCollapsed ? '50px' : '240px'};
     padding: ${({ theme }) => theme.spacing.lg};
   }
   

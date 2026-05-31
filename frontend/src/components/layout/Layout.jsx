@@ -15,6 +15,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const [activeLevel1, setActiveLevel1] = React.useState(null);
   const [activeLevel2, setActiveLevel2] = React.useState(null);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
 
   // 根据当前 URL 路径自动设置 activeLevel1 和 activeLevel2
   React.useEffect(() => {
@@ -58,6 +59,10 @@ const Layout = ({ children }) => {
     setActiveLevel2(level2Id);
   };
 
+  const handleSidebarCollapseChange = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
+
   return (
     <LayoutContainer>
       <TopNav
@@ -67,8 +72,12 @@ const Layout = ({ children }) => {
         onLevel1Click={handleLevel1Click}
         onLevel2Click={handleLevel2Click}
       />
-      <Sidebar menuData={menuConfig.menu} activeLevel2={activeLevel2} />
-      <MainContent>{children}</MainContent>
+      <Sidebar 
+        menuData={menuConfig.menu} 
+        activeLevel2={activeLevel2} 
+        onCollapseChange={handleSidebarCollapseChange}
+      />
+      <MainContent $sidebarCollapsed={isSidebarCollapsed}>{children}</MainContent>
     </LayoutContainer>
   );
 };

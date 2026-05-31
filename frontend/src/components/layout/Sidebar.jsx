@@ -6,16 +6,17 @@ const SidebarContainer = styled.aside`
   position: fixed;
   top: 60px;
   left: 0;
-  width: 280px;
+  width: ${({ $collapsed }) => $collapsed ? '50px' : '280px'};
   height: calc(100vh - 60px);
   background: ${({ theme }) => theme.colors.surface};
   border-right: 1px solid ${({ theme }) => theme.colors.border};
   overflow-y: auto;
   padding: ${({ theme }) => theme.spacing.lg} 0;
   z-index: ${({ theme }) => theme.zIndex.sticky};
+  transition: width 0.3s ease;
   
   @media (max-width: 768px) {
-    width: 240px;
+    width: ${({ $collapsed }) => $collapsed ? '50px' : '240px'};
   }
 `;
 
@@ -61,9 +62,33 @@ const EmptyState = styled.div`
   font-size: 0.9rem;
 `;
 
-const Sidebar = ({ menuData, activeLevel2 }) => {
+const CollapseButton = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.colors.textMuted};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: ${({ theme }) => theme.colors.surfaceLight};
+    color: ${({ theme }) => theme.colors.textPrimary};
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+const Sidebar = ({ menuData, activeLevel2, onCollapseChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
   
   // 查找当前激活的二级菜单
   const activeModule = React.useMemo(() => {
@@ -74,9 +99,17 @@ const Sidebar = ({ menuData, activeLevel2 }) => {
     return null;
   }, [menuData, activeLevel2]);
 
+  const handleToggleCollapse = () => {
+    const newCollapsedState = !isCollapsed;
+    setIsCollapsed(newCollapsedState);
+    if (onCollapseChange) {
+      onCollapseChange(newCollapsedState);
+    }
+  };
+
   if (!activeModule) {
     return (
-      <SidebarContainer>
+      <SidebarContainer $collapsed={isCollapsed}>
         <EmptyState>
           Select a module from the top menu to view topics
         </EmptyState>
@@ -85,20 +118,27 @@ const Sidebar = ({ menuData, activeLevel2 }) => {
   }
 
   return (
-    <SidebarContainer>
-      <SidebarTitle>{activeModule.name}</SidebarTitle>
-      <MenuItemList>
-        {activeModule.children?.map((level3) => (
-          <MenuItem key={level3.id}>
-            <MenuLink
-              $active={location.pathname === level3.path}
-              onClick={() => navigate(level3.path)}
-            >
-              {level3.name}
-            </MenuLink>
-          </MenuItem>
-        ))}
-      </MenuItemList>
+    <SidebarContainer $collapsed={isCollapsed}>
+      {!isCollapsed && (
+        <>
+          <SidebarTitle>{activeModule.name}</SidebarTitle>
+          <MenuItemList>
+            {activeModule.children?.map((level3) => (
+              <MenuItem key={level3.id}>
+                <MenuLink
+                  $active={location.pathname === level3.path}
+                  onClick={() => navigate(level3.path)}
+                >
+                  {level3.name}
+                </MenuLink>
+              </MenuItem>
+            ))}
+          </MenuItemList>
+        </>
+      )}
+      <CollapseButton onClick={handleToggleCollapse} title={isCollapsed ? "Expand" : "Collapse"}>
+        {isCollapsed ? '▶' : '◀'}
+      </CollapseButton>
     </SidebarContainer>
   );
 };
