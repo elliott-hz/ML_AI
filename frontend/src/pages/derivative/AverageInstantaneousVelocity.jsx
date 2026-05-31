@@ -283,7 +283,7 @@ const AverageInstantaneousVelocity = () => {
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/2-calculus/derivative')}>
+        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/derivative')}>
            Back to Derivative
         </BackButton>
         <Title>Average Velocity → Instantaneous Velocity</Title>

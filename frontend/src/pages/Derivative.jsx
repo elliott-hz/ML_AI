@@ -93,6 +93,24 @@ const Derivative = () => {
     }
   ];
 
+  // Group 2: Basic Derivative Formulas - Constants and Power Functions
+  const basicFormulas = [
+    {
+      id: 'constants',
+      icon: 'C',
+      title: 'Constants',
+      description: 'The derivative of any constant is zero — no change means zero slope everywhere. See the flat line and its zero derivative.',
+      path: '/mathematics/1-fundamentals/derivative/constants'
+    },
+    {
+      id: 'power-functions',
+      icon: 'x^μ',
+      title: 'Power Functions',
+      description: 'The power rule for any real exponent μ — integers, fractions, and negatives. Drag μ to watch the function and its derivative transform.',
+      path: '/mathematics/1-fundamentals/derivative/power-functions'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -112,6 +130,21 @@ const Derivative = () => {
       <GroupTitle>Motivation of the Derivative</GroupTitle>
       <ButtonGrid>
         {motivation.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            {/* <ButtonIcon>{feature.icon}</ButtonIcon> */}
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 2: Basic Derivative Formulas */}
+      <GroupTitle>Basic Derivative Formulas — Constants and Power Functions</GroupTitle>
+      <ButtonGrid>
+        {basicFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}

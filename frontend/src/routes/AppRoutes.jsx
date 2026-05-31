@@ -30,6 +30,8 @@ import Continuity from '../pages/Continuity';
 import ContinuityOfFunction from '../pages/continuity/ContinuityOfFunction';
 import Derivative from '../pages/Derivative';
 import AverageInstantaneousVelocity from '../pages/derivative/AverageInstantaneousVelocity';
+import DerivativeConstants from '../pages/derivative/DerivativeConstants';
+import DerivativePowerFunctions from '../pages/derivative/DerivativePowerFunctions';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -98,6 +100,8 @@ const AppRoutes = () => {
 
         {/* 数学模块 - Derivative 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/1-fundamentals/derivative/avg-instant-velocity" element={<AverageInstantaneousVelocity />} />
+        <Route path="/mathematics/1-fundamentals/derivative/constants" element={<DerivativeConstants />} />
+        <Route path="/mathematics/1-fundamentals/derivative/power-functions" element={<DerivativePowerFunctions />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />
