@@ -204,10 +204,11 @@ const Limit = () => {
   return (
     <PageContainer>
       <Header>
-        <Title>Sequence Limits</Title>
+        <Title>Limits</Title>
         <Subtitle>
-          Explore the behavior of sequences as n approaches infinity.
-          Visualize both convergent sequences (approaching a limit) and divergent sequences (growing without bound or oscillating).
+          A limit describes the value that a function or sequence approaches as the input approaches a certain point.
+          Explore convergent and divergent sequences, elementary function limits, one-sided and two-sided limits,
+          and the properties of infinitesimals through interactive visualizations.
         </Subtitle>
       </Header>
 
