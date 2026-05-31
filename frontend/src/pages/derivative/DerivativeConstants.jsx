@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import FunctionPlotter from '../../components/visualization/FunctionPlotter';
+import DerivativePlotter from '../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -218,7 +218,7 @@ const DerivativeConstants = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <FunctionPlotter
+          <DerivativePlotter
             data={traces}
             xRange={params.xRange}
             title={`Derivative of Constant: C = ${params.C.toFixed(1)}`}

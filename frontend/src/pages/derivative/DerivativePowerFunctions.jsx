@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import FunctionPlotter from '../../components/visualization/FunctionPlotter';
+import DerivativePlotter from '../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -87,29 +87,6 @@ const ControlsPanel = styled.div`
 const PlotPanel = styled.div`
   flex: 1;
   min-width: 0;
-  position: relative;
-`;
-
-// Floating formula box overlay on the plot
-const FloatingFormula = styled.div`
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 5;
-  background: rgba(30, 41, 59, 0.85);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  border-radius: 8px;
-  padding: 12px 16px;
-  pointer-events: none;
-  white-space: nowrap;
-`;
-
-const FloatingFormulaText = styled.div`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 15px;
-  font-family: 'Courier New', monospace;
-  line-height: 1.6;
 `;
 
 /**
@@ -252,7 +229,7 @@ const DerivativePowerFunctions = () => {
   const derivMu = mu - 1;
   const muExp = formatExp(mu);
   const derivMuExp = formatExp(derivMu);
-  const floatingFormula = `(x${muExp})' = ${mu}x${derivMuExp}`;
+  const formulaInTitle = `(x${muExp})' = ${mu}x${derivMuExp}`;
 
   const powerConfig = [
     { name: 'mu', label: 'μ (power exponent)', min: -3, max: 4, step: 0.1 }
@@ -290,7 +267,7 @@ const DerivativePowerFunctions = () => {
         <Formula>
           f(x) = x{toSuperscript('μ')}<br/><br/>
           f'(x) = μ · x{toSuperscript('(μ-1)')}<br/><br/>
-          Examples: (x²)' = 2x, &nbsp; (x⁰·⁵)' = 0.5x⁻·⁵, &nbsp; (x⁻¹)' = -x⁻²
+          Examples: (x²)' = 2x, &nbsp; (x·⁵)' = 0.5x·⁵, &nbsp; (x⁻¹)' = -x⁻²
         </Formula>
       </FormulaBox>
 
@@ -310,13 +287,10 @@ const DerivativePowerFunctions = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <FloatingFormula>
-            <FloatingFormulaText>{floatingFormula}</FloatingFormulaText>
-          </FloatingFormula>
-          <FunctionPlotter
+          <DerivativePlotter
             data={traces}
             xRange={params.xRange}
-            title={`Power Rule: μ = ${mu.toFixed(1)}`}
+            title={`${formulaInTitle}    μ = ${mu.toFixed(1)}`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
