@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import FunctionPlotter from '../../components/visualization/FunctionPlotter';
+import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -127,7 +127,7 @@ const MonotonicityFunctions = () => {
 
   const increasingViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const increasingLegendPositionConfig = [
@@ -157,7 +157,7 @@ const MonotonicityFunctions = () => {
 
   const decreasingViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -20, max: 20, step: 1, default: [-8, 8] },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const decreasingLegendPositionConfig = [

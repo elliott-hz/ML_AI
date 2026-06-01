@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import DerivativePlotter from '../../components/visualization/DerivativePlotter';
+import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -177,7 +177,7 @@ const DerivativeConstants = () => {
       name: 'xRange', label: 'X Range', type: 'range',
       min: -10, max: 10, step: 0.5, default: [-5, 5]
     },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const legendPositionConfig = [

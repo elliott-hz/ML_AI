@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import LimitPlotter from '../../components/visualization/LimitPlotter';
+import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -220,7 +220,7 @@ const ReciprocalFunctionLimit = () => {
       step: 1,
       default: [-10, 10]
     },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const legendPositionConfig = [

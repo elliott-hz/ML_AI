@@ -1,6 +1,8 @@
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 
+export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
+
 /**
  * Derivative Plotter - Specialized for derivative visualization
  * Receives pre-computed Plotly traces and handles theme-aware rendering

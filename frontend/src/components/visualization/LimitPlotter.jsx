@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
+export { ASPECT_RATIO_OPTIONS } from './DerivativePlotter';
 
 /**
  * Limit Plotter 组件 - 支持极限函数可视化的展示

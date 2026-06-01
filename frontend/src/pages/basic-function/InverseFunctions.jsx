@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import FunctionPlotter from '../../components/visualization/FunctionPlotter';
+import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -128,7 +128,7 @@ const InverseFunctions = () => {
       step: 1,
       default: [-5, 5]
     },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const legendPositionConfig = [

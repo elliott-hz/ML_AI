@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import LimitPlotter from '../../components/visualization/LimitPlotter';
+import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../components/visualization/LimitPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -236,7 +236,7 @@ const InfiniteSumNotInfinitesimal = () => {
   // Parameter configurations for Plot 1 (removed maxN - fixed terms)
   const plot1ViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -5, max: 5, step: 0.5, default: [-2, 2] },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const plot1PlotStyleConfig = [
@@ -256,7 +256,7 @@ const InfiniteSumNotInfinitesimal = () => {
   // Parameter configurations for Plot 2 (removed maxN - fixed sums)
   const plot2ViewRangeConfig = [
     { name: 'xRange', label: 'X Range', type: 'range', min: -5, max: 5, step: 0.5, default: [-2, 2] },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const plot2PlotStyleConfig = [
@@ -279,7 +279,7 @@ const InfiniteSumNotInfinitesimal = () => {
   ];
 
   const plot3ViewRangeConfig = [
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const plot3PlotStyleConfig = [

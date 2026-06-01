@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import ContinuityPlotter from '../../components/visualization/ContinuityPlotter';
+import ContinuityPlotter, { ASPECT_RATIO_OPTIONS } from '../../components/visualization/ContinuityPlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 
@@ -162,7 +162,7 @@ const ContinuityOfFunction = () => {
       step: 0.5,
       default: [-1, 3]
     },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ['auto', '16:9', '4:3'] }
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   const legendPositionConfig = [

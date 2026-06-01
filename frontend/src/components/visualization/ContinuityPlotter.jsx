@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
+export { ASPECT_RATIO_OPTIONS } from './DerivativePlotter';
 
 /**
  * Continuity Plotter - Specialized for continuity visualization
