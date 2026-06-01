@@ -158,8 +158,8 @@ const FunctionPlotter = ({
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
     const isDark = themeMode === 'dark';
-    const axisColor = isDark ? '#475569' : '#cbd5e1';
-    
+    const axisColor = isDark ? '#b9b9d3' : '#475569';
+
     return {
       title: {
         text: title,
@@ -176,7 +176,7 @@ const FunctionPlotter = ({
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
         titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
         showline: true,
-        linewidth: 2,
+        linewidth: 1,
         linecolor: axisColor,
         mirror: true
       },
@@ -188,7 +188,7 @@ const FunctionPlotter = ({
         tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
         titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
         showline: true,
-        linewidth: 2,
+        linewidth: 1,
         linecolor: axisColor,
         mirror: true
       },
