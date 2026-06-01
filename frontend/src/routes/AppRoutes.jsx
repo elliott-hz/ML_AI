@@ -32,6 +32,12 @@ import Derivative from '../pages/Derivative';
 import AverageInstantaneousVelocity from '../pages/derivative/AverageInstantaneousVelocity';
 import DerivativeConstants from '../pages/derivative/DerivativeConstants';
 import DerivativePowerFunctions from '../pages/derivative/DerivativePowerFunctions';
+import DerivativeSin from '../pages/derivative/DerivativeSin';
+import DerivativeCos from '../pages/derivative/DerivativeCos';
+import DerivativeTan from '../pages/derivative/DerivativeTan';
+import DerivativeCot from '../pages/derivative/DerivativeCot';
+import DerivativeSec from '../pages/derivative/DerivativeSec';
+import DerivativeCsc from '../pages/derivative/DerivativeCsc';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -102,6 +108,12 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/avg-instant-velocity" element={<AverageInstantaneousVelocity />} />
         <Route path="/mathematics/1-fundamentals/derivative/constants" element={<DerivativeConstants />} />
         <Route path="/mathematics/1-fundamentals/derivative/power-functions" element={<DerivativePowerFunctions />} />
+        <Route path="/mathematics/1-fundamentals/derivative/sin" element={<DerivativeSin />} />
+        <Route path="/mathematics/1-fundamentals/derivative/cos" element={<DerivativeCos />} />
+        <Route path="/mathematics/1-fundamentals/derivative/tan" element={<DerivativeTan />} />
+        <Route path="/mathematics/1-fundamentals/derivative/cot" element={<DerivativeCot />} />
+        <Route path="/mathematics/1-fundamentals/derivative/sec" element={<DerivativeSec />} />
+        <Route path="/mathematics/1-fundamentals/derivative/csc" element={<DerivativeCsc />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />

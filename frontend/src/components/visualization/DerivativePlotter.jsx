@@ -13,7 +13,8 @@ const DerivativePlotter = ({
   showExportButton = true,
   plotStyle = 'medium',
   aspectRatio = 'auto',
-  legendPosition = 'top-right'
+  legendPosition = 'top-right',
+  xTickMode = 'auto' // 'auto' | 'pi'
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -64,10 +65,14 @@ const DerivativePlotter = ({
       return [-10, 10];
     }
     const range = maxY - minY;
-    const padding = Math.max(range * 0.1, 1);
-    if (range < 2) {
+    const padding = Math.max(range * 0.08, 0.1);
+    if (range < 1.5) {
       const center = (minY + maxY) / 2;
-      return [center - 1, center + 1];
+      return [center - 1.3, center + 1.3];
+    }
+    if (range <= 2) {
+      const padding = range * 0.15;
+      return [minY - padding, maxY + padding];
     }
     return [minY - padding, maxY + padding];
   }, [data, propYRange]);
@@ -152,6 +157,39 @@ const DerivativePlotter = ({
     const isDark = themeMode === 'dark';
     const axisColor = isDark ? '#b9b9d3' : '#475569';
 
+    // Build π-style tick values + labels for trig pages
+    let xaxisExtra = {};
+    if (xTickMode === 'pi') {
+      const [rMin, rMax] = propXRange;
+      // Generate ticks at multiples of π/2, only those within visible range
+      const halfPi = Math.PI / 2;
+      const startK = Math.ceil(rMin / halfPi);
+      const endK = Math.floor(rMax / halfPi);
+      const PI_TICKS = [];
+      for (let k = startK; k <= endK; k++) {
+        const val = k * halfPi;
+        const neg = k < 0 ? '−' : '';
+        const absK = Math.abs(k);
+        let label;
+        if (absK === 0) {
+          label = '0';
+        } else if (absK % 2 === 0) {
+          const coeff = absK / 2;
+          label = `${neg}${coeff === 1 ? '' : coeff}π`;
+        } else if (absK === 1) {
+          label = `${neg}π/2`;
+        } else {
+          label = `${neg}${absK}π/2`;
+        }
+        PI_TICKS.push([val, label]);
+      }
+      xaxisExtra = {
+        tickmode: 'array',
+        tickvals: PI_TICKS.map(([v]) => v),
+        ticktext: PI_TICKS.map(([, label]) => label)
+      };
+    }
+
     return {
       title: {
         text: title,
@@ -170,7 +208,8 @@ const DerivativePlotter = ({
         showline: true,
         linewidth: 1,
         linecolor: axisColor,
-        mirror: true
+        mirror: true,
+        ...xaxisExtra
       },
       yaxis: {
         title: 'y',
@@ -199,7 +238,7 @@ const DerivativePlotter = ({
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode]);
 
   const config = {
     displayModeBar: true,

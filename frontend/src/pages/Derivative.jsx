@@ -111,6 +111,52 @@ const Derivative = () => {
     }
   ];
 
+  // Group 3: Basic Derivative Formulas — Trigonometric Functions
+  const trigFormulas = [
+    {
+      id: 'sin',
+      icon: 'sin',
+      title: '(sin x)\' = cos x',
+      description: 'The derivative of sin x is cos x. Peaks of sin align with zero-crossings of cos.',
+      path: '/mathematics/1-fundamentals/derivative/sin'
+    },
+    {
+      id: 'cos',
+      icon: 'cos',
+      title: '(cos x)\' = −sin x',
+      description: 'The derivative of cos x is −sin x. The negative sign reflects the phase shift.',
+      path: '/mathematics/1-fundamentals/derivative/cos'
+    },
+    {
+      id: 'tan',
+      icon: 'tan',
+      title: '(tan x)\' = sec²x',
+      description: 'The derivative of tan x is sec²x — always positive where defined. Watch the vertical asymptotes.',
+      path: '/mathematics/1-fundamentals/derivative/tan'
+    },
+    {
+      id: 'cot',
+      icon: 'cot',
+      title: '(cot x)\' = −csc²x',
+      description: 'The derivative of cot x is −csc²x — always negative where defined. Asymptotes at x = kπ.',
+      path: '/mathematics/1-fundamentals/derivative/cot'
+    },
+    {
+      id: 'sec',
+      icon: 'sec',
+      title: '(sec x)\' = sec x·tan x',
+      description: 'The derivative of sec x is the product sec x · tan x. Shared asymptotes at x = π/2 + kπ.',
+      path: '/mathematics/1-fundamentals/derivative/sec'
+    },
+    {
+      id: 'csc',
+      icon: 'csc',
+      title: '(csc x)\' = −csc x·cot x',
+      description: 'The derivative of csc x is −csc x · cot x. The negative sign flips the slope pattern.',
+      path: '/mathematics/1-fundamentals/derivative/csc'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -145,6 +191,21 @@ const Derivative = () => {
       <GroupTitle>Basic Derivative Formulas — Constants and Power Functions</GroupTitle>
       <ButtonGrid>
         {basicFormulas.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            {/* <ButtonIcon>{feature.icon}</ButtonIcon> */}
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 3: Basic Derivative Formulas — Trigonometric Functions */}
+      <GroupTitle>Basic Derivative Formulas — Trigonometric Functions</GroupTitle>
+      <ButtonGrid>
+        {trigFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
