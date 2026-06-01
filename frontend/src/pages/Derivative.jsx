@@ -188,7 +188,7 @@ const Derivative = () => {
       </ButtonGrid>
 
       {/* Group 2: Basic Derivative Formulas */}
-      <GroupTitle>Basic Derivative Formulas — Constants and Power Functions</GroupTitle>
+      <GroupTitle>Constants and Power Functions</GroupTitle>
       <ButtonGrid>
         {basicFormulas.map((feature) => (
           <FeatureButton
@@ -203,7 +203,7 @@ const Derivative = () => {
       </ButtonGrid>
 
       {/* Group 3: Basic Derivative Formulas — Trigonometric Functions */}
-      <GroupTitle>Basic Derivative Formulas — Trigonometric Functions</GroupTitle>
+      <GroupTitle>Trigonometric Functions</GroupTitle>
       <ButtonGrid>
         {trigFormulas.map((feature) => (
           <FeatureButton
