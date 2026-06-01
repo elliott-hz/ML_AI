@@ -38,6 +38,10 @@ import DerivativeTan from '../pages/derivative/DerivativeTan';
 import DerivativeCot from '../pages/derivative/DerivativeCot';
 import DerivativeSec from '../pages/derivative/DerivativeSec';
 import DerivativeCsc from '../pages/derivative/DerivativeCsc';
+import DerivativeExpBaseA from '../pages/derivative/DerivativeExpBaseA';
+import DerivativeExpE from '../pages/derivative/DerivativeExpE';
+import DerivativeLogBaseA from '../pages/derivative/DerivativeLogBaseA';
+import DerivativeLn from '../pages/derivative/DerivativeLn';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -114,6 +118,10 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/cot" element={<DerivativeCot />} />
         <Route path="/mathematics/1-fundamentals/derivative/sec" element={<DerivativeSec />} />
         <Route path="/mathematics/1-fundamentals/derivative/csc" element={<DerivativeCsc />} />
+        <Route path="/mathematics/1-fundamentals/derivative/exp-base-a" element={<DerivativeExpBaseA />} />
+        <Route path="/mathematics/1-fundamentals/derivative/exp-e" element={<DerivativeExpE />} />
+        <Route path="/mathematics/1-fundamentals/derivative/log-base-a" element={<DerivativeLogBaseA />} />
+        <Route path="/mathematics/1-fundamentals/derivative/ln" element={<DerivativeLn />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />

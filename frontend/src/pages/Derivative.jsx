@@ -157,6 +157,38 @@ const Derivative = () => {
     }
   ];
 
+  // Group 4: Basic Derivative Formulas — Exponential and Logarithmic Functions
+  const expLogFormulas = [
+    {
+      id: 'exp-base-a',
+      icon: 'a^x',
+      title: "(a^x)' = a^x ln a",
+      description: 'For any base a > 0, the derivative scales by ln(a). Drag a to see how growth rate changes.',
+      path: '/mathematics/1-fundamentals/derivative/exp-base-a'
+    },
+    {
+      id: 'exp-e',
+      icon: 'e^x',
+      title: "(e^x)' = e^x",
+      description: "The natural exponential is its own derivative — slope equals value everywhere.",
+      path: '/mathematics/1-fundamentals/derivative/exp-e'
+    },
+    {
+      id: 'log-base-a',
+      icon: 'log_a',
+      title: "(log_a x)' = 1 / (x ln a)",
+      description: 'The general log derivative. Asymptote at x = 0, slope decays as 1/x.',
+      path: '/mathematics/1-fundamentals/derivative/log-base-a'
+    },
+    {
+      id: 'ln',
+      icon: 'ln',
+      title: "(ln x)' = 1/x",
+      description: "The natural log's derivative is the simple reciprocal — slope equals 1/x.",
+      path: '/mathematics/1-fundamentals/derivative/ln'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -206,6 +238,21 @@ const Derivative = () => {
       <GroupTitle>Trigonometric Functions</GroupTitle>
       <ButtonGrid>
         {trigFormulas.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            {/* <ButtonIcon>{feature.icon}</ButtonIcon> */}
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 4: Basic Derivative Formulas — Exponential and Logarithmic Functions */}
+      <GroupTitle>Exponential and Logarithmic Functions</GroupTitle>
+      <ButtonGrid>
+        {expLogFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
