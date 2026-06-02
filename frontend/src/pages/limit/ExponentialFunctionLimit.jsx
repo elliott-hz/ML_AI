@@ -132,7 +132,7 @@ const ExponentialFunctionLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: 'f(x)',
+      name: `${base.toFixed(1)}·e⁻ˣ`,
       line: { 
         color: '#6366f1', 
         width: 2.5
@@ -248,7 +248,7 @@ const ExponentialFunctionLimit = () => {
           <LimitPlotter
             data={generateFunctionData()}
             xRange={params.xRange}
-            title={`Function: f(x) = a·e⁻ˣ`}
+            title={`Function: f(x) = ${params.base.toFixed(1)}·e⁻ˣ`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}

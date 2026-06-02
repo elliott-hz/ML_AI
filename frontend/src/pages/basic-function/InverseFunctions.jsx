@@ -176,7 +176,7 @@ const InverseFunctions = () => {
         y: originalH,
         type: 'scatter',
         mode: 'lines',
-        name: 'Original: h(t) = at²',
+        name: `Original: h(t) = ${a.toFixed(1)}t²`,
         line: { color: '#6366f1', width: 2 }
       },
       {
@@ -184,7 +184,7 @@ const InverseFunctions = () => {
         y: inverseT,
         type: 'scatter',
         mode: 'lines',
-        name: 'Inverse: t(h) = √(h/a)',
+        name: `Inverse: t(h) = √(h/${a.toFixed(1)})`,
         line: { color: '#06b6d4', width: 2 }
       },
       {
@@ -252,7 +252,7 @@ const InverseFunctions = () => {
           <FunctionPlotter
             data={traces}
             xRange={params.xRange}
-            title="Inverse Function: h(t) and t(h)"
+            title={`Inverse Function: h(t) = ${params.coefficient.toFixed(1)}t² and t(h)`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}

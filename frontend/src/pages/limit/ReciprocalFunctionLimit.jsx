@@ -140,7 +140,7 @@ const ReciprocalFunctionLimit = () => {
           y: yValuesNeg,
           type: 'scatter',
           mode: 'lines',
-          name: 'f(x)',
+          name: `${coefficient.toFixed(1)}/x`,
           line: { 
             color: '#6366f1', 
             width: 2.5
@@ -168,7 +168,7 @@ const ReciprocalFunctionLimit = () => {
           y: yValuesPos,
           type: 'scatter',
           mode: 'lines',
-          name: 'f(x)',
+          name: `${coefficient.toFixed(1)}/x`,
           line: { 
             color: '#6366f1', 
             width: 2.5
@@ -286,7 +286,7 @@ const ReciprocalFunctionLimit = () => {
           <LimitPlotter
             data={generateFunctionData()}
             xRange={params.xRange}
-            title={`Function: f(x) = a/x`}
+            title={`Function: f(x) = ${params.coefficient.toFixed(1)}/x`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}

@@ -132,7 +132,7 @@ const ArctanFunctionLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: 'f(x)',
+      name: `${coefficient.toFixed(1)}·arctan(x)`,
       line: { 
         color: '#6366f1', 
         width: 2.5
@@ -266,7 +266,7 @@ const ArctanFunctionLimit = () => {
           <LimitPlotter
             data={generateFunctionData()}
             xRange={params.xRange}
-            title={`Function: f(x) = a·arctan(x)`}
+            title={`Function: f(x) = ${params.coefficient.toFixed(1)}·arctan(x)`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}

@@ -185,7 +185,7 @@ const PiecewiseFunctions = () => {
         y: leftY,
         type: 'scatter',
         mode: 'lines',
-        name: 'f(x) = 0 (x < 0)',
+        name: `f(x) = 0 (x < 0)`,
         line: { color: '#6366f1', width: 2 },
         showlegend: false
       },
@@ -264,7 +264,7 @@ const PiecewiseFunctions = () => {
           <FunctionPlotter
             data={traces}
             xRange={params.xRange}
-            title="Piecewise Function: f(x)"
+            title={`Piecewise Function: f(x) (a = ${params.coefficient.toFixed(1)})`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}

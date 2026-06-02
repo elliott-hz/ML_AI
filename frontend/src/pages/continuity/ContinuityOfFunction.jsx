@@ -378,7 +378,7 @@ const ContinuityOfFunction = () => {
           <ContinuityPlotter
             data={traces}
             xRange={params.xRange}
-            title="Continuity: f(x) = ax + b"
+            title={`Continuity: f(x) = ${params.coefficientA.toFixed(1)}x + ${params.coefficientB.toFixed(1)}`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}

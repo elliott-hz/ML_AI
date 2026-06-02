@@ -255,7 +255,7 @@ const PeriodicFunctions = () => {
           <FunctionPlotter
             data={traces}
             xRange={periodicParams.xRange}
-            title="Periodic Function: f(x) = a·sin(bx + c)"
+            title={`Periodic Function: f(x) = ${periodicParams.a.toFixed(1)}·sin(${periodicParams.b.toFixed(1)}x + ${periodicParams.c.toFixed(1)})`}
             showExportButton={false}
             plotStyle={periodicParams.plotStyle}
             aspectRatio={periodicParams.aspectRatio}

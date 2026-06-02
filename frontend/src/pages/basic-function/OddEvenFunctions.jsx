@@ -339,7 +339,7 @@ const OddEvenFunctions = () => {
           <FunctionPlotter
             data={oddTraces}
             xRange={oddParams.xRange}
-            title="Odd Function: f(x) = ax³"
+            title={`Odd Function: f(x) = ${oddParams.a.toFixed(1)}x³ + ${oddParams.b.toFixed(1)}`}
             showExportButton={false}
             plotStyle={oddParams.plotStyle}
             aspectRatio={oddParams.aspectRatio}
@@ -379,7 +379,7 @@ const OddEvenFunctions = () => {
           <FunctionPlotter
             data={evenTraces}
             xRange={evenParams.xRange}
-            title="Even Function: f(x) = ax²"
+            title={`Even Function: f(x) = ${evenParams.a.toFixed(1)}x² + ${evenParams.b.toFixed(1)}`}
             showExportButton={false}
             plotStyle={evenParams.plotStyle}
             aspectRatio={evenParams.aspectRatio}
