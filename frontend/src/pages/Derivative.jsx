@@ -189,6 +189,52 @@ const Derivative = () => {
     }
   ];
 
+  // Group 5: Inverse Trigonometric Functions
+  const inverseTrigFormulas = [
+    {
+      id: 'arcsin',
+      icon: 'arcsin',
+      title: "(arcsin x)' = 1 / \u221A(1 - x\u00B2)",
+      description: 'The derivative of arcsin x grows large near x = ±1, reflecting the vertical tangents at the domain boundaries.',
+      path: '/mathematics/1-fundamentals/derivative/arcsin'
+    },
+    {
+      id: 'arccos',
+      icon: 'arccos',
+      title: "(arccos x)' = \u22121 / \u221A(1 - x\u00B2)",
+      description: 'The derivative of arccos x is always negative, making the function strictly decreasing over its domain.',
+      path: '/mathematics/1-fundamentals/derivative/arccos'
+    },
+    {
+      id: 'arctan',
+      icon: 'arctan',
+      title: "(arctan x)' = 1 / (1 + x\u00B2)",
+      description: 'The derivative of arctan x forms a bell curve peaking at 1. It is defined for all real x.',
+      path: '/mathematics/1-fundamentals/derivative/arctan'
+    },
+    {
+      id: 'arccot',
+      icon: 'arccot',
+      title: "(arccot x)' = \u22121 / (1 + x\u00B2)",
+      description: 'The derivative of arccot x is always negative, the mirror of arctan\'s derivative.',
+      path: '/mathematics/1-fundamentals/derivative/arccot'
+    },
+    {
+      id: 'arcsec',
+      icon: 'arcsec',
+      title: "(arcsec x)' = 1 / (|x| \u00B7 \u221A(x\u00B2 \u2212 1))",
+      description: 'The derivative of arcsec x is defined only for |x| > 1, with vertical asymptotes at x = ±1.',
+      path: '/mathematics/1-fundamentals/derivative/arcsec'
+    },
+    {
+      id: 'arccsc',
+      icon: 'arccsc',
+      title: "(arccsc x)' = \u22121 / (|x| \u00B7 \u221A(x\u00B2 \u2212 1))",
+      description: 'The derivative of arccsc x is the negative of arcsec\'s derivative, defined for |x| > 1.',
+      path: '/mathematics/1-fundamentals/derivative/arccsc'
+    }
+  ];
+
   const handleFeatureClick = (path) => {
     navigate(path);
   };
@@ -253,6 +299,21 @@ const Derivative = () => {
       <GroupTitle>Exponential and Logarithmic Functions</GroupTitle>
       <ButtonGrid>
         {expLogFormulas.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            {/* <ButtonIcon>{feature.icon}</ButtonIcon> */}
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 5: Basic Derivative Formulas — Inverse Trigonometric Functions */}
+      <GroupTitle>Inverse Trigonometric Functions</GroupTitle>
+      <ButtonGrid>
+        {inverseTrigFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}

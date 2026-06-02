@@ -42,6 +42,12 @@ import DerivativeExpBaseA from '../pages/derivative/DerivativeExpBaseA';
 import DerivativeExpE from '../pages/derivative/DerivativeExpE';
 import DerivativeLogBaseA from '../pages/derivative/DerivativeLogBaseA';
 import DerivativeLn from '../pages/derivative/DerivativeLn';
+import DerivativeArcsin from '../pages/derivative/DerivativeArcsin';
+import DerivativeArccos from '../pages/derivative/DerivativeArccos';
+import DerivativeArctan from '../pages/derivative/DerivativeArctan';
+import DerivativeArccot from '../pages/derivative/DerivativeArccot';
+import DerivativeArcsec from '../pages/derivative/DerivativeArcsec';
+import DerivativeArccsc from '../pages/derivative/DerivativeArccsc';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -122,6 +128,12 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/exp-e" element={<DerivativeExpE />} />
         <Route path="/mathematics/1-fundamentals/derivative/log-base-a" element={<DerivativeLogBaseA />} />
         <Route path="/mathematics/1-fundamentals/derivative/ln" element={<DerivativeLn />} />
+        <Route path="/mathematics/1-fundamentals/derivative/arcsin" element={<DerivativeArcsin />} />
+        <Route path="/mathematics/1-fundamentals/derivative/arccos" element={<DerivativeArccos />} />
+        <Route path="/mathematics/1-fundamentals/derivative/arctan" element={<DerivativeArctan />} />
+        <Route path="/mathematics/1-fundamentals/derivative/arccot" element={<DerivativeArccot />} />
+        <Route path="/mathematics/1-fundamentals/derivative/arcsec" element={<DerivativeArcsec />} />
+        <Route path="/mathematics/1-fundamentals/derivative/arccsc" element={<DerivativeArccsc />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />
