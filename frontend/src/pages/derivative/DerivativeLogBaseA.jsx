@@ -105,6 +105,13 @@ const DerivativeLogBaseA = () => {
 
   const { a } = params;
 
+  // Convert a number to Unicode subscript (e.g. 2.5 → "₂.₅")
+  const toSub = (num) => String(num).replace(/[0-9.-]/g, (c) => {
+    if (c === '.') return '.';
+    if (c === '-') return '\u208B';
+    return String.fromCharCode(0x2080 + parseInt(c));
+  });
+
   const generateData = useCallback(() => {
     const { a, xRange } = params;
     const [xMin, xMax] = xRange;
@@ -134,14 +141,14 @@ const DerivativeLogBaseA = () => {
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: `y = logₐ(x)`,
+      name: `y = log${toSub(a)}(x)`,
       line: { color: '#6366f1', width: 2.5 }
     });
 
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: `y' = 1/(x · ln a)`,
+      name: `y' = 1/(x · ln ${a})`,
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
 
@@ -150,7 +157,7 @@ const DerivativeLogBaseA = () => {
 
   const traces = useMemo(() => generateData(), [generateData]);
 
-  const plotTitle = `(logₐ x)' = 1 / (x · ln a)`;
+  const plotTitle = `(log${toSub(a)} x)' = 1 / (x · ln ${a})`;
 
   const baseConfig = [
     { name: 'a', label: 'a (base, a > 0, a ≠ 1)', min: 0.5, max: 5, step: 0.1 }
