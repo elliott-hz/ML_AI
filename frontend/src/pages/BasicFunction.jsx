@@ -100,7 +100,18 @@ const BasicFunction = () => {
     }
   ];
 
-  // Group 2: Function Properties
+  // Group 2: Trigonometric Functions
+  const trigonometricFunctions = [
+    {
+      id: 'trigonometric-ratios',
+      icon: '',
+      title: 'Trigonometric Ratios',
+      description: 'Explore the six trigonometric ratios (sin, cos, tan, cot, sec, csc) through an interactive right triangle. Drag point C to see how the ratios change in real time.',
+      path: '/mathematics/1-fundamentals/basic-function/trigonometric-ratios'
+    }
+  ];
+
+  // Group 3: Function Properties
   const functionProperties = [
     {
       id: 'odd-even',
@@ -154,7 +165,22 @@ const BasicFunction = () => {
         ))}
       </ButtonGrid>
 
-      {/* Group 2: Function Properties */}
+      {/* Group 2: Trigonometric Functions */}
+      <GroupTitle>Trigonometric Functions</GroupTitle>
+      <ButtonGrid>
+        {trigonometricFunctions.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => handleFeatureClick(feature.path)}
+          >
+            <ButtonIcon>{feature.icon}</ButtonIcon>
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </ButtonGrid>
+
+      {/* Group 3: Function Properties */}
       <GroupTitle>Function Properties</GroupTitle>
       <ButtonGrid>
         {functionProperties.map((feature) => (

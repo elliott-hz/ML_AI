@@ -9,6 +9,7 @@ import InverseFunctions from '../pages/basic-function/function-types/InverseFunc
 import OddEvenFunctions from '../pages/basic-function/function-properties/OddEvenFunctions';
 import PeriodicFunctions from '../pages/basic-function/function-properties/PeriodicFunctions';
 import MonotonicityFunctions from '../pages/basic-function/function-properties/MonotonicityFunctions';
+import TrigonometricRatios from '../pages/basic-function/trigonometric/TrigonometricRatios';
 import ConvergentSequence1 from '../pages/limit/sequences/ConvergentSequence1';
 import ConvergentSequence2 from '../pages/limit/sequences/ConvergentSequence2';
 import DivergentSequence1 from '../pages/limit/sequences/DivergentSequence1';
@@ -72,6 +73,7 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/basic-function/odd-even" element={<OddEvenFunctions />} />
         <Route path="/mathematics/1-fundamentals/basic-function/periodic" element={<PeriodicFunctions />} />
         <Route path="/mathematics/1-fundamentals/basic-function/monotonicity" element={<MonotonicityFunctions />} />
+        <Route path="/mathematics/1-fundamentals/basic-function/trigonometric-ratios" element={<TrigonometricRatios />} />
         
         {/* 数学模块 - Limit 主页面 */}
         <Route path="/mathematics/1-fundamentals/limit" element={<Limit />} />
