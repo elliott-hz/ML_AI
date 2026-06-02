@@ -23,11 +23,11 @@ import InfinitesimalBounded from '../pages/limit/infinitesimal/InfinitesimalBoun
 import InfinitesimalConstant from '../pages/limit/infinitesimal/InfinitesimalConstant';
 import InfiniteSumNotInfinitesimal from '../pages/limit/infinitesimal/InfiniteSumNotInfinitesimal';
 import QuotientOfInfinitesimals from '../pages/limit/infinitesimal/QuotientOfInfinitesimals';
-import DiscontinuityUndefined from '../pages/continuity/DiscontinuityUndefined';
-import DiscontinuityJump from '../pages/continuity/DiscontinuityJump';
-import DiscontinuityRemovable from '../pages/continuity/DiscontinuityRemovable';
+import DiscontinuityUndefined from '../pages/continuity/discontinuity-points/DiscontinuityUndefined';
+import DiscontinuityJump from '../pages/continuity/discontinuity-points/DiscontinuityJump';
+import DiscontinuityRemovable from '../pages/continuity/discontinuity-points/DiscontinuityRemovable';
 import Continuity from '../pages/Continuity';
-import ContinuityOfFunction from '../pages/continuity/ContinuityOfFunction';
+import ContinuityOfFunction from '../pages/continuity/continuity-basics/ContinuityOfFunction';
 import Derivative from '../pages/Derivative';
 import AverageInstantaneousVelocity from '../pages/derivative/avg-instant-velocity/AverageInstantaneousVelocity';
 import DerivativeConstants from '../pages/derivative/constants-power/DerivativeConstants';
