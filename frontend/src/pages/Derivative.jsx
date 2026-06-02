@@ -104,7 +104,7 @@ const Derivative = () => {
     },
     {
       id: 'power-functions',
-      icon: 'x^μ',
+      icon: 'x\u1D45C',
       title: 'Power Functions',
       description: 'The power rule for any real exponent μ — integers, fractions, and negatives. Drag μ to watch the function and its derivative transform.',
       path: '/mathematics/1-fundamentals/derivative/power-functions'
@@ -144,14 +144,14 @@ const Derivative = () => {
     {
       id: 'sec',
       icon: 'sec',
-      title: '(sec x)\' = sec x·tan x',
-      description: 'The derivative of sec x is the product sec x · tan x. Shared asymptotes at x = π/2 + kπ.',
+      title: '(sec x)\' = sec x · tan x',
+      description: 'The derivative of sec x is sec x · tan x. Shared asymptotes at x = π/2 + kπ.',
       path: '/mathematics/1-fundamentals/derivative/sec'
     },
     {
       id: 'csc',
       icon: 'csc',
-      title: '(csc x)\' = −csc x·cot x',
+      title: '(csc x)\' = −csc x · cot x',
       description: 'The derivative of csc x is −csc x · cot x. The negative sign flips the slope pattern.',
       path: '/mathematics/1-fundamentals/derivative/csc'
     }
@@ -161,22 +161,22 @@ const Derivative = () => {
   const expLogFormulas = [
     {
       id: 'exp-base-a',
-      icon: 'a^x',
-      title: "(a^x)' = a^x ln a",
+      icon: 'aˣ',
+      title: "(aˣ)' = aˣ ln a",
       description: 'For any base a > 0, the derivative scales by ln(a). Drag a to see how growth rate changes.',
       path: '/mathematics/1-fundamentals/derivative/exp-base-a'
     },
     {
       id: 'exp-e',
-      icon: 'e^x',
-      title: "(e^x)' = e^x",
-      description: "The natural exponential is its own derivative — slope equals value everywhere.",
+      icon: 'eˣ',
+      title: "(eˣ)' = eˣ",
+      description: "The natural exponential eˣ is its own derivative — slope equals value everywhere.",
       path: '/mathematics/1-fundamentals/derivative/exp-e'
     },
     {
       id: 'log-base-a',
-      icon: 'log_a',
-      title: "(log_a x)' = 1 / (x ln a)",
+      icon: 'logₐ',
+      title: "(logₐ x)' = 1 / (x ln a)",
       description: 'The general log derivative. Asymptote at x = 0, slope decays as 1/x.',
       path: '/mathematics/1-fundamentals/derivative/log-base-a'
     },
@@ -184,7 +184,7 @@ const Derivative = () => {
       id: 'ln',
       icon: 'ln',
       title: "(ln x)' = 1/x",
-      description: "The natural log's derivative is the simple reciprocal — slope equals 1/x.",
+      description: "The natural log's derivative is ln'(x) = 1/x — slope equals the reciprocal.",
       path: '/mathematics/1-fundamentals/derivative/ln'
     }
   ];
