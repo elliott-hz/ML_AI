@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
@@ -207,9 +207,11 @@ const MiniInf = styled(MiniVal)`
 
 const PlotRow = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  align-items: flex-start;
+  gap: 0;
   flex: 1;
   min-height: 0;
+  position: relative;
 `;
 
 const PlotHalf = styled.div`
@@ -221,17 +223,46 @@ const PlotHalf = styled.div`
 `;
 
 const PlotHalfNarrow = styled.div`
-  flex: 0 0 38%;
+  display: flex;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+`;
+
+const PlotInner = styled.div`
+  flex: 1;
   min-width: 0;
   min-height: 0;
   display: grid;
   aspect-ratio: 1;
-  
+
   & > * {
     min-width: 0;
     min-height: 0;
     width: 100%;
     height: 100%;
+  }
+`;
+
+const Resizer = styled.div`
+  width: 8px;
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 3px;
+    bottom: 0;
+    width: 2px;
+    background: ${({ theme }) => theme?.colors?.border || '#334155'};
+    border-radius: 1px;
+    transition: background 0.2s ease;
+  }
+  &:hover::after {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
   }
 `;
 
@@ -252,7 +283,23 @@ const TrigonometricRatios = () => {
 
   const [params, setParams] = useState({ radius: 3, angle: 45 });
   const [plotStyle, setPlotStyle] = useState('medium');
-  const [activePlot, setActivePlot] = useState('sin-cos'); // 'sin-cos' | 'tan-cot' | 'sec-csc'
+  const [activePlot, setActivePlot] = useState('sin-cos');
+  const [leftRatio, setLeftRatio] = useState(38);
+  const [rightAspect, setRightAspect] = useState('auto');
+  const [rightPlotKey, setRightPlotKey] = useState(0);
+  const rowRef = useRef(null);
+  const dragging = useRef(false);
+
+  // Force remount right plot after fullscreen exit
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setRightPlotKey(k => k + 1);
+      }
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
 
   const { radius, angle } = params;
   const angleRad = angle * Math.PI / 180;
@@ -448,6 +495,27 @@ const TrigonometricRatios = () => {
     setParams(p => ({ ...p, [key]: parseFloat(e.target.value) }));
   };
 
+  // ── Splitter drag handlers ──
+  const onResizeStart = useCallback((e) => {
+    e.preventDefault();
+    dragging.current = true;
+    const onMove = (ev) => {
+      if (!dragging.current || !rowRef.current) return;
+      const rect = rowRef.current.getBoundingClientRect();
+      const pct = ((ev.clientX - rect.left) / rect.width) * 100;
+      setLeftRatio(Math.max(20, Math.min(60, pct)));
+    };
+    const onUp = () => {
+      dragging.current = false;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      // Remount right plot with new dimensions
+      setRightPlotKey(k => k + 1);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  }, []);
+
   return (
     <PageContainer>
       <Header>
@@ -487,6 +555,13 @@ const TrigonometricRatios = () => {
           <option value="thick">Thick</option>
           <option value="extra-thick">Extra-thick</option>
         </StyleSelect>
+
+        <StyleSelect value={rightAspect} onChange={(e) => setRightAspect(e.target.value)}>
+          <option value="auto">Auto</option>
+          <option value="16:9">16:9</option>
+          <option value="4:3">4:3</option>
+          <option value="1:1">1:1</option>
+        </StyleSelect>
       </ControlsBar>
 
       {/* Row 2: Ratio cards */}
@@ -500,50 +575,56 @@ const TrigonometricRatios = () => {
       </RatiosBar>
 
       {/* Row 3: Two plots */}
-      <PlotRow>
-        <PlotHalfNarrow>
-          <FunctionPlotter
-            data={triangleTraces}
-            xRange={[-5, 5]} yRange={[-5, 5]}
-            aspectRatio="1:1"
-            title="Right Triangle"
-            plotStyle={plotStyle}
-            showExportButton={false}
-          />
+      <PlotRow ref={rowRef}>
+        <PlotHalfNarrow style={{ flex: `0 0 ${leftRatio}%` }}>
+          <PlotInner>
+            <FunctionPlotter
+              data={triangleTraces}
+              xRange={[-5, 5]} yRange={[-5, 5]}
+              aspectRatio="1:1"
+              title="Right Triangle"
+              plotStyle={plotStyle}
+              showExportButton={false}
+            />
+          </PlotInner>
+          <Resizer onMouseDown={onResizeStart} />
         </PlotHalfNarrow>
         <PlotHalf>
           {activePlot === 'sin-cos' && (
             <DerivativePlotter
+              key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={sinCosTraces}
               xRange={[-Math.PI, Math.PI]} yRange={[-1.5, 1.5]}
               xTickMode="pi"
               title="sin(θ) &amp; cos(θ)"
               plotStyle={plotStyle}
-              aspectRatio="auto"
+              aspectRatio={rightAspect}
               legendPosition="top-right"
               showExportButton={false}
             />
           )}
           {activePlot === 'tan-cot' && (
             <DerivativePlotter
+              key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={tanCotTraces}
               xRange={[-Math.PI, Math.PI]} yRange={[-5, 5]}
               xTickMode="pi"
               title="tan(θ) &amp; cot(θ)"
               plotStyle={plotStyle}
-              aspectRatio="auto"
+              aspectRatio={rightAspect}
               legendPosition="top-right"
               showExportButton={false}
             />
           )}
           {activePlot === 'sec-csc' && (
             <DerivativePlotter
+              key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={secCscTraces}
               xRange={[-Math.PI, Math.PI]} yRange={[-5, 5]}
               xTickMode="pi"
               title="sec(θ) &amp; csc(θ)"
               plotStyle={plotStyle}
-              aspectRatio="auto"
+              aspectRatio={rightAspect}
               legendPosition="top-right"
               showExportButton={false}
             />
