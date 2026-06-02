@@ -90,7 +90,7 @@ const PlotPanel = styled.div`
 `;
 
 /**
- * Derivative of log_a(x): (log_a x)' = 1 / (x · ln a)
+ * Derivative of logₐ(x): (logₐ x)' = 1 / (x · ln a)
  */
 const DerivativeLogBaseA = () => {
   const navigate = useNavigate();
@@ -102,6 +102,8 @@ const DerivativeLogBaseA = () => {
     aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
+
+  const { a } = params;
 
   const generateData = useCallback(() => {
     const { a, xRange } = params;
@@ -132,14 +134,14 @@ const DerivativeLogBaseA = () => {
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: `y = log_${a}(x)`,
+      name: `y = logₐ(x)`,
       line: { color: '#6366f1', width: 2.5 }
     });
 
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: `Derivative: 1 / (x · ln(${a}))`,
+      name: `y' = 1/(x · ln a)`,
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
 
@@ -148,7 +150,7 @@ const DerivativeLogBaseA = () => {
 
   const traces = useMemo(() => generateData(), [generateData]);
 
-  const plotTitle = `(log_${params.a} x)' = 1 / (x · ln(${params.a}))`;
+  const plotTitle = `(logₐ x)' = 1 / (x · ln a)`;
 
   const baseConfig = [
     { name: 'a', label: 'a (base, a > 0, a ≠ 1)', min: 0.5, max: 5, step: 0.1 }
@@ -186,15 +188,15 @@ const DerivativeLogBaseA = () => {
       </Header>
 
       <Description>
-        For any base a &gt; 0, a ≠ 1, the derivative of log_a(x) is 1 / (x · ln(a)).
-        Notice the vertical asymptote at x = 0: the slope approaches infinity as x approaches zero.
-        Adjust the base a to see how the curve and its derivative scale.
+        For any base <em>a</em> &gt; 0, <em>a</em> ≠ 1, the derivative of logₐ(<em>x</em>) is 1 / (<em>x</em> · ln(<em>a</em>)).
+        Notice the vertical asymptote at <em>x</em> = 0: the slope approaches infinity as <em>x</em> approaches zero.
+        Adjust the base <em>a</em> to see how the curve and its derivative scale.
       </Description>
 
       <FormulaBox>
-        <FormulaTitle>Derivative of log_a(x):</FormulaTitle>
+        <FormulaTitle>Derivative of logₐ(x):</FormulaTitle>
         <Formula>
-          f(x) = log_a(x)<br/><br/>
+          f(x) = logₐ(x)<br/><br/>
           f'(x) = 1 / (x · ln(a))
         </Formula>
       </FormulaBox>

@@ -138,7 +138,7 @@ const DerivativeLn = () => {
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: 'Derivative: 1/x',
+      name: "y' = 1/x",
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
 
@@ -181,9 +181,9 @@ const DerivativeLn = () => {
       </Header>
 
       <Description>
-        The natural logarithm ln(x) is the inverse of e^x. Its derivative is 1/x —
-        a simple reciprocal. Notice the vertical asymptote at x = 0: the slope becomes
-        arbitrarily large as x approaches zero from the right.
+        The natural logarithm ln(<em>x</em>) is the inverse of <em>e</em>ˣ. Its derivative is 1/<em>x</em> —
+        a simple reciprocal. Notice the vertical asymptote at <em>x</em> = 0: the slope becomes
+        arbitrarily large as <em>x</em> approaches zero from the right.
       </Description>
 
       <FormulaBox>

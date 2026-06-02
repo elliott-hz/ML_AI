@@ -90,7 +90,7 @@ const PlotPanel = styled.div`
 `;
 
 /**
- * Derivative of e^x: (e^x)' = e^x
+ * Derivative of eˣ: (eˣ)' = eˣ
  */
 const DerivativeExpE = () => {
   const navigate = useNavigate();
@@ -131,14 +131,14 @@ const DerivativeExpE = () => {
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: 'y = e^x',
+      name: 'y = eˣ',
       line: { color: '#6366f1', width: 2.5 }
     });
 
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: 'Derivative: e^x',
+      name: "y' = eˣ",
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
 
@@ -147,7 +147,7 @@ const DerivativeExpE = () => {
 
   const traces = useMemo(() => generateData(), [generateData]);
 
-  const plotTitle = "(e^x)' = e^x";
+  const plotTitle = "(eˣ)' = eˣ";
 
   const viewRangeConfig = [
     {
@@ -181,16 +181,16 @@ const DerivativeExpE = () => {
       </Header>
 
       <Description>
-        The natural exponential function e^x is unique: its derivative equals itself.
+        The natural exponential function <em>e</em>ˣ is unique: its derivative equals itself.
         No scaling factor is needed — the slope at every point is exactly the value
-        of the function at that point. This is why e is called the "natural" base.
+        of the function at that point. This is why <em>e</em> is called the "natural" base.
       </Description>
 
       <FormulaBox>
-        <FormulaTitle>Derivative of e^x:</FormulaTitle>
+        <FormulaTitle>Derivative of eˣ:</FormulaTitle>
         <Formula>
-          f(x) = e^x<br/><br/>
-          f'(x) = e^x
+          f(x) = eˣ<br/><br/>
+          f'(x) = eˣ
         </Formula>
       </FormulaBox>
 

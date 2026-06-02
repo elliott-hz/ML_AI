@@ -90,7 +90,7 @@ const PlotPanel = styled.div`
 `;
 
 /**
- * Derivative of a^x: (a^x)' = a^x ln a
+ * Derivative of aˣ: (aˣ)' = aˣ · ln(a)
  */
 const DerivativeExpBaseA = () => {
   const navigate = useNavigate();
@@ -103,6 +103,8 @@ const DerivativeExpBaseA = () => {
     legendPosition: 'top-right'
   });
 
+  const { a } = params;
+
   const generateData = useCallback(() => {
     const { a, xRange } = params;
     const [xMin, xMax] = xRange;
@@ -110,7 +112,7 @@ const DerivativeExpBaseA = () => {
     const step = (xMax - xMin) / numPoints;
     const lnA = Math.log(a);
 
-    // f(x) = a^x
+    // f(x) = aˣ
     const mainX = [];
     const mainY = [];
     for (let i = 0; i <= numPoints; i++) {
@@ -119,7 +121,7 @@ const DerivativeExpBaseA = () => {
       mainY.push(Math.pow(a, x));
     }
 
-    // f'(x) = a^x * ln(a)
+    // f'(x) = aˣ · ln(a)
     const derivX = [];
     const derivY = [];
     for (let i = 0; i <= numPoints; i++) {
@@ -132,14 +134,14 @@ const DerivativeExpBaseA = () => {
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: `y = ${a}^x`,
+      name: `y = ${a}ˣ`,
       line: { color: '#6366f1', width: 2.5 }
     });
 
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: `Derivative: ${a}^x · ln(${a})`,
+      name: `y' = ${a}ˣ · ln(${a})`,
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
 
@@ -148,7 +150,7 @@ const DerivativeExpBaseA = () => {
 
   const traces = useMemo(() => generateData(), [generateData]);
 
-  const plotTitle = `(${params.a}^x)' = ${params.a}^x · ln(${params.a})`;
+  const plotTitle = `(${a}ˣ)' = ${a}ˣ · ln(${a})`;
 
   const baseConfig = [
     { name: 'a', label: 'a (base, a > 0)', min: 0.5, max: 5, step: 0.1 }
@@ -186,17 +188,17 @@ const DerivativeExpBaseA = () => {
       </Header>
 
       <Description>
-        For any base a &gt; 0, the derivative of a^x is a^x · ln(a).
-        Unlike e^x, the derivative is scaled by ln(a).
-        When a &gt; 1 the function grows; when 0 &lt; a &lt; 1 it decays.
-        Adjust the base a to see how the slope changes.
+        For any base <em>a</em> &gt; 0, the derivative of <em>a</em>ˣ is <em>a</em>ˣ · ln(<em>a</em>).
+        Unlike <em>e</em>ˣ, the derivative is scaled by ln(<em>a</em>).
+        When <em>a</em> &gt; 1 the function grows; when 0 &lt; <em>a</em> &lt; 1 it decays.
+        Adjust the base <em>a</em> to see how the slope changes.
       </Description>
 
       <FormulaBox>
-        <FormulaTitle>Derivative of a^x:</FormulaTitle>
+        <FormulaTitle>Derivative of aˣ:</FormulaTitle>
         <Formula>
-          f(x) = a^x<br/><br/>
-          f'(x) = a^x · ln(a)
+          f(x) = aˣ<br/><br/>
+          f'(x) = aˣ · ln(a)
         </Formula>
       </FormulaBox>
 
