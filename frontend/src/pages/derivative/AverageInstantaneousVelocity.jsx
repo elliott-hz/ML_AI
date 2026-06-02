@@ -336,7 +336,7 @@ const AverageInstantaneousVelocity = () => {
           <DerivativePlotter
             data={traces}
             xRange={params.xRange}
-            title="Derivative: Average vs Instantaneous Velocity"
+            title={`s(t) = ${params.a.toFixed(1)}t² + ${params.b.toFixed(1)}t + ${params.c.toFixed(1)}`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
