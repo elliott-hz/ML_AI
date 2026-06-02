@@ -212,6 +212,7 @@ const DerivativeArccos = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
+            yTickMode="pi"
           />
         </PlotPanel>
       </ContentLayout>

@@ -16,7 +16,8 @@ const DerivativePlotter = ({
   plotStyle = 'medium',
   aspectRatio = 'auto',
   legendPosition = 'top-right',
-  xTickMode = 'auto' // 'auto' | 'pi'
+  xTickMode = 'auto', // 'auto' | 'pi'
+  yTickMode = 'auto'  // 'auto' | 'pi'
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -159,11 +160,9 @@ const DerivativePlotter = ({
     const isDark = themeMode === 'dark';
     const axisColor = isDark ? '#b9b9d3' : '#475569';
 
-    // Build π-style tick values + labels for trig pages
-    let xaxisExtra = {};
-    if (xTickMode === 'pi') {
-      const [rMin, rMax] = propXRange;
-      // Generate ticks at multiples of π/2, only those within visible range
+    // Shared helper: generate π-format tick config for a given axis range
+    const buildPiTickExtra = (range) => {
+      const [rMin, rMax] = range;
       const halfPi = Math.PI / 2;
       const startK = Math.ceil(rMin / halfPi);
       const endK = Math.floor(rMax / halfPi);
@@ -185,11 +184,20 @@ const DerivativePlotter = ({
         }
         PI_TICKS.push([val, label]);
       }
-      xaxisExtra = {
+      return {
         tickmode: 'array',
         tickvals: PI_TICKS.map(([v]) => v),
         ticktext: PI_TICKS.map(([, label]) => label)
       };
+    };
+
+    let xaxisExtra = {};
+    if (xTickMode === 'pi') {
+      xaxisExtra = buildPiTickExtra(propXRange);
+    }
+    let yaxisExtra = {};
+    if (yTickMode === 'pi') {
+      yaxisExtra = buildPiTickExtra(autoYRange);
     }
 
     return {
@@ -223,7 +231,8 @@ const DerivativePlotter = ({
         showline: true,
         linewidth: 1,
         linecolor: axisColor,
-        mirror: true
+        mirror: true,
+        ...yaxisExtra
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
@@ -240,7 +249,7 @@ const DerivativePlotter = ({
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode]);
 
   const config = {
     displayModeBar: true,
