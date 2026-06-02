@@ -286,9 +286,24 @@ const TrigonometricRatios = () => {
   const [activePlot, setActivePlot] = useState('sin-cos');
   const [leftRatio, setLeftRatio] = useState(38);
   const [rightAspect, setRightAspect] = useState('auto');
+  const [legendPos, setLegendPos] = useState('top-right');
   const [rightPlotKey, setRightPlotKey] = useState(0);
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
   const rowRef = useRef(null);
   const dragging = useRef(false);
+
+  // Theme detection (same polling approach as the plotters)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const mode = localStorage.getItem('themeMode') || 'dark';
+      setThemeMode(mode);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  const plotTextColor = themeMode === 'dark' ? '#f8fafc' : '#1e293b';
+  const plotSubTextColor = themeMode === 'dark' ? '#94a3b8' : '#475569';
+  const auxGridColor = themeMode === 'dark' ? 'rgba(148, 163, 184, 0.2)' : 'rgba(100, 116, 139, 0.3)';
 
   // Force remount right plot after fullscreen exit
   useEffect(() => {
@@ -380,8 +395,8 @@ const TrigonometricRatios = () => {
       x: [0, cx, cx + (cx >= 0 ? 1 : -1) * lo],
       y: [-lo, -lo, cy + (cy >= 0 ? 1 : -1) * lo],
       mode: 'text', type: 'scatter',
-      text: ['A(0,0)', `B(${cx.toFixed(2)},0)`, `C(${cx.toFixed(2)},${cy.toFixed(2)})`],
-      textposition: 'middle center', textfont: { color: '#f8fafc', size: 11 },
+      text: ['A(0,0)', `B(${cx.toFixed(1)},0)`, `C(${cx.toFixed(1)},${cy.toFixed(1)})`],
+      textposition: 'middle center', textfont: { color: plotTextColor, size: 11 },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -395,12 +410,12 @@ const TrigonometricRatios = () => {
       y: [cy / 2, (cy >= 0 ? -0.45 : 0.45), cy / 2 + cPerpY],
       mode: 'text', type: 'scatter',
       text: [`a = ${aLen.toFixed(1)}`, `b = ${bLen.toFixed(1)}`, `c = ${cLen.toFixed(1)}`],
-      textposition: 'middle center', textfont: { color: '#94a3b8', size: 12 },
+      textposition: 'middle center', textfont: { color: plotSubTextColor, size: 12 },
       hoverinfo: 'skip', showlegend: false
     });
 
     return traces;
-  }, [cx, cy, theta, hyp]);
+  }, [cx, cy, theta, hyp, themeMode]);
 
   // ── Sampling ──
   const NUM_PTS = 2000;
@@ -433,7 +448,7 @@ const TrigonometricRatios = () => {
     keyAngles.forEach(x => {
       traces.push({
         x: [x, x], y: [-1.5, 1.5], mode: 'lines', type: 'scatter',
-        line: { color: 'rgba(148, 163, 184, 0.2)', width: 1, dash: 'dot' },
+        line: { color: auxGridColor, width: 1, dash: 'dot' },
         hoverinfo: 'skip', showlegend: false
       });
     });
@@ -447,11 +462,11 @@ const TrigonometricRatios = () => {
       traces.push({
         x: mx, y: my, mode: 'markers+text', type: 'scatter', name: 'Values',
         marker: { size: 9, color: mc, symbol: 'circle', line: { color: '#fff', width: 1 } },
-        text: mt, textposition: 'top center', textfont: { size: 10, color: '#f8fafc' }, hoverinfo: 'text'
+        text: mt, textposition: 'top center', textfont: { size: 10, color: plotTextColor }, hoverinfo: 'text'
       });
     }
     return traces;
-  }, [theta, sampleFunction]);
+  }, [theta, sampleFunction, themeMode]);
 
   // ── Tan/Cot traces ──
   const tanCotTraces = useMemo(() => {
@@ -468,10 +483,10 @@ const TrigonometricRatios = () => {
       if (d.interValid) { allMx.push(tv); allMy.push(d.inter); allMt.push(`${name.replace('(θ)', '')} = ${formatVal(d.inter)}`); allMc.push(color); }
     });
     traces.push({ x: [tv, tv], y: [-5, 5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: '#f59e0b', width: 2, dash: 'dash' } });
-    if (allMx.length) traces.push({ x: allMx, y: allMy, mode: 'markers+text', type: 'scatter', name: 'Values', marker: { size: 9, color: allMc, symbol: 'circle', line: { color: '#fff', width: 1 } }, text: allMt, textposition: 'top center', textfont: { size: 10, color: '#f8fafc' }, hoverinfo: 'text' });
+    if (allMx.length) traces.push({ x: allMx, y: allMy, mode: 'markers+text', type: 'scatter', name: 'Values', marker: { size: 9, color: allMc, symbol: 'circle', line: { color: '#fff', width: 1 } }, text: allMt, textposition: 'top center', textfont: { size: 10, color: plotTextColor }, hoverinfo: 'text' });
     return traces;
-  }, [theta, sampleFunction]);
-
+  }, [theta, sampleFunction, themeMode]);
+  
   // ── Sec/Csc traces ──
   const secCscTraces = useMemo(() => {
     const xVals = sampleFunction, tv = theta;
@@ -487,10 +502,10 @@ const TrigonometricRatios = () => {
       if (d.interValid) { allMx.push(tv); allMy.push(d.inter); allMt.push(`${name.replace('(θ)', '')} = ${formatVal(d.inter)}`); allMc.push(color); }
     });
     traces.push({ x: [tv, tv], y: [-5, 5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: '#f59e0b', width: 2, dash: 'dash' } });
-    if (allMx.length) traces.push({ x: allMx, y: allMy, mode: 'markers+text', type: 'scatter', name: 'Values', marker: { size: 9, color: allMc, symbol: 'circle', line: { color: '#fff', width: 1 } }, text: allMt, textposition: 'top center', textfont: { size: 10, color: '#f8fafc' }, hoverinfo: 'text' });
+    if (allMx.length) traces.push({ x: allMx, y: allMy, mode: 'markers+text', type: 'scatter', name: 'Values', marker: { size: 9, color: allMc, symbol: 'circle', line: { color: '#fff', width: 1 } }, text: allMt, textposition: 'top center', textfont: { size: 10, color: plotTextColor }, hoverinfo: 'text' });
     return traces;
-  }, [theta, sampleFunction]);
-
+  }, [theta, sampleFunction, themeMode]);
+  
   const handleSlider = (key) => (e) => {
     setParams(p => ({ ...p, [key]: parseFloat(e.target.value) }));
   };
@@ -562,6 +577,14 @@ const TrigonometricRatios = () => {
           <option value="4:3">4:3</option>
           <option value="1:1">1:1</option>
         </StyleSelect>
+
+        <StyleSelect value={legendPos} onChange={(e) => setLegendPos(e.target.value)}>
+          <option value="top-right">Top-Right</option>
+          <option value="top-left">Top-Left</option>
+          <option value="bottom-left">Bottom-Left</option>
+          <option value="bottom-right">Bottom-Right</option>
+          <option value="None">None</option>
+        </StyleSelect>
       </ControlsBar>
 
       {/* Row 2: Ratio cards */}
@@ -599,7 +622,7 @@ const TrigonometricRatios = () => {
               title="sin(θ) &amp; cos(θ)"
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
-              legendPosition="top-right"
+              legendPosition={legendPos}
               showExportButton={false}
             />
           )}
@@ -612,7 +635,7 @@ const TrigonometricRatios = () => {
               title="tan(θ) &amp; cot(θ)"
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
-              legendPosition="top-right"
+              legendPosition={legendPos}
               showExportButton={false}
             />
           )}
@@ -625,7 +648,7 @@ const TrigonometricRatios = () => {
               title="sec(θ) &amp; csc(θ)"
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
-              legendPosition="top-right"
+              legendPosition={legendPos}
               showExportButton={false}
             />
           )}
