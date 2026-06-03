@@ -85,6 +85,13 @@ const BasicFunction = () => {
   // Group 1: Function Types
   const functionTypes = [
     {
+      id: 'power-function',
+      icon: '',
+      title: 'Power Function',
+      description: 'Visualize power functions y = xⁿ through geometric representations — line, square, cube, and reciprocal. Adjust x and n to see real-time changes.',
+      path: '/mathematics/1-fundamentals/basic-function/power-function'
+    },
+    {
       id: 'piecewise',
       icon: '',
       title: 'Piecewise Function',
