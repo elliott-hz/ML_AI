@@ -143,7 +143,8 @@ const TrigonometricFunctionLimit = () => {
 
     const fnLabel = activeFunction === 'sin' ? `sin(${k.toFixed(1)}x)` :
                     activeFunction === 'tan' ? `tan(${k.toFixed(1)}x)` :
-                    `1-cos(${k.toFixed(1)}x)`;
+                    activeFunction === 'cos1' ? `1-cos(${k.toFixed(1)}x)` :
+                    `(1-cos(${k.toFixed(1)}x))/(${k.toFixed(1)}x)²`;
 
     const xValues = [];
     const yValues = [];
@@ -156,8 +157,11 @@ const TrigonometricFunctionLimit = () => {
         y = Math.abs(k * x) > 1e-10 ? Math.sin(k * x) / (k * x) : 1;
       } else if (activeFunction === 'tan') {
         y = Math.abs(k * x) > 1e-10 ? Math.tan(k * x) / (k * x) : 1;
-      } else {
+      } else if (activeFunction === 'cos1') {
         y = Math.abs(k * x) > 1e-10 ? (1 - Math.cos(k * x)) / x : 0;
+      } else {
+        // (1 - cos(kx)) / (kx)²  →  1/2
+        y = Math.abs(k * x) > 1e-10 ? (1 - Math.cos(k * x)) / (k * k * x * x) : 0.5;
       }
 
       xValues.push(x);
@@ -180,8 +184,10 @@ const TrigonometricFunctionLimit = () => {
     let limitValue;
     if (activeFunction === 'sin' || activeFunction === 'tan') {
       limitValue = 1;
-    } else {
+    } else if (activeFunction === 'cos1') {
       limitValue = 0;
+    } else {
+      limitValue = 0.5;
     }
 
     traces.push({
@@ -253,18 +259,21 @@ const TrigonometricFunctionLimit = () => {
     ...viewRangeConfig
   ];
 
-  const limitValue = (activeFunction === 'sin' || activeFunction === 'tan') ? 1 : 0;
+  const limitValue = (activeFunction === 'sin' || activeFunction === 'tan') ? 1 :
+                     activeFunction === 'cos1' ? 0 : 0.5;
   const k = params.coefficient;
 
   const functionTitle = activeFunction === 'sin' ? `sin(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
                         activeFunction === 'tan' ? `tan(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
-                        `(1 - cos(${k.toFixed(1)}x)) / x`;
+                        activeFunction === 'cos1' ? `(1 - cos(${k.toFixed(1)}x)) / x` :
+                        `(1 - cos(${k.toFixed(1)}x)) / (${k.toFixed(1)}x)²`;
 
   const fnLatex = activeFunction === 'sin' ? `sin(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
                   activeFunction === 'tan' ? `tan(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
-                  `(1 - cos(${k.toFixed(1)}x)) / x`;
+                  activeFunction === 'cos1' ? `(1 - cos(${k.toFixed(1)}x)) / x` :
+                  `(1 - cos(${k.toFixed(1)}x)) / (${k.toFixed(1)}x)²`;
 
-  const limitLatex = limitValue === 1 ? '1' : '0';
+  const limitLatex = limitValue === 1 ? '1' : limitValue === 0.5 ? '1/2' : '0';
 
   return (
     <PageContainer>
@@ -289,8 +298,11 @@ const TrigonometricFunctionLimit = () => {
         <ToggleBtn $active={activeFunction === 'tan'} onClick={() => setActiveFunction('tan')}>
           tan(kx) / (kx)
         </ToggleBtn>
-        <ToggleBtn $active={activeFunction === 'cos'} onClick={() => setActiveFunction('cos')}>
+        <ToggleBtn $active={activeFunction === 'cos1'} onClick={() => setActiveFunction('cos1')}>
           (1 - cos(kx)) / x
+        </ToggleBtn>
+        <ToggleBtn $active={activeFunction === 'cos2'} onClick={() => setActiveFunction('cos2')}>
+          (1 - cos(kx)) / (kx)²
         </ToggleBtn>
       </ToggleGroup>
 
@@ -304,7 +316,8 @@ const TrigonometricFunctionLimit = () => {
       <SectionDescription>
         {activeFunction === 'sin' && 'This is the most important limit in trigonometry. The function sin(x)/x has a removable discontinuity at x = 0 with limit 1.'}
         {activeFunction === 'tan' && 'Similarly to sin(x)/x, this limit follows from tan(x) = sin(x)/cos(x) and the fact that cos(x) → 1 as x → 0.'}
-        {activeFunction === 'cos' && 'The function (1 - cos(x))/x approaches 0 as x → 0, which is essential for deriving the derivative of cos(x).'}
+        {activeFunction === 'cos1' && 'The function (1 - cos(x))/x approaches 0 as x → 0, which is essential for deriving the derivative of cos(x).'}
+        {activeFunction === 'cos2' && 'This second-order limit (1-cos(x))/x² → 1/2 follows from the Taylor expansion cos(x) = 1 − x²/2 + ... It is foundational for understanding second-order approximations.'}
       </SectionDescription>
 
       <ContentLayout>
