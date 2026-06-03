@@ -5,6 +5,18 @@ import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualiz
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 
+const toPiLabel = (val) => {
+  const halfPi = Math.PI / 2;
+  const k = Math.round(val / halfPi);
+  if (Math.abs(val - k * halfPi) > 1e-6) return val.toFixed(2);
+  const neg = k < 0 ? '−' : '';
+  const absK = Math.abs(k);
+  if (absK === 0) return '0';
+  if (absK === 1) return `${neg}π/2`;
+  if (absK % 2 === 0) return `${neg}${absK / 2 === 1 ? '' : absK / 2}π`;
+  return `${neg}${absK}π/2`;
+};
+
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
   max-width: 1400px;
@@ -157,11 +169,11 @@ const InverseTrigIntuitiveLimit = () => {
       const asy = a * Math.PI / 2;
       traces.push({
         x: [xMin, xMax], y: [asy, asy], type: 'scatter', mode: 'lines',
-        name: `lim:+${asy.toFixed(2)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `lim:+${toPiLabel(asy)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
       });
       traces.push({
         x: [xMin, xMax], y: [-asy, -asy], type: 'scatter', mode: 'lines',
-        name: `lim:${(-asy).toFixed(2)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `lim:${toPiLabel(-asy)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
       });
     } else {
       xMin = Math.max(-1, xMin);
@@ -183,11 +195,11 @@ const InverseTrigIntuitiveLimit = () => {
       const yHi = activeFunction === 'arcsin' ? a * Math.PI / 2 : a * Math.PI;
       traces.push({
         x: [-1, -1], y: [yLo - 1.5, yLo + 1.5], type: 'scatter', mode: 'lines',
-        name: `x→-1⁺: ${yLo.toFixed(2)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `x = -1⁺: ${toPiLabel(yLo)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
       });
       traces.push({
         x: [1, 1], y: [yHi - 1.5, yHi + 1.5], type: 'scatter', mode: 'lines',
-        name: `x→1⁻: ${yHi.toFixed(2)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `x = 1⁻: ${toPiLabel(yHi)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
       });
     }
 
@@ -225,17 +237,17 @@ const InverseTrigIntuitiveLimit = () => {
   let formulaLines, limitDesc;
   if (activeFunction === 'arctan') {
     const asy = a * Math.PI / 2;
-    formulaLines = [`f(x) = ${a.toFixed(1)}·arctan(x)`, `Domain: (-∞, +∞)`, `Range: (${(-asy).toFixed(2)}, ${asy.toFixed(2)})`];
-    limitDesc = `The arctangent function approaches horizontal asymptotes at y = ±${asy.toFixed(2)} as x → ±∞. It is the inverse of tan(x) and is defined for all real x.`;
+    formulaLines = [`f(x) = ${a.toFixed(1)}·arctan(x)`, `Domain: (-∞, +∞)`, `Range: (${toPiLabel(-asy)}, ${toPiLabel(asy)})`];
+    limitDesc = `The arctangent function approaches horizontal asymptotes at y = ±${toPiLabel(asy)} as x → ±∞. It is the inverse of tan(x) and is defined for all real x.`;
   } else if (activeFunction === 'arcsin') {
     const hi = a * Math.PI / 2;
     const lo = -a * Math.PI / 2;
-    formulaLines = [`f(x) = ${a.toFixed(1)}·arcsin(x)`, `Domain: [-1, 1]`, `Range: [${lo.toFixed(2)}, ${hi.toFixed(2)}]`];
-    limitDesc = `arcsin(x) is defined only on [-1, 1]. At x = -1, the function reaches its minimum ${lo.toFixed(2)}; at x = 1, its maximum ${hi.toFixed(2)}. These are the finite endpoint limits.`;
+    formulaLines = [`f(x) = ${a.toFixed(1)}·arcsin(x)`, `Domain: [-1, 1]`, `Range: [${toPiLabel(lo)}, ${toPiLabel(hi)}]`];
+    limitDesc = `arcsin(x) is defined only on [-1, 1]. At x = -1, the function reaches its minimum ${toPiLabel(lo)}; at x = 1, its maximum ${toPiLabel(hi)}. These are the finite endpoint limits.`;
   } else {
     const hi = a * Math.PI;
-    formulaLines = [`f(x) = ${a.toFixed(1)}·arccos(x)`, `Domain: [-1, 1]`, `Range: [0, ${hi.toFixed(2)}]`];
-    limitDesc = `arccos(x) is the inverse of cos(x), defined on [-1, 1]. It decreases from ${hi.toFixed(2)} at x = -1 to 0 at x = 1, with finite endpoint limits.`;
+    formulaLines = [`f(x) = ${a.toFixed(1)}·arccos(x)`, `Domain: [-1, 1]`, `Range: [0, ${toPiLabel(hi)}]`];
+    limitDesc = `arccos(x) is the inverse of cos(x), defined on [-1, 1]. It decreases from ${toPiLabel(hi)} at x = -1 to 0 at x = 1, with finite endpoint limits.`;
   }
 
   return (

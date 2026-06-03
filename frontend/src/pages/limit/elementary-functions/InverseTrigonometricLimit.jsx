@@ -126,7 +126,7 @@ const InverseTrigonometricLimit = () => {
 
   const [params, setParams] = useState({
     coefficient: 1,        // 缩放系数 k
-    xRange: [-2, 2],       // X轴范围
+    xRange: [-1.5, 1.5],       // X轴范围
     plotStyle: 'medium',
     aspectRatio: 'auto',
     legendPosition: 'top-right'
@@ -136,7 +136,7 @@ const InverseTrigonometricLimit = () => {
 
   // 生成函数数据
   const generateFunctionData = useCallback(() => {
-    const [xMin, xMax] = params.xRange || [-2, 2];
+    const [xMin, xMax] = params.xRange || [-1.5, 1.5];
     const k = params.coefficient || 1;
     const numPoints = 400;
 
@@ -268,7 +268,7 @@ const InverseTrigonometricLimit = () => {
       min: -10,
       max: 10,
       step: 1,
-      default: [-2, 2]
+      default: [-1.5, 1.5]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
