@@ -377,20 +377,27 @@ const InverseTrigonometricRatios = () => {
     theta = Math.atan(cVal);
     ratioLabel = `tan(θ) = ${cVal.toFixed(3)}`;
   } else {
-    // arcsec: sec(θ) = cVal  →  cos(θ) = 1/cVal  →  θ = acos(1/cVal)
-    // For |cVal| < 1, arcsec is undefined (keep within domain)
-    const safeRatio = cVal >= -1 && cVal <= 1 ? (cVal >= 0 ? 1 : -1) : 1 / cVal;
-    theta = Math.acos(clamp(safeRatio, -1, 1));
-    ratioLabel = `sec(θ) = ${cVal.toFixed(3)}`;
-    // For visual clarity, use the clamped angle
-    if (cVal < -1) theta = Math.acos(-1 / cVal);
-    else if (cVal > 1) theta = Math.acos(1 / cVal);
-    else theta = Math.acos(clamp(cVal, -1, 1));  // domain boundary
+    // arcsec/arccsc mode: use arccsc for negative x (Q4), arcsec for positive x (Q1)
+    if (cVal < -1) {
+      theta = Math.asin(1 / cVal);            // arccsc → Q4
+      ratioLabel = `csc(θ) = ${cVal.toFixed(3)}`;
+    } else if (cVal > 1) {
+      theta = Math.acos(1 / cVal);            // arcsec → Q1
+      ratioLabel = `sec(θ) = ${cVal.toFixed(3)}`;
+    } else {
+      // |cVal| ≤ 1: at domain boundary, pick Q1 for non-negative, Q4 for negative
+      theta = cVal >= 0 ? Math.acos(1) : Math.asin(-1);
+      ratioLabel = `x = ${cVal.toFixed(3)} (boundary)`;
+    }
   }
 
-  const cx = Math.cos(theta);
-  const cy = Math.sin(theta);
-  const thetaDeg = (theta * 180 / Math.PI);
+  // In arcsec/arccsc mode, sec⁻¹(x) and csc⁻¹(x) are undefined for |x| < 1
+  const showTriangle = !(activePlot === 'arcsec-arccsc' && Math.abs(cVal) < 1);
+  // Use safe values for triangle only when showing it
+  const safeTheta = showTriangle ? theta : 0;
+  const cx = Math.cos(safeTheta);
+  const cy = Math.sin(safeTheta);
+  const thetaDeg = showTriangle ? (theta * 180 / Math.PI) : 0;
 
   // ── 6 inverse trig values ──
   const invData = [
@@ -404,6 +411,9 @@ const InverseTrigonometricRatios = () => {
 
   // ── Triangle traces (unit circle) ──
   const triangleTraces = useMemo(() => {
+    // When arcsec/arccsc is undefined (|x| ≤ 1), show nothing
+    if (!showTriangle) return [];
+
     const traces = [];
     const R = 2.5;  // unit circle radius for display
 
@@ -524,7 +534,7 @@ const InverseTrigonometricRatios = () => {
     });
 
     return traces;
-  }, [cx, cy, theta, thetaDeg, ratioLabel, themeMode]);
+  }, [cx, cy, theta, thetaDeg, ratioLabel, themeMode, showTriangle]);
 
   // ── Sampling for function curves ──
   const NUM_PTS = 2000;
