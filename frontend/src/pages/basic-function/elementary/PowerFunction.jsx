@@ -805,9 +805,12 @@ export default function PowerFunction() {
         hoverinfo: 'skip', showlegend: false
       });
     } else if (n === -1 && ax > 0) {
-      // Rectangle xy = 1
+      // Rectangle xy = 1, in Q1 when x>0, in Q3 when x<0
       const yRecip = 1 / ax;
-      const pts = [[0, 0], [ax, 0], [ax, yRecip], [0, yRecip], [0, 0]];
+      const sign = xVal >= 0 ? 1 : -1;
+      const xEnd = sign * ax;
+      const yEnd = sign * yRecip;
+      const pts = [[0, 0], [xEnd, 0], [xEnd, yEnd], [0, yEnd], [0, 0]];
       traces.push({
         x: pts.map(p => p[0]), y: pts.map(p => p[1]),
         mode: 'lines', type: 'scatter',
@@ -818,21 +821,21 @@ export default function PowerFunction() {
       });
       // x label
       traces.push({
-        x: [ax / 2], y: [-0.1], mode: 'text', type: 'scatter',
-        text: [`x = ${ax.toFixed(1)}`],
+        x: [xEnd / 2], y: [sign === 1 ? -0.1 : yEnd - 0.1], mode: 'text', type: 'scatter',
+        text: [`x = ${xVal.toFixed(1)}`],
         textfont: { color: '#f59e0b', size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
       // y label
       traces.push({
-        x: [-0.15], y: [yRecip / 2], mode: 'text', type: 'scatter',
-        text: [`1/x = ${yRecip.toFixed(3)}`],
+        x: [sign === 1 ? -0.15 : xEnd - 0.15], y: [yEnd / 2], mode: 'text', type: 'scatter',
+        text: [`1/x = ${(sign * yRecip).toFixed(1)}`],
         textfont: { color: '#f59e0b', size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
-      // Area annotation
+      // Area annotation (center of rectangle)
       traces.push({
-        x: [ax / 2], y: [yRecip / 2], mode: 'text', type: 'scatter',
+        x: [xEnd / 2], y: [yEnd / 2], mode: 'text', type: 'scatter',
         text: ['xy = 1'],
         textfont: { color: plotTextColor, size: 12, family: 'Georgia' },
         hoverinfo: 'skip', showlegend: false
