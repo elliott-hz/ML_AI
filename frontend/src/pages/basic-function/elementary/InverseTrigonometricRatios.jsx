@@ -783,7 +783,7 @@ const InverseTrigonometricRatios = () => {
             <DerivativePlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={invArctanArccotTraces}
-              xRange={[-10.5, 10.5]} yRange={[-Math.PI - 0.3, Math.PI + 0.3]}
+              xRange={[-10.5, 10.5]} yRange={[-Math.PI / 2 - 0.3, Math.PI + 0.3]}
               title={mode.plotTitle}
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
@@ -795,7 +795,7 @@ const InverseTrigonometricRatios = () => {
             <DerivativePlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={invArcsecArccscTraces}
-              xRange={[-10.5, 10.5]} yRange={[-0.3, Math.PI + 0.3]}
+              xRange={[-10.5, 10.5]} yRange={[-Math.PI / 2 - 0.3, Math.PI + 0.3]}
               title={mode.plotTitle}
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
