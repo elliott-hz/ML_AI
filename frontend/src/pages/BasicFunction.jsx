@@ -94,6 +94,13 @@ const BasicFunction = () => {
       path: '/mathematics/1-fundamentals/basic-function/trigonometric-ratios'
     },
     {
+      id: 'inverse-trigonometric-ratios',
+      icon: '',
+      title: 'Inverse Trigonometric Ratios',
+      description: 'Explore inverse trigonometric functions (arcsin, arccos, arctan, arccot, arcsec, arccsc). Given a ratio x, find the corresponding angle θ on the unit circle.',
+      path: '/mathematics/1-fundamentals/basic-function/inverse-trigonometric-ratios'
+    },
+    {
       id: 'exponential',
       icon: '',
       title: 'Exponential Function',
