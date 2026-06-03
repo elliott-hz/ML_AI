@@ -194,12 +194,12 @@ const InverseTrigIntuitiveLimit = () => {
       const yLo = activeFunction === 'arcsin' ? -a * Math.PI / 2 : 0;
       const yHi = activeFunction === 'arcsin' ? a * Math.PI / 2 : a * Math.PI;
       traces.push({
-        x: [-1, -1], y: [yLo - 1.5, yLo + 1.5], type: 'scatter', mode: 'lines',
-        name: `x = -1⁺: ${toPiLabel(yLo)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        x: [-1, -1], y: [-8, 8], type: 'scatter', mode: 'lines',
+        name: `x=-1⁺: ${toPiLabel(yLo)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
       });
       traces.push({
-        x: [1, 1], y: [yHi - 1.5, yHi + 1.5], type: 'scatter', mode: 'lines',
-        name: `x = 1⁻: ${toPiLabel(yHi)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        x: [1, 1], y: [-8, 8], type: 'scatter', mode: 'lines',
+        name: `x=1⁻: ${toPiLabel(yHi)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
       });
     }
 
