@@ -104,6 +104,13 @@ const BasicFunction = () => {
   // Group 2: Other Function Types
   const otherFunctionTypes = [
     {
+      id: 'reciprocal',
+      icon: '',
+      title: 'Reciprocal Function',
+      description: 'Explore g(x) = 1/f(x) — the reciprocal of a linear function. See how the graph splits at the vertical asymptote and approaches y = 0.',
+      path: '/mathematics/1-fundamentals/basic-function/reciprocal'
+    },
+    {
       id: 'piecewise',
       icon: '',
       title: 'Piecewise Function',
