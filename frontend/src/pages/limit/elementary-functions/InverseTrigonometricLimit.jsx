@@ -390,7 +390,12 @@ const InverseTrigonometricLimit = () => {
 
       <FormulaBox>
         <Formula>
-          {formulaLines.join('<br/>')}
+          {formulaLines.map((line, i) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < formulaLines.length - 1 && <br/>}
+            </React.Fragment>
+          ))}
         </Formula>
       </FormulaBox>
 
