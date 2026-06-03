@@ -141,11 +141,11 @@ const Limit = () => {
       path: '/mathematics/1-fundamentals/limit/power-function'
     },
     {
-      id: 'arctan',
+      id: 'inverse-trigonometric',
       icon: '',
-      title: 'Arctangent Function Limit',
-      description: 'Study arctangent function limit. Observe how y = a·arctan(x) approaches -a·π/2 as x → -∞.',
-      path: '/mathematics/1-fundamentals/limit/arctan'
+      title: 'Inverse Trigonometric Limits',
+      description: 'Explore limits of inverse trig functions: arctan(x) → ±π/2 at ±∞, arcsin(x) and arccos(x) with finite endpoint limits.',
+      path: '/mathematics/1-fundamentals/limit/inverse-trigonometric'
     }
   ];
 
