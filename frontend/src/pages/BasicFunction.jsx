@@ -104,6 +104,13 @@ const BasicFunction = () => {
       title: 'Exponential Function',
       description: 'Understand exponential growth and decay through y = a·bˣ. See how each unit step multiplies the output by the base b — the essence of exponential behavior.',
       path: '/mathematics/1-fundamentals/basic-function/exponential'
+    },
+    {
+      id: 'logarithmic',
+      icon: '',
+      title: 'Logarithmic Function',
+      description: 'The inverse of exponential: y = log_b(x) answers "how many times to multiply b to reach x?" Essential for cross-entropy loss, information entropy, and log transformations.',
+      path: '/mathematics/1-fundamentals/basic-function/logarithmic'
     }
   ];
 
