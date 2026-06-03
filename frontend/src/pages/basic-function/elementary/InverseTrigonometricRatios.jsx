@@ -776,6 +776,7 @@ const InverseTrigonometricRatios = () => {
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
               legendPosition={legendPos}
+              yTickMode="pi"
               showExportButton={false}
             />
           )}
@@ -788,6 +789,7 @@ const InverseTrigonometricRatios = () => {
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
               legendPosition={legendPos}
+              yTickMode="pi"
               showExportButton={false}
             />
           )}
@@ -800,6 +802,7 @@ const InverseTrigonometricRatios = () => {
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
               legendPosition={legendPos}
+              yTickMode="pi"
               showExportButton={false}
             />
           )}
