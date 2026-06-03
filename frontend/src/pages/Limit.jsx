@@ -127,6 +127,13 @@ const Limit = () => {
       path: '/mathematics/1-fundamentals/limit/logarithmic'
     },
     {
+      id: 'trigonometric',
+      icon: '',
+      title: 'Trigonometric Function Limit',
+      description: 'Explore the classic finite limits sin(kx)/(kx) → 1, tan(kx)/(kx) → 1, and (1-cos(kx))/x → 0 as x → 0.',
+      path: '/mathematics/1-fundamentals/limit/trigonometric'
+    },
+    {
       id: 'reciprocal',
       icon: '',
       title: 'Reciprocal Function Limit',
