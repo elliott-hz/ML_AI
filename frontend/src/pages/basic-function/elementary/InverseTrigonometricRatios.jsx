@@ -771,7 +771,7 @@ const InverseTrigonometricRatios = () => {
             <DerivativePlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={invArcsinArccosTraces}
-              xRange={[-1.2, 1.2]} yRange={[-0.5, Math.PI + 0.5]}
+              xRange={[-1.2, 1.2]} yRange={[-Math.PI / 2 - 0.3, Math.PI + 0.3]}
               title={mode.plotTitle}
               plotStyle={plotStyle}
               aspectRatio={rightAspect}
