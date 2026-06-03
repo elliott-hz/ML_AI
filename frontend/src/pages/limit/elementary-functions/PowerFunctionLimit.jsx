@@ -5,6 +5,13 @@ import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualiz
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 
+const SUPERSCRIPT_MAP = {
+  '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
+  '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079',
+  '-': '\u207B', '.': '\u00B7'
+};
+const toSup = (s) => String(s).split('').map(c => SUPERSCRIPT_MAP[c] || c).join('');
+
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
   max-width: 1400px;
@@ -115,11 +122,12 @@ const PowerFunctionLimit = () => {
   // 生成连续函数数据
   const generateFunctionData = useCallback(() => {
     const [xMin, xMax] = params.xRange || [-10, 10];
-    const a = params.coefficient || 1;
-    const n = params.exponent || -1;
+    const a = params.coefficient !== undefined ? params.coefficient : 1;
+    const n = params.exponent !== undefined ? params.exponent : -1;
     const integerExp = Math.abs(n - Math.round(n)) < 1e-9;
     const nRound = Math.round(n);
     const numPoints = 400;
+    const supExp = toSup(integerExp ? String(nRound) : n.toFixed(1));
 
     const traces = [];
 
@@ -135,7 +143,7 @@ const PowerFunctionLimit = () => {
       }
       traces.push({
         x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·x^${nRound}`,
+        name: `${a.toFixed(1)}·x${supExp}`,
         line: { color: '#6366f1', width: 2.5 }
       });
     } else if (integerExp && nRound < 0) {
@@ -153,7 +161,7 @@ const PowerFunctionLimit = () => {
         if (xN.length > 0) {
           traces.push({
             x: xN, y: yN, type: 'scatter', mode: 'lines',
-            name: `${a.toFixed(1)}·x^${nRound}`,
+            name: `${a.toFixed(1)}·x${supExp}`,
             line: { color: '#6366f1', width: 2.5 }
           });
         }
@@ -171,7 +179,7 @@ const PowerFunctionLimit = () => {
         if (xP.length > 0) {
           traces.push({
             x: xP, y: yP, type: 'scatter', mode: 'lines',
-            name: `${a.toFixed(1)}·x^${nRound}`,
+            name: `${a.toFixed(1)}·x${supExp}`,
             line: { color: '#6366f1', width: 2.5 }
           });
         }
@@ -191,7 +199,7 @@ const PowerFunctionLimit = () => {
       if (xValues.length > 0) {
         traces.push({
           x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-          name: `${a.toFixed(1)}·x^${n.toFixed(1)}`,
+          name: `${a.toFixed(1)}·x${supExp}`,
           line: { color: '#6366f1', width: 2.5 }
         });
       }
@@ -210,7 +218,7 @@ const PowerFunctionLimit = () => {
       if (xValues.length > 0) {
         traces.push({
           x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-          name: `${a.toFixed(1)}·x^${n.toFixed(1)}`,
+          name: `${a.toFixed(1)}·x${supExp}`,
           line: { color: '#6366f1', width: 2.5 }
         });
       }
@@ -219,33 +227,40 @@ const PowerFunctionLimit = () => {
     // ✅ 极限参考线
     let limitValue;
     let limitLabel;
+    let showLimitLine;
     if (n > 0) {
       limitValue = 0;
       limitLabel = 'lim(x→0): 0';
+      showLimitLine = true;
     } else if (n === 0) {
+      // n = 0: f(x) = a (constant), function line IS the limit — no separate reference needed
       limitValue = a;
       limitLabel = 'lim: ' + a.toFixed(1);
+      showLimitLine = false;
     } else {
       limitValue = 0;
       limitLabel = 'lim(x→±∞): 0';
+      showLimitLine = true;
     }
 
     const plotMin = Math.min(...traces.flatMap(t => t.y.filter(v => isFinite(v))), 0);
     const plotMax = Math.max(...traces.flatMap(t => t.y.filter(v => isFinite(v))), 1);
     const yPad = (plotMax - plotMin) * 0.15 || 1;
 
-    traces.push({
-      x: [xMin, xMax],
-      y: [limitValue, limitValue],
-      type: 'scatter',
-      mode: 'lines',
-      name: limitLabel,
-      line: {
-        color: '#ffd700',
-        width: 2,
-        dash: 'dash'
-      }
-    });
+    if (showLimitLine) {
+      traces.push({
+        x: [xMin, xMax],
+        y: [limitValue, limitValue],
+        type: 'scatter',
+        mode: 'lines',
+        name: limitLabel,
+        line: {
+          color: '#ffd700',
+          width: 2,
+          dash: 'dash'
+        }
+      });
+    }
 
     // 指数 < 0 时显示垂直渐近线 x=0
     if (n < 0) {
@@ -317,7 +332,7 @@ const PowerFunctionLimit = () => {
   const n = params.exponent;
 
   // 指数显示格式
-  const expDisplay = isIntegerExp ? String(Math.round(n)) : n.toFixed(1);
+  const expDisplay = toSup(isIntegerExp ? String(Math.round(n)) : n.toFixed(1));
 
   // 极限描述
   let limitDesc;
@@ -384,7 +399,7 @@ const PowerFunctionLimit = () => {
           <LimitPlotter
             data={generateFunctionData()}
             xRange={params.xRange}
-            title={`Function: f(x) = ${a.toFixed(1)}·x^${expDisplay}`}
+            title={`Function: f(x) = ${a.toFixed(1)}·x${expDisplay}`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
