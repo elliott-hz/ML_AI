@@ -120,6 +120,13 @@ const Limit = () => {
       path: '/mathematics/1-fundamentals/limit/exponential'
     },
     {
+      id: 'logarithmic',
+      icon: '',
+      title: 'Logarithmic Function Limit',
+      description: 'Explore logarithmic function limit. See how y = log_b(x) approaches -∞ as x → 0⁺ and +∞ as x → +∞.',
+      path: '/mathematics/1-fundamentals/limit/logarithmic'
+    },
+    {
       id: 'reciprocal',
       icon: '',
       title: 'Reciprocal Function Limit',

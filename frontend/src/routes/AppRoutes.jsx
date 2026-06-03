@@ -20,6 +20,7 @@ import ConvergentSequence2 from '../pages/limit/sequences/ConvergentSequence2';
 import DivergentSequence1 from '../pages/limit/sequences/DivergentSequence1';
 import DivergentSequence2 from '../pages/limit/sequences/DivergentSequence2';
 import ExponentialFunctionLimit from '../pages/limit/elementary-functions/ExponentialFunctionLimit';
+import LogarithmicFunctionLimit from '../pages/limit/elementary-functions/LogarithmicFunctionLimit';
 import ReciprocalFunctionLimit from '../pages/limit/elementary-functions/ReciprocalFunctionLimit';
 import ArctanFunctionLimit from '../pages/limit/elementary-functions/ArctanFunctionLimit';
 import OneSidedLimit from '../pages/limit/one-two-sided/OneSidedLimit';
@@ -96,6 +97,7 @@ const AppRoutes = () => {
         
         {/* 数学模块 - Elementary Functions Limits 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/1-fundamentals/limit/exponential" element={<ExponentialFunctionLimit />} />
+        <Route path="/mathematics/1-fundamentals/limit/logarithmic" element={<LogarithmicFunctionLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/reciprocal" element={<ReciprocalFunctionLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/arctan" element={<ArctanFunctionLimit />} />
         
