@@ -272,7 +272,7 @@ const TrigonometricFunctionLimit = () => {
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
            Back to Limit
         </BackButton>
-        <SectionTitle>Elementary Function: Trigonometric Limits</SectionTitle>
+        <SectionTitle>Trigonometric — Limit Visualization</SectionTitle>
       </Header>
 
       <SectionDescription>

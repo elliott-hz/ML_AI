@@ -357,7 +357,7 @@ const InverseTrigonometricLimit = () => {
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
            Back to Limit
         </BackButton>
-        <SectionTitle>Elementary Function: Inverse Trig. Limits</SectionTitle>
+        <SectionTitle>Inverse Trig. — Limit Visualization</SectionTitle>
       </Header>
 
       <SectionDescription>

@@ -250,7 +250,7 @@ const LogarithmicFunctionLimit = () => {
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
            Back to Limit
         </BackButton>
-        <SectionTitle>Elementary Function: Logarithmic</SectionTitle>
+        <SectionTitle>Logarithmic — Limit Visualization</SectionTitle>
       </Header>
 
       <SectionDescription>

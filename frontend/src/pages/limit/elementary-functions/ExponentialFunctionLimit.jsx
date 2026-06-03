@@ -251,7 +251,7 @@ const ExponentialFunctionLimit = () => {
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
            Back to Limit
         </BackButton>
-        <SectionTitle>Elementary Function: Exponential</SectionTitle>
+        <SectionTitle>Exponential — Limit Visualization</SectionTitle>
       </Header>
 
       <SectionDescription>

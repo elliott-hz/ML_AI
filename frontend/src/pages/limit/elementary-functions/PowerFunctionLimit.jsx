@@ -350,7 +350,7 @@ const PowerFunctionLimit = () => {
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
            Back to Limit
         </BackButton>
-        <SectionTitle>Elementary Function: Power Function</SectionTitle>
+        <SectionTitle>Power Function — Limit Visualization</SectionTitle>
       </Header>
 
       <SectionDescription>
