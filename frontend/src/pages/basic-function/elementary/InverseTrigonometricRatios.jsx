@@ -273,6 +273,11 @@ const formatVal = (v) => {
   return parseFloat(v.toFixed(4)).toString();
 };
 
+const radToDeg = (rad) => {
+  if (!isFinite(rad)) return null;
+  return parseFloat((rad * 180 / Math.PI).toFixed(1)).toString() + '°';
+};
+
 const isInfinite = (v) => !isFinite(v) || Math.abs(v) > 1e8;
 
 // ── Inverse trig parameters per mode ──
@@ -550,7 +555,7 @@ const InverseTrigonometricRatios = () => {
     const mx = [], my = [], mt = [], mc = [];
     const as = Math.asin(interVal);
     const ac = Math.acos(interVal);
-    if (isFinite(as)) { mx.push(interVal, interVal); my.push(as, ac); mt.push(`arcsin = ${formatVal(as)}`, `arccos = ${formatVal(ac)}`); mc.push('#6366f1', '#06b6d4'); }
+    if (isFinite(as)) { mx.push(interVal, interVal); my.push(as, ac); mt.push(`arcsin = ${radToDeg(as)}`, `arccos = ${radToDeg(ac)}`); mc.push('#6366f1', '#06b6d4'); }
     if (mx.length) {
       traces.push({
         x: mx, y: my, mode: 'markers+text', type: 'scatter', name: 'Values',
@@ -599,7 +604,7 @@ const InverseTrigonometricRatios = () => {
     });
 
     const mx = [cVal, cVal], my = [Math.atan(cVal), Math.PI / 2 - Math.atan(cVal)];
-    const mt = [`arctan = ${formatVal(Math.atan(cVal))}`, `arccot = ${formatVal(Math.PI / 2 - Math.atan(cVal))}`];
+    const mt = [`arctan = ${radToDeg(Math.atan(cVal))}`, `arccot = ${radToDeg(Math.PI / 2 - Math.atan(cVal))}`];
     traces.push({
       x: mx, y: my, mode: 'markers+text', type: 'scatter', name: 'Values',
       marker: { size: 9, color: ['#f59e0b', '#10b981'], symbol: 'circle', line: { color: '#fff', width: 1 } },
@@ -652,7 +657,7 @@ const InverseTrigonometricRatios = () => {
       const sv = Math.acos(1 / cVal);
       const cv = Math.asin(1 / cVal);
       mx.push(cVal, cVal); my.push(sv, cv);
-      mt.push(`arcsec = ${formatVal(sv)}`, `arccsc = ${formatVal(cv)}`);
+      mt.push(`arcsec = ${radToDeg(sv)}`, `arccsc = ${radToDeg(cv)}`);
       mc.push('#f97316', '#ec4899');
     }
     if (mx.length) {
