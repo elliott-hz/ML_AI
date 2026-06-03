@@ -115,152 +115,142 @@ const ToggleBtn = styled.button`
 `;
 
 /**
- * Inverse Trigonometric Limit - limits of arcsin(x), arccos(x), arctan(x)
+ * Inverse Trigonometric Limit — classic limits of inverse trig functions at x = 0
  *
- *   arctan(x):  lim(x→±∞) arctan(x) = ±π/2  (horizontal asymptotes)
- *   arcsin(x):  lim(x→-1⁺) arcsin(x) = -π/2, lim(x→1⁻) arcsin(x) = π/2
- *   arccos(x):  lim(x→-1⁺) arccos(x) = π,   lim(x→1⁻) arccos(x) = 0
+ *   arcsin(kx)/(kx) → 1   (arcsin x ~ x)
+ *   arctan(kx)/(kx) → 1   (arctan x ~ x)
+ *   (arccos(kx) − π/2)/(kx) → -1   (arccos x = π/2 − x + o(x))
  */
 const InverseTrigonometricLimit = () => {
   const navigate = useNavigate();
 
-  // 参数状态
   const [params, setParams] = useState({
-    coefficient: 1,        // 系数
-    xRange: [-5, 5],       // X轴范围（默认适合 arctan）
-    plotStyle: 'medium',   // Plot 样式档位
-    aspectRatio: 'auto',   // 显示比例
+    coefficient: 1,        // 缩放系数 k
+    xRange: [-2, 2],       // X轴范围
+    plotStyle: 'medium',
+    aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
 
-  const [activeFunction, setActiveFunction] = useState('arctan');
+  const [activeFunction, setActiveFunction] = useState('arcsin');
 
-  // 生成连续函数数据
+  // 生成函数数据
   const generateFunctionData = useCallback(() => {
-    let [xMin, xMax] = params.xRange || [-5, 5];
-    const a = params.coefficient || 1;
+    const [xMin, xMax] = params.xRange || [-2, 2];
+    const k = params.coefficient || 1;
     const numPoints = 400;
 
-    const traces = [];
+    const fnLabel = activeFunction === 'arcsin' ? `arcsin(${k.toFixed(1)}x)` :
+                    activeFunction === 'arctan' ? `arctan(${k.toFixed(1)}x)` :
+                    `arccos(${k.toFixed(1)}x)-π/2`;
 
-    if (activeFunction === 'arctan') {
-      // ── arctan(x): 全域定义，有水平渐近线 ──
-      const xValues = [];
-      const yValues = [];
-      for (let i = 0; i <= numPoints; i++) {
-        const x = xMin + ((xMax - xMin) * i) / numPoints;
-        xValues.push(x);
-        yValues.push(a * Math.atan(x));
+    const xValues = [];
+    const yValues = [];
+
+    for (let i = 0; i <= numPoints; i++) {
+      const x = xMin + ((xMax - xMin) * i) / numPoints;
+      let y;
+
+      if (activeFunction === 'arcsin') {
+        // arcsin(kx)/(kx) — domain: x ∈ [-1/k, 1/k], limit at 0 → 1
+        const denom = k * x;
+        const arg = k * x;
+        y = Math.abs(denom) > 1e-10 && Math.abs(arg) <= 1
+          ? Math.asin(arg) / denom
+          : Math.abs(arg) <= 1 ? 1 : NaN;
+      } else if (activeFunction === 'arctan') {
+        // arctan(kx)/(kx) — limit at 0 → 1
+        const denom = k * x;
+        y = Math.abs(denom) > 1e-10 ? Math.atan(k * x) / denom : 1;
+      } else {
+        // (arccos(kx) - π/2)/(kx) — limit at 0 → -1
+        const denom = k * x;
+        const arg = k * x;
+        y = Math.abs(denom) > 1e-10 && Math.abs(arg) <= 1
+          ? (Math.acos(arg) - Math.PI / 2) / denom
+          : Math.abs(arg) <= 1 ? -1 : NaN;
       }
-      traces.push({
-        x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·arctan(x)`,
-        line: { color: '#6366f1', width: 2.5 }
-      });
 
-      // 水平渐近线 ±a·π/2
-      const asy = a * Math.PI / 2;
-      traces.push({
-        x: [xMin, xMax], y: [asy, asy], type: 'scatter', mode: 'lines',
-        name: `lim(x→+∞): +${asy.toFixed(2)}`,
-        line: { color: '#ffd700', width: 2, dash: 'dash' }
-      });
-      traces.push({
-        x: [xMin, xMax], y: [-asy, -asy], type: 'scatter', mode: 'lines',
-        name: `lim(x→-∞): ${(-asy).toFixed(2)}`,
-        line: { color: '#ffd700', width: 2, dash: 'dash' }
-      });
-    } else if (activeFunction === 'arcsin') {
-      // ── arcsin(x): 定义域 [-1, 1] ──
-      xMin = Math.max(-1, xMin);
-      xMax = Math.min(1, xMax);
-      const xValues = [];
-      const yValues = [];
-      for (let i = 0; i <= numPoints; i++) {
-        const x = xMin + ((xMax - xMin) * i) / numPoints;
-        xValues.push(x);
-        yValues.push(a * Math.asin(x));
+      xValues.push(x);
+      yValues.push(y);
+    }
+
+    const traces = [{
+      x: xValues,
+      y: yValues,
+      type: 'scatter',
+      mode: 'lines',
+      name: fnLabel,
+      line: {
+        color: '#6366f1',
+        width: 2.5
       }
-      traces.push({
-        x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·arcsin(x)`,
-        line: { color: '#6366f1', width: 2.5 }
-      });
+    }];
 
-      // 边界极限值
-      const upper = a * Math.PI / 2;
-      const lower = -a * Math.PI / 2;
-      // 垂直边界线 x = -1
-      traces.push({
-        x: [-1, -1], y: [lower - 0.3, lower + 0.3], type: 'scatter', mode: 'lines',
-        name: `lim(x→-1⁺): ${lower.toFixed(2)}`,
-        line: { color: '#ffd700', width: 2, dash: 'dash' }
-      });
-      // 垂直边界线 x = 1
-      traces.push({
-        x: [1, 1], y: [upper - 0.3, upper + 0.3], type: 'scatter', mode: 'lines',
-        name: `lim(x→1⁻): ${upper.toFixed(2)}`,
-        line: { color: '#ffd700', width: 2, dash: 'dash' }
-      });
+    // 极限参考线
+    let limitValue;
+    if (activeFunction === 'arcsin' || activeFunction === 'arctan') {
+      limitValue = 1;
+    } else {
+      limitValue = -1;
+    }
 
-      // x=0 参考线
+    // Domain boundary lines for arcsin/arccos
+    if (activeFunction !== 'arctan') {
+      const bound = 1 / Math.abs(k || 1);
       traces.push({
-        x: [-1, 1], y: [0, 0], type: 'scatter', mode: 'lines',
-        name: 'y = 0',
+        x: [bound, bound],
+        y: [limitValue - 3, limitValue + 3],
+        type: 'scatter',
+        mode: 'lines',
+        name: `x = ${bound.toFixed(2)}`,
         line: { color: 'rgba(148,163,184,0.4)', width: 1, dash: 'dot' },
         hoverinfo: 'skip', showlegend: false
       });
-    } else {
-      // ── arccos(x): 定义域 [-1, 1] ──
-      xMin = Math.max(-1, xMin);
-      xMax = Math.min(1, xMax);
-      const xValues = [];
-      const yValues = [];
-      for (let i = 0; i <= numPoints; i++) {
-        const x = xMin + ((xMax - xMin) * i) / numPoints;
-        xValues.push(x);
-        yValues.push(a * Math.acos(x));
-      }
       traces.push({
-        x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·arccos(x)`,
-        line: { color: '#6366f1', width: 2.5 }
-      });
-
-      // 边界极限值
-      const upper = a * Math.PI;
-      const lower = 0;
-      // 垂直边界线
-      traces.push({
-        x: [-1, -1], y: [upper - 0.3, upper + 0.3], type: 'scatter', mode: 'lines',
-        name: `lim(x→-1⁺): ${(a * Math.PI).toFixed(2)}`,
-        line: { color: '#ffd700', width: 2, dash: 'dash' }
-      });
-      traces.push({
-        x: [1, 1], y: [-0.3, 0.3], type: 'scatter', mode: 'lines',
-        name: `lim(x→1⁻): 0`,
-        line: { color: '#ffd700', width: 2, dash: 'dash' }
-      });
-
-      // x=0 参考线
-      traces.push({
-        x: [-1, 1], y: [0, 0], type: 'scatter', mode: 'lines',
-        name: 'y = 0',
+        x: [-bound, -bound],
+        y: [limitValue - 3, limitValue + 3],
+        type: 'scatter',
+        mode: 'lines',
+        name: `x = ${(-bound).toFixed(2)}`,
         line: { color: 'rgba(148,163,184,0.4)', width: 1, dash: 'dot' },
         hoverinfo: 'skip', showlegend: false
       });
     }
 
+    traces.push({
+      x: [xMin, xMax],
+      y: [limitValue, limitValue],
+      type: 'scatter',
+      mode: 'lines',
+      name: `lim: ${limitValue}`,
+      line: {
+        color: '#ffd700',
+        width: 2,
+        dash: 'dash'
+      }
+    });
+
+    // x = 0 reference line
+    traces.push({
+      x: [0, 0],
+      y: [limitValue - 3, limitValue + 3],
+      type: 'scatter',
+      mode: 'lines',
+      name: 'x = 0',
+      line: { color: '#ef4444', width: 1, dash: 'dot' },
+      hoverinfo: 'skip', showlegend: false
+    });
+
     return traces;
   }, [params, activeFunction]);
 
-  // 参数配置
   const coefficientConfig = [
     {
       name: 'coefficient',
-      label: 'Coefficient (a)',
+      label: 'Coefficient (k)',
       min: 0.5,
-      max: 5,
+      max: 3,
       step: 0.1,
       type: 'slider'
     }
@@ -270,31 +260,16 @@ const InverseTrigonometricLimit = () => {
     { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
   ];
 
-  const viewRangeConfig = (() => {
-    if (activeFunction === 'arctan') {
-      return [{
-        name: 'xRange',
-        label: 'X Range',
-        type: 'range',
-        min: -10,
-        max: 10,
-        step: 1,
-        default: [-5, 5]
-      }];
-    }
-    // arcsin / arccos: 固定范围 [-1, 1]，使用虚拟 range 控件（不可调的显示）
-    return [{
+  const viewRangeConfig = [
+    {
       name: 'xRange',
       label: 'X Range',
       type: 'range',
-      min: -1,
-      max: 1,
-      step: 0.1,
-      default: [-1, 1]
-    }];
-  })();
-
-  const viewRangeExtra = [
+      min: -10,
+      max: 10,
+      step: 1,
+      default: [-2, 2]
+    },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
@@ -305,51 +280,21 @@ const InverseTrigonometricLimit = () => {
   const commonParamsConfig = [
     ...legendPositionConfig,
     ...plotStyleConfig,
-    ...viewRangeConfig,
-    ...viewRangeExtra
+    ...viewRangeConfig
   ];
 
-  const a = params.coefficient;
+  const limitValue = (activeFunction === 'arcsin' || activeFunction === 'arctan') ? 1 : -1;
+  const k = params.coefficient;
 
-  // 根据 activeFunction 生成显示内容
-  const functionName = activeFunction === 'arctan' ? 'arctan' : activeFunction === 'arcsin' ? 'arcsin' : 'arccos';
-  const fnDisplay = `${a.toFixed(1)}·${functionName}(x)`;
+  const functionTitle = activeFunction === 'arcsin' ? `arcsin(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
+                        activeFunction === 'arctan' ? `arctan(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
+                        `(arccos(${k.toFixed(1)}x) - π/2) / (${k.toFixed(1)}x)`;
 
-  let formulaLines;
-  let description;
+  const fnLatex = activeFunction === 'arcsin' ? `arcsin(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
+                  activeFunction === 'arctan' ? `arctan(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
+                  `(arccos(${k.toFixed(1)}x) - π/2) / (${k.toFixed(1)}x)`;
 
-  if (activeFunction === 'arctan') {
-    const asy = a * Math.PI / 2;
-    formulaLines = [
-      `f(x) = ${a.toFixed(1)}·arctan(x)`,
-      `As x → +∞, f(x) → +${asy.toFixed(2)}`,
-      `As x → -∞, f(x) → ${(-asy).toFixed(2)}`
-    ];
-    description = `The arctangent function has two horizontal asymptotes at y = ±${asy.toFixed(2)}.
-      As x → +∞ the curve approaches the upper asymptote, and as x → -∞ it approaches the lower one.
-      This is the classic S-shaped inverse tangent curve.`;
-  } else if (activeFunction === 'arcsin') {
-    const upper = a * Math.PI / 2;
-    const lower = -a * Math.PI / 2;
-    formulaLines = [
-      `f(x) = ${a.toFixed(1)}·arcsin(x)`,
-      `As x → -1⁺, f(x) → ${lower.toFixed(2)}`,
-      `As x → 1⁻,  f(x) → ${upper.toFixed(2)}`
-    ];
-    description = `The arcsin function is defined only on the domain x ∈ [-1, 1].
-      At x = -1, the function reaches its minimum ${lower.toFixed(2)}, and at x = 1, its maximum ${upper.toFixed(2)}.
-      These are the endpoint limits of the function.`;
-  } else {
-    const upper = a * Math.PI;
-    formulaLines = [
-      `f(x) = ${a.toFixed(1)}·arccos(x)`,
-      `As x → -1⁺, f(x) → ${upper.toFixed(2)}`,
-      `As x → 1⁻,  f(x) → 0`
-    ];
-    description = `The arccos function is defined on the domain x ∈ [-1, 1].
-      Unlike arcsin, it decreases from ${upper.toFixed(2)} at x = -1 to 0 at x = 1.
-      It is a decreasing function with finite endpoint limits.`;
-  }
+  const limitLatex = limitValue === 1 ? '1' : '-1';
 
   return (
     <PageContainer>
@@ -361,46 +306,36 @@ const InverseTrigonometricLimit = () => {
       </Header>
 
       <SectionDescription>
-        Explore the limit behavior of inverse trigonometric functions. Each function approaches
-        finite values at the boundaries of its domain.
+        Explore the classic limits of inverse trigonometric functions at x = 0.
+        Like their trigonometric counterparts, these functions satisfy simple asymptotic relations:
+        arcsin(x) ~ x, arctan(x) ~ x, and arccos(x) = π/2 − x + o(x) as x → 0.
       </SectionDescription>
 
       <SectionTitle>Function:</SectionTitle>
 
       <ToggleGroup>
-        <ToggleBtn $active={activeFunction === 'arctan'} onClick={() => {
-          setActiveFunction('arctan');
-          setParams(p => ({ ...p, xRange: [-5, 5] }));
-        }}>
-          arctan(x)
+        <ToggleBtn $active={activeFunction === 'arcsin'} onClick={() => setActiveFunction('arcsin')}>
+          arcsin(kx) / (kx)
         </ToggleBtn>
-        <ToggleBtn $active={activeFunction === 'arcsin'} onClick={() => {
-          setActiveFunction('arcsin');
-          setParams(p => ({ ...p, xRange: [-1, 1] }));
-        }}>
-          arcsin(x)
+        <ToggleBtn $active={activeFunction === 'arctan'} onClick={() => setActiveFunction('arctan')}>
+          arctan(kx) / (kx)
         </ToggleBtn>
-        <ToggleBtn $active={activeFunction === 'arccos'} onClick={() => {
-          setActiveFunction('arccos');
-          setParams(p => ({ ...p, xRange: [-1, 1] }));
-        }}>
-          arccos(x)
+        <ToggleBtn $active={activeFunction === 'arccos'} onClick={() => setActiveFunction('arccos')}>
+          (arccos(kx) − π/2) / (kx)
         </ToggleBtn>
       </ToggleGroup>
 
       <FormulaBox>
         <Formula>
-          {formulaLines.map((line, i) => (
-            <React.Fragment key={i}>
-              {line}
-              {i < formulaLines.length - 1 && <br/>}
-            </React.Fragment>
-          ))}
+          f(x) = {fnLatex}<br/>
+          As x → 0, f(x) → {limitLatex}
         </Formula>
       </FormulaBox>
 
       <SectionDescription>
-        {description}
+        {activeFunction === 'arcsin' && 'arcsin(x) ~ x as x → 0, so arcsin(kx)/(kx) → 1. This is the inverse counterpart of sin(x)/x → 1, and is used in deriving the derivative (arcsin x)′ = 1/√(1−x²).'}
+        {activeFunction === 'arctan' && 'arctan(x) ~ x as x → 0, so arctan(kx)/(kx) → 1. This is equivalent to tan(x)/x → 1 via the inverse relationship, and gives the derivative (arctan x)′ = 1/(1+x²).'}
+        {activeFunction === 'arccos' && 'arccos(x) = π/2 − arcsin(x), so its first-order expansion is arccos(x) = π/2 − x + o(x). Hence (arccos(kx)−π/2)/(kx) → −1, consistent with (arccos x)′ = −1/√(1−x²).'}
       </SectionDescription>
 
       <ContentLayout>
@@ -425,8 +360,8 @@ const InverseTrigonometricLimit = () => {
         <PlotPanel>
           <LimitPlotter
             data={generateFunctionData()}
-            xRange={activeFunction === 'arctan' ? params.xRange : [-1, 1]}
-            title={`Function: f(x) = ${fnDisplay}`}
+            xRange={params.xRange}
+            title={`Function: f(x) = ${functionTitle}`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
