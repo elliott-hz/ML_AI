@@ -101,27 +101,27 @@ const BasicFunction = () => {
     // Future: Exponential Function
   ];
 
-  // Group 2: Other Function Types
-  const otherFunctionTypes = [
+  // Group 2: Function Relationships
+  const functionRelationships = [
     {
       id: 'reciprocal',
       icon: '',
       title: 'Reciprocal Function',
-      description: 'Explore g(x) = 1/f(x) — the reciprocal of a linear function. See how the graph splits at the vertical asymptote and approaches y = 0.',
+      description: 'Relationship between f(x) and 1/f(x). When f(x) is large, its reciprocal is small — explore the vertical asymptote, horizontal asymptote, and self-reciprocal point.',
       path: '/mathematics/1-fundamentals/basic-function/reciprocal'
     },
     {
       id: 'piecewise',
       icon: '',
       title: 'Piecewise Function',
-      description: 'Explore functions defined by different expressions on different intervals. Visualize f(x) = {a·x, x ≥ 0; 0, x < 0}.',
+      description: 'Relationship between different x-intervals and their corresponding expressions. The same variable x is mapped to different formulas depending on its domain range.',
       path: '/mathematics/1-fundamentals/basic-function/piecewise'
     },
     {
       id: 'inverse',
       icon: '',
       title: 'Inverse Function',
-      description: 'Understand the relationship between a function and its inverse. See how h = ½gt² relates to t = √(2h/g).',
+      description: 'Relationship between f(x) and its inverse f⁻¹(x). If f maps x → y, then f⁻¹ maps y → x. The graphs are symmetric about y = x.',
       path: '/mathematics/1-fundamentals/basic-function/inverse'
     }
   ];
@@ -180,10 +180,10 @@ const BasicFunction = () => {
         ))}
       </ButtonGrid>
 
-      {/* Group 2: Other Function Types */}
-      <GroupTitle>Other Function Types</GroupTitle>
+      {/* Group 2: Function Relationships */}
+      <GroupTitle>Function Relationships</GroupTitle>
       <ButtonGrid>
-        {otherFunctionTypes.map((feature) => (
+        {functionRelationships.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
