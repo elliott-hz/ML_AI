@@ -134,11 +134,11 @@ const Limit = () => {
       path: '/mathematics/1-fundamentals/limit/trigonometric'
     },
     {
-      id: 'reciprocal',
+      id: 'power-function',
       icon: '',
-      title: 'Reciprocal Function Limit',
-      description: 'Understand reciprocal function limit. Visualize how y = a/x converges to 0 as x → ±∞.',
-      path: '/mathematics/1-fundamentals/limit/reciprocal'
+      title: 'Power Function Limit',
+      description: 'Explore power function limits y = a·xⁿ. For n < 0, converges to 0 as x → ±∞; for n > 0, converges to 0 as x → 0.',
+      path: '/mathematics/1-fundamentals/limit/power-function'
     },
     {
       id: 'arctan',
