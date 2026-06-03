@@ -89,6 +89,33 @@ const PlotPanel = styled.div`
   min-width: 0;
 `;
 
+const QuickSetRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  font-size: 13px;
+  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
+`;
+
+const QuickBtn = styled.button`
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
+  padding: 4px 12px;
+  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
+  cursor: pointer;
+  font-size: 13px;
+  font-family: monospace;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    color: #fff;
+  }
+`;
+
 /**
  * Exponential Function 页面 - 指数函数可视化
  * y = a · bˣ
@@ -136,6 +163,7 @@ const ExponentialFunction = () => {
   const generateData = useCallback(() => {
     const a = params.a;
     const b = params.b;
+    const baseDisplay = Math.abs(b - Math.E) < 1e-9 ? 'e' : b.toFixed(1);
     const [xMin, xMax] = params.xRange;
     const numPoints = 300;
 
@@ -153,7 +181,7 @@ const ExponentialFunction = () => {
     traces.push({
       x: xVals, y: yVals,
       type: 'scatter', mode: 'lines',
-      name: `y = ${a.toFixed(1)} · ${b.toFixed(1)}ˣ`,
+      name: `y = ${a.toFixed(1)} · ${baseDisplay}ˣ`,
       line: { color: '#6366f1', width: 2 }
     });
 
@@ -193,7 +221,7 @@ const ExponentialFunction = () => {
         const y2 = a * Math.pow(b, x + 1);
         midX.push(x + 0.5);
         midY.push(Math.max(y1, y2) * 1.15);  // place above the higher point
-        factorLabels.push(`×${b.toFixed(1)}`);
+        factorLabels.push(`×${baseDisplay}`);
       }
 
       traces.push({
@@ -211,6 +239,9 @@ const ExponentialFunction = () => {
   }, [params.a, params.b, params.xRange]);
 
   const traces = useMemo(() => generateData(), [generateData]);
+
+  // When b is set to Euler's number, display "e" instead of "2.718"
+  const baseDisplay = Math.abs(params.b - Math.E) < 1e-9 ? 'e' : params.b.toFixed(1);
 
   const growthDesc = params.b > 1
     ? 'Exponential Growth — each step multiplies by b > 1'
@@ -254,6 +285,13 @@ const ExponentialFunction = () => {
             />
           </ParameterSection>
 
+          <QuickSetRow>
+            <span>Quick set:</span>
+            <QuickBtn onClick={() => setParams(p => ({ ...p, b: Math.E }))}>
+              b = e ({Math.E.toFixed(3)})
+            </QuickBtn>
+          </QuickSetRow>
+
           <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
@@ -267,7 +305,7 @@ const ExponentialFunction = () => {
           <FunctionPlotter
             data={traces}
             xRange={params.xRange}
-            title={`Exponential: y = ${params.a.toFixed(1)} · ${params.b.toFixed(1)}ˣ`}
+            title={`Exponential: y = ${params.a.toFixed(1)} · ${baseDisplay}ˣ`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
