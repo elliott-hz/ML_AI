@@ -66,8 +66,8 @@ const SliderGroup = styled.div`
   padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
   height: 42px;
   box-sizing: border-box;
-  flex: 0 1 auto;
-  min-width: 180px;
+  flex: 1;
+  min-width: 200px;
 `;
 
 const SliderItem = styled.div`
@@ -89,11 +89,10 @@ const SliderItem = styled.div`
   }
   .val {
     color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-    font-size: 14px;
-    font-weight: 700;
-    min-width: 40px;
+    font-size: 13px;
+    min-width: 36px;
     text-align: right;
-    font-variant-numeric: tabular-nums;
+    font-family: monospace;
   }
 `;
 
@@ -128,7 +127,7 @@ const ToggleGroup = styled.div`
 `;
 
 const ToggleBtn = styled.button`
-  padding: 6px 12px;
+  padding: 6px ${({ theme }) => theme?.spacing?.md || '1rem'};
   background: ${({ $active, theme }) => ($active ? (theme?.colors?.primary || '#6366f1') : 'transparent')};
   color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
   border: none;
@@ -139,18 +138,19 @@ const ToggleBtn = styled.button`
   white-space: nowrap;
   height: 42px;
   box-sizing: border-box;
-  &:hover { background: ${({ $active, theme }) => ($active ? (theme?.colors?.primary || '#6366f1') : 'rgba(99, 102, 241, 0.15)')}; }
+  &:hover { background: ${({ $active, theme }) => ($active ? (theme?.colors?.primary || '#6366f1') : (theme?.colors?.inputBg || '#334155'))}; }
 `;
 
 const StyleSelect = styled.select`
   background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
   color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  padding: 6px 10px;
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
   border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-  font-size: 12px;
+  padding: 6px ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
+  font-size: 13px;
   cursor: pointer;
-  height: 32px;
+  height: 42px;
+  box-sizing: border-box;
 `;
 
 // ── Plot row ──
@@ -264,14 +264,15 @@ const MiniCard = styled.div`
 const MiniName = styled.span`
   color: ${({ $color }) => $color || '#cbd5e1'};
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
 `;
 
 const MiniVal = styled.span`
   color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-family: monospace;
 `;
 
 // ── Helpers ────────────────────────────────────────────
@@ -422,6 +423,164 @@ function Cube3D({ size, dark, plotStyle }) {
         style={{
           position: 'absolute', top: '20px', right: '10px', zIndex: 10,
           background: '#6366f1', border: 'none', borderRadius: '4px',
+          width: '18px', height: '18px', cursor: 'pointer',
+          color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}
+        title="Toggle Fullscreen"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+        </svg>
+      </button>
+      <CubeContainer ref={plotRef} />
+    </PlotContainer>
+  );
+}
+
+// ── 3D Box Component (n=-2: x²·y=1) ─────────────────
+
+const boxStyleMap = {
+  thin:        { line: 1, fontSize: 9 },
+  medium:      { line: 2, fontSize: 10 },
+  thick:       { line: 2, fontSize: 11 },
+  'extra-thick': { line: 3, fontSize: 12 },
+};
+
+function Box3D({ size, dark, plotStyle }) {
+  const plotRef = useRef(null);
+  const containerRef = useRef(null);
+  const cs = boxStyleMap[plotStyle] || boxStyleMap.medium;
+
+  const handleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      if (containerRef.current) {
+        containerRef.current.requestFullscreen().catch(err =>
+          console.log(`Fullscreen error: ${err.message}`)
+        );
+      }
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!plotRef.current || !size) return;
+    const a = size;
+    const h = 1 / (a * a); // height = 1/x²
+    const maxDim = Math.max(a, h);
+    const pad = Math.max(0.3, maxDim * 0.08);
+
+    // 8 vertices: base a×a, height h
+    const v = [
+      [0, 0, 0], [a, 0, 0], [a, a, 0], [0, a, 0],
+      [0, 0, h], [a, 0, h], [a, a, h], [0, a, h]
+    ];
+    const x = v.map(p => p[0]);
+    const y = v.map(p => p[1]);
+    const z = v.map(p => p[2]);
+
+    // Mesh faces (12 triangles)
+    const i = [0, 0, 4, 4, 0, 0, 1, 1, 3, 3, 0, 0];
+    const j = [1, 2, 5, 6, 3, 7, 5, 6, 2, 6, 1, 5];
+    const k = [2, 3, 6, 7, 7, 4, 6, 2, 6, 7, 5, 4];
+    const faceColors = [
+      '#f59e0b','#f59e0b','#d97706','#d97706',
+      '#fbbf24','#fbbf24','#d97706','#d97706',
+      '#fbbf24','#fbbf24','#f59e0b','#f59e0b',
+    ];
+
+    // Wireframe edges (12 edges)
+    const edges = [
+      [0,1],[1,2],[2,3],[3,0],[4,5],[5,6],
+      [6,7],[7,4],[0,4],[1,5],[2,6],[3,7]
+    ];
+    const ex = [], ey = [], ez = [];
+    edges.forEach(([p, q]) => {
+      ex.push(v[p][0], v[q][0], null);
+      ey.push(v[p][1], v[q][1], null);
+      ez.push(v[p][2], v[q][2], null);
+    });
+
+    const data = [{
+      type: 'mesh3d', x, y, z, i, j, k,
+      facecolor: faceColors,
+      opacity: 0.85, flatshading: true,
+      lighting: { ambient: 0.6, diffuse: 0.5 },
+      hoverinfo: 'skip',
+    }, {
+      type: 'scatter3d', mode: 'lines',
+      x: ex, y: ey, z: ez,
+      line: { color: '#f59e0b', width: cs.line },
+      hoverinfo: 'skip', showlegend: false,
+    }, {
+      type: 'scatter3d', mode: 'text',
+      x: [a / 2], y: [a + (a * 0.08)], z: [h / 2],
+      text: ['Volume = 1'],
+      textfont: { color: '#ffffff', size: cs.fontSize, family: 'Georgia' },
+      hoverinfo: 'skip',
+    }];
+
+    const bg = dark ? '#1e293b' : '#ffffff';
+    const axisColor = dark ? '#64748b' : '#475569';
+    const gridColor = dark ? 'rgba(148,163,184,0.15)' : 'rgba(100,116,139,0.6)';
+    const tickColor = dark ? '#94a3b8' : '#334155';
+    // Camera: look from above-right, adjust for tall/flat box
+    const camZ = maxDim / a < 1.5 ? 1.2 : 0.8;
+
+    const layout = {
+      title: {
+        text: `Rectangular Box (x² · y = 1)`,
+        font: { color: dark ? '#e0e0e0' : '#0f172a', size: cs.fontSize },
+      },
+      showlegend: false,
+      scene: {
+        xaxis: {
+          visible: true, showgrid: true, range: [-pad, a + pad],
+          tickfont: { color: tickColor, size: cs.fontSize },
+          gridcolor: gridColor, zerolinecolor: axisColor,
+          showbackground: true, backgroundcolor: bg,
+        },
+        yaxis: {
+          visible: true, showgrid: true, range: [-pad, a + pad],
+          tickfont: { color: tickColor, size: cs.fontSize },
+          gridcolor: gridColor, zerolinecolor: axisColor,
+          showbackground: true, backgroundcolor: bg,
+        },
+        zaxis: {
+          visible: true, showgrid: true, range: [-pad, h + pad],
+          tickfont: { color: tickColor, size: cs.fontSize },
+          gridcolor: gridColor, zerolinecolor: axisColor,
+          showbackground: true, backgroundcolor: bg,
+        },
+        camera: { eye: { x: 1.8, y: 1.8, z: camZ } },
+        bgcolor: bg, aspectmode: 'data',
+      },
+      margin: { l: 0, r: 0, t: 30, b: 0 },
+      paper_bgcolor: bg, plot_bgcolor: bg,
+      bordercolor: dark ? '#334155' : '#cbd5e1', borderwidth: 1,
+    };
+
+    const config = { displayModeBar: false, displaylogo: false, responsive: true };
+    Plotly.newPlot(plotRef.current, data, layout, config);
+
+    const ro = new ResizeObserver(() => {
+      if (plotRef.current) Plotly.Plots.resize(plotRef.current);
+    });
+    if (containerRef.current) ro.observe(containerRef.current);
+
+    return () => {
+      ro.disconnect();
+      if (plotRef.current) { try { Plotly.purge(plotRef.current); } catch(e) {} }
+    };
+  }, [size, dark, cs]);
+
+  return (
+    <PlotContainer $dark={dark} ref={containerRef}>
+      <button
+        onClick={handleFullscreen}
+        style={{
+          position: 'absolute', top: '20px', right: '10px', zIndex: 10,
+          background: '#f59e0b', border: 'none', borderRadius: '4px',
           width: '18px', height: '18px', cursor: 'pointer',
           color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
@@ -694,8 +853,8 @@ export default function PowerFunction() {
   }, [xVal, n, themeMode]);
 
   function superscript(num) {
-    const sups = { '-2': '⁻²', '-1': '⁻¹', '0': '⁰', '1': '', '2': '²', '3': '³' };
-    return sups[num] || `^(${num})`;
+    const sups = { '-2': '⁻²', '-1': '⁻¹', '0': '⁰', '1': '¹', '2': '²', '3': '³' };
+    return sups[num] ?? `^(${num})`;
   }
 
   // ── Curve data ──
@@ -851,11 +1010,6 @@ export default function PowerFunction() {
           ))}
         </ToggleGroup>
 
-        <ExpressionPill>
-          <ExprLabel>y = x<sup>{superscript(n.toString())}</sup></ExprLabel>
-          <span style={{ color: plotSubTextColor, fontSize: 12 }}>= {yDisplay}</span>
-        </ExpressionPill>
-
         <StyleSelect value={plotStyle} onChange={(e) => setPlotStyle(e.target.value)}>
           <option value="thin">Thin</option>
           <option value="medium">Medium</option>
@@ -892,7 +1046,9 @@ export default function PowerFunction() {
       {/* Row 3: Two plots */}
       <PlotRow ref={rowRef}>
         <PlotHalfNarrow style={{ flex: `0 0 ${leftRatio}%` }}>
-          {n === 3 && absX > 0 ? (
+          {n === -2 && absX > 0 ? (
+            <Box3D size={absX} dark={themeMode === 'dark'} plotStyle={plotStyle} />
+          ) : n === 3 && absX > 0 ? (
             <Cube3D size={absX} dark={themeMode === 'dark'} plotStyle={plotStyle} />
           ) : (
           <PlotInner>
