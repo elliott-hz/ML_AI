@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import CardGrid from '../components/CardGrid';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -34,12 +35,6 @@ const GroupTitle = styled.h2`
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
   border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
   padding-left: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const ButtonGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
 `;
 
 const FeatureButton = styled.button`
@@ -135,7 +130,7 @@ const Continuity = () => {
 
       {/* Group 1: Continuity Basics */}
       <GroupTitle>Continuity Basics</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {continuityBasics.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -146,11 +141,11 @@ const Continuity = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 2: Discontinuity Points */}
       <GroupTitle>Discontinuity Points</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {discontinuityPoints.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -161,7 +156,7 @@ const Continuity = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
     </PageContainer>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import CardGrid from '../components/CardGrid';
 
 const HomeContainer = styled.div`
   max-width: 1200px;
@@ -32,15 +33,8 @@ const HeroSubtitle = styled.p`
   margin: 0 auto;
 `;
 
-const FeaturesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme.spacing.lg};
+const FeaturesGrid = styled(CardGrid)`
   margin-top: ${({ theme }) => theme.spacing.xxl};
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
 `;
 
 const FeatureCard = styled.div`

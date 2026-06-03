@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import CardGrid from '../components/CardGrid';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -34,12 +35,6 @@ const GroupTitle = styled.h2`
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
   border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
   padding-left: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const ButtonGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
 `;
 
 const FeatureButton = styled.button`
@@ -214,7 +209,7 @@ const Limit = () => {
 
       {/* Group 1: Sequences (Convergent & Divergent) */}
       <GroupTitle>Sequences (Convergent & Divergent)</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {sequences.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -225,11 +220,11 @@ const Limit = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 2: Elementary Functions Limits */}
       <GroupTitle>Elementary Functions Limits</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {elementaryFunctions.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -240,11 +235,11 @@ const Limit = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 3: One-Sided & Two-Sided Limits */}
       <GroupTitle>One-Sided & Two-Sided Limits</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {oneSidedTwoSidedLimits.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -255,11 +250,11 @@ const Limit = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 4: Infinitesimal Properties */}
       <GroupTitle>Infinitesimal Properties</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {infinitesimalProperties.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -270,7 +265,7 @@ const Limit = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
     </PageContainer>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import CardGrid from '../components/CardGrid';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -34,12 +35,6 @@ const GroupTitle = styled.h2`
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
   border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
   padding-left: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const ButtonGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
 `;
 
 const FeatureButton = styled.button`
@@ -252,7 +247,7 @@ const Derivative = () => {
 
       {/* Group 1: Motivation of the Derivative */}
       <GroupTitle>Motivation of the Derivative</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {motivation.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -263,11 +258,11 @@ const Derivative = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 2: Basic Derivative Formulas */}
       <GroupTitle>Constants and Power Functions</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {basicFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -278,11 +273,11 @@ const Derivative = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 3: Basic Derivative Formulas — Trigonometric Functions */}
       <GroupTitle>Trigonometric Functions</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {trigFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -293,11 +288,11 @@ const Derivative = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 4: Basic Derivative Formulas — Exponential and Logarithmic Functions */}
       <GroupTitle>Exponential and Logarithmic Functions</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {expLogFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -308,11 +303,11 @@ const Derivative = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 5: Basic Derivative Formulas — Inverse Trigonometric Functions */}
       <GroupTitle>Inverse Trigonometric Functions</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {inverseTrigFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -323,7 +318,7 @@ const Derivative = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
     </PageContainer>
   );
 };

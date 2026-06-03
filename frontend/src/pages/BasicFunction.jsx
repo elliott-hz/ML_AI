@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import CardGrid from '../components/CardGrid';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -34,12 +35,6 @@ const GroupTitle = styled.h2`
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
   border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
   padding-left: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const ButtonGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
 `;
 
 const FeatureButton = styled.button`
@@ -180,7 +175,7 @@ const BasicFunction = () => {
 
       {/* Group 1: Elementary Functions */}
       <GroupTitle>Elementary Functions</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {elementaryFunctions.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -191,11 +186,11 @@ const BasicFunction = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 2: Function Relationships */}
       <GroupTitle>Function Relationships</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {functionRelationships.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -206,11 +201,11 @@ const BasicFunction = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
 
       {/* Group 3: Function Properties */}
       <GroupTitle>Function Properties</GroupTitle>
-      <ButtonGrid>
+      <CardGrid>
         {functionProperties.map((feature) => (
           <FeatureButton
             key={feature.id}
@@ -221,7 +216,7 @@ const BasicFunction = () => {
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
         ))}
-      </ButtonGrid>
+      </CardGrid>
     </PageContainer>
   );
 };
