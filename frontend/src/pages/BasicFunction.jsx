@@ -82,8 +82,8 @@ const ButtonDescription = styled.p`
 const BasicFunction = () => {
   const navigate = useNavigate();
 
-  // Group 1: Function Types
-  const functionTypes = [
+  // Group 1: Elementary Functions
+  const elementaryFunctions = [
     {
       id: 'power-function',
       icon: '',
@@ -91,6 +91,18 @@ const BasicFunction = () => {
       description: 'Visualize power functions y = xⁿ through geometric representations — line, square, cube, and reciprocal. Adjust x and n to see real-time changes.',
       path: '/mathematics/1-fundamentals/basic-function/power-function'
     },
+    {
+      id: 'trigonometric-ratios',
+      icon: '',
+      title: 'Trigonometric Ratios',
+      description: 'Explore the six trigonometric ratios (sin, cos, tan, cot, sec, csc) through an interactive right triangle. Drag point C to see how the ratios change in real time.',
+      path: '/mathematics/1-fundamentals/basic-function/trigonometric-ratios'
+    }
+    // Future: Exponential Function
+  ];
+
+  // Group 2: Other Function Types
+  const otherFunctionTypes = [
     {
       id: 'piecewise',
       icon: '',
@@ -104,17 +116,6 @@ const BasicFunction = () => {
       title: 'Inverse Function',
       description: 'Understand the relationship between a function and its inverse. See how h = ½gt² relates to t = √(2h/g).',
       path: '/mathematics/1-fundamentals/basic-function/inverse'
-    }
-  ];
-
-  // Group 2: Trigonometric Functions
-  const trigonometricFunctions = [
-    {
-      id: 'trigonometric-ratios',
-      icon: '',
-      title: 'Trigonometric Ratios',
-      description: 'Explore the six trigonometric ratios (sin, cos, tan, cot, sec, csc) through an interactive right triangle. Drag point C to see how the ratios change in real time.',
-      path: '/mathematics/1-fundamentals/basic-function/trigonometric-ratios'
     }
   ];
 
@@ -157,10 +158,10 @@ const BasicFunction = () => {
         </Subtitle>
       </Header>
 
-      {/* Group 1: Function Types */}
-      <GroupTitle>Function Types</GroupTitle>
+      {/* Group 1: Elementary Functions */}
+      <GroupTitle>Elementary Functions</GroupTitle>
       <ButtonGrid>
-        {functionTypes.map((feature) => (
+        {elementaryFunctions.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
@@ -172,10 +173,10 @@ const BasicFunction = () => {
         ))}
       </ButtonGrid>
 
-      {/* Group 2: Trigonometric Functions */}
-      <GroupTitle>Trigonometric Functions</GroupTitle>
+      {/* Group 2: Other Function Types */}
+      <GroupTitle>Other Function Types</GroupTitle>
       <ButtonGrid>
-        {trigonometricFunctions.map((feature) => (
+        {otherFunctionTypes.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}

@@ -5,7 +5,7 @@ import Home from '../pages/Home';
 import BasicFunction from '../pages/BasicFunction';
 import Limit from '../pages/Limit';
 import PiecewiseFunctions from '../pages/basic-function/function-types/PiecewiseFunctions';
-import PowerFunction from '../pages/basic-function/function-types/PowerFunction';
+import PowerFunction from '../pages/basic-function/elementary/PowerFunction';
 import InverseFunctions from '../pages/basic-function/function-types/InverseFunctions';
 import OddEvenFunctions from '../pages/basic-function/function-properties/OddEvenFunctions';
 import PeriodicFunctions from '../pages/basic-function/function-properties/PeriodicFunctions';
