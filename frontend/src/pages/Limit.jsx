@@ -115,8 +115,8 @@ const Limit = () => {
     {
       id: 'exponential',
       icon: '',
-      title: 'Exponential Decay Limit',
-      description: 'Explore exponential decay limit. See how y = a·e^(-x) approaches 0 as x → +∞.',
+      title: 'Exponential Function Limit',
+      description: 'Explore limits of a·bˣ. For b > 1, the function approaches 0 as x → −∞; for 0 < b < 1, it approaches 0 as x → +∞.',
       path: '/mathematics/1-fundamentals/limit/exponential'
     },
     {

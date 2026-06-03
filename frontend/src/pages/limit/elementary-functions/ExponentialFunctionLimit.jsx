@@ -53,18 +53,10 @@ const SectionDescription = styled.p`
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
 `;
 
-const FunctionSection = styled.div`
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
-`;
-
 const ContentLayout = styled.div`
   display: flex;
   gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  
+
   @media (max-width: 1200px) {
     flex-direction: column;
   }
@@ -78,6 +70,33 @@ const ControlsPanel = styled.div`
 const PlotPanel = styled.div`
   flex: 1;
   min-width: 0;
+`;
+
+const QuickSetRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  font-size: 13px;
+  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
+`;
+
+const QuickBtn = styled.button`
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
+  padding: 4px 12px;
+  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
+  cursor: pointer;
+  font-size: 13px;
+  font-family: monospace;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    color: #fff;
+  }
 `;
 
 const FormulaBox = styled.div`
@@ -98,70 +117,87 @@ const Formula = styled.code`
 `;
 
 /**
- * Exponential Function Limit - y = a·e^(-x), lim(x→+∞) = 0
+ * Exponential Function Limit — f(x) = a·bˣ
+ *
+ *   b > 1:  lim(x→-∞) a·bˣ = 0  (horizontal asymptote on the left)
+ *   0 < b < 1:  lim(x→+∞) a·bˣ = 0  (horizontal asymptote on the right)
+ *   b = 1:  f(x) = a (constant)
  */
 const ExponentialFunctionLimit = () => {
   const navigate = useNavigate();
-  
+
   // 参数状态
   const [params, setParams] = useState({
-    base: Math.E,        // 底数，默认使用自然常数 e ≈ 2.71828
-    xRange: [-5, 5],     // X轴范围（根据参考图调整）
-    plotStyle: 'medium', // Plot 样式档位
-    aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
+    coefficient: 1,       // 系数 a
+    base: 2,              // 底数 b
+    xRange: [-5, 5],      // X轴范围
+    plotStyle: 'medium',  // Plot 样式档位
+    aspectRatio: 'auto',  // 显示比例
     legendPosition: 'top-right'
   });
 
   // 生成连续函数数据
   const generateFunctionData = useCallback(() => {
     const [xMin, xMax] = params.xRange || [-5, 5];
-    const base = params.base || Math.E;
-    const numPoints = 200;
-    
+    const a = params.coefficient || 1;
+    const b = params.base || 2;
+    const numPoints = 300;
+
     const xValues = [];
     const yValues = [];
-    
+
     for (let i = 0; i <= numPoints; i++) {
       const x = xMin + ((xMax - xMin) * i) / numPoints;
       xValues.push(x);
-      yValues.push(base * Math.exp(-x));
+      yValues.push(a * Math.pow(b, x));
     }
-    
+
+    // 底数显示名
+    const baseLabel = Math.abs(b - Math.E) < 1e-9 ? 'e' : b.toFixed(1);
+
     const traces = [{
       x: xValues,
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: `${base.toFixed(1)}·e⁻ˣ`,
-      line: { 
-        color: '#6366f1', 
+      name: `${a.toFixed(1)}·${baseLabel}ˣ`,
+      line: {
+        color: '#6366f1',
         width: 2.5
       }
     }];
-    
-    // ✅ 添加收敛辅助线（y=0）
+
+    // ✅ 水平渐近线 y = 0
     traces.push({
       x: [xMin, xMax],
       y: [0, 0],
       type: 'scatter',
       mode: 'lines',
       name: 'lim: 0',
-      line: { 
-        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
-        width: 2, 
-        dash: 'dash' 
+      line: {
+        color: '#ffd700',
+        width: 2,
+        dash: 'dash'
       }
     });
-    
+
     return traces;
   }, [params]);
 
   // 参数配置
-  const baseConfig = [
+  const functionConfig = [
+    {
+      name: 'coefficient',
+      label: 'Coefficient (a)',
+      min: 0.1,
+      max: 5,
+      step: 0.1,
+      type: 'slider'
+    },
     {
       name: 'base',
-      label: 'Base (a)',
-      min: 1.5,
+      label: 'Base (b)',
+      min: 0.1,
       max: 5,
       step: 0.1,
       type: 'slider'
@@ -195,32 +231,49 @@ const ExponentialFunctionLimit = () => {
     ...viewRangeConfig
   ];
 
+  const a = params.coefficient;
+  const b = params.base;
+  const baseLabel = Math.abs(b - Math.E) < 1e-9 ? 'e' : b.toFixed(1);
+
+  // 极限描述
+  let limitDesc;
+  if (b > 1) {
+    limitDesc = `As x → −∞, f(x) → 0  (horizontal asymptote on the left)`;
+  } else if (b < 1) {
+    limitDesc = `As x → +∞, f(x) → 0  (horizontal asymptote on the right)`;
+  } else {
+    limitDesc = `f(x) = ${a.toFixed(1)} (constant) — limit everywhere = ${a.toFixed(1)}`;
+  }
+
   return (
     <PageContainer>
       <Header>
         <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
            Back to Limit
         </BackButton>
-        <SectionTitle>Elementary Function: Exponential Decay</SectionTitle>
+        <SectionTitle>Elementary Function: Exponential</SectionTitle>
       </Header>
 
       <SectionDescription>
-        Observe how the exponential decay function behaves as x approaches different values.
-        By examining the graph, you can see that as x → +, the function value approaches 0.
+        Observe how the exponential function a·bˣ behaves at its limits.
+        The base b determines which side approaches the horizontal asymptote y = 0.
       </SectionDescription>
 
-      <SectionTitle>Function: y = a·e<sup>-x</sup></SectionTitle>
+      <SectionTitle>Function: y = a·b<sup>x</sup></SectionTitle>
 
       <FormulaBox>
         <Formula>
-          f(x) = a·e<sup>-x</sup><br/>
-          As x → +∞, f(x) → 0
+          f(x) = {a.toFixed(1)}·{baseLabel}<sup>x</sup><br/>
+          {limitDesc}
         </Formula>
       </FormulaBox>
 
       <SectionDescription>
-        Adjust the coefficient (a) and X range to explore how the function behaves near different points.
-        Notice how the curve approaches the horizontal asymptote at y = 0.
+        {b > 1
+          ? `With b = ${b.toFixed(1)} > 1, the function grows exponentially as x → +∞ and approaches 0 as x → −∞.`
+          : b < 1
+            ? `With b = ${b.toFixed(1)} < 1, the function decays toward 0 as x → +∞ and grows unbounded as x → −∞.`
+            : 'The base is 1, making this a constant function with no interesting limit behavior.'}
       </SectionDescription>
 
       <ContentLayout>
@@ -230,9 +283,16 @@ const ExponentialFunctionLimit = () => {
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={baseConfig}
+              config={functionConfig}
             />
           </ParameterSection>
+
+          <QuickSetRow>
+            <span>Quick set:</span>
+            <QuickBtn onClick={() => setParams(p => ({ ...p, base: Math.E }))}>
+              b = e ({Math.E.toFixed(3)})
+            </QuickBtn>
+          </QuickSetRow>
 
           <ParameterSection title="General Settings">
             <ParameterControls
@@ -244,11 +304,10 @@ const ExponentialFunctionLimit = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          {/* 只显示原函数图 */}
           <LimitPlotter
             data={generateFunctionData()}
             xRange={params.xRange}
-            title={`Function: f(x) = ${params.base.toFixed(1)}·e⁻ˣ`}
+            title={`Function: f(x) = ${a.toFixed(1)}·${baseLabel}ˣ`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
