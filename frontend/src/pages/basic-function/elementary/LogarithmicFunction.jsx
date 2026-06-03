@@ -5,6 +5,22 @@ import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visua
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 
+const SUBSCRIPT_MAP = {
+  '0': '\u2080', '1': '\u2081', '2': '\u2082', '3': '\u2083', '4': '\u2084',
+  '5': '\u2085', '6': '\u2086', '7': '\u2087', '8': '\u2088', '9': '\u2089',
+  'e': '\u2091'
+};
+const toSub = (s) => String(s).split('').map(c => SUBSCRIPT_MAP[c] || c).join('');
+const fmtBaseDisplay = (b) => {
+  const isE = Math.abs(b - Math.E) < 1e-9;
+  if (isE) return { raw: 'e', sub: toSub('e') };
+  const intVal = Math.round(b);
+  const isInt = Math.abs(b - intVal) < 1e-9;
+  if (isInt) return { raw: String(intVal), sub: toSub(String(intVal)) };
+  const raw = b.toFixed(1);
+  return { raw, sub: String(raw).split('').map(c => SUBSCRIPT_MAP[c] || c).join('') };
+};
+
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
   max-width: 1400px;
@@ -84,6 +100,33 @@ const ControlsPanel = styled.div`
   min-width: 300px;
 `;
 
+const QuickSetRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  font-size: 13px;
+  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
+`;
+
+const QuickBtn = styled.button`
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
+  padding: 4px 12px;
+  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
+  cursor: pointer;
+  font-size: 13px;
+  font-family: monospace;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    color: #fff;
+  }
+`;
+
 const PlotPanel = styled.div`
   flex: 1;
   min-width: 0;
@@ -139,7 +182,7 @@ const LogarithmicFunction = () => {
     const [xMin, xMax] = params.xRange;
     const numPoints = 300;
     const fmtA = a % 1 === 0 ? a.toFixed(0) : a.toFixed(1);
-    const fmtBase = b % 1 === 0 ? b.toFixed(0) : b.toFixed(1);
+    const bd = fmtBaseDisplay(b);
 
     // 1. Continuous curve y = a · log_b(x) = a · ln(x) / ln(b)
     const xVals = [];
@@ -156,7 +199,7 @@ const LogarithmicFunction = () => {
     traces.push({
       x: xVals, y: yVals,
       type: 'scatter', mode: 'lines',
-      name: `y = ${fmtA} · log ${fmtBase}(x)`,
+      name: `y = ${fmtA} · log${bd.sub}(x)`,
       line: { color: '#6366f1', width: 2 }
     });
 
@@ -213,7 +256,7 @@ const LogarithmicFunction = () => {
   const traces = useMemo(() => generateData(), [generateData]);
 
   const fmtA = params.a % 1 === 0 ? params.a.toFixed(0) : params.a.toFixed(1);
-  const fmtBase = params.b % 1 === 0 ? params.b.toFixed(0) : params.b.toFixed(1);
+  const bdRender = fmtBaseDisplay(params.b);
 
   return (
     <PageContainer>
@@ -252,6 +295,13 @@ const LogarithmicFunction = () => {
             />
           </ParameterSection>
 
+          <QuickSetRow>
+            <span>Quick set:</span>
+            <QuickBtn onClick={() => setParams(p => ({ ...p, b: Math.E }))}>
+              b = e ({Math.E.toFixed(3)})
+            </QuickBtn>
+          </QuickSetRow>
+
           <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
@@ -265,7 +315,7 @@ const LogarithmicFunction = () => {
           <FunctionPlotter
             data={traces}
             xRange={params.xRange}
-            title={`Logarithmic: y = ${fmtA} · log ${fmtBase}(x)`}
+            title={`Logarithmic: y = ${fmtA} · log${bdRender.sub}(x)`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}

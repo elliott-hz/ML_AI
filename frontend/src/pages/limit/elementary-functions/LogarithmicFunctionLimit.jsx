@@ -5,6 +5,29 @@ import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualiz
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 
+const SUBSCRIPT_MAP = {
+  '0': '\u2080', '1': '\u2081', '2': '\u2082', '3': '\u2083', '4': '\u2084',
+  '5': '\u2085', '6': '\u2086', '7': '\u2087', '8': '\u2088', '9': '\u2089',
+  'e': '\u2091'
+};
+const toSub = (s) => String(s).split('').map(c => SUBSCRIPT_MAP[c] || c).join('');
+
+// Format base for display: integer uses subscript ("₂"), decimal uses "_{3.5}" notation
+const fmtBaseDisplay = (b) => {
+  const isE = Math.abs(b - Math.E) < 1e-9;
+  if (isE) return { raw: 'e', sub: toSub('e'), short: 'e' };
+  const intVal = Math.round(b);
+  const isInt = Math.abs(b - intVal) < 1e-9;
+  if (isInt) {
+    const raw = String(intVal);
+    return { raw, sub: toSub(raw), short: raw };
+  }
+  const raw = b.toFixed(1);
+  // decimal bases: use subscript for digits, keep '.' as regular period
+  const sub = String(raw).split('').map(c => SUBSCRIPT_MAP[c] || c).join('');
+  return { raw, sub, short: raw };
+};
+
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
   max-width: 1400px;
@@ -67,6 +90,33 @@ const ControlsPanel = styled.div`
   min-width: 300px;
 `;
 
+const QuickSetRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
+  font-size: 13px;
+  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
+`;
+
+const QuickBtn = styled.button`
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
+  padding: 4px 12px;
+  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
+  cursor: pointer;
+  font-size: 13px;
+  font-family: monospace;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
+    color: #fff;
+  }
+`;
+
 const PlotPanel = styled.div`
   flex: 1;
   min-width: 0;
@@ -109,6 +159,7 @@ const LogarithmicFunctionLimit = () => {
     const [xMin, xMax] = params.xRange || [0.01, 8];
     const base = params.base || 2;
     const numPoints = 200;
+    const bd = fmtBaseDisplay(base);
 
     const xValues = [];
     const yValues = [];
@@ -125,26 +176,12 @@ const LogarithmicFunctionLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: `log_{${base.toFixed(1)}}(x)`,
+      name: `log${bd.sub}(x)`,
       line: {
         color: '#6366f1',
         width: 2.5
       }
     }];
-
-    // ✅ 添加 x=0 垂直渐近线
-    traces.push({
-      x: [0, 0],
-      y: [-8, 8],
-      type: 'scatter',
-      mode: 'lines',
-      name: 'x = 0',
-      line: {
-        color: '#ef4444',
-        width: 1.5,
-        dash: 'dot'
-      }
-    });
 
     // ✅ 添加水平趋向参考线（y=0）
     traces.push({
@@ -202,8 +239,10 @@ const LogarithmicFunctionLimit = () => {
     ...viewRangeConfig
   ];
 
-  const baseLabel = params.base.toFixed(1);
-  const baseForDisplay = params.base;
+  const b = params.base;
+  const bd = fmtBaseDisplay(b);
+  const baseLabel = bd.raw;
+  const baseForDisplay = b;
 
   return (
     <PageContainer>
@@ -223,7 +262,7 @@ const LogarithmicFunctionLimit = () => {
 
       <FormulaBox>
         <Formula>
-          f(x) = log<sub>{baseForDisplay.toFixed(1)}</sub>(x)<br/>
+          f(x) = log<sub>{baseLabel}</sub>(x)<br/>
           As x → 0⁺, f(x) → −∞ &nbsp;|&nbsp; As x → +∞, f(x) → +∞
         </Formula>
       </FormulaBox>
@@ -246,6 +285,13 @@ const LogarithmicFunctionLimit = () => {
             />
           </ParameterSection>
 
+          <QuickSetRow>
+            <span>Quick set:</span>
+            <QuickBtn onClick={() => setParams(p => ({ ...p, base: Math.E }))}>
+              b = e ({Math.E.toFixed(3)})
+            </QuickBtn>
+          </QuickSetRow>
+
           <ParameterSection title="General Settings">
             <ParameterControls
               parameters={params}
@@ -260,7 +306,7 @@ const LogarithmicFunctionLimit = () => {
           <LimitPlotter
             data={generateFunctionData()}
             xRange={params.xRange}
-            title={`Function: f(x) = log\u208B${baseLabel}(x)`}
+            title={`Function: f(x) = log${bd.sub}(x)`}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
