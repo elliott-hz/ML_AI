@@ -281,7 +281,7 @@ const isInfinite = (v) => !isFinite(v) || Math.abs(v) > 1e8;
 const TrigonometricRatios = () => {
   const navigate = useNavigate();
 
-  const [params, setParams] = useState({ radius: 3, angle: 45 });
+  const [params, setParams] = useState({ angle: 45 });
   const [plotStyle, setPlotStyle] = useState('medium');
   const [activePlot, setActivePlot] = useState('sin-cos');
   const [leftRatio, setLeftRatio] = useState(38);
@@ -316,12 +316,13 @@ const TrigonometricRatios = () => {
     return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
   }, []);
 
-  const { radius, angle } = params;
+  const { angle } = params;
+  const R = 3;
   const angleRad = angle * Math.PI / 180;
-  const cx = radius * Math.cos(angleRad);
-  const cy = radius * Math.sin(angleRad);
+  const cx = R * Math.cos(angleRad);
+  const cy = R * Math.sin(angleRad);
   const theta = angleRad;
-  const hyp = radius;
+  const hyp = R;
 
   // ── 6 trig ratios ──
   const sinVal = hyp > 0 ? cy / hyp : 0;
@@ -343,6 +344,20 @@ const TrigonometricRatios = () => {
   // ── Triangle traces ──
   const triangleTraces = useMemo(() => {
     const traces = [];
+
+    // Unit circle (trajectory of point C)
+    const circPts = 100;
+    const circX = [], circY = [];
+    for (let i = 0; i <= circPts; i++) {
+      const a = (2 * Math.PI * i) / circPts;
+      circX.push(R * Math.cos(a));
+      circY.push(R * Math.sin(a));
+    }
+    traces.push({
+      x: circX, y: circY, mode: 'lines', type: 'scatter',
+      name: 'Unit Circle', line: { color: auxGridColor, width: 1.5, dash: 'dash' },
+      hoverinfo: 'skip', showlegend: false
+    });
 
     // Edges A(0,0) → B(cx,0) → C(cx,cy) → A
     traces.push({
@@ -541,11 +556,6 @@ const TrigonometricRatios = () => {
       {/* Row 1: Controls */}
       <ControlsBar>
         <SliderGroup>
-          <SliderItem>
-            <label>Radius</label>
-            <input type="range" min={0.5} max={6} step={0.1} value={params.radius} onChange={handleSlider('radius')} />
-            <span className="val">{params.radius.toFixed(1)}</span>
-          </SliderItem>
           <SliderItem>
             <label>Angle</label>
             <input type="range" min={-180} max={180} step={10} value={params.angle} onChange={handleSlider('angle')} />
