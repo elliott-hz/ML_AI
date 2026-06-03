@@ -23,6 +23,8 @@ import ExponentialFunctionLimit from '../pages/limit/elementary-functions/Expone
 import LogarithmicFunctionLimit from '../pages/limit/elementary-functions/LogarithmicFunctionLimit';
 import TrigonometricFunctionLimit from '../pages/limit/elementary-functions/TrigonometricFunctionLimit';
 import PowerFunctionLimit from '../pages/limit/elementary-functions/PowerFunctionLimit';
+import TrigonometricIntuitiveLimit from '../pages/limit/elementary-functions/TrigonometricIntuitiveLimit';
+import InverseTrigIntuitiveLimit from '../pages/limit/elementary-functions/InverseTrigIntuitiveLimit';
 import InverseTrigonometricLimit from '../pages/limit/elementary-functions/InverseTrigonometricLimit';
 import OneSidedLimit from '../pages/limit/one-two-sided/OneSidedLimit';
 import TwoSidedLimit from '../pages/limit/one-two-sided/TwoSidedLimit';
@@ -101,6 +103,8 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/limit/logarithmic" element={<LogarithmicFunctionLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/trigonometric" element={<TrigonometricFunctionLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/power-function" element={<PowerFunctionLimit />} />
+        <Route path="/mathematics/1-fundamentals/limit/trigonometric-intuitive" element={<TrigonometricIntuitiveLimit />} />
+        <Route path="/mathematics/1-fundamentals/limit/inverse-trig-intuitive" element={<InverseTrigIntuitiveLimit />} />
         <Route path="/mathematics/1-fundamentals/limit/inverse-trigonometric" element={<InverseTrigonometricLimit />} />
         
         {/* 数学模块 - One-Sided & Two-Sided Limits 四级子页面（不在菜单中显示） */}

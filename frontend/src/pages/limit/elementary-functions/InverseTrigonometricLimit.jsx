@@ -200,7 +200,7 @@ const InverseTrigonometricLimit = () => {
       const bound = 1 / Math.abs(k || 1);
       traces.push({
         x: [bound, bound],
-        y: [limitValue - 3, limitValue + 3],
+        y: [limitValue - 5, limitValue + 5],
         type: 'scatter',
         mode: 'lines',
         name: `x = ${bound.toFixed(2)}`,
@@ -209,7 +209,7 @@ const InverseTrigonometricLimit = () => {
       });
       traces.push({
         x: [-bound, -bound],
-        y: [limitValue - 3, limitValue + 3],
+        y: [limitValue - 5, limitValue + 5],
         type: 'scatter',
         mode: 'lines',
         name: `x = ${(-bound).toFixed(2)}`,
@@ -365,6 +365,7 @@ const InverseTrigonometricLimit = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
+            yTickMode="pi"
           />
         </PlotPanel>
       </ContentLayout>

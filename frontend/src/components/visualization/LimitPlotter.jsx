@@ -15,7 +15,8 @@ const LimitPlotter = ({
   plotStyle = 'medium',
   aspectRatio = 'auto', // 显示比例 (auto, 16:9, 4:3)
   data, // 直接传入 Plotly traces 数组（唯一数据源）
-  legendPosition = 'top-right'
+  legendPosition = 'top-right',
+  yTickMode = 'auto'  // 'auto' | 'pi'
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -197,6 +198,42 @@ const LimitPlotter = ({
     const isDark = themeMode === 'dark';
     const axisColor = isDark ? '#b9b9d3' : '#475569'; // 边框颜色
 
+    // Pi tick formatter for y-axis
+    const buildPiTickExtra = (range) => {
+      const [rMin, rMax] = range;
+      const halfPi = Math.PI / 2;
+      const startK = Math.ceil(rMin / halfPi);
+      const endK = Math.floor(rMax / halfPi);
+      const PI_TICKS = [];
+      for (let k = startK; k <= endK; k++) {
+        const val = k * halfPi;
+        const neg = k < 0 ? '−' : '';
+        const absK = Math.abs(k);
+        let label;
+        if (absK === 0) {
+          label = '0';
+        } else if (absK % 2 === 0) {
+          const coeff = absK / 2;
+          label = `${neg}${coeff === 1 ? '' : coeff}π`;
+        } else if (absK === 1) {
+          label = `${neg}π/2`;
+        } else {
+          label = `${neg}${absK}π/2`;
+        }
+        PI_TICKS.push([val, label]);
+      }
+      return {
+        tickmode: 'array',
+        tickvals: PI_TICKS.map(([v]) => v),
+        ticktext: PI_TICKS.map(([, label]) => label)
+      };
+    };
+
+    let yaxisExtra = {};
+    if (yTickMode === 'pi') {
+      yaxisExtra = buildPiTickExtra(autoYRange);
+    }
+
     return {
       title: {
         text: title,
@@ -229,7 +266,8 @@ const LimitPlotter = ({
         showline: true,
         linewidth: 1,
         linecolor: axisColor,
-        mirror: true // 让轴线在两侧都显示，形成闭合框
+        mirror: true, // 让轴线在两侧都显示，形成闭合框
+        ...yaxisExtra
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
@@ -246,7 +284,7 @@ const LimitPlotter = ({
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, data, legendPosition]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, data, legendPosition, yTickMode]);
 
   // 配置 Plotly 工具栏
   const config = {

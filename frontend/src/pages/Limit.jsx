@@ -112,6 +112,22 @@ const Limit = () => {
 
   // Group 2: Elementary Functions Limits
   const elementaryFunctions = [
+    // ── Intuitive limits (function behavior overview) ──
+    {
+      id: 'trigonometric-intuitive',
+      icon: '',
+      title: 'Trigonometric Intuitive Limits',
+      description: 'Visually explore sin/cos/tan behavior: bounded oscillation, vertical asymptotes, and why limits at infinity do not exist.',
+      path: '/mathematics/1-fundamentals/limit/trigonometric-intuitive'
+    },
+    {
+      id: 'inverse-trig-intuitive',
+      icon: '',
+      title: 'Inverse Trig. Intuitive Limits',
+      description: 'Observe arctan horizontal asymptotes at ±π/2, and the domain/range boundaries of arcsin and arccos.',
+      path: '/mathematics/1-fundamentals/limit/inverse-trig-intuitive'
+    },
+    // ── Classic limits (exact ratios at x → 0) ──
     {
       id: 'exponential',
       icon: '',
@@ -127,13 +143,6 @@ const Limit = () => {
       path: '/mathematics/1-fundamentals/limit/logarithmic'
     },
     {
-      id: 'trigonometric',
-      icon: '',
-      title: 'Trigonometric Function Limit',
-      description: 'Explore the classic finite limits sin(kx)/(kx) → 1, tan(kx)/(kx) → 1, and (1-cos(kx))/x → 0 as x → 0.',
-      path: '/mathematics/1-fundamentals/limit/trigonometric'
-    },
-    {
       id: 'power-function',
       icon: '',
       title: 'Power Function Limit',
@@ -141,10 +150,17 @@ const Limit = () => {
       path: '/mathematics/1-fundamentals/limit/power-function'
     },
     {
+      id: 'trigonometric',
+      icon: '',
+      title: 'Trigonometric Classic Limits',
+      description: 'The foundational limits sin(kx)/(kx) → 1, tan(kx)/(kx) → 1, and (1−cos(kx))/(kx)² → ½ at x → 0.',
+      path: '/mathematics/1-fundamentals/limit/trigonometric'
+    },
+    {
       id: 'inverse-trigonometric',
       icon: '',
-      title: 'Inverse Trigonometric Limits',
-      description: 'Explore limits of inverse trig functions: arctan(x) → ±π/2 at ±∞, arcsin(x) and arccos(x) with finite endpoint limits.',
+      title: 'Inverse Trig. Classic Limits',
+      description: 'The equivalent asymptotic limits: arcsin(kx)/(kx) → 1, arctan(kx)/(kx) → 1, and (arccos(kx)−π/2)/(kx) → −1.',
       path: '/mathematics/1-fundamentals/limit/inverse-trigonometric'
     }
   ];
