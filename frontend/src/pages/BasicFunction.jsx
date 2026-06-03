@@ -97,8 +97,14 @@ const BasicFunction = () => {
       title: 'Trigonometric Ratios',
       description: 'Explore the six trigonometric ratios (sin, cos, tan, cot, sec, csc) through an interactive right triangle. Drag point C to see how the ratios change in real time.',
       path: '/mathematics/1-fundamentals/basic-function/trigonometric-ratios'
+    },
+    {
+      id: 'exponential',
+      icon: '',
+      title: 'Exponential Function',
+      description: 'Understand exponential growth and decay through y = a·bˣ. See how each unit step multiplies the output by the base b — the essence of exponential behavior.',
+      path: '/mathematics/1-fundamentals/basic-function/exponential'
     }
-    // Future: Exponential Function
   ];
 
   // Group 2: Function Relationships

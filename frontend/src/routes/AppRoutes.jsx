@@ -6,6 +6,7 @@ import BasicFunction from '../pages/BasicFunction';
 import Limit from '../pages/Limit';
 import PiecewiseFunctions from '../pages/basic-function/function-relationship/PiecewiseFunctions';
 import PowerFunction from '../pages/basic-function/elementary/PowerFunction';
+import ExponentialFunction from '../pages/basic-function/elementary/ExponentialFunction';
 import InverseFunctions from '../pages/basic-function/function-relationship/InverseFunctions';
 import ReciprocalFunctions from '../pages/basic-function/function-relationship/ReciprocalFunctions';
 import OddEvenFunctions from '../pages/basic-function/function-properties/OddEvenFunctions';
@@ -71,6 +72,7 @@ const AppRoutes = () => {
         
         {/* 数学模块 - Basic Function 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/1-fundamentals/basic-function/power-function" element={<PowerFunction />} />
+        <Route path="/mathematics/1-fundamentals/basic-function/exponential" element={<ExponentialFunction />} />
         <Route path="/mathematics/1-fundamentals/basic-function/piecewise" element={<PiecewiseFunctions />} />
         <Route path="/mathematics/1-fundamentals/basic-function/inverse" element={<InverseFunctions />} />
         <Route path="/mathematics/1-fundamentals/basic-function/reciprocal" element={<ReciprocalFunctions />} />
