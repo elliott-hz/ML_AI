@@ -126,7 +126,7 @@ const ProductRule = () => {
     a: 2, b: 0.5, m: 1,   // u(x) = 2 + 0.5x
     c: 1, d: 1, n: 2,     // v(x) = 1 + x²
     x0: 1,
-    dx: 0.1,
+    dx: 0.5,
     xRange: [-5, 5],
     plotStyle: 'medium',
     aspectRatio: 'auto',
@@ -423,8 +423,8 @@ const ProductRule = () => {
           <ParameterSection title={uSection}>
             <ParameterControls parameters={params} onChange={setParams}
               config={[
-                { name: 'a', label: 'constant (a)', min: -5, max: 5, step: 0.1 },
-                { name: 'b', label: 'coeff (b)', min: -3, max: 3, step: 0.1 },
+                { name: 'a', label: 'constant (a)', min: -5, max: 5, step: 0.5 },
+                { name: 'b', label: 'coeff (b)', min: -3, max: 3, step: 0.5 },
                 { name: 'm', label: 'exponent (m)', min: 1, max: 5, step: 0.1 }
               ]}
             />
@@ -433,8 +433,8 @@ const ProductRule = () => {
           <ParameterSection title={vSection}>
             <ParameterControls parameters={params} onChange={setParams}
               config={[
-                { name: 'c', label: 'constant (c)', min: -5, max: 5, step: 0.1 },
-                { name: 'd', label: 'coeff (d)', min: -3, max: 3, step: 0.1 },
+                { name: 'c', label: 'constant (c)', min: -5, max: 5, step: 0.5 },
+                { name: 'd', label: 'coeff (d)', min: -3, max: 3, step: 0.5 },
                 { name: 'n', label: 'exponent (n)', min: 1, max: 5, step: 0.1 }
               ]}
             />
