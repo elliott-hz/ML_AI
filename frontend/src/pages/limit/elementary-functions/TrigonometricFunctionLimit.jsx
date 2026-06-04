@@ -141,10 +141,10 @@ const TrigonometricFunctionLimit = () => {
     const k = params.coefficient || 1;
     const numPoints = 400;
 
-    const fnLabel = activeFunction === 'sin' ? `sin(${k.toFixed(1)}x)` :
-                    activeFunction === 'tan' ? `tan(${k.toFixed(1)}x)` :
-                    activeFunction === 'cos1' ? `1-cos(${k.toFixed(1)}x)` :
-                    `(1-cos(${k.toFixed(1)}x))/(${k.toFixed(1)}x)²`;
+    const fnLabel = activeFunction === 'sin' ? `sin(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
+                    activeFunction === 'tan' ? `tan(${k.toFixed(1)}x) / (${k.toFixed(1)}x)` :
+                    activeFunction === 'cos1' ? `(1-cos(${k.toFixed(1)}x)) / x` :
+                    `(1-cos(${k.toFixed(1)}x)) / (${k.toFixed(1)}x)²`;
 
     const xValues = [];
     const yValues = [];
