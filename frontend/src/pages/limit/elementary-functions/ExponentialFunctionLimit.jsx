@@ -167,19 +167,21 @@ const ExponentialFunctionLimit = () => {
       }
     }];
 
-    // ✅ 水平渐近线 y = 0
-    traces.push({
-      x: [xMin, xMax],
-      y: [0, 0],
-      type: 'scatter',
-      mode: 'lines',
-      name: 'lim: 0',
-      line: {
-        color: '#ffd700',
-        width: 2,
-        dash: 'dash'
-      }
-    });
+    // ✅ 水平渐近线 y = 0 (only when base ≠ 1 — constant function has no asymptote)
+    if (Math.abs(b - 1) > 1e-9) {
+      traces.push({
+        x: [xMin, xMax],
+        y: [0, 0],
+        type: 'scatter',
+        mode: 'lines',
+        name: 'lim: 0',
+        line: {
+          color: '#ffd700',
+          width: 2,
+          dash: 'dash'
+        }
+      });
+    }
 
     return traces;
   }, [params]);
