@@ -114,26 +114,15 @@ const ToggleBtn = styled.button`
   }
 `;
 
-const LiveValueBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-top: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
+// ─── Unicode superscript ───────────────────────────────────────────
+const SUP = {
+  '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
+  '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079',
+  '-': '\u207B', '.': '\u00B7'
+};
+const toSup = (s) => String(s).split('').map(c => SUP[c] || c).join('');
 
-const LiveValueRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  font-size: 14px;
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-family: 'Courier New', monospace;
-`;
-
-const LiveValueLabel = styled.span`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
-`;
+const fmtExp = (val) => toSup(val % 1 === 0 ? String(val) : val.toFixed(1));
 
 /**
  * Linearity Rule — (u±v)' = u'±v' and (Cu)' = Cu'
@@ -147,10 +136,10 @@ const LinearityRule = () => {
 
   const [activeTab, setActiveTab] = useState('sum');
   const [params, setParams] = useState({
-    a: 2,          // u(x) constant term
+    a: 0,          // u(x) constant term
     b: 1,          // u(x) coefficient
     m: 3,          // u(x) exponent
-    c: 1,          // v(x) constant term
+    c: 0,          // v(x) constant term
     d: 1,          // v(x) coefficient
     n: 2,          // v(x) exponent
     C: 3,          // constant multiple
@@ -168,6 +157,10 @@ const LinearityRule = () => {
   const numDeriv = useCallback((fn, x, h = 1e-6) => {
     return (fn(x + h) - fn(x - h)) / (2 * h);
   }, []);
+
+  // Formatted display helpers
+  const uLabelStr = `u(x) = ${params.a.toFixed(1)} + ${params.b.toFixed(1)}x${fmtExp(params.m)}`;
+  const vLabelStr = `v(x) = ${params.c.toFixed(1)} + ${params.d.toFixed(1)}x${fmtExp(params.n)}`;
 
   const generateData = useCallback(() => {
     const [xMin, xMax] = params.xRange;
@@ -208,22 +201,20 @@ const LinearityRule = () => {
 
     // u(x)
     const uData = genTrace(uFn);
-    const uLabel = `u(x) = ${params.a.toFixed(1)} + ${params.b.toFixed(1)}x^${params.m.toFixed(1)}`;
     traces.push({
       x: uData.xs, y: uData.ys,
       type: 'scatter', mode: 'lines',
-      name: uLabel,
+      name: uLabelStr,
       line: { color: '#6366f1', width: 2.5 }
     });
 
     // v(x) only for sum/difference
     if (activeTab !== 'constant-multiple') {
       const vData = genTrace(vFn);
-      const vLabel = `v(x) = ${params.c.toFixed(1)} + ${params.d.toFixed(1)}x^${params.n.toFixed(1)}`;
       traces.push({
         x: vData.xs, y: vData.ys,
         type: 'scatter', mode: 'lines',
-        name: vLabel,
+        name: vLabelStr,
         line: { color: '#22c55e', width: 2.5 }
       });
     }
@@ -253,48 +244,78 @@ const LinearityRule = () => {
       line: { color: '#f59e0b', width: 1.5, dash: 'dot' }
     });
 
-    // Tangents at x₀
-    const addTangent = (fn, label, color, dash) => {
+    // ── Tangents at x₀ (with slope in legend) ──
+    // Compute derivative values first
+    const uPrimeVal = numDeriv(uFn, x0);
+    const vPrimeVal = activeTab !== 'constant-multiple' ? numDeriv(vFn, x0) : NaN;
+    let combPrimeVal;
+    if (activeTab === 'sum') {
+      combPrimeVal = uPrimeVal + vPrimeVal;
+    } else if (activeTab === 'difference') {
+      combPrimeVal = uPrimeVal - vPrimeVal;
+    } else {
+      combPrimeVal = params.C * uPrimeVal;
+    }
+
+    const addTangent2 = (fn, label, derivVal, color, dash) => {
       const f0 = fn(x0);
-      const f1 = numDeriv(fn, x0);
-      const tanX = [x0 - 2, x0 + 2];
+      const f1 = derivVal;
+      const xSpan = (xMax - xMin) * 0.8;
+      const tanX = [x0 - xSpan / 2, x0 + xSpan / 2];
       const tanY = tanX.map(x => f0 + f1 * (x - x0));
       traces.push({
         x: tanX, y: tanY,
         type: 'scatter', mode: 'lines',
-        name: `${label}'(x₀)`,
+        name: `${label}' = ${isFinite(f1) ? f1.toFixed(1) : '?'}`,
         line: { color, width: 2, dash: dash || 'dash' }
       });
     };
 
-    addTangent(uFn, "u", '#6366f1');
+    addTangent2(uFn, 'u', uPrimeVal, '#6366f1');
     if (activeTab !== 'constant-multiple') {
-      addTangent(vFn, "v", '#22c55e');
+      addTangent2(vFn, 'v', vPrimeVal, '#22c55e');
     }
-    addTangent(combinedFn, activeTab === 'constant-multiple' ? 'Cu' : activeTab === 'sum' ? 'u+v' : 'u−v', combColor);
+    addTangent2(
+      combinedFn,
+      activeTab === 'constant-multiple' ? 'Cu' : activeTab === 'sum' ? 'u+v' : 'u−v',
+      combPrimeVal,
+      combColor
+    );
+
+    // ── Marker points at x₀ ──
+    traces.push({
+      x: [x0], y: [uFn(x0)],
+      type: 'scatter', mode: 'markers',
+      name: '',
+      marker: { color: '#6366f1', size: 8, symbol: 'circle' },
+      showlegend: false
+    });
+    if (activeTab !== 'constant-multiple') {
+      traces.push({
+        x: [x0], y: [vFn(x0)],
+        type: 'scatter', mode: 'markers',
+        name: '',
+        marker: { color: '#22c55e', size: 8, symbol: 'circle' },
+        showlegend: false
+      });
+    }
+    traces.push({
+      x: [x0], y: [combinedFn(x0)],
+      type: 'scatter', mode: 'markers',
+      name: '',
+      marker: { color: '#ef4444', size: 8, symbol: 'circle' },
+      showlegend: false
+    });
 
     return traces;
-  }, [params, activeTab, uFn, vFn, numDeriv]);
+  }, [params, activeTab, uFn, vFn, numDeriv, uLabelStr, vLabelStr]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 
-  // Live derivative values
-  const uPrime = numDeriv(uFn, params.x0);
-  const vPrime = activeTab !== 'constant-multiple' ? numDeriv(vFn, params.x0) : NaN;
-
-  let combPrime;
-  if (activeTab === 'sum') {
-    combPrime = uPrime + vPrime;
-  } else if (activeTab === 'difference') {
-    combPrime = uPrime - vPrime;
-  } else {
-    combPrime = params.C * uPrime;
-  }
-
   const tabTitles = {
-    sum: 'Sum Rule: (u+v)\' = u\' + v\'',
-    difference: 'Difference Rule: (u−v)\' = u\' − v\'',
-    'constant-multiple': 'Constant Multiple: (Cu)\' = Cu\''
+    sum: `Sum Rule: (u+v)' = u' + v'`,
+    difference: `Difference Rule: (u−v)' = u' − v'`,
+    'constant-multiple': `Constant Multiple: (Cu)' = Cu'`
   };
 
   const tabDesc = {
@@ -307,14 +328,14 @@ const LinearityRule = () => {
   const uConfig = [
     { name: 'a', label: 'u(x) constant (a)', min: -5, max: 5, step: 0.1 },
     { name: 'b', label: 'u(x) coeff (b)', min: -3, max: 3, step: 0.1 },
-    { name: 'm', label: 'u(x) exponent (m)', min: 1, max: 5, step: 0.5 }
+    { name: 'm', label: 'u(x) exponent (m)', min: 1, max: 5, step: 0.1 }
   ];
 
   const vConfig = activeTab !== 'constant-multiple'
     ? [
         { name: 'c', label: 'v(x) constant (c)', min: -5, max: 5, step: 0.1 },
         { name: 'd', label: 'v(x) coeff (d)', min: -3, max: 3, step: 0.1 },
-        { name: 'n', label: 'v(x) exponent (n)', min: 1, max: 5, step: 0.5 }
+        { name: 'n', label: 'v(x) exponent (n)', min: 1, max: 5, step: 0.1 }
       ]
     : [];
 
@@ -323,7 +344,7 @@ const LinearityRule = () => {
     : [];
 
   const commonConfig = [
-    { name: 'x0', label: 'x₀ (evaluation point)', min: -5, max: 5, step: 0.1 }
+    { name: 'x0', label: 'x₀ (evaluation point)', min: -10, max: 10, step: 0.1 }
   ];
 
   const viewConfig = [
@@ -345,8 +366,11 @@ const LinearityRule = () => {
       ? `(u−v)'(x₀) = u'(x₀) − v'(x₀)`
       : `(Cu)'(x₀) = C · u'(x₀)`;
 
-  const uStr = `${params.a.toFixed(1)} + ${params.b.toFixed(1)}x^${params.m.toFixed(1)}`;
-  const vStr = `${params.c.toFixed(1)} + ${params.d.toFixed(1)}x^${params.n.toFixed(1)}`;
+  const uStr = `${params.a.toFixed(1)} + ${params.b.toFixed(1)}x${fmtExp(params.m)}`;
+  const vStr = `${params.c.toFixed(1)} + ${params.d.toFixed(1)}x${fmtExp(params.n)}`;
+
+  const uSectionTitle = `u(x) = a + b·x${toSup('m')}`;
+  const vSectionTitle = `v(x) = c + d·x${toSup('n')}`;
 
   return (
     <PageContainer>
@@ -387,12 +411,12 @@ const LinearityRule = () => {
 
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title={`u(x) = a + b·x^m`}>
+          <ParameterSection title={uSectionTitle}>
             <ParameterControls parameters={params} onChange={setParams} config={uConfig} />
           </ParameterSection>
 
           {activeTab !== 'constant-multiple' && (
-            <ParameterSection title={`v(x) = c + d·x^n`}>
+            <ParameterSection title={vSectionTitle}>
               <ParameterControls parameters={params} onChange={setParams} config={vConfig} />
             </ParameterSection>
           )}
@@ -406,25 +430,6 @@ const LinearityRule = () => {
           <ParameterSection title="Evaluation">
             <ParameterControls parameters={params} onChange={setParams} config={commonConfig} />
           </ParameterSection>
-
-          <LiveValueBox>
-            <LiveValueRow>
-              <LiveValueLabel>u'(x₀) =</LiveValueLabel>
-              <span>{isFinite(uPrime) ? uPrime.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-            {activeTab !== 'constant-multiple' && (
-              <LiveValueRow>
-                <LiveValueLabel>v'(x₀) =</LiveValueLabel>
-                <span>{isFinite(vPrime) ? vPrime.toFixed(3) : '—'}</span>
-              </LiveValueRow>
-            )}
-            <LiveValueRow>
-              <LiveValueLabel>
-                {activeTab === 'constant-multiple' ? "(Cu)'(x₀) =" : activeTab === 'sum' ? "(u+v)'(x₀) =" : "(u−v)'(x₀) ="}
-              </LiveValueLabel>
-              <span style={{ color: '#6366f1', fontWeight: 700 }}>{isFinite(combPrime) ? combPrime.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-          </LiveValueBox>
 
           <ParameterSection title="General Settings">
             <ParameterControls
