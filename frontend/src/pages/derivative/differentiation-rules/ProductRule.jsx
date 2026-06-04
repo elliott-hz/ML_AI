@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
@@ -100,88 +100,31 @@ const PlotGrid2 = styled.div`
   }
 `;
 
-const Label = styled.label`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
-  font-size: 13px;
-  margin-bottom: 4px;
-  display: block;
-`;
-
-const FuncInput = styled.input`
-  width: 100%;
-  padding: 8px 12px;
-  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#475569'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  }
-`;
-
-const LiveValueBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-top: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const LiveValueRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  font-size: 14px;
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-family: 'Courier New', monospace;
-`;
-
-const LiveValueLabel = styled.span`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
-`;
-
-// ─── Expression evaluator ─────────────────────────────────────────
-function compileExpression(expr) {
-  const s = expr
-    .replace(/sin\(/g, 'Math.sin(')
-    .replace(/cos\(/g, 'Math.cos(')
-    .replace(/tan\(/g, 'Math.tan(')
-    .replace(/sqrt\(/g, 'Math.sqrt(')
-    .replace(/abs\(/g, 'Math.abs(')
-    .replace(/log\(/g, 'Math.log(')
-    .replace(/exp\(/g, 'Math.exp(')
-    .replace(/asin\(/g, 'Math.asin(')
-    .replace(/acos\(/g, 'Math.acos(')
-    .replace(/atan\(/g, 'Math.atan(')
-    .replace(/π/g, 'Math.PI')
-    .replace(/e\^/g, 'Math.exp(')
-    .replace(/\^/g, '**')
-    .replace(/²/g, '**2')
-    .replace(/³/g, '**3');
-  try {
-    return new Function('x', `"use strict"; return (${s})`);
-  } catch {
-    return () => NaN;
-  }
-}
+// ─── Unicode superscript ───────────────────────────────────────────
+const SUP = {
+  '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
+  '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079',
+  '-': '\u207B', '.': '\u00B7',
+  'm': '\u1D50', 'n': '\u207F'
+};
+const toSup = (s) => String(s).split('').map(c => SUP[c] || c).join('');
+const fmtExp = (val) => toSup(val % 1 === 0 ? String(val) : val.toFixed(1));
 
 /**
  * Product Rule — (uv)' = u'v + uv'
  *
- * Row 1: [Controls | Plot 1: Product Function curves]
+ * u(x) = a + b·x^m
+ * v(x) = c + d·x^n
+ *
+ * Row 1: [Controls | Plot 1: Product Function curves + tangents]
  * Row 2: [Plot 2: Area rectangle]  [Plot 3: Area Expansion]
  */
 const ProductRule = () => {
   const navigate = useNavigate();
 
   const [params, setParams] = useState({
-    uExpr: '2+0.5*x',
-    vExpr: '1+x*x',
+    a: 2, b: 0.5, m: 1,   // u(x) = 2 + 0.5x
+    c: 1, d: 1, n: 2,     // v(x) = 1 + x²
     x0: 1,
     dx: 0.1,
     xRange: [-5, 5],
@@ -190,16 +133,28 @@ const ProductRule = () => {
     legendPosition: 'top-right'
   });
 
-  const uFn = useMemo(() => compileExpression(params.uExpr), [params.uExpr]);
-  const vFn = useMemo(() => compileExpression(params.vExpr), [params.vExpr]);
+  // Theme detection for text color
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setThemeMode(localStorage.getItem('themeMode') || 'dark');
+    }, 200);
+    return () => clearInterval(interval);
+  }, []);
+  const textColor = themeMode === 'dark' ? '#f8fafc' : '#1e293b';
+
+  const uFn = useCallback((x) => params.a + params.b * Math.pow(x, params.m), [params.a, params.b, params.m]);
+  const vFn = useCallback((x) => params.c + params.d * Math.pow(x, params.n), [params.c, params.d, params.n]);
+  const productFn = useCallback((x) => uFn(x) * vFn(x), [uFn, vFn]);
 
   const numDeriv = useCallback((fn, x, h = 1e-6) => {
     return (fn(x + h) - fn(x - h)) / (2 * h);
   }, []);
 
-  // ── Plot 1: Product Function curves ────────────────────────────
-  const productFn = useCallback((x) => uFn(x) * vFn(x), [uFn, vFn]);
+  const uLabel = `u(x) = ${params.a.toFixed(1)} + ${params.b.toFixed(1)}x${fmtExp(params.m)}`;
+  const vLabel = `v(x) = ${params.c.toFixed(1)} + ${params.d.toFixed(1)}x${fmtExp(params.n)}`;
 
+  // ── Plot 1: Product Function curves + tangents + markers ──────
   const plot1Data = useMemo(() => {
     const [xMin, xMax] = params.xRange;
     const x0 = params.x0;
@@ -226,7 +181,7 @@ const ProductRule = () => {
     traces.push({
       x: uData.xs, y: uData.ys,
       type: 'scatter', mode: 'lines',
-      name: `u(x) = ${params.uExpr}`,
+      name: uLabel,
       line: { color: '#6366f1', width: 2.5 }
     });
 
@@ -235,7 +190,7 @@ const ProductRule = () => {
     traces.push({
       x: vData.xs, y: vData.ys,
       type: 'scatter', mode: 'lines',
-      name: `v(x) = ${params.vExpr}`,
+      name: vLabel,
       line: { color: '#22c55e', width: 2.5 }
     });
 
@@ -260,8 +215,50 @@ const ProductRule = () => {
       line: { color: '#f59e0b', width: 1.5, dash: 'dot' }
     });
 
+    // ── Tangents at x₀ (slope in legend, no x₀ → keeps original color) ──
+    const uPrimeVal = numDeriv(uFn, x0);
+    const vPrimeVal = numDeriv(vFn, x0);
+    const pPrimeVal = numDeriv(productFn, x0);
+    const xSpan = (xMax - xMin) * 0.8;
+
+    const addTan = (fn, derivVal, label, color) => {
+      const f0 = fn(x0);
+      const tx = [x0 - xSpan / 2, x0 + xSpan / 2];
+      const ty = tx.map(x => f0 + derivVal * (x - x0));
+      traces.push({
+        x: tx, y: ty,
+        type: 'scatter', mode: 'lines',
+        name: `${label}' = ${isFinite(derivVal) ? derivVal.toFixed(1) : '?'}`,
+        line: { color, width: 2, dash: 'dash' }
+      });
+    };
+
+    addTan(uFn, uPrimeVal, 'u', '#6366f1');
+    addTan(vFn, vPrimeVal, 'v', '#22c55e');
+    addTan(productFn, pPrimeVal, 'uv', '#ef4444');
+
+    // ── Marker points at x₀ ──
+    traces.push({
+      x: [x0], y: [uFn(x0)],
+      type: 'scatter', mode: 'markers',
+      name: '', marker: { color: '#6366f1', size: 8, symbol: 'circle' },
+      showlegend: false
+    });
+    traces.push({
+      x: [x0], y: [vFn(x0)],
+      type: 'scatter', mode: 'markers',
+      name: '', marker: { color: '#22c55e', size: 8, symbol: 'circle' },
+      showlegend: false
+    });
+    traces.push({
+      x: [x0], y: [productFn(x0)],
+      type: 'scatter', mode: 'markers',
+      name: '', marker: { color: '#ef4444', size: 8, symbol: 'circle' },
+      showlegend: false
+    });
+
     return traces;
-  }, [params, uFn, vFn, productFn]);
+  }, [params, uFn, vFn, productFn, numDeriv, uLabel, vLabel]);
 
   // ── Plot 2: Area rectangle (u × v) ─────────────────────────────
   const plot2Data = useMemo(() => {
@@ -270,13 +267,11 @@ const ProductRule = () => {
     const v0 = vFn(x0);
     if (!isFinite(u0) || !isFinite(v0)) return [];
 
-    // Rectangle corners: bottom-left at (0, 0), width = u0, height = v0
     const rectX = [0, u0, u0, 0, 0];
     const rectY = [0, 0, v0, v0, 0];
 
     const traces = [];
 
-    // Filled rectangle
     traces.push({
       x: rectX, y: rectY,
       type: 'scatter', mode: 'lines',
@@ -286,36 +281,30 @@ const ProductRule = () => {
       line: { color: '#6366f1', width: 2 }
     });
 
-    // Labels for u, v
     traces.push({
       x: [u0 / 2], y: [-v0 * 0.08],
       type: 'scatter', mode: 'text',
       text: [`u = ${isFinite(u0) ? u0.toFixed(2) : '?'}`],
       textfont: { color: '#6366f1', size: 14, family: 'monospace' },
-      name: 'u',
       showlegend: false
     });
-
     traces.push({
       x: [-u0 * 0.08], y: [v0 / 2],
       type: 'scatter', mode: 'text',
       text: [`v = ${isFinite(v0) ? v0.toFixed(2) : '?'}`],
       textfont: { color: '#22c55e', size: 14, family: 'monospace' },
-      name: 'v',
       showlegend: false
     });
-
     traces.push({
       x: [u0 / 2], y: [v0 / 2],
       type: 'scatter', mode: 'text',
       text: [`Area = ${isFinite(u0) && isFinite(v0) ? (u0 * v0).toFixed(2) : '?'}`],
-      textfont: { color: '#f8fafc', size: 15, family: 'monospace' },
-      name: 'Area',
+      textfont: { color: textColor, size: 15, family: 'monospace' },
       showlegend: false
     });
 
     return traces;
-  }, [params, uFn, vFn]);
+  }, [params, uFn, vFn, textColor]);
 
   // ── Plot 3: Area Expansion (core) ──────────────────────────────
   const plot3Data = useMemo(() => {
@@ -331,109 +320,53 @@ const ProductRule = () => {
     const du = up * dx;
     const dv = vp * dx;
 
-    // Block 1: original area (bottom-left) — light yellow
-    const b1x = [0, u0, u0, 0, 0];
-    const b1y = [0, 0, v0, v0, 0];
-
-    // Block 2: right strip (u'v·dx) — yellow
-    const b2x = [u0, u0 + du, u0 + du, u0, u0];
-    const b2y = [0, 0, v0, v0, 0];
-
-    // Block 3: top strip (uv'·dx) — cyan
-    const b3x = [0, u0, u0, 0, 0];
-    const b3y = [v0, v0, v0 + dv, v0 + dv, v0];
-
-    // Block 4: top-right corner (u'v'·dx²) — purple
-    const b4x = [u0, u0 + du, u0 + du, u0, u0];
-    const b4y = [v0, v0, v0 + dv, v0 + dv, v0];
+    const b1x = [0, u0, u0, 0, 0]; const b1y = [0, 0, v0, v0, 0];
+    const b2x = [u0, u0 + du, u0 + du, u0, u0]; const b2y = [0, 0, v0, v0, 0];
+    const b3x = [0, u0, u0, 0, 0]; const b3y = [v0, v0, v0 + dv, v0 + dv, v0];
+    const b4x = [u0, u0 + du, u0 + du, u0, u0]; const b4y = [v0, v0, v0 + dv, v0 + dv, v0];
 
     const traces = [];
 
-    // Block 1
     traces.push({
-      x: b1x, y: b1y,
-      type: 'scatter', mode: 'lines',
-      fill: 'toself',
-      fillcolor: 'rgba(250, 204, 21, 0.2)',
-      name: 'uv (original)',
-      line: { color: '#eab308', width: 1.5 }
+      x: b1x, y: b1y, type: 'scatter', mode: 'lines',
+      fill: 'toself', fillcolor: 'rgba(250, 204, 21, 0.2)',
+      name: 'uv (original)', line: { color: '#eab308', width: 1.5 }
     });
-
-    // Block 2
     traces.push({
-      x: b2x, y: b2y,
-      type: 'scatter', mode: 'lines',
-      fill: 'toself',
-      fillcolor: 'rgba(250, 204, 21, 0.5)',
+      x: b2x, y: b2y, type: 'scatter', mode: 'lines',
+      fill: 'toself', fillcolor: 'rgba(250, 204, 21, 0.5)',
       name: `u'v·dx = ${(up * v0 * dx).toFixed(3)}`,
       line: { color: '#eab308', width: 1.5 }
     });
-
-    // Block 3
     traces.push({
-      x: b3x, y: b3y,
-      type: 'scatter', mode: 'lines',
-      fill: 'toself',
-      fillcolor: 'rgba(34, 197, 94, 0.4)',
+      x: b3x, y: b3y, type: 'scatter', mode: 'lines',
+      fill: 'toself', fillcolor: 'rgba(34, 197, 94, 0.4)',
       name: `uv'·dx = ${(u0 * vp * dx).toFixed(3)}`,
       line: { color: '#22c55e', width: 1.5 }
     });
-
-    // Block 4
     traces.push({
-      x: b4x, y: b4y,
-      type: 'scatter', mode: 'lines',
-      fill: 'toself',
-      fillcolor: 'rgba(168, 85, 247, 0.4)',
+      x: b4x, y: b4y, type: 'scatter', mode: 'lines',
+      fill: 'toself', fillcolor: 'rgba(168, 85, 247, 0.4)',
       name: `u'v'·dx² = ${(up * vp * dx * dx).toFixed(5)}`,
       line: { color: '#a855f7', width: 1.5 }
     });
 
-    // Labels inside blocks
-    const totalW = u0 + du;
-    const totalH = v0 + dv;
-    traces.push({
-      x: [u0 / 2], y: [v0 / 2],
-      type: 'scatter', mode: 'text',
-      text: ['uv'],
-      textfont: { color: '#f8fafc', size: 13, family: 'monospace' },
-      showlegend: false
-    });
-    traces.push({
-      x: [u0 + du / 2], y: [v0 / 2],
-      type: 'scatter', mode: 'text',
-      text: ["u'v·dx"],
-      textfont: { color: '#f8fafc', size: 11, family: 'monospace' },
-      showlegend: false
-    });
-    traces.push({
-      x: [u0 / 2], y: [v0 + dv / 2],
-      type: 'scatter', mode: 'text',
-      text: ["uv'·dx"],
-      textfont: { color: '#f8fafc', size: 11, family: 'monospace' },
-      showlegend: false
-    });
-    traces.push({
-      x: [u0 + du / 2], y: [v0 + dv / 2],
-      type: 'scatter', mode: 'text',
-      text: ["u'v'·dx²"],
-      textfont: { color: '#f8fafc', size: 10, family: 'monospace' },
-      showlegend: false
-    });
+    traces.push({ x: [u0 / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ['uv'], textfont: { color: textColor, size: 13, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 + du / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ["u'v·dx"], textfont: { color: textColor, size: 11, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["uv'·dx"], textfont: { color: textColor, size: 11, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 + du / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["u'v'·dx²"], textfont: { color: textColor, size: 10, family: 'monospace' }, showlegend: false });
 
     return traces;
-  }, [params, uFn, vFn, numDeriv]);
+  }, [params, uFn, vFn, numDeriv, textColor]);
 
   const x0 = params.x0;
   const dx = params.dx;
-  const u0 = (() => { try { return uFn(x0); } catch { return NaN; } })();
-  const v0 = (() => { try { return vFn(x0); } catch { return NaN; } })();
   const up = numDeriv(uFn, x0);
   const vp = numDeriv(vFn, x0);
-  const productVal = u0 * v0;
+  const u0 = uFn(x0);
+  const v0 = vFn(x0);
   const productDeriv = u0 * vp + v0 * up;
 
-  // Pre-compute xRange values for Plot 2 and Plot 3
   const plot2XRange = useMemo(() => {
     const uv = uFn(params.x0);
     if (!isFinite(uv)) return [-1, 5];
@@ -452,6 +385,9 @@ const ProductRule = () => {
     const maxDim = Math.max(totalW, totalH);
     return [-maxDim * 0.15, maxDim * 1.15];
   }, [params.x0, params.dx, uFn, vFn, numDeriv]);
+
+  const uSection = `u(x) = a + b·x${toSup('m')}`;
+  const vSection = `v(x) = c + d·x${toSup('n')}`;
 
   return (
     <PageContainer>
@@ -473,69 +409,48 @@ const ProductRule = () => {
         <Formula>
           (u·v)' = u'·v + u·v'<br/><br/>
           At x₀ = {x0.toFixed(1)}: &nbsp;
-          u = {isFinite(u0) ? u0.toFixed(2) : '?'}, &nbsp;
-          v = {isFinite(v0) ? v0.toFixed(2) : '?'}, &nbsp;
-          u' = {isFinite(up) ? up.toFixed(3) : '?'}, &nbsp;
-          v' = {isFinite(vp) ? vp.toFixed(3) : '?'}<br/>
-          (uv)' = {isFinite(productDeriv) ? productDeriv.toFixed(3) : '?'}
+          u = {isFinite(u0) ? u0.toFixed(1) : '?'}, &nbsp;
+          v = {isFinite(v0) ? v0.toFixed(1) : '?'}, &nbsp;
+          u' = {isFinite(up) ? up.toFixed(1) : '?'}, &nbsp;
+          v' = {isFinite(vp) ? vp.toFixed(1) : '?'}<br/>
+          (uv)' = {isFinite(productDeriv) ? productDeriv.toFixed(1) : '?'}
         </Formula>
       </FormulaBox>
 
       {/* Row 1: Controls + Plot 1 */}
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Function Editor">
-            <Label>u(x) =</Label>
-            <FuncInput
-              value={params.uExpr}
-              onChange={e => setParams(p => ({ ...p, uExpr: e.target.value }))}
-            />
-            <Label>v(x) =</Label>
-            <FuncInput
-              value={params.vExpr}
-              onChange={e => setParams(p => ({ ...p, vExpr: e.target.value }))}
-            />
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
+          <ParameterSection title={uSection}>
+            <ParameterControls parameters={params} onChange={setParams}
               config={[
-                { name: 'x0', label: 'x₀', min: -5, max: 5, step: 0.1 },
-                { name: 'dx', label: 'dx (increment)', min: 0.001, max: 0.5, step: 0.001 }
+                { name: 'a', label: 'constant (a)', min: -5, max: 5, step: 0.1 },
+                { name: 'b', label: 'coeff (b)', min: -3, max: 3, step: 0.1 },
+                { name: 'm', label: 'exponent (m)', min: 1, max: 5, step: 0.1 }
               ]}
             />
           </ParameterSection>
 
-          <LiveValueBox>
-            <LiveValueRow>
-              <LiveValueLabel>u(x₀) =</LiveValueLabel>
-              <span>{isFinite(u0) ? u0.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-            <LiveValueRow>
-              <LiveValueLabel>v(x₀) =</LiveValueLabel>
-              <span>{isFinite(v0) ? v0.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-            <LiveValueRow>
-              <LiveValueLabel>uv(x₀) =</LiveValueLabel>
-              <span style={{ color: '#ef4444', fontWeight: 700 }}>{isFinite(productVal) ? productVal.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-            <LiveValueRow>
-              <LiveValueLabel>u'(x₀) =</LiveValueLabel>
-              <span>{isFinite(up) ? up.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-            <LiveValueRow>
-              <LiveValueLabel>v'(x₀) =</LiveValueLabel>
-              <span>{isFinite(vp) ? vp.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-            <LiveValueRow>
-              <LiveValueLabel>(uv)'(x₀) =</LiveValueLabel>
-              <span style={{ color: '#6366f1', fontWeight: 700 }}>{isFinite(productDeriv) ? productDeriv.toFixed(3) : '—'}</span>
-            </LiveValueRow>
-          </LiveValueBox>
+          <ParameterSection title={vSection}>
+            <ParameterControls parameters={params} onChange={setParams}
+              config={[
+                { name: 'c', label: 'constant (c)', min: -5, max: 5, step: 0.1 },
+                { name: 'd', label: 'coeff (d)', min: -3, max: 3, step: 0.1 },
+                { name: 'n', label: 'exponent (n)', min: 1, max: 5, step: 0.1 }
+              ]}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Parameters">
+            <ParameterControls parameters={params} onChange={setParams}
+              config={[
+                { name: 'x0', label: 'x₀', min: -10, max: 10, step: 0.1 },
+                { name: 'dx', label: 'dx (increment)', min: 0.05, max: 0.5, step: 0.05 }
+              ]}
+            />
+          </ParameterSection>
 
           <ParameterSection title="General Settings">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
+            <ParameterControls parameters={params} onChange={setParams}
               config={[
                 { name: 'legendPosition', label: 'Legend', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] },
                 { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] },
@@ -550,7 +465,7 @@ const ProductRule = () => {
           <DerivativePlotter
             data={plot1Data}
             xRange={params.xRange}
-            title="Product Function: u(x) · v(x)"
+            title={`u(x)·v(x)  —  (uv)' = u'v + uv'`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
@@ -564,7 +479,7 @@ const ProductRule = () => {
         <DerivativePlotter
           data={plot2Data}
           xRange={plot2XRange}
-          title={`Area = u × v  (u=${isFinite(u0) ? u0.toFixed(2) : '?'}, v=${isFinite(v0) ? v0.toFixed(2) : '?'})`}
+          title={`Area = u × v`}
           showExportButton={false}
           plotStyle={params.plotStyle}
           aspectRatio="1:1"
