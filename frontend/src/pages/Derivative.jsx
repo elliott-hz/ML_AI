@@ -319,6 +319,39 @@ const Derivative = () => {
           </FeatureButton>
         ))}
       </CardGrid>
+
+      {/* Group 6: Differentiation Rules */}
+      <GroupTitle>Differentiation Rules</GroupTitle>
+      <CardGrid>
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/linearity-rule')}>
+          <ButtonTitle>Linearity Rule</ButtonTitle>
+          <ButtonDescription>
+            (u±v)' = u'±v' and (Cu)' = Cu'. Derivatives distribute over addition, subtraction,
+            and constant multiplication — the foundation of linearity in calculus.
+          </ButtonDescription>
+        </FeatureButton>
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/product-rule')}>
+          <ButtonTitle>Product Rule</ButtonTitle>
+          <ButtonDescription>
+            (uv)' = u'v + uv'. Visualized through rectangle area expansion: when both sides grow,
+            the total area increase splits into three regions.
+          </ButtonDescription>
+        </FeatureButton>
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/quotient-rule')}>
+          <ButtonTitle>Quotient Rule</ButtonTitle>
+          <ButtonDescription>
+            (u/v)' = (u'v − uv') / v². Seen geometrically as height = area ÷ width —
+            numerator grows with u, shrinks with v, and v² dilutes the change.
+          </ButtonDescription>
+        </FeatureButton>
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/chain-rule')}>
+          <ButtonTitle>Chain Rule</ButtonTitle>
+          <ButtonDescription>
+            dy/dx = dy/dz · dz/dx. Changes cascade through each layer — the foundation
+            of backpropagation in neural networks.
+          </ButtonDescription>
+        </FeatureButton>
+      </CardGrid>
     </PageContainer>
   );
 };

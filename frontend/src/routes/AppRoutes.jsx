@@ -58,6 +58,10 @@ import DerivativeArctan from '../pages/derivative/inverse-trig/DerivativeArctan'
 import DerivativeArccot from '../pages/derivative/inverse-trig/DerivativeArccot';
 import DerivativeArcsec from '../pages/derivative/inverse-trig/DerivativeArcsec';
 import DerivativeArccsc from '../pages/derivative/inverse-trig/DerivativeArccsc';
+import LinearityRule from '../pages/derivative/differentiation-rules/LinearityRule';
+import ProductRule from '../pages/derivative/differentiation-rules/ProductRule';
+import QuotientRule from '../pages/derivative/differentiation-rules/QuotientRule';
+import ChainRule from '../pages/derivative/differentiation-rules/ChainRule';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -154,6 +158,12 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/arccot" element={<DerivativeArccot />} />
         <Route path="/mathematics/1-fundamentals/derivative/arcsec" element={<DerivativeArcsec />} />
         <Route path="/mathematics/1-fundamentals/derivative/arccsc" element={<DerivativeArccsc />} />
+
+        {/* 数学模块 - Differentiation Rules */}
+        <Route path="/mathematics/1-fundamentals/derivative/linearity-rule" element={<LinearityRule />} />
+        <Route path="/mathematics/1-fundamentals/derivative/product-rule" element={<ProductRule />} />
+        <Route path="/mathematics/1-fundamentals/derivative/quotient-rule" element={<QuotientRule />} />
+        <Route path="/mathematics/1-fundamentals/derivative/chain-rule" element={<ChainRule />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />
