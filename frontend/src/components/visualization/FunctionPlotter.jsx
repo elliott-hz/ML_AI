@@ -3,6 +3,36 @@ import Plotly from 'plotly.js/dist/plotly.min.js';
 export { ASPECT_RATIO_OPTIONS } from './DerivativePlotter';
 
 /**
+ * Build π-format tick config for a given axis range.
+ * Shared helper (same logic as DerivativePlotter).
+ */
+function buildPiTickExtra(range) {
+  const [rMin, rMax] = range;
+  const halfPi = Math.PI / 2;
+  const startK = Math.ceil(rMin / halfPi);
+  const endK = Math.floor(rMax / halfPi);
+  const PI_TICKS = [];
+  for (let k = startK; k <= endK; k++) {
+    const val = k * halfPi;
+    const neg = k < 0 ? '\u2212' : '';
+    const absK = Math.abs(k);
+    let label;
+    if (absK === 0) label = '0';
+    else if (absK % 2 === 0) {
+      const coeff = absK / 2;
+      label = `${neg}${coeff === 1 ? '' : coeff}\u03C0`;
+    } else if (absK === 1) label = `${neg}\u03C0/2`;
+    else label = `${neg}${absK}\u03C0/2`;
+    PI_TICKS.push([val, label]);
+  }
+  return {
+    tickmode: 'array',
+    tickvals: PI_TICKS.map(([v]) => v),
+    ticktext: PI_TICKS.map(([, label]) => label),
+  };
+}
+
+/**
  * 通用函数绘图组件 - 纯渲染引擎
  * 接收已计算好的 Plotly traces 数据并渲染
  */
@@ -14,7 +44,9 @@ const FunctionPlotter = ({
   showExportButton = true,
   plotStyle = 'medium',
   aspectRatio = 'auto',
-  legendPosition = 'top-right'
+  legendPosition = 'top-right',
+  xTickMode = 'auto',
+  yTickMode = 'auto'
 }) => {
   const plotRef = useRef(null);
   const [themeMode, setThemeMode] = useState(() => {
@@ -54,10 +86,10 @@ const FunctionPlotter = ({
   // 自动计算 Y 轴范围（基于传入的数据）
   const autoYRange = useMemo(() => {
     if (propYRange) return propYRange;
-    
+
     let minY = Infinity;
     let maxY = -Infinity;
-    
+
     // 遍历所有 traces，找到最小和最大值
     data.forEach(trace => {
       if (trace.y && Array.isArray(trace.y)) {
@@ -69,19 +101,19 @@ const FunctionPlotter = ({
         });
       }
     });
-    
+
     if (minY === Infinity || maxY === -Infinity) {
       return [-10, 10];
     }
-    
+
     const range = maxY - minY;
     const padding = Math.max(range * 0.1, 1);
-    
+
     if (range < 2) {
       const center = (minY + maxY) / 2;
       return [center - 1, center + 1];
     }
-    
+
     return [minY - padding, maxY + padding];
   }, [data, propYRange]);
 
@@ -105,18 +137,18 @@ const FunctionPlotter = ({
           trace.name.includes('symmetry axis') ||
           trace.name.includes('P(') ||
           trace.name.includes("P'") ||
-          trace.name.includes('P₁') ||
-          trace.name.includes('P₂') ||
-          trace.name.includes('Δx') ||
-          trace.name.includes('Δy') ||
+          trace.name.includes('P\u2081') ||
+          trace.name.includes('P\u2082') ||
+          trace.name.includes('\u0394x') ||
+          trace.name.includes('\u0394y') ||
           trace.name.includes('gap') ||
           trace.name.includes('jump') ||
           trace.name.includes('Hole') ||
-          trace.name.includes('x₀') ||
+          trace.name.includes('x\u2080') ||
           trace.name.startsWith('x=') ||
           trace.name.startsWith('y=') ||
           trace.name.startsWith('lim') ||
-          trace.name.startsWith('f(x₀)')
+          trace.name.startsWith('f(x\u2080)')
         );
 
       if (isAuxiliaryElement) {
@@ -161,6 +193,10 @@ const FunctionPlotter = ({
     const isDark = themeMode === 'dark';
     const axisColor = isDark ? '#b9b9d3' : '#475569';
 
+    // π tick extras (only applied when tick mode is 'pi')
+    const xaxisExtra = xTickMode === 'pi' ? buildPiTickExtra(propXRange) : {};
+    const yaxisExtra = yTickMode === 'pi' ? buildPiTickExtra(autoYRange) : {};
+
     return {
       title: {
         text: title,
@@ -179,7 +215,8 @@ const FunctionPlotter = ({
         showline: true,
         linewidth: 1,
         linecolor: axisColor,
-        mirror: true
+        mirror: true,
+        ...xaxisExtra
       },
       yaxis: {
         title: 'y',
@@ -191,7 +228,8 @@ const FunctionPlotter = ({
         showline: true,
         linewidth: 1,
         linecolor: axisColor,
-        mirror: true
+        mirror: true,
+        ...yaxisExtra
       },
       plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
       paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
@@ -208,7 +246,7 @@ const FunctionPlotter = ({
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode]);
 
   // 配置 Plotly 工具栏
   const config = {
@@ -260,7 +298,7 @@ const FunctionPlotter = ({
           height: 800,
           scale: 2
         });
-        
+
         const link = document.createElement('a');
         link.href = imageData;
         link.download = `${title.replace(/\s+/g, '_')}_${Date.now()}.png`;

@@ -2,7 +2,6 @@ import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 
 const PageContainer = styled.div`
@@ -624,7 +623,7 @@ const TrigonometricRatios = () => {
         </PlotHalfNarrow>
         <PlotHalf>
           {activePlot === 'sin-cos' && (
-            <DerivativePlotter
+            <FunctionPlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={sinCosTraces}
               xRange={[-Math.PI, Math.PI]} yRange={[-1.5, 1.5]}
@@ -637,7 +636,7 @@ const TrigonometricRatios = () => {
             />
           )}
           {activePlot === 'tan-cot' && (
-            <DerivativePlotter
+            <FunctionPlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={tanCotTraces}
               xRange={[-Math.PI, Math.PI]} yRange={[-5, 5]}
@@ -650,7 +649,7 @@ const TrigonometricRatios = () => {
             />
           )}
           {activePlot === 'sec-csc' && (
-            <DerivativePlotter
+            <FunctionPlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={secCscTraces}
               xRange={[-Math.PI, Math.PI]} yRange={[-5, 5]}

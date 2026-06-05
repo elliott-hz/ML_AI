@@ -2,7 +2,6 @@ import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 
 const PageContainer = styled.div`
@@ -783,7 +782,7 @@ const InverseTrigonometricRatios = () => {
         </PlotHalfNarrow>
         <PlotHalf>
           {activePlot === 'arcsin-arccos' && (
-            <DerivativePlotter
+            <FunctionPlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={invArcsinArccosTraces}
               xRange={[-1.2, 1.2]} yRange={[-Math.PI / 2 - 0.3, Math.PI + 0.3]}
@@ -796,7 +795,7 @@ const InverseTrigonometricRatios = () => {
             />
           )}
           {activePlot === 'arctan-arccot' && (
-            <DerivativePlotter
+            <FunctionPlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={invArctanArccotTraces}
               xRange={[-10.5, 10.5]} yRange={[-Math.PI / 2 - 0.3, Math.PI + 0.3]}
@@ -809,7 +808,7 @@ const InverseTrigonometricRatios = () => {
             />
           )}
           {activePlot === 'arcsec-arccsc' && (
-            <DerivativePlotter
+            <FunctionPlotter
               key={`${activePlot}-${rightAspect}-${rightPlotKey}`}
               data={invArcsecArccscTraces}
               xRange={[-10.5, 10.5]} yRange={[-Math.PI / 2 - 0.3, Math.PI + 0.3]}

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
 
 // ── Styled Components ──────────────────────────────────
 
@@ -1068,7 +1067,7 @@ export default function PowerFunction() {
           <Resizer onMouseDown={onResizeStart} />
         </PlotHalfNarrow>
         <PlotHalf>
-          <DerivativePlotter
+          <FunctionPlotter
             key={`power-${rightAspect}-${rightPlotKey}`}
             data={curveTraces}
             xRange={[-3, 3]}
