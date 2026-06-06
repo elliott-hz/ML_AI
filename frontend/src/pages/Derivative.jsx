@@ -124,81 +124,21 @@ const Derivative = () => {
     }
   ];
 
-  // Group 4: Basic Derivative Formulas — Exponential and Logarithmic Functions
+  // Group 4: Exponential and Logarithmic Functions
   const expLogFormulas = [
     {
-      id: 'exp-base-a',
+      id: 'exponential',
       icon: 'aˣ',
-      title: "(aˣ)' = aˣ ln a",
-      description: 'For any base a > 0, the derivative scales by ln(a). Drag a to see how growth rate changes.',
-      path: '/mathematics/1-fundamentals/derivative/exp-base-a'
+      title: 'Exponential Functions',
+      description: 'Derivatives of aˣ and eˣ. Adjust the base with a slider and quick-set to e to compare general vs. natural exponential.',
+      path: '/mathematics/1-fundamentals/derivative/exponential'
     },
     {
-      id: 'exp-e',
-      icon: 'eˣ',
-      title: "(eˣ)' = eˣ",
-      description: "The natural exponential eˣ is its own derivative — slope equals value everywhere.",
-      path: '/mathematics/1-fundamentals/derivative/exp-e'
-    },
-    {
-      id: 'log-base-a',
+      id: 'logarithmic',
       icon: 'logₐ',
-      title: "(logₐ x)' = 1 / (x ln a)",
-      description: 'The general log derivative. Asymptote at x = 0, slope decays as 1/x.',
-      path: '/mathematics/1-fundamentals/derivative/log-base-a'
-    },
-    {
-      id: 'ln',
-      icon: 'ln',
-      title: "(ln x)' = 1/x",
-      description: "The natural log's derivative is ln'(x) = 1/x — slope equals the reciprocal.",
-      path: '/mathematics/1-fundamentals/derivative/ln'
-    }
-  ];
-
-  // Group 5: Inverse Trigonometric Functions
-  const inverseTrigFormulas = [
-    {
-      id: 'arcsin',
-      icon: 'arcsin',
-      title: "(arcsin x)' = 1 / \u221A(1 - x\u00B2)",
-      description: 'The derivative of arcsin x grows large near x = ±1, reflecting the vertical tangents at the domain boundaries.',
-      path: '/mathematics/1-fundamentals/derivative/arcsin'
-    },
-    {
-      id: 'arccos',
-      icon: 'arccos',
-      title: "(arccos x)' = \u22121 / \u221A(1 - x\u00B2)",
-      description: 'The derivative of arccos x is always negative, making the function strictly decreasing over its domain.',
-      path: '/mathematics/1-fundamentals/derivative/arccos'
-    },
-    {
-      id: 'arctan',
-      icon: 'arctan',
-      title: "(arctan x)' = 1 / (1 + x\u00B2)",
-      description: 'The derivative of arctan x forms a bell curve peaking at 1. It is defined for all real x.',
-      path: '/mathematics/1-fundamentals/derivative/arctan'
-    },
-    {
-      id: 'arccot',
-      icon: 'arccot',
-      title: "(arccot x)' = \u22121 / (1 + x\u00B2)",
-      description: 'The derivative of arccot x is always negative, the mirror of arctan\'s derivative.',
-      path: '/mathematics/1-fundamentals/derivative/arccot'
-    },
-    {
-      id: 'arcsec',
-      icon: 'arcsec',
-      title: "(arcsec x)' = 1 / (|x| \u00B7 \u221A(x\u00B2 \u2212 1))",
-      description: 'The derivative of arcsec x is defined only for |x| > 1, with vertical asymptotes at x = ±1.',
-      path: '/mathematics/1-fundamentals/derivative/arcsec'
-    },
-    {
-      id: 'arccsc',
-      icon: 'arccsc',
-      title: "(arccsc x)' = \u22121 / (|x| \u00B7 \u221A(x\u00B2 \u2212 1))",
-      description: 'The derivative of arccsc x is the negative of arcsec\'s derivative, defined for |x| > 1.',
-      path: '/mathematics/1-fundamentals/derivative/arccsc'
+      title: 'Logarithmic Functions',
+      description: 'Derivatives of logₐx and ln x. Adjust the base with a slider and quick-set to e to compare general vs. natural logarithm.',
+      path: '/mathematics/1-fundamentals/derivative/logarithmic'
     }
   ];
 

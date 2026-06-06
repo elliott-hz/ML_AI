@@ -44,10 +44,8 @@ import DerivativeConstants from '../pages/derivative/constants-power/DerivativeC
 import DerivativePowerFunctions from '../pages/derivative/constants-power/DerivativePowerFunctions';
 import TrigonometricFunctions from '../pages/derivative/trigonometric/TrigonometricFunctions';
 import InverseTrigonometricFunctions from '../pages/derivative/inverse-trig/InverseTrigonometricFunctions';
-import DerivativeExpBaseA from '../pages/derivative/exp-log/DerivativeExpBaseA';
-import DerivativeExpE from '../pages/derivative/exp-log/DerivativeExpE';
-import DerivativeLogBaseA from '../pages/derivative/exp-log/DerivativeLogBaseA';
-import DerivativeLn from '../pages/derivative/exp-log/DerivativeLn';
+import ExponentialFunctions from '../pages/derivative/exp-log/ExponentialFunctions';
+import LogarithmicFunctions from '../pages/derivative/exp-log/LogarithmicFunctions';
 import LinearityRule from '../pages/derivative/differentiation-rules/LinearityRule';
 import ProductRule from '../pages/derivative/differentiation-rules/ProductRule';
 import QuotientRule from '../pages/derivative/differentiation-rules/QuotientRule';
@@ -134,10 +132,8 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/power-functions" element={<DerivativePowerFunctions />} />
         <Route path="/mathematics/1-fundamentals/derivative/trigonometric" element={<TrigonometricFunctions />} />
         <Route path="/mathematics/1-fundamentals/derivative/inverse-trigonometric" element={<InverseTrigonometricFunctions />} />
-        <Route path="/mathematics/1-fundamentals/derivative/exp-base-a" element={<DerivativeExpBaseA />} />
-        <Route path="/mathematics/1-fundamentals/derivative/exp-e" element={<DerivativeExpE />} />
-        <Route path="/mathematics/1-fundamentals/derivative/log-base-a" element={<DerivativeLogBaseA />} />
-        <Route path="/mathematics/1-fundamentals/derivative/ln" element={<DerivativeLn />} />
+        <Route path="/mathematics/1-fundamentals/derivative/exponential" element={<ExponentialFunctions />} />
+        <Route path="/mathematics/1-fundamentals/derivative/logarithmic" element={<LogarithmicFunctions />} />
 
         {/* 数学模块 - Differentiation Rules */}
         <Route path="/mathematics/1-fundamentals/derivative/linearity-rule" element={<LinearityRule />} />

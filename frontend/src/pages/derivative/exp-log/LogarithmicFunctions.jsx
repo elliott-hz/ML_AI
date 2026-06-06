@@ -15,14 +15,22 @@ import {
   PlotPanel,
   FormulaBox,
   FormulaTitle,
-  Formula
+  Formula,
+  QuickSetRow,
+  QuickBtn
 } from '../../../components/derivative/shared/DerivativeStyled';
 
+// Convert integer digit to Unicode subscript
+const SUB = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+function toSub(n) {
+  return String(n).replace(/\d/g, (d) => SUB[parseInt(d)]);
+}
 
 /**
- * Derivative of logₐ(x): (logₐ x)' = 1 / (x · ln a)
+ * Combined Logarithmic Functions — general base logₐx with quick-set to ln x
+ * (logₐx)' = 1 / (x · ln(a)). When a = e, (ln x)' = 1/x.
  */
-const DerivativeLogBaseA = () => {
+const LogarithmicFunctions = () => {
   const navigate = useNavigate();
 
   const [params, setParams] = useState({
@@ -33,61 +41,49 @@ const DerivativeLogBaseA = () => {
     legendPosition: 'top-right'
   });
 
-  const { a } = params;
-
-  // Convert a number to Unicode subscript (e.g. 2.5 → "₂.₅")
-  const toSub = (num) => String(num).replace(/[0-9.-]/g, (c) => {
-    if (c === '.') return '.';
-    if (c === '-') return '\u208B';
-    return String.fromCharCode(0x2080 + parseInt(c));
-  });
+  const isNatural = Math.abs(params.a - Math.E) < 0.001;
+  const aSub = toSub(Math.round(params.a));
+  const plotTitle = isNatural
+    ? "(ln x)' = 1 / x"
+    : `(log${aSub} x)' = 1 / (x · ln ${params.a.toFixed(1)})`;
 
   const generateData = useCallback(() => {
-    const { a, xRange } = params;
-    const [xMin, xMax] = xRange;
+    const [xMin, xMax] = params.xRange;
     const numPoints = 500;
     const step = (xMax - xMin) / numPoints;
+    const a = params.a;
     const lnA = Math.log(a);
 
-    // f(x) = log_a(x) = ln(x) / ln(a)
     const mainX = [];
     const mainY = [];
-    for (let i = 0; i <= numPoints; i++) {
-      const x = xMin + i * step;
-      mainX.push(x);
-      mainY.push(Math.log(x) / lnA);
-    }
-
-    // f'(x) = 1 / (x · ln a)
     const derivX = [];
     const derivY = [];
     for (let i = 0; i <= numPoints; i++) {
       const x = xMin + i * step;
+      if (x <= 0) continue;
+      mainX.push(x);
+      mainY.push(isNatural ? Math.log(x) : Math.log(x) / lnA);
       derivX.push(x);
-      derivY.push(1 / (x * lnA));
+      derivY.push(isNatural ? 1 / x : 1 / (x * lnA));
     }
 
     const traces = [];
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: `y = log${toSub(a)}(x)`,
+      name: isNatural ? 'ln x' : `log${aSub} x`,
       line: { color: '#6366f1', width: 2.5 }
     });
-
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: `y' = 1/(x · ln ${a})`,
+      name: isNatural ? "1 / x (derivative)" : `1/(x·ln ${params.a.toFixed(1)}) (derivative)`,
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
-
     return traces;
   }, [params]);
 
   const traces = useMemo(() => generateData(), [generateData]);
-
-  const plotTitle = `(log${toSub(a)} x)' = 1 / (x · ln ${a})`;
 
   const baseConfig = [
     { name: 'a', label: 'a (base, a > 0, a ≠ 1)', min: 0.5, max: 5, step: 0.1 }
@@ -107,27 +103,29 @@ const DerivativeLogBaseA = () => {
     ...viewRangeConfig
   ];
 
+  const isNaturalDescription = 'The natural logarithm ln(x) is the inverse of eˣ. Its derivative is 1/x — a simple reciprocal. Notice the vertical asymptote at x = 0: the slope becomes arbitrarily large as x approaches zero from the right.';
+  const generalDescription = `For base a = ${params.a.toFixed(1)} > 0, a ≠ 1, the derivative of log${aSub}(x) is 1/(x·ln(a)). Adjust the base slider to see how the scaling factor ln(a) changes the slope.`;
+
+  const formulaText = isNatural
+    ? 'f(x) = ln x<br/><br/>f\'(x) = 1 / x'
+    : `f(x) = log${aSub}(x)<br/><br/>f'(x) = 1 / (x · ln ${params.a.toFixed(1)})`;
+
   return (
     <PageContainer>
       <Header>
         <BackButton to="/mathematics/1-fundamentals/derivative">
           Back to Derivative
         </BackButton>
-        <SectionTitleH1>General Logarithmic Function</SectionTitleH1>
+        <SectionTitleH1>Logarithmic Function</SectionTitleH1>
       </Header>
 
       <SectionDescription>
-        For any base <em>a</em> &gt; 0, <em>a</em> ≠ 1, the derivative of logₐ(<em>x</em>) is 1 / (<em>x</em> · ln(<em>a</em>)).
-        Notice the vertical asymptote at <em>x</em> = 0: the slope approaches infinity as <em>x</em> approaches zero.
-        Adjust the base <em>a</em> to see how the curve and its derivative scale.
+        {isNatural ? isNaturalDescription : generalDescription}
       </SectionDescription>
 
       <FormulaBox>
-        <FormulaTitle>Derivative of logₐ(x):</FormulaTitle>
-        <Formula>
-          f(x) = logₐ(x)<br/><br/>
-          f'(x) = 1 / (x · ln(a))
-        </Formula>
+        <FormulaTitle>Derivative of Logarithm:</FormulaTitle>
+        <Formula dangerouslySetInnerHTML={{ __html: formulaText }} />
       </FormulaBox>
 
       <ContentLayout>
@@ -135,6 +133,13 @@ const DerivativeLogBaseA = () => {
           <ParameterSection title="Base">
             <ParameterControls parameters={params} onChange={setParams} config={baseConfig} />
           </ParameterSection>
+
+          <QuickSetRow>
+            <span>Quick set:</span>
+            <QuickBtn onClick={() => setParams(p => ({ ...p, a: Math.E }))}>
+              a = e ({Math.E.toFixed(3)})
+            </QuickBtn>
+          </QuickSetRow>
 
           <ParameterSection title="General Settings">
             <ParameterControls parameters={params} onChange={setParams} config={commonParamsConfig} />
@@ -157,4 +162,4 @@ const DerivativeLogBaseA = () => {
   );
 };
 
-export default DerivativeLogBaseA;
+export default LogarithmicFunctions;

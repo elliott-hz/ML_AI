@@ -15,73 +15,77 @@ import {
   PlotPanel,
   FormulaBox,
   FormulaTitle,
-  Formula
+  Formula,
+  QuickSetRow,
+  QuickBtn
 } from '../../../components/derivative/shared/DerivativeStyled';
 
 /**
- * Derivative of ln(x): (ln x)' = 1/x
+ * Combined Exponential Functions — general base aˣ with quick-set to eˣ
+ * (aˣ)' = aˣ · ln(a). When a = e, (eˣ)' = eˣ.
  */
-const DerivativeLn = () => {
+const ExponentialFunctions = () => {
   const navigate = useNavigate();
 
   const [params, setParams] = useState({
-    xRange: [0.01, 4],
+    a: 2,
+    xRange: [-2, 2],
     plotStyle: 'medium',
     aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
 
-  const xRange = params.xRange;
+  const isNatural = Math.abs(params.a - Math.E) < 0.001;
+  const plotTitle = isNatural
+    ? "(eˣ)' = eˣ"
+    : `(${params.a.toFixed(1)}ˣ)' = ${params.a.toFixed(1)}ˣ · ln(${params.a.toFixed(1)})`;
 
   const generateData = useCallback(() => {
-    const [xMin, xMax] = xRange;
+    const [xMin, xMax] = params.xRange;
     const numPoints = 500;
     const step = (xMax - xMin) / numPoints;
+    const a = params.a;
+    const lnA = Math.log(a);
 
-    // f(x) = ln(x)
     const mainX = [];
     const mainY = [];
-    for (let i = 0; i <= numPoints; i++) {
-      const x = xMin + i * step;
-      mainX.push(x);
-      mainY.push(Math.log(x));
-    }
-
-    // f'(x) = 1/x
     const derivX = [];
     const derivY = [];
     for (let i = 0; i <= numPoints; i++) {
       const x = xMin + i * step;
+      const ax = Math.pow(a, x);
+      mainX.push(x);
+      mainY.push(ax);
       derivX.push(x);
-      derivY.push(1 / x);
+      derivY.push(ax * (isNatural ? 1 : lnA));
     }
 
     const traces = [];
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: 'y = ln x',
+      name: isNatural ? 'eˣ' : `${a.toFixed(1)}ˣ`,
       line: { color: '#6366f1', width: 2.5 }
     });
-
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: "y' = 1/x",
+      name: isNatural ? "eˣ (derivative)" : `${a.toFixed(1)}ˣ·ln(${a.toFixed(1)}) (derivative)`,
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
-
     return traces;
-  }, [params, xRange]);
+  }, [params]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 
-  const plotTitle = "(ln x)' = 1/x";
+  const baseConfig = [
+    { name: 'a', label: 'a (base, a > 0)', min: 0.5, max: 5, step: 0.1 }
+  ];
 
   const viewRangeConfig = [
     {
       name: 'xRange', label: 'X Range', type: 'range',
-      min: 0.01, max: 8, step: 0.1, default: [0.01, 4]
+      min: -5, max: 5, step: 0.25, default: [-2, 2]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
@@ -92,31 +96,43 @@ const DerivativeLn = () => {
     ...viewRangeConfig
   ];
 
+  const description = isNatural
+    ? 'The natural exponential function eˣ is unique: its derivative equals itself. No scaling factor is needed — the slope at every point is exactly the value of the function at that point.'
+    : `For base a = ${params.a.toFixed(1)} > 0, the derivative of aˣ is aˣ · ln(a). Unlike eˣ, the derivative is scaled by ln(a), shifting the growth rate. Drag the base slider to see how the slope changes.`;
+
+  const formulaText = isNatural
+    ? 'f(x) = eˣ<br/><br/>f\'(x) = eˣ'
+    : `f(x) = ${params.a.toFixed(1)}ˣ<br/><br/>f'(x) = ${params.a.toFixed(1)}ˣ · ln(${params.a.toFixed(1)})`;
+
   return (
     <PageContainer>
       <Header>
         <BackButton to="/mathematics/1-fundamentals/derivative">
           Back to Derivative
         </BackButton>
-        <SectionTitleH1>Natural Logarithm</SectionTitleH1>
+        <SectionTitleH1>Exponential Function</SectionTitleH1>
       </Header>
 
-      <SectionDescription>
-        The natural logarithm ln(<em>x</em>) is the inverse of <em>e</em>ˣ. Its derivative is 1/<em>x</em> —
-        a simple reciprocal. Notice the vertical asymptote at <em>x</em> = 0: the slope becomes
-        arbitrarily large as <em>x</em> approaches zero from the right.
-      </SectionDescription>
+      <SectionDescription>{description}</SectionDescription>
 
       <FormulaBox>
-        <FormulaTitle>Derivative of ln(x):</FormulaTitle>
-        <Formula>
-          f(x) = ln(x)<br/><br/>
-          f'(x) = 1 / x
-        </Formula>
+        <FormulaTitle>Derivative of Exponential:</FormulaTitle>
+        <Formula dangerouslySetInnerHTML={{ __html: formulaText }} />
       </FormulaBox>
 
       <ContentLayout>
         <ControlsPanel>
+          <ParameterSection title="Base">
+            <ParameterControls parameters={params} onChange={setParams} config={baseConfig} />
+          </ParameterSection>
+
+          <QuickSetRow>
+            <span>Quick set:</span>
+            <QuickBtn onClick={() => setParams(p => ({ ...p, a: Math.E }))}>
+              a = e ({Math.E.toFixed(3)})
+            </QuickBtn>
+          </QuickSetRow>
+
           <ParameterSection title="General Settings">
             <ParameterControls parameters={params} onChange={setParams} config={commonParamsConfig} />
           </ParameterSection>
@@ -125,7 +141,7 @@ const DerivativeLn = () => {
         <PlotPanel>
           <DerivativePlotter
             data={traces}
-            xRange={xRange}
+            xRange={params.xRange}
             title={plotTitle}
             showExportButton={false}
             plotStyle={params.plotStyle}
@@ -138,4 +154,4 @@ const DerivativeLn = () => {
   );
 };
 
-export default DerivativeLn;
+export default ExponentialFunctions;
