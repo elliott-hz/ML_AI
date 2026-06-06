@@ -68,7 +68,7 @@ export function getTracePalette(themeMode) {
 
     // ── 3.2 Auxiliary traces (dashed lines) ──
     auxTraces: {
-      derivative: isDark ? '#ef4444' : '#dc2626',   // f'(x) — red dashed
+      derivative: isDark ? '#facc15' : '#dc2626',   // f'(x) — red dashed
       secant: isDark ? '#22c55e' : '#16a34a',       // secant line — green dashed
       tangent: isDark ? '#06b6d4' : '#0891b2',      // tangent line — cyan dashed
       general: isDark ? '#ffd700' : '#b45309',  // generic aux — gold (dark) / amber (light)
