@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../../hooks/useThemeMode';
 import { getTracePalette } from '../../../constants/plotThemeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
+import { createDataAnnotation } from '../../../utils/annotationUtils';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';
@@ -182,28 +183,13 @@ const ProductRule = () => {
     const uv0 = productFn(x0);
 
     const fmt = (v) => isFinite(v) ? v.toFixed(2) : '?';
-    const bg = themeMode === 'dark' ? 'rgba(30,41,59,0.85)' : 'rgba(255,255,255,0.85)';
-
-    const mkAnno = (y, text, color) => ({
-      x: x0, y,
-      xref: 'x', yref: 'y',
-      xanchor: 'left',
-      xshift: 14,
-      showarrow: false,
-      text,
-      font: { color, size: 12, family: 'monospace' },
-      bgcolor: bg,
-      bordercolor: color,
-      borderwidth: 1,
-      borderpad: 3
-    });
 
     const annos = [];
-    if (isFinite(u0)) annos.push(mkAnno(u0, `u = ${fmt(u0)}`, palette.mainTraces.primary));
-    if (isFinite(v0)) annos.push(mkAnno(v0, `v = ${fmt(v0)}`, palette.mainTraces.secondary));
-    if (isFinite(uv0)) annos.push(mkAnno(uv0, `uv = ${fmt(uv0)}`, palette.auxTraces.combined));
+    if (isFinite(u0)) annos.push(createDataAnnotation({ x: x0, y: u0, text: `u = ${fmt(u0)}`, color: palette.mainTraces.primary, plotStyle: params.plotStyle, themeMode }));
+    if (isFinite(v0)) annos.push(createDataAnnotation({ x: x0, y: v0, text: `v = ${fmt(v0)}`, color: palette.mainTraces.secondary, plotStyle: params.plotStyle, themeMode }));
+    if (isFinite(uv0)) annos.push(createDataAnnotation({ x: x0, y: uv0, text: `uv = ${fmt(uv0)}`, color: palette.auxTraces.combined, plotStyle: params.plotStyle, themeMode }));
     return annos;
-  }, [params.x0, uFn, vFn, productFn, palette, themeMode]);
+  }, [params.x0, uFn, vFn, productFn, palette, themeMode, params.plotStyle]);
 
   // ── Plot 2: Area rectangle (u × v) ─────────────────────────────
   const plot2Data = useMemo(() => {
