@@ -44,7 +44,7 @@ const ProductRule = () => {
   const navigate = useNavigate();
 
   const [params, setParams] = useState({
-    a: 2, b: 0.5, m: 1,   // u(x) = 2 + 0.5x
+    a: 2, b: 0.5, m: 3,   // u(x) = 2 + 0.5x³
     c: 1, d: 1, n: 2,     // v(x) = 1 + x²
     x0: 1,
     dx: 0.5,
