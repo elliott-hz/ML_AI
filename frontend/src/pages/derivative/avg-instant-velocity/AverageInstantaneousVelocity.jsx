@@ -1,4 +1,6 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout, Delta-t slider converges secant→tangent
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette, getAuxiliaryColor } from '../../../constants/plotThemeConfig';
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
@@ -46,6 +48,9 @@ const AverageInstantaneousVelocity = () => {
   // True instantaneous velocity (derivative)
   const vInstant = useCallback((t) => 2 * params.a * t + params.b, [params.a, params.b]);
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   const generateData = useCallback(() => {
     const a = params.a;
     const b = params.b;
@@ -81,7 +86,7 @@ const AverageInstantaneousVelocity = () => {
       x: curveX, y: curveY,
       type: 'scatter', mode: 'lines',
       name: `s(t) = ${a.toFixed(1)}t² + ${b.toFixed(1)}t + ${c.toFixed(1)}`,
-      line: { color: '#6366f1', width: 2.5 }
+      line: { color: palette.mainTraces.primary, width: 2.5 }
     });
 
     // 2. Secant line (average velocity) — green dashed
@@ -91,7 +96,7 @@ const AverageInstantaneousVelocity = () => {
       y: [s0 - secantExtend * vAvg, s1 + secantExtend * vAvg],
       type: 'scatter', mode: 'lines',
       name: `Secant (v̄ = ${vAvg.toFixed(2)})`,
-      line: { color: '#22c55e', width: 2, dash: 'dash' }
+      line: { color: palette.auxTraces.secant, width: 2, dash: 'dash' }
     });
 
     // 3. Tangent line (instantaneous velocity) — cyan dashed
@@ -100,7 +105,7 @@ const AverageInstantaneousVelocity = () => {
       y: [s0 - secantExtend * vInst, s0 + secantExtend * vInst],
       type: 'scatter', mode: 'lines',
       name: `Tangent (v = ${vInst.toFixed(2)})`,
-      line: { color: '#06b6d4', width: 2, dash: 'dash' }
+      line: { color: palette.auxTraces.tangent, width: 2, dash: 'dash' }
     });
 
     // 4. Horizontal auxiliary line (Δt)
@@ -109,7 +114,7 @@ const AverageInstantaneousVelocity = () => {
       y: [s0, s0],
       type: 'scatter', mode: 'lines',
       name: 'Δt',
-      line: { color: '#ffd700', width: 1.5, dash: 'dash' }
+      line: { color: getAuxiliaryColor(themeMode), width: 1.5, dash: 'dash' }
     });
 
     // 5. Vertical auxiliary line (Δs)
@@ -118,7 +123,7 @@ const AverageInstantaneousVelocity = () => {
       y: [s0, s1],
       type: 'scatter', mode: 'lines',
       name: 'Δs',
-      line: { color: '#ffd700', width: 1.5, dash: 'dash' }
+      line: { color: getAuxiliaryColor(themeMode), width: 1.5, dash: 'dash' }
     });
 
     // 6. Δt label
@@ -128,7 +133,7 @@ const AverageInstantaneousVelocity = () => {
       type: 'scatter', mode: 'text',
       name: 'Δt Label',
       text: [`Δt = ${dt.toFixed(2)}`],
-      textfont: { color: '#3b82f6', size: 13 },
+      textfont: { color: palette.markers.deltaX, size: 13 },
       showlegend: false
     });
 
@@ -139,7 +144,7 @@ const AverageInstantaneousVelocity = () => {
       type: 'scatter', mode: 'text',
       name: 'Δs Label',
       text: [`Δs = ${ds.toFixed(2)}`],
-      textfont: { color: '#22c55e', size: 13 },
+      textfont: { color: palette.markers.deltaY, size: 13 },
       showlegend: false
     });
 
@@ -148,10 +153,10 @@ const AverageInstantaneousVelocity = () => {
       x: [t0], y: [s0],
       type: 'scatter', mode: 'markers+text',
       name: 'A (t₀, s(t₀))',
-      marker: { color: '#3b82f6', size: 10, symbol: 'circle' },
+      marker: { color: palette.markers.deltaX, size: 10, symbol: 'circle' },
       text: ['A'],
       textposition: 'top right',
-      textfont: { color: '#3b82f6', size: 14 }
+      textfont: { color: palette.markers.deltaX, size: 14 }
     });
 
     // 9. Point B at (t₀+Δt, s(t₀+Δt))
@@ -159,10 +164,10 @@ const AverageInstantaneousVelocity = () => {
       x: [t0 + dt], y: [s1],
       type: 'scatter', mode: 'markers+text',
       name: 'B (t₀+Δt, s(t₀+Δt))',
-      marker: { color: '#ef4444', size: 10, symbol: 'circle' },
+      marker: { color: palette.markers.pointB, size: 10, symbol: 'circle' },
       text: ['B'],
       textposition: 'top right',
-      textfont: { color: '#ef4444', size: 14 }
+      textfont: { color: palette.markers.pointB, size: 14 }
     });
 
     // 10. t₀ label on x-axis
@@ -172,12 +177,12 @@ const AverageInstantaneousVelocity = () => {
       type: 'scatter', mode: 'text',
       name: 't₀ Label',
       text: ['t₀'],
-      textfont: { color: '#ffd700', size: 14 },
+      textfont: { color: getAuxiliaryColor(themeMode), size: 14 },
       showlegend: false
     });
 
     return traces;
-  }, [params]);
+  }, [params, themeMode, palette]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

@@ -1,6 +1,8 @@
 // UI Pattern: MultiSectionPlot — ContentLayout (row 1) + PlotGrid2 (row 2, 2 plots)
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
@@ -52,15 +54,8 @@ const ProductRule = () => {
     legendPosition: 'top-right'
   });
 
-  // Theme detection for text color
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setThemeMode(localStorage.getItem('themeMode') || 'dark');
-    }, 200);
-    return () => clearInterval(interval);
-  }, []);
-  const textColor = themeMode === 'dark' ? '#f8fafc' : '#1e293b';
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const uFn = useCallback((x) => params.a + params.b * Math.pow(x, params.m), [params.a, params.b, params.m]);
   const vFn = useCallback((x) => params.c + params.d * Math.pow(x, params.n), [params.c, params.d, params.n]);
@@ -101,7 +96,7 @@ const ProductRule = () => {
       x: uData.xs, y: uData.ys,
       type: 'scatter', mode: 'lines',
       name: uLabel,
-      line: { color: '#6366f1', width: 2.5 }
+      line: { color: palette.mainTraces.primary, width: 2.5 }
     });
 
     // v(x)
@@ -110,7 +105,7 @@ const ProductRule = () => {
       x: vData.xs, y: vData.ys,
       type: 'scatter', mode: 'lines',
       name: vLabel,
-      line: { color: '#22c55e', width: 2.5 }
+      line: { color: palette.mainTraces.secondary, width: 2.5 }
     });
 
     // uv(x)
@@ -119,7 +114,7 @@ const ProductRule = () => {
       x: pData.xs, y: pData.ys,
       type: 'scatter', mode: 'lines',
       name: 'u(x)·v(x)',
-      line: { color: '#ef4444', width: 2.5 }
+      line: { color: palette.auxTraces.combined, width: 2.5 }
     });
 
     // Vertical line at x₀
@@ -131,7 +126,7 @@ const ProductRule = () => {
       x: [x0, x0], y: [yMin - pad, yMax + pad],
       type: 'scatter', mode: 'lines',
       name: `x₀ = ${x0.toFixed(1)}`,
-      line: { color: '#f59e0b', width: 1.5, dash: 'dot' }
+      line: { color: palette.markers.evalX0, width: 1.5, dash: 'dot' }
     });
 
     // ── Tangents at x₀ (slope in legend, no x₀ → keeps original color) ──
@@ -152,32 +147,32 @@ const ProductRule = () => {
       });
     };
 
-    addTan(uFn, uPrimeVal, 'u', '#6366f1');
-    addTan(vFn, vPrimeVal, 'v', '#22c55e');
-    addTan(productFn, pPrimeVal, 'uv', '#ef4444');
+    addTan(uFn, uPrimeVal, 'u', palette.mainTraces.primary);
+    addTan(vFn, vPrimeVal, 'v', palette.mainTraces.secondary);
+    addTan(productFn, pPrimeVal, 'uv', palette.auxTraces.combined);
 
     // ── Marker points at x₀ ──
     traces.push({
       x: [x0], y: [uFn(x0)],
       type: 'scatter', mode: 'markers',
-      name: '', marker: { color: '#6366f1', size: 8, symbol: 'circle' },
+      name: '', marker: { color: palette.mainTraces.primary, size: 8, symbol: 'circle' },
       showlegend: false
     });
     traces.push({
       x: [x0], y: [vFn(x0)],
       type: 'scatter', mode: 'markers',
-      name: '', marker: { color: '#22c55e', size: 8, symbol: 'circle' },
+      name: '', marker: { color: palette.mainTraces.secondary, size: 8, symbol: 'circle' },
       showlegend: false
     });
     traces.push({
       x: [x0], y: [productFn(x0)],
       type: 'scatter', mode: 'markers',
-      name: '', marker: { color: '#ef4444', size: 8, symbol: 'circle' },
+      name: '', marker: { color: palette.auxTraces.combined, size: 8, symbol: 'circle' },
       showlegend: false
     });
 
     return traces;
-  }, [params, uFn, vFn, productFn, numDeriv, uLabel, vLabel]);
+  }, [params, uFn, vFn, productFn, numDeriv, uLabel, vLabel, palette]);
 
   // ── Plot 2: Area rectangle (u × v) ─────────────────────────────
   const plot2Data = useMemo(() => {
@@ -195,35 +190,35 @@ const ProductRule = () => {
       x: rectX, y: rectY,
       type: 'scatter', mode: 'lines',
       fill: 'toself',
-      fillcolor: 'rgba(99, 102, 241, 0.15)',
+      fillcolor: palette.fills.primary,
       name: `Area = u·v`,
-      line: { color: '#6366f1', width: 2 }
+      line: { color: palette.mainTraces.primary, width: 2 }
     });
 
     traces.push({
       x: [u0 / 2], y: [-v0 * 0.08],
       type: 'scatter', mode: 'text',
       text: [`u = ${isFinite(u0) ? u0.toFixed(2) : '?'}`],
-      textfont: { color: '#6366f1', size: 14, family: 'monospace' },
+      textfont: { color: palette.mainTraces.primary, size: 14, family: 'monospace' },
       showlegend: false
     });
     traces.push({
       x: [-u0 * 0.08], y: [v0 / 2],
       type: 'scatter', mode: 'text',
       text: [`v = ${isFinite(v0) ? v0.toFixed(2) : '?'}`],
-      textfont: { color: '#22c55e', size: 14, family: 'monospace' },
+      textfont: { color: palette.mainTraces.secondary, size: 14, family: 'monospace' },
       showlegend: false
     });
     traces.push({
       x: [u0 / 2], y: [v0 / 2],
       type: 'scatter', mode: 'text',
       text: [`Area = ${isFinite(u0) && isFinite(v0) ? (u0 * v0).toFixed(2) : '?'}`],
-      textfont: { color: textColor, size: 15, family: 'monospace' },
+      textfont: { color: palette.text.annotation, size: 15, family: 'monospace' },
       showlegend: false
     });
 
     return traces;
-  }, [params, uFn, vFn, textColor]);
+  }, [params, uFn, vFn, palette]);
 
   // ── Plot 3: Area Expansion (core) ──────────────────────────────
   const plot3Data = useMemo(() => {
@@ -248,7 +243,7 @@ const ProductRule = () => {
 
     traces.push({
       x: b1x, y: b1y, type: 'scatter', mode: 'lines',
-      fill: 'toself', fillcolor: 'rgba(250, 204, 21, 0.2)',
+      fill: 'toself', fillcolor: palette.fills.highlight,
       name: 'uv (original)', line: { color: '#eab308', width: 1.5 }
     });
     traces.push({
@@ -259,24 +254,24 @@ const ProductRule = () => {
     });
     traces.push({
       x: b3x, y: b3y, type: 'scatter', mode: 'lines',
-      fill: 'toself', fillcolor: 'rgba(34, 197, 94, 0.4)',
+      fill: 'toself', fillcolor: palette.fills.secondary,
       name: `uv'·dx = ${(u0 * vp * dx).toFixed(3)}`,
-      line: { color: '#22c55e', width: 1.5 }
+      line: { color: palette.mainTraces.secondary, width: 1.5 }
     });
     traces.push({
       x: b4x, y: b4y, type: 'scatter', mode: 'lines',
-      fill: 'toself', fillcolor: 'rgba(168, 85, 247, 0.4)',
+      fill: 'toself', fillcolor: palette.fills.accent,
       name: `u'v'·dx² = ${(up * vp * dx * dx).toFixed(5)}`,
       line: { color: '#a855f7', width: 1.5 }
     });
 
-    traces.push({ x: [u0 / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ['uv'], textfont: { color: textColor, size: 13, family: 'monospace' }, showlegend: false });
-    traces.push({ x: [u0 + du / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ["u'v·dx"], textfont: { color: textColor, size: 11, family: 'monospace' }, showlegend: false });
-    traces.push({ x: [u0 / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["uv'·dx"], textfont: { color: textColor, size: 11, family: 'monospace' }, showlegend: false });
-    traces.push({ x: [u0 + du / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["u'v'·dx²"], textfont: { color: textColor, size: 10, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ['uv'], textfont: { color: palette.text.annotation, size: 13, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 + du / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ["u'v·dx"], textfont: { color: palette.text.annotation, size: 11, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["uv'·dx"], textfont: { color: palette.text.annotation, size: 11, family: 'monospace' }, showlegend: false });
+    traces.push({ x: [u0 + du / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["u'v'·dx²"], textfont: { color: palette.text.annotation, size: 10, family: 'monospace' }, showlegend: false });
 
     return traces;
-  }, [params, uFn, vFn, numDeriv, textColor]);
+  }, [params, uFn, vFn, numDeriv, palette]);
 
   const x0 = params.x0;
   const dx = params.dx;

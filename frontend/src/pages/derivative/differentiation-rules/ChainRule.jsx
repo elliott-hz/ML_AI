@@ -1,5 +1,7 @@
 // UI Pattern: MultiSectionPlot — ContentLayout (row 1) + PlotGrid2 (row 2, 2 plots) + LiveValueBox
 import React, { useState, useMemo, useCallback } from 'react';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
@@ -101,6 +103,9 @@ const ChainRule = () => {
     return (fn(x + h) - fn(x - h)) / (2 * h);
   }, []);
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   // ── Plot 1: g(x) and f(g(x)) ──────────────────────────────────
   const plot1Data = useMemo(() => {
     const [xMin, xMax] = params.xRange;
@@ -130,7 +135,7 @@ const ChainRule = () => {
       x: gData.xs, y: gData.ys,
       type: 'scatter', mode: 'lines',
       name: `g(x) = ${params.gExpr}`,
-      line: { color: '#6366f1', width: 2.5 }
+      line: { color: palette.mainTraces.primary, width: 2.5 }
     });
 
     // f(g(x))
@@ -139,7 +144,7 @@ const ChainRule = () => {
       x: fgData.xs, y: fgData.ys,
       type: 'scatter', mode: 'lines',
       name: `f(g(x)) = ${params.fExpr.replace(/z/g, '(' + params.gExpr + ')')}`,
-      line: { color: '#ef4444', width: 2.5, dash: 'dash' }
+      line: { color: palette.auxTraces.derivative, width: 2.5, dash: 'dash' }
     });
 
     // Vertical line at x₀
@@ -151,7 +156,7 @@ const ChainRule = () => {
       x: [x0, x0], y: [yMin - pad, yMax + pad],
       type: 'scatter', mode: 'lines',
       name: `x₀ = ${x0.toFixed(1)}`,
-      line: { color: '#f59e0b', width: 1.5, dash: 'dot' }
+      line: { color: palette.markers.evalX0, width: 1.5, dash: 'dot' }
     });
 
     // Marker at (x₀, g(x₀))
@@ -160,12 +165,12 @@ const ChainRule = () => {
         x: [x0], y: [gFn(x0)],
         type: 'scatter', mode: 'markers',
         name: `(x₀, g(x₀))`,
-        marker: { color: '#22c55e', size: 10, symbol: 'circle' }
+        marker: { color: palette.mainTraces.secondary, size: 10, symbol: 'circle' }
       });
     }
 
     return traces;
-  }, [params, gFn, fgFn]);
+  }, [params, gFn, fgFn, palette, themeMode]);
 
   // ── Plot 2: Flow of Change ────────────────────────────────────
   const plot2Data = useMemo(() => {
@@ -201,7 +206,7 @@ const ChainRule = () => {
       x: gxs, y: gys,
       type: 'scatter', mode: 'lines',
       name: `g(x)`,
-      line: { color: '#6366f1', width: 1.5, opacity: 0.5 }
+      line: { color: palette.mainTraces.primary, width: 1.5, opacity: 0.5 }
     });
 
     // Δx on x-axis
@@ -214,8 +219,8 @@ const ChainRule = () => {
       x: [x0, x0 + dx], y: [yMin, yMin],
       type: 'scatter', mode: 'lines+markers',
       name: `Δx = ${dx.toFixed(3)}`,
-      marker: { color: '#f59e0b', size: 6, symbol: 'arrow' },
-      line: { color: '#f59e0b', width: 3 }
+      marker: { color: palette.markers.evalX0, size: 6, symbol: 'arrow' },
+      line: { color: palette.markers.evalX0, width: 3 }
     });
 
     // Vertical line at x₀ (thin)
@@ -223,7 +228,7 @@ const ChainRule = () => {
       x: [x0, x0], y: [0, gFn(x0)],
       type: 'scatter', mode: 'lines',
       name: '',
-      line: { color: '#475569', width: 1, dash: 'dot' },
+      line: { color: palette.text.muted, width: 1, dash: 'dot' },
       showlegend: false
     });
 
@@ -232,7 +237,7 @@ const ChainRule = () => {
       x: [x0 + dx, x0 + dx], y: [0, gFn(x0 + dx)],
       type: 'scatter', mode: 'lines',
       name: '',
-      line: { color: '#475569', width: 1, dash: 'dot' },
+      line: { color: palette.text.muted, width: 1, dash: 'dot' },
       showlegend: false
     });
 
@@ -242,8 +247,8 @@ const ChainRule = () => {
         x: [x0 + dx, x0 + dx], y: [gFn(x0), gFn(x0 + dx)],
         type: 'scatter', mode: 'lines+markers',
         name: `Δz ≈ g'(x₀)·dx = ${isFinite(gp) ? gp.toFixed(3) : '?'} × ${dx.toFixed(3)} = ${isFinite(dz) ? dz.toFixed(3) : '?'}`,
-        marker: { color: '#22c55e', size: 6, symbol: 'arrow' },
-        line: { color: '#22c55e', width: 2.5 }
+        marker: { color: palette.mainTraces.secondary, size: 6, symbol: 'arrow' },
+        line: { color: palette.mainTraces.secondary, width: 2.5 }
       });
     }
 
@@ -255,12 +260,12 @@ const ChainRule = () => {
         x: tanX, y: tanY,
         type: 'scatter', mode: 'lines',
         name: `g'(x₀) = ${gp.toFixed(3)}`,
-        line: { color: '#22c55e', width: 1.5, dash: 'dash' }
+        line: { color: palette.mainTraces.secondary, width: 1.5, dash: 'dash' }
       });
     }
 
     return traces;
-  }, [params, gFn, fFn, numDeriv]);
+  }, [params, gFn, fFn, numDeriv, palette, themeMode]);
 
   const x0 = params.x0;
   const dx = params.dx;
@@ -355,7 +360,7 @@ const ChainRule = () => {
             g'(x₀) = {isFinite(gp) ? gp.toFixed(3) : '?'}
             {'  ×  '} f'(z₀) = {isFinite(fp) ? fp.toFixed(3) : '?'}
             {'  =  '}
-            <span style={{ color: '#6366f1', fontWeight: 700 }}>
+            <span style={{ color: palette.mainTraces.primary, fontWeight: 700 }}>
               dy/dx = {isFinite(chainDeriv) ? chainDeriv.toFixed(3) : '?'}
             </span>
           </span>

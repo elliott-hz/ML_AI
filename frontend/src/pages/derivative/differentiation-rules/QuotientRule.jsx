@@ -1,5 +1,7 @@
 // UI Pattern: MultiSectionPlot — ContentLayout (row 1) + PlotGrid2 (row 2, 2 plots) + LiveValueBox
 import React, { useState, useMemo, useCallback } from 'react';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { useNavigate } from 'react-router-dom';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
@@ -75,6 +77,9 @@ const QuotientRule = () => {
   const numDeriv = useCallback((fn, x, h = 1e-6) => {
     return (fn(x + h) - fn(x - h)) / (2 * h);
   }, []);
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // ── Plot 1: Quotient Function curves ───────────────────────────
   const quotientFn = useCallback((x) => {
@@ -166,9 +171,9 @@ const QuotientRule = () => {
       x: rectX, y: rectY,
       type: 'scatter', mode: 'lines',
       fill: 'toself',
-      fillcolor: 'rgba(99, 102, 241, 0.15)',
+      fillcolor: palette.fills.primary,
       name: 'Area = u',
-      line: { color: '#6366f1', width: 2 }
+      line: { color: palette.mainTraces.primary, width: 2 }
     });
 
     // Labels
@@ -176,26 +181,26 @@ const QuotientRule = () => {
       x: [v0 / 2], y: [-q * 0.08],
       type: 'scatter', mode: 'text',
       text: [`v = ${isFinite(v0) ? v0.toFixed(2) : '?'} (width)`],
-      textfont: { color: '#22c55e', size: 13, family: 'monospace' },
+      textfont: { color: palette.mainTraces.secondary, size: 13, family: 'monospace' },
       showlegend: false
     });
     traces.push({
       x: [-v0 * 0.08], y: [q / 2],
       type: 'scatter', mode: 'text',
       text: [`u/v = ${isFinite(q) ? q.toFixed(2) : '?'} (height)`],
-      textfont: { color: '#ef4444', size: 13, family: 'monospace' },
+      textfont: { color: palette.auxTraces.combined, size: 13, family: 'monospace' },
       showlegend: false
     });
     traces.push({
       x: [v0 / 2], y: [q / 2],
       type: 'scatter', mode: 'text',
       text: [`Area = u = ${isFinite(u0) ? u0.toFixed(2) : '?'}`],
-      textfont: { color: '#f8fafc', size: 14, family: 'monospace' },
+      textfont: { color: palette.text.annotation, size: 14, family: 'monospace' },
       showlegend: false
     });
 
     return traces;
-  }, [params, uFn, vFn]);
+  }, [params, uFn, vFn, palette, themeMode]);
 
   // ── Plot 3: Ratio Change ──────────────────────────────────────
   const plot3Data = useMemo(() => {
@@ -226,9 +231,9 @@ const QuotientRule = () => {
       x: r1x, y: r1y,
       type: 'scatter', mode: 'lines',
       fill: 'toself',
-      fillcolor: 'rgba(99, 102, 241, 0.15)',
+      fillcolor: palette.fills.primary,
       name: 'Original',
-      line: { color: '#6366f1', width: 1.5 }
+      line: { color: palette.mainTraces.primary, width: 1.5 }
     });
 
     // Positive contribution: Δu makes height go up (u'·dx / v)
@@ -242,9 +247,9 @@ const QuotientRule = () => {
         x: px, y: py,
         type: 'scatter', mode: 'lines',
         fill: 'toself',
-        fillcolor: posContrib > 0 ? 'rgba(34, 197, 94, 0.35)' : 'rgba(239, 68, 68, 0.35)',
+        fillcolor: posContrib > 0 ? palette.fills.positive : palette.fills.negative,
         name: `${posContrib > 0 ? '+' : ''}${(posContrib).toFixed(3)} (u'·dx / v)`,
-        line: { color: posContrib > 0 ? '#22c55e' : '#ef4444', width: 1.5 }
+        line: { color: posContrib > 0 ? palette.mainTraces.secondary : palette.auxTraces.combined, width: 1.5 }
       });
     }
 
@@ -257,7 +262,7 @@ const QuotientRule = () => {
       fill: 'toself',
       fillcolor: 'rgba(251, 191, 36, 0.1)',
       name: 'After change',
-      line: { color: '#f59e0b', width: 1.5, dash: 'dot' }
+      line: { color: palette.markers.evalX0, width: 1.5, dash: 'dot' }
     });
 
     // Labels
@@ -265,7 +270,7 @@ const QuotientRule = () => {
       x: [v0 / 2], y: [q0 / 2],
       type: 'scatter', mode: 'text',
       text: [`u = ${u0.toFixed(2)}`],
-      textfont: { color: '#f8fafc', size: 12, family: 'monospace' },
+      textfont: { color: palette.text.annotation, size: 12, family: 'monospace' },
       showlegend: false
     });
 
@@ -274,12 +279,12 @@ const QuotientRule = () => {
       x: [Math.max(v0, v1) * 0.5], y: [Math.max(q0, q1) * 1.3],
       type: 'scatter', mode: 'text',
       text: [formulaStr],
-      textfont: { color: '#f8fafc', size: 12, family: 'monospace' },
+      textfont: { color: palette.text.annotation, size: 12, family: 'monospace' },
       showlegend: false
     });
 
     return traces;
-  }, [params, uFn, vFn, numDeriv]);
+  }, [params, uFn, vFn, numDeriv, palette, themeMode]);
 
   const x0 = params.x0;
   const u0 = (() => { try { return uFn(x0); } catch { return NaN; } })();
@@ -352,7 +357,7 @@ const QuotientRule = () => {
             </LiveValueRow>
             <LiveValueRow>
               <LiveValueLabel>u/v(x₀) =</LiveValueLabel>
-              <span style={{ color: '#ef4444', fontWeight: 700 }}>{isFinite(q0) ? q0.toFixed(3) : '—'}</span>
+              <span style={{ color: palette.auxTraces.combined, fontWeight: 700 }}>{isFinite(q0) ? q0.toFixed(3) : '—'}</span>
             </LiveValueRow>
             <LiveValueRow>
               <LiveValueLabel>u'(x₀) =</LiveValueLabel>
@@ -364,7 +369,7 @@ const QuotientRule = () => {
             </LiveValueRow>
             <LiveValueRow>
               <LiveValueLabel>(u/v)'(x₀) =</LiveValueLabel>
-              <span style={{ color: '#6366f1', fontWeight: 700 }}>{isFinite(quotientDeriv) ? quotientDeriv.toFixed(3) : '—'}</span>
+              <span style={{ color: palette.mainTraces.primary, fontWeight: 700 }}>{isFinite(quotientDeriv) ? quotientDeriv.toFixed(3) : '—'}</span>
             </LiveValueRow>
             <LiveValueRow>
               <LiveValueLabel>v(x₀)² =</LiveValueLabel>
