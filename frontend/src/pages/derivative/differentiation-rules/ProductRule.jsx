@@ -130,6 +130,15 @@ const ProductRule = () => {
       line: { color: palette.markers.evalX0, width: 1.5, dash: 'dot' }
     });
 
+    // Vertical line at x₁ = x₀ + dx
+    const x1 = x0 + params.dx;
+    traces.push({
+      x: [x1, x1], y: [yMin - pad, yMax + pad],
+      type: 'scatter', mode: 'lines',
+      name: `x₁ = ${x1.toFixed(2)}`,
+      line: { color: palette.markers.evalX0, width: 1.5, dash: 'dash' }
+    });
+
     // ── Tangents at x₀ (slope in legend, no x₀ → keeps original color) ──
     const uPrimeVal = numDeriv(uFn, x0);
     const vPrimeVal = numDeriv(vFn, x0);
@@ -172,24 +181,48 @@ const ProductRule = () => {
       showlegend: false
     });
 
+    // ── Marker points at x₁ ──
+    traces.push({
+      x: [x1], y: [uFn(x1)],
+      type: 'scatter', mode: 'markers',
+      name: '', marker: { color: palette.mainTraces.primary, size: 8, symbol: 'square' },
+      showlegend: false
+    });
+    traces.push({
+      x: [x1], y: [vFn(x1)],
+      type: 'scatter', mode: 'markers',
+      name: '', marker: { color: palette.mainTraces.secondary, size: 8, symbol: 'square' },
+      showlegend: false
+    });
+    traces.push({
+      x: [x1], y: [productFn(x1)],
+      type: 'scatter', mode: 'markers',
+      name: '', marker: { color: palette.auxTraces.combined, size: 8, symbol: 'square' },
+      showlegend: false
+    });
+
     return traces;
   }, [params, uFn, vFn, productFn, numDeriv, uLabel, vLabel, palette]);
 
-  // ── Plot 1 annotations (value labels at x₀, right of markers) ──
+  // ── Plot 1 annotations (value labels at x₀ and x₁, right of markers) ──
   const plot1Annotations = useMemo(() => {
     const x0 = params.x0;
-    const u0 = uFn(x0);
-    const v0 = vFn(x0);
-    const uv0 = productFn(x0);
+    const x1 = x0 + params.dx;
+    const u0 = uFn(x0), v0 = vFn(x0), uv0 = productFn(x0);
+    const u1 = uFn(x1), v1 = vFn(x1), uv1 = productFn(x1);
 
     const fmt = (v) => isFinite(v) ? v.toFixed(2) : '?';
+    const style = { plotStyle: params.plotStyle, themeMode };
 
     const annos = [];
-    if (isFinite(u0)) annos.push(createDataAnnotation({ x: x0, y: u0, text: `u = ${fmt(u0)}`, color: palette.mainTraces.primary, plotStyle: params.plotStyle, themeMode }));
-    if (isFinite(v0)) annos.push(createDataAnnotation({ x: x0, y: v0, text: `v = ${fmt(v0)}`, color: palette.mainTraces.secondary, plotStyle: params.plotStyle, themeMode }));
-    if (isFinite(uv0)) annos.push(createDataAnnotation({ x: x0, y: uv0, text: `uv = ${fmt(uv0)}`, color: palette.auxTraces.combined, plotStyle: params.plotStyle, themeMode }));
+    if (isFinite(u0)) annos.push(createDataAnnotation({ x: x0, y: u0, text: `u = ${fmt(u0)}`, color: palette.mainTraces.primary, ...style }));
+    if (isFinite(v0)) annos.push(createDataAnnotation({ x: x0, y: v0, text: `v = ${fmt(v0)}`, color: palette.mainTraces.secondary, ...style }));
+    if (isFinite(uv0)) annos.push(createDataAnnotation({ x: x0, y: uv0, text: `uv = ${fmt(uv0)}`, color: palette.auxTraces.combined, ...style }));
+    if (isFinite(u1)) annos.push(createDataAnnotation({ x: x1, y: u1, text: `u = ${fmt(u1)}`, color: palette.mainTraces.primary, ...style }));
+    if (isFinite(v1)) annos.push(createDataAnnotation({ x: x1, y: v1, text: `v = ${fmt(v1)}`, color: palette.mainTraces.secondary, ...style }));
+    if (isFinite(uv1)) annos.push(createDataAnnotation({ x: x1, y: uv1, text: `uv = ${fmt(uv1)}`, color: palette.auxTraces.combined, ...style }));
     return annos;
-  }, [params.x0, uFn, vFn, productFn, palette, themeMode, params.plotStyle]);
+  }, [params.x0, params.dx, uFn, vFn, productFn, palette, themeMode, params.plotStyle]);
 
   // ── Plot 2: Area rectangle (u × v) ─────────────────────────────
   const plot2Data = useMemo(() => {
