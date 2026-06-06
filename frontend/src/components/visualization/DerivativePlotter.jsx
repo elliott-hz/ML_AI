@@ -19,7 +19,8 @@ const DerivativePlotter = ({
   aspectRatio = 'auto',
   legendPosition = 'top-right',
   xTickMode = 'auto', // 'auto' | 'pi'
-  yTickMode = 'auto'  // 'auto' | 'pi'
+  yTickMode = 'auto',  // 'auto' | 'pi'
+  annotations: propAnnotations
 }) => {
   const plotRef = useRef(null);
   const themeMode = useThemeMode();
@@ -181,9 +182,11 @@ const DerivativePlotter = ({
       yaxisExtra = buildPiTickExtra(autoYRange);
     }
 
+    const annotations = propAnnotations || [];
+
     return {
+      annotations,
       title: {
-        text: title,
         font: {
           size: styleConfig.fontSize + 6,
           color: plotLayout.titleFontColor
@@ -230,7 +233,7 @@ const DerivativePlotter = ({
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode, propAnnotations]);
 
   const config = {
     displayModeBar: true,

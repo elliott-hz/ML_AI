@@ -174,6 +174,37 @@ const ProductRule = () => {
     return traces;
   }, [params, uFn, vFn, productFn, numDeriv, uLabel, vLabel, palette]);
 
+  // ── Plot 1 annotations (value labels at x₀, right of markers) ──
+  const plot1Annotations = useMemo(() => {
+    const x0 = params.x0;
+    const u0 = uFn(x0);
+    const v0 = vFn(x0);
+    const uv0 = productFn(x0);
+
+    const fmt = (v) => isFinite(v) ? v.toFixed(2) : '?';
+    const bg = themeMode === 'dark' ? 'rgba(30,41,59,0.85)' : 'rgba(255,255,255,0.85)';
+
+    const mkAnno = (y, text, color) => ({
+      x: x0, y,
+      xref: 'x', yref: 'y',
+      xanchor: 'left',
+      xshift: 14,
+      showarrow: false,
+      text,
+      font: { color, size: 12, family: 'monospace' },
+      bgcolor: bg,
+      bordercolor: color,
+      borderwidth: 1,
+      borderpad: 3
+    });
+
+    const annos = [];
+    if (isFinite(u0)) annos.push(mkAnno(u0, `u = ${fmt(u0)}`, palette.mainTraces.primary));
+    if (isFinite(v0)) annos.push(mkAnno(v0, `v = ${fmt(v0)}`, palette.mainTraces.secondary));
+    if (isFinite(uv0)) annos.push(mkAnno(uv0, `uv = ${fmt(uv0)}`, palette.auxTraces.combined));
+    return annos;
+  }, [params.x0, uFn, vFn, productFn, palette, themeMode]);
+
   // ── Plot 2: Area rectangle (u × v) ─────────────────────────────
   const plot2Data = useMemo(() => {
     const x0 = params.x0;
@@ -378,6 +409,7 @@ const ProductRule = () => {
         <PlotPanel>
           <DerivativePlotter
             data={plot1Data}
+            annotations={plot1Annotations}
             xRange={params.xRange}
             title={`u(x)·v(x)  —  (uv)' = u'v + uv'`}
             showExportButton={false}
