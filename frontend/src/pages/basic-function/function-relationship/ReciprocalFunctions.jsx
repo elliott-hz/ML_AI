@@ -1,78 +1,15 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel (ParameterControls + ParameterSection) and content layout
 import React, { useState, useMemo, useCallback } from 'react';
-import styled from 'styled-components';
 import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';
-
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-`;
-
-const Title = styled.h1`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 28px;
-  font-weight: 700;
-`;
-
-const Description = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-`;
-
-const FormulaTitle = styled.h3`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
-`;
-
-const Formula = styled.code`
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 16px;
-  font-family: 'Courier New', monospace;
-  display: block;
-  line-height: 1.8;
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
+import {
+  PageContainer, Header, SectionTitleH1, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel,
+  FormulaBox, FormulaTitle, Formula
+} from '../../../components/common/LayoutStyled';
+import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
 
 /**
  * Reciprocal Functions 页面 - 倒函数可视化
@@ -93,20 +30,12 @@ const ReciprocalFunctions = () => {
     { name: 'b', label: 'b (intercept)', min: -5, max: 5, step: 0.1 }
   ];
 
-  const plotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
-  ];
-
   const viewRangeConfig = [
     {
       name: 'xRange', label: 'X Range', type: 'range',
       min: -20, max: 20, step: 1, default: [-5, 5]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
-  ];
-
-  const legendPositionConfig = [
-    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
   ];
 
   const commonParamsConfig = [
@@ -217,14 +146,14 @@ const ReciprocalFunctions = () => {
     <PageContainer>
       <Header>
         <BackButton to="/mathematics/1-fundamentals/basic-function" />
-        <Title>Reciprocal Function</Title>
+        <SectionTitleH1>Reciprocal Function</SectionTitleH1>
       </Header>
 
-      <Description>
+      <SectionDescription>
         The reciprocal function g(x) = 1/f(x) reverses the output of the original function.
         When f(x) is large, its reciprocal is small, and vice versa. The graphs share key
         symmetry: points where f(x) = 1 are fixed (self-reciprocal).
-      </Description>
+      </SectionDescription>
 
       <FormulaBox>
         <FormulaTitle>Reciprocal Relationship</FormulaTitle>

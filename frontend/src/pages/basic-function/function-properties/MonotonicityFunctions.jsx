@@ -1,64 +1,13 @@
 // UI Pattern: MultiSectionPlot — multiple function sections (increasing/decreasing), each with its own content layout and controls
 import React, { useState, useMemo, useCallback } from 'react';
-import styled from 'styled-components';
 import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';
-
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const SectionTitle = styled.h2`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const SectionDescription = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const FunctionSection = styled.div`
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
+import {
+  PageContainer, Header, SectionTitle, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel, FunctionSection
+} from '../../../components/common/LayoutStyled';
 
 /**
  * 单调性函数子页面 - 展示单调递增和单调递减函数的特性

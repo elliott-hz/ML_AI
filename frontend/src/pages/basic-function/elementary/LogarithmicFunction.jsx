@@ -1,10 +1,16 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel (ParameterControls + ParameterSection) and content layout
 import React, { useState, useMemo, useCallback } from 'react';
-import styled from 'styled-components';
 import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';
+import {
+  PageContainer, Header, SectionTitleH1, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel,
+  FormulaBox, FormulaTitle, Formula,
+  QuickSetRow, QuickBtn
+} from '../../../components/common/LayoutStyled';
+import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
 
 const SUBSCRIPT_MAP = {
   '0': '\u2080', '1': '\u2081', '2': '\u2082', '3': '\u2083', '4': '\u2084',
@@ -21,101 +27,6 @@ const fmtBaseDisplay = (b) => {
   const raw = b.toFixed(1);
   return { raw, sub: String(raw).split('').map(c => SUBSCRIPT_MAP[c] || c).join('') };
 };
-
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-`;
-
-const Title = styled.h1`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 28px;
-  font-weight: 700;
-`;
-
-const Description = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-`;
-
-const FormulaTitle = styled.h3`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
-`;
-
-const Formula = styled.code`
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 16px;
-  font-family: 'Courier New', monospace;
-  display: block;
-  line-height: 1.8;
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const QuickSetRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  font-size: 13px;
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
-`;
-
-const QuickBtn = styled.button`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  padding: 4px 12px;
-  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
-  cursor: pointer;
-  font-size: 13px;
-  font-family: monospace;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    color: #fff;
-  }
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
 
 /**
  * Logarithmic Function 页面 - 对数函数可视化
@@ -137,20 +48,12 @@ const LogarithmicFunction = () => {
     { name: 'b', label: 'Base (b)', min: 0.5, max: 10, step: 0.5 }
   ];
 
-  const plotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
-  ];
-
   const viewRangeConfig = [
     {
       name: 'xRange', label: 'X Range', type: 'range',
       min: 0.5, max: 20, step: 0.5, default: [0.5, 8]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
-  ];
-
-  const legendPositionConfig = [
-    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
   ];
 
   const commonParamsConfig = [
@@ -245,14 +148,14 @@ const LogarithmicFunction = () => {
     <PageContainer>
       <Header>
         <BackButton to="/mathematics/1-fundamentals/basic-function" />
-        <Title>Logarithmic Function</Title>
+        <SectionTitleH1>Logarithmic Function</SectionTitleH1>
       </Header>
 
-      <Description>
+      <SectionDescription>
         The logarithmic function y = log<sub>b</sub>(x) answers "how many times must we multiply b to get x?"
         It is the inverse of the exponential function: if y = bˣ then x = log<sub>b</sub>(y).
         In ML, logarithms appear in cross-entropy loss, information entropy, TF-IDF, and feature transformations.
-      </Description>
+      </SectionDescription>
 
       <FormulaBox>
         <FormulaTitle>Logarithm &amp; Its Inverse (Exponential)</FormulaTitle>

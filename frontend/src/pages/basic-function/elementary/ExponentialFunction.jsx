@@ -1,105 +1,16 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel (ParameterControls + ParameterSection) and content layout
 import React, { useState, useMemo, useCallback } from 'react';
-import styled from 'styled-components';
 import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';
-
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-`;
-
-const Title = styled.h1`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 28px;
-  font-weight: 700;
-`;
-
-const Description = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-`;
-
-const FormulaTitle = styled.h3`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
-`;
-
-const Formula = styled.code`
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 16px;
-  font-family: 'Courier New', monospace;
-  display: block;
-  line-height: 1.8;
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
-const QuickSetRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  font-size: 13px;
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
-`;
-
-const QuickBtn = styled.button`
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  padding: 4px 12px;
-  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
-  cursor: pointer;
-  font-size: 13px;
-  font-family: monospace;
-  transition: all 0.15s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    color: #fff;
-  }
-`;
+import {
+  PageContainer, Header, SectionTitleH1, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel,
+  FormulaBox, FormulaTitle, Formula,
+  QuickSetRow, QuickBtn
+} from '../../../components/common/LayoutStyled';
+import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
 
 /**
  * Exponential Function 页面 - 指数函数可视化
@@ -121,20 +32,12 @@ const ExponentialFunction = () => {
     { name: 'b', label: 'Base (b)', min: 0.1, max: 5, step: 0.1 }
   ];
 
-  const plotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
-  ];
-
   const viewRangeConfig = [
     {
       name: 'xRange', label: 'X Range', type: 'range',
       min: -20, max: 20, step: 1, default: [-2, 5]
     },
     { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
-  ];
-
-  const legendPositionConfig = [
-    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
   ];
 
   const commonParamsConfig = [
@@ -236,14 +139,14 @@ const ExponentialFunction = () => {
     <PageContainer>
       <Header>
         <BackButton to="/mathematics/1-fundamentals/basic-function" />
-        <Title>Exponential Function</Title>
+        <SectionTitleH1>Exponential Function</SectionTitleH1>
       </Header>
 
-      <Description>
+      <SectionDescription>
         The exponential function y = a·bˣ grows by a constant factor at each unit step.
         The base b determines whether the function grows (b &gt; 1), decays (0 &lt; b &lt; 1),
         or stays constant (b = 1). Watch how each integer increment multiplies the output by b.
-      </Description>
+      </SectionDescription>
 
       <FormulaBox>
         <FormulaTitle>Exponential Growth &amp; Decay</FormulaTitle>
