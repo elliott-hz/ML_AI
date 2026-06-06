@@ -42,22 +42,12 @@ import Derivative from '../pages/Derivative';
 import AverageInstantaneousVelocity from '../pages/derivative/avg-instant-velocity/AverageInstantaneousVelocity';
 import DerivativeConstants from '../pages/derivative/constants-power/DerivativeConstants';
 import DerivativePowerFunctions from '../pages/derivative/constants-power/DerivativePowerFunctions';
-import DerivativeSin from '../pages/derivative/trigonometric/DerivativeSin';
-import DerivativeCos from '../pages/derivative/trigonometric/DerivativeCos';
-import DerivativeTan from '../pages/derivative/trigonometric/DerivativeTan';
-import DerivativeCot from '../pages/derivative/trigonometric/DerivativeCot';
-import DerivativeSec from '../pages/derivative/trigonometric/DerivativeSec';
-import DerivativeCsc from '../pages/derivative/trigonometric/DerivativeCsc';
+import TrigonometricFunctions from '../pages/derivative/trigonometric/TrigonometricFunctions';
+import InverseTrigonometricFunctions from '../pages/derivative/inverse-trig/InverseTrigonometricFunctions';
 import DerivativeExpBaseA from '../pages/derivative/exp-log/DerivativeExpBaseA';
 import DerivativeExpE from '../pages/derivative/exp-log/DerivativeExpE';
 import DerivativeLogBaseA from '../pages/derivative/exp-log/DerivativeLogBaseA';
 import DerivativeLn from '../pages/derivative/exp-log/DerivativeLn';
-import DerivativeArcsin from '../pages/derivative/inverse-trig/DerivativeArcsin';
-import DerivativeArccos from '../pages/derivative/inverse-trig/DerivativeArccos';
-import DerivativeArctan from '../pages/derivative/inverse-trig/DerivativeArctan';
-import DerivativeArccot from '../pages/derivative/inverse-trig/DerivativeArccot';
-import DerivativeArcsec from '../pages/derivative/inverse-trig/DerivativeArcsec';
-import DerivativeArccsc from '../pages/derivative/inverse-trig/DerivativeArccsc';
 import LinearityRule from '../pages/derivative/differentiation-rules/LinearityRule';
 import ProductRule from '../pages/derivative/differentiation-rules/ProductRule';
 import QuotientRule from '../pages/derivative/differentiation-rules/QuotientRule';
@@ -142,22 +132,12 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/avg-instant-velocity" element={<AverageInstantaneousVelocity />} />
         <Route path="/mathematics/1-fundamentals/derivative/constants" element={<DerivativeConstants />} />
         <Route path="/mathematics/1-fundamentals/derivative/power-functions" element={<DerivativePowerFunctions />} />
-        <Route path="/mathematics/1-fundamentals/derivative/sin" element={<DerivativeSin />} />
-        <Route path="/mathematics/1-fundamentals/derivative/cos" element={<DerivativeCos />} />
-        <Route path="/mathematics/1-fundamentals/derivative/tan" element={<DerivativeTan />} />
-        <Route path="/mathematics/1-fundamentals/derivative/cot" element={<DerivativeCot />} />
-        <Route path="/mathematics/1-fundamentals/derivative/sec" element={<DerivativeSec />} />
-        <Route path="/mathematics/1-fundamentals/derivative/csc" element={<DerivativeCsc />} />
+        <Route path="/mathematics/1-fundamentals/derivative/trigonometric" element={<TrigonometricFunctions />} />
+        <Route path="/mathematics/1-fundamentals/derivative/inverse-trigonometric" element={<InverseTrigonometricFunctions />} />
         <Route path="/mathematics/1-fundamentals/derivative/exp-base-a" element={<DerivativeExpBaseA />} />
         <Route path="/mathematics/1-fundamentals/derivative/exp-e" element={<DerivativeExpE />} />
         <Route path="/mathematics/1-fundamentals/derivative/log-base-a" element={<DerivativeLogBaseA />} />
         <Route path="/mathematics/1-fundamentals/derivative/ln" element={<DerivativeLn />} />
-        <Route path="/mathematics/1-fundamentals/derivative/arcsin" element={<DerivativeArcsin />} />
-        <Route path="/mathematics/1-fundamentals/derivative/arccos" element={<DerivativeArccos />} />
-        <Route path="/mathematics/1-fundamentals/derivative/arctan" element={<DerivativeArctan />} />
-        <Route path="/mathematics/1-fundamentals/derivative/arccot" element={<DerivativeArccot />} />
-        <Route path="/mathematics/1-fundamentals/derivative/arcsec" element={<DerivativeArcsec />} />
-        <Route path="/mathematics/1-fundamentals/derivative/arccsc" element={<DerivativeArccsc />} />
 
         {/* 数学模块 - Differentiation Rules */}
         <Route path="/mathematics/1-fundamentals/derivative/linearity-rule" element={<LinearityRule />} />

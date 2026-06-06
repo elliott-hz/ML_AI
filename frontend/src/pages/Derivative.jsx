@@ -106,49 +106,21 @@ const Derivative = () => {
     }
   ];
 
-  // Group 3: Basic Derivative Formulas — Trigonometric Functions
-  const trigFormulas = [
+  // Group 3: Trigonometric and Inverse Trig. Functions
+  const trigAndInverseTrigFormulas = [
     {
-      id: 'sin',
-      icon: 'sin',
-      title: '(sin x)\' = cos x',
-      description: 'The derivative of sin x is cos x. Peaks of sin align with zero-crossings of cos.',
-      path: '/mathematics/1-fundamentals/derivative/sin'
+      id: 'trigonometric',
+      icon: 'trig',
+      title: 'Trigonometric Functions',
+      description: 'Derivatives of sin x, cos x, tan x, cot x, sec x, and csc x — explore each with an interactive tab-based interface.',
+      path: '/mathematics/1-fundamentals/derivative/trigonometric'
     },
     {
-      id: 'cos',
-      icon: 'cos',
-      title: '(cos x)\' = −sin x',
-      description: 'The derivative of cos x is −sin x. The negative sign reflects the phase shift.',
-      path: '/mathematics/1-fundamentals/derivative/cos'
-    },
-    {
-      id: 'tan',
-      icon: 'tan',
-      title: '(tan x)\' = sec²x',
-      description: 'The derivative of tan x is sec²x — always positive where defined. Watch the vertical asymptotes.',
-      path: '/mathematics/1-fundamentals/derivative/tan'
-    },
-    {
-      id: 'cot',
-      icon: 'cot',
-      title: '(cot x)\' = −csc²x',
-      description: 'The derivative of cot x is −csc²x — always negative where defined. Asymptotes at x = kπ.',
-      path: '/mathematics/1-fundamentals/derivative/cot'
-    },
-    {
-      id: 'sec',
-      icon: 'sec',
-      title: '(sec x)\' = sec x · tan x',
-      description: 'The derivative of sec x is sec x · tan x. Shared asymptotes at x = π/2 + kπ.',
-      path: '/mathematics/1-fundamentals/derivative/sec'
-    },
-    {
-      id: 'csc',
-      icon: 'csc',
-      title: '(csc x)\' = −csc x · cot x',
-      description: 'The derivative of csc x is −csc x · cot x. The negative sign flips the slope pattern.',
-      path: '/mathematics/1-fundamentals/derivative/csc'
+      id: 'inverse-trigonometric',
+      icon: 'inv-trig',
+      title: 'Inverse Trigonometric Functions',
+      description: 'Derivatives of arcsin x, arccos x, arctan x, arccot x, arcsec x, and arccsc x — switch between functions with a tab bar.',
+      path: '/mathematics/1-fundamentals/derivative/inverse-trigonometric'
     }
   ];
 
@@ -275,15 +247,14 @@ const Derivative = () => {
         ))}
       </CardGrid>
 
-      {/* Group 3: Basic Derivative Formulas — Trigonometric Functions */}
-      <GroupTitle>Trigonometric Functions</GroupTitle>
+      {/* Group 3: Trigonometric and Inverse Trig. Functions */}
+      <GroupTitle>Trigonometric and Inverse Trig. Functions</GroupTitle>
       <CardGrid>
-        {trigFormulas.map((feature) => (
+        {trigAndInverseTrigFormulas.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => handleFeatureClick(feature.path)}
           >
-            {/* <ButtonIcon>{feature.icon}</ButtonIcon> */}
             <ButtonTitle>{feature.title}</ButtonTitle>
             <ButtonDescription>{feature.description}</ButtonDescription>
           </FeatureButton>
@@ -305,22 +276,7 @@ const Derivative = () => {
         ))}
       </CardGrid>
 
-      {/* Group 5: Basic Derivative Formulas — Inverse Trigonometric Functions */}
-      <GroupTitle>Inverse Trigonometric Functions</GroupTitle>
-      <CardGrid>
-        {inverseTrigFormulas.map((feature) => (
-          <FeatureButton
-            key={feature.id}
-            onClick={() => handleFeatureClick(feature.path)}
-          >
-            {/* <ButtonIcon>{feature.icon}</ButtonIcon> */}
-            <ButtonTitle>{feature.title}</ButtonTitle>
-            <ButtonDescription>{feature.description}</ButtonDescription>
-          </FeatureButton>
-        ))}
-      </CardGrid>
-
-      {/* Group 6: Differentiation Rules */}
+      {/* Group 5: Differentiation Rules */}
       <GroupTitle>Differentiation Rules</GroupTitle>
       <CardGrid>
         <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/linearity-rule')}>
