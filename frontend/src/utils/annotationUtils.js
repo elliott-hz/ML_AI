@@ -51,3 +51,24 @@ export function createDataAnnotation({
     borderpad: 3,
   };
 }
+
+/**
+ * applyAnnotationBorderRadius — round the corners of all annotation
+ * background rects in a Plotly graph div.
+ *
+ * Run this after Plotly.newPlot / Plotly.react / Plotly.Plots.resize
+ * (e.g. from a `plotly_afterplot` handler).
+ *
+ * @param {HTMLElement} gd — the Plotly graph div (plotRef.current)
+ * @param {number}      [radius=6] — border-radius in px
+ */
+export function applyAnnotationBorderRadius(gd, radius = 6) {
+  if (!gd) return;
+  gd.querySelectorAll('g > rect').forEach(rect => {
+    const parent = rect.parentElement;
+    if (parent && parent.querySelector('text')) {
+      rect.setAttribute('rx', String(radius));
+      rect.setAttribute('ry', String(radius));
+    }
+  });
+}

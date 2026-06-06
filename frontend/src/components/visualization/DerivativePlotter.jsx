@@ -2,6 +2,7 @@ import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
+import { applyAnnotationBorderRadius } from '../../utils/annotationUtils';
 
 export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
@@ -251,18 +252,8 @@ const DerivativePlotter = ({
     }
   };
 
-  // ── Rounded corners for annotation background rects ───────────
   const applyAnnotationRadius = useCallback(() => {
-    const gd = plotRef.current;
-    if (!gd) return;
-    // Annotations with bgcolor render a <rect><text> pair inside a <g>
-    gd.querySelectorAll('g > rect').forEach(rect => {
-      const parent = rect.parentElement;
-      if (parent && parent.querySelector('text')) {
-        rect.setAttribute('rx', '6');
-        rect.setAttribute('ry', '6');
-      }
-    });
+    applyAnnotationBorderRadius(plotRef.current);
   }, []);
 
   useEffect(() => {
