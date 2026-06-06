@@ -98,8 +98,7 @@ const DerivativePlotter = ({
           trace.name.startsWith('x=') ||
           trace.name.startsWith('y=') ||
           trace.name.startsWith('lim') ||
-          trace.name.startsWith('f(x₀)') ||
-          trace.name.startsWith("f'(")
+          trace.name.startsWith('f(x₀)')
         );
 
       if (isAuxiliaryElement) {

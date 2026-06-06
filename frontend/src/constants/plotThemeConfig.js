@@ -68,21 +68,21 @@ export function getTracePalette(themeMode) {
 
     // ── 3.2 Auxiliary traces (dashed lines) ──
     auxTraces: {
-      derivative: '#ef4444',   // f'(x) — red dashed
-      secant: '#22c55e',       // secant line — green dashed
-      tangent: '#06b6d4',      // tangent line — cyan dashed
+      derivative: isDark ? '#ef4444' : '#dc2626',   // f'(x) — red dashed
+      secant: isDark ? '#22c55e' : '#16a34a',       // secant line — green dashed
+      tangent: isDark ? '#06b6d4' : '#0891b2',      // tangent line — cyan dashed
       general: isDark ? '#ffd700' : '#b45309',  // generic aux — gold (dark) / amber (light)
-      combined: '#ef4444',     // combined function (u+v, u·v, u/v) — red
+      combined: isDark ? '#ef4444' : '#dc2626',     // combined function (u+v, u·v, u/v) — red
     },
 
     // ── 3.3 Markers / special elements ──
     markers: {
-      pointA: '#3b82f6',      // Point A — blue
-      pointB: '#ef4444',      // Point B — red
-      evalX0: '#f59e0b',      // x₀ vertical line — amber
-      deltaX: '#3b82f6',      // Δx arrow / label — blue
-      deltaY: '#22c55e',      // Δy arrow / label — green
-      tangentPoint: '#06b6d4', // tangent point — cyan
+      pointA: isDark ? '#3b82f6' : '#2563eb',      // Point A — blue
+      pointB: isDark ? '#ef4444' : '#dc2626',      // Point B — red
+      evalX0: isDark ? '#f59e0b' : '#d97706',      // x₀ vertical line — amber
+      deltaX: isDark ? '#3b82f6' : '#2563eb',      // Δx arrow / label — blue
+      deltaY: isDark ? '#22c55e' : '#16a34a',      // Δy arrow / label — green
+      tangentPoint: isDark ? '#06b6d4' : '#0891b2', // tangent point — cyan
     },
 
     // ── 3.3b Text annotations (theme-dependent) ──
