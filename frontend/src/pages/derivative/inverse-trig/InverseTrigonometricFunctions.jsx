@@ -114,8 +114,8 @@ function generateArcsinData(xRange) {
       dy.push(1 / Math.sqrt(1 - x * x));
     }
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arcsin x', line: { color: _MC, width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "1 / √(1 − x²)", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'f(x) = arcsin x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "f'(x) = 1/√(1−x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -138,8 +138,8 @@ function generateArccosData(xRange) {
       dy.push(-1 / Math.sqrt(1 - x * x));
     }
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arccos x', line: { color: _MC, width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "−1 / √(1 − x²)", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'f(x) = arccos x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "f'(x) = −1/√(1−x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -158,8 +158,8 @@ function generateArctanData(xRange) {
     dx.push(x);
     dy.push(1 / (1 + x * x));
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arctan x', line: { color: _MC, width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "1 / (1 + x²)", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'f(x) = arctan x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "f'(x) = 1/(1+x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -178,8 +178,8 @@ function generateArccotData(xRange) {
     dx.push(x);
     dy.push(-1 / (1 + x * x));
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arccot x', line: { color: _MC, width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "−1 / (1 + x²)", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'f(x) = arccot x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "f'(x) = −1/(1+x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -215,10 +215,10 @@ function generateArcsecData(xRange) {
     }
   }
 
-  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'arcsec x', line: { color: _MC, width: 2.5 } });
-  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'arcsec x', line: { color: _MC, width: 2.5 }, showlegend: false });
-  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' } });
-  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' }, showlegend: false });
+  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'f(x) = arcsec x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'f(x) = arcsec x', line: { color: _MC, width: 2.5 }, showlegend: false });
+  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "f'(x) = 1/(|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "f'(x) = 1/(|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' }, showlegend: false });
 
   return traces;
 }
@@ -254,10 +254,10 @@ function generateArccscData(xRange) {
     }
   }
 
-  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'arccsc x', line: { color: _MC, width: 2.5 } });
-  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'arccsc x', line: { color: _MC, width: 2.5 }, showlegend: false });
-  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "−1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' } });
-  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "−1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' }, showlegend: false });
+  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'f(x) = arccsc x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'f(x) = arccsc x', line: { color: _MC, width: 2.5 }, showlegend: false });
+  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "f'(x) = −1/(|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "f'(x) = −1/(|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' }, showlegend: false });
 
   return traces;
 }

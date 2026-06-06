@@ -115,8 +115,8 @@ function generateSinData(xRange) {
   }
 
   return [
-    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'sin x', line: { color: _MC, width: 2.5 } },
-    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: 'cos x (derivative)', line: { color: _DC, width: 2, dash: 'dash' } }
+    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'f(x) = sin x', line: { color: _MC, width: 2.5 } },
+    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: "f'(x) = cos x", line: { color: _DC, width: 2, dash: 'dash' } }
   ];
 }
 
@@ -136,8 +136,8 @@ function generateCosData(xRange) {
   }
 
   return [
-    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'cos x', line: { color: _MC, width: 2.5 } },
-    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: '−sin x (derivative)', line: { color: _DC, width: 2, dash: 'dash' } }
+    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'f(x) = cos x', line: { color: _MC, width: 2.5 } },
+    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: "f'(x) = −sin x", line: { color: _DC, width: 2, dash: 'dash' } }
   ];
 }
 
@@ -178,8 +178,8 @@ function generateTanData(xRange) {
   return generateAsymptoticData(xRange, {
     fn: Math.tan,
     derivFn: (x) => 1 / (Math.cos(x) * Math.cos(x)),
-    fnName: 'tan x',
-    derivName: 'sec²x (derivative)',
+    fnName: 'f(x) = tan x',
+    derivName: "f'(x) = sec²x",
     asymptoteOffset: Math.PI / 2
   });
 }
@@ -188,8 +188,8 @@ function generateCotData(xRange) {
   return generateAsymptoticData(xRange, {
     fn: (x) => Math.cos(x) / Math.sin(x),
     derivFn: (x) => -1 / (Math.sin(x) * Math.sin(x)),
-    fnName: 'cot x',
-    derivName: '−csc²x (derivative)',
+    fnName: 'f(x) = cot x',
+    derivName: "f'(x) = −csc²x",
     asymptoteOffset: 0
   });
 }
@@ -198,8 +198,8 @@ function generateSecData(xRange) {
   return generateAsymptoticData(xRange, {
     fn: (x) => 1 / Math.cos(x),
     derivFn: (x) => (1 / Math.cos(x)) * Math.tan(x),
-    fnName: 'sec x',
-    derivName: 'sec x·tan x (derivative)',
+    fnName: 'f(x) = sec x',
+    derivName: "f'(x) = sec x·tan x",
     asymptoteOffset: Math.PI / 2
   });
 }
@@ -208,8 +208,8 @@ function generateCscData(xRange) {
   return generateAsymptoticData(xRange, {
     fn: (x) => 1 / Math.sin(x),
     derivFn: (x) => -(1 / Math.sin(x)) * (Math.cos(x) / Math.sin(x)),
-    fnName: 'csc x',
-    derivName: '−csc x·cot x (derivative)',
+    fnName: 'f(x) = csc x',
+    derivName: "f'(x) = −csc x·cot x",
     asymptoteOffset: 0
   });
 }

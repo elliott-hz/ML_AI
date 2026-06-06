@@ -70,13 +70,13 @@ const ExponentialFunctions = () => {
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: isNatural ? 'eˣ' : `${a.toFixed(1)}ˣ`,
+      name: isNatural ? 'f(x) = eˣ' : `f(x) = ${a.toFixed(1)}ˣ`,
       line: { color: palette.mainTraces.primary, width: 2.5 }
     });
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: isNatural ? "eˣ (derivative)" : `${a.toFixed(1)}ˣ·ln(${a.toFixed(1)}) (derivative)`,
+      name: isNatural ? "f'(x) = eˣ" : `f'(x) = ${a.toFixed(1)}ˣ·ln(${a.toFixed(1)})`,
       line: { color: palette.auxTraces.derivative, width: 2, dash: 'dash' }
     });
     return traces;

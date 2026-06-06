@@ -77,13 +77,13 @@ const LogarithmicFunctions = () => {
     traces.push({
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
-      name: isNatural ? 'ln x' : `log${aSub} x`,
+      name: isNatural ? 'f(x) = ln x' : `f(x) = log${aSub} x`,
       line: { color: palette.mainTraces.primary, width: 2.5 }
     });
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
-      name: isNatural ? "1 / x (derivative)" : `1/(x·ln ${params.a.toFixed(1)}) (derivative)`,
+      name: isNatural ? "f'(x) = 1/x" : `f'(x) = 1/(x·ln ${params.a.toFixed(1)})`,
       line: { color: palette.auxTraces.derivative, width: 2, dash: 'dash' }
     });
     return traces;
