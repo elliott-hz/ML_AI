@@ -251,11 +251,31 @@ const DerivativePlotter = ({
     }
   };
 
+  // ── Rounded corners for annotation background rects ───────────
+  const applyAnnotationRadius = useCallback(() => {
+    const gd = plotRef.current;
+    if (!gd) return;
+    // Annotations with bgcolor render a <rect><text> pair inside a <g>
+    gd.querySelectorAll('g > rect').forEach(rect => {
+      const parent = rect.parentElement;
+      if (parent && parent.querySelector('text')) {
+        rect.setAttribute('rx', '6');
+        rect.setAttribute('ry', '6');
+      }
+    });
+  }, []);
+
   useEffect(() => {
-    if (plotRef.current && styledData && styledData.length > 0) {
-      Plotly.newPlot(plotRef.current, styledData, layout, config);
-    }
-  }, [styledData, layout, config]);
+    const gd = plotRef.current;
+    if (!gd || !styledData || styledData.length === 0) return;
+    Plotly.newPlot(gd, styledData, layout, config);
+    const handler = () => applyAnnotationRadius();
+    gd.on('plotly_afterplot', handler);
+    return () => {
+      gd.removeListener('plotly_afterplot', handler);
+      Plotly.purge(gd);
+    };
+  }, [styledData, layout, config, applyAnnotationRadius]);
 
   useEffect(() => {
     const handleResize = () => {
