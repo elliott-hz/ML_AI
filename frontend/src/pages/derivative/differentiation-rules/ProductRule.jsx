@@ -270,58 +270,66 @@ const ProductRule = () => {
     return traces;
   }, [params, uFn, vFn, palette]);
 
-  // ── Plot 3: Area Expansion (core) ──────────────────────────────
+  // ── Plot 3: Area Expansion (actual Δu, Δv from function) ─────
   const plot3Data = useMemo(() => {
     const x0 = params.x0;
-    const dx = params.dx;
-    const u0 = uFn(x0);
-    const v0 = vFn(x0);
-    const up = numDeriv(uFn, x0);
-    const vp = numDeriv(vFn, x0);
+    const x1 = x0 + params.dx;
+    const u0 = uFn(x0), v0 = vFn(x0);
+    const u1 = uFn(x1), v1 = vFn(x1);
+    const du = u1 - u0;    // actual Δu, NOT linear approx
+    const dv = v1 - v0;    // actual Δv
 
-    if (!isFinite(u0) || !isFinite(v0)) return [];
-
-    const du = up * dx;
-    const dv = vp * dx;
+    if (!isFinite(u0) || !isFinite(v0) || !isFinite(du) || !isFinite(dv)) return [];
 
     const b1x = [0, u0, u0, 0, 0]; const b1y = [0, 0, v0, v0, 0];
     const b2x = [u0, u0 + du, u0 + du, u0, u0]; const b2y = [0, 0, v0, v0, 0];
     const b3x = [0, u0, u0, 0, 0]; const b3y = [v0, v0, v0 + dv, v0 + dv, v0];
     const b4x = [u0, u0 + du, u0 + du, u0, u0]; const b4y = [v0, v0, v0 + dv, v0 + dv, v0];
 
+    const areaUV  = u0 * v0;
+    const areaVdU = v0 * du;
+    const areaUdV = u0 * dv;
+    const areaDudV = du * dv;
+
     const traces = [];
 
+    // Region 1 — original rectangle uv
     traces.push({
       x: b1x, y: b1y, type: 'scatter', mode: 'lines',
       fill: 'toself', fillcolor: palette.fills.highlight,
-      name: 'uv (original)', line: { color: '#eab308', width: 1.5 }
+      name: `uv = ${areaUV.toFixed(3)}`,
+      line: { color: '#eab308', width: 1.5 }
     });
+    // Region 2 — u'v·dx (right strip)
     traces.push({
       x: b2x, y: b2y, type: 'scatter', mode: 'lines',
       fill: 'toself', fillcolor: 'rgba(250, 204, 21, 0.5)',
-      name: `u'v·dx = ${(up * v0 * dx).toFixed(3)}`,
+      name: `u'v·dx = ${areaVdU.toFixed(3)}`,
       line: { color: '#eab308', width: 1.5 }
     });
+    // Region 3 — uv'·dx (top strip)
     traces.push({
       x: b3x, y: b3y, type: 'scatter', mode: 'lines',
       fill: 'toself', fillcolor: palette.fills.secondary,
-      name: `uv'·dx = ${(u0 * vp * dx).toFixed(3)}`,
+      name: `uv'·dx = ${areaUdV.toFixed(3)}`,
       line: { color: palette.mainTraces.secondary, width: 1.5 }
     });
+    // Region 4 — u'v'·dx² (corner)
     traces.push({
       x: b4x, y: b4y, type: 'scatter', mode: 'lines',
       fill: 'toself', fillcolor: palette.fills.accent,
-      name: `u'v'·dx² = ${(up * vp * dx * dx).toFixed(5)}`,
+      name: `u'v'·dx² = ${areaDudV.toFixed(5)}`,
       line: { color: '#a855f7', width: 1.5 }
     });
 
+    // In-rectangle labels
     traces.push({ x: [u0 / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ['uv'], textfont: { color: palette.text.annotation, size: 13, family: 'monospace' }, showlegend: false });
     traces.push({ x: [u0 + du / 2], y: [v0 / 2], type: 'scatter', mode: 'text', text: ["u'v·dx"], textfont: { color: palette.text.annotation, size: 11, family: 'monospace' }, showlegend: false });
     traces.push({ x: [u0 / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["uv'·dx"], textfont: { color: palette.text.annotation, size: 11, family: 'monospace' }, showlegend: false });
     traces.push({ x: [u0 + du / 2], y: [v0 + dv / 2], type: 'scatter', mode: 'text', text: ["u'v'·dx²"], textfont: { color: palette.text.annotation, size: 10, family: 'monospace' }, showlegend: false });
 
     return traces;
-  }, [params, uFn, vFn, numDeriv, palette]);
+  }, [params, uFn, vFn, palette]);
 
   const x0 = params.x0;
   const dx = params.dx;
@@ -339,16 +347,14 @@ const ProductRule = () => {
   }, [params.x0, uFn, vFn]);
 
   const plot3XRange = useMemo(() => {
-    const uv = uFn(params.x0);
-    const vv = vFn(params.x0);
-    const upv = numDeriv(uFn, params.x0);
-    const vpv = numDeriv(vFn, params.x0);
-    if (!isFinite(uv) || !isFinite(vv)) return [-0.5, 5];
-    const totalW = Math.abs(uv) + Math.abs(upv * params.dx);
-    const totalH = Math.abs(vv) + Math.abs(vpv * params.dx);
-    const maxDim = Math.max(totalW, totalH);
-    return [-maxDim * 0.15, maxDim * 1.15];
-  }, [params.x0, params.dx, uFn, vFn, numDeriv]);
+    const x0 = params.x0;
+    const x1 = x0 + params.dx;
+    const u1 = uFn(x1);
+    const v1 = vFn(x1);
+    if (!isFinite(u1) || !isFinite(v1)) return [-0.5, 5];
+    const maxDim = Math.max(Math.abs(u1), Math.abs(v1));
+    return [-maxDim * 0.25, maxDim * 1.25];
+  }, [params.x0, params.dx, uFn, vFn]);
 
   const uSection = `u(x) = a + b·x${toSup('m')}`;
   const vSection = `v(x) = c + d·x${toSup('n')}`;

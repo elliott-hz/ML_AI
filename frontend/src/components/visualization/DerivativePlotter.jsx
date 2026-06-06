@@ -21,7 +21,8 @@ const DerivativePlotter = ({
   legendPosition = 'top-right',
   xTickMode = 'auto', // 'auto' | 'pi'
   yTickMode = 'auto',  // 'auto' | 'pi'
-  annotations: propAnnotations
+  annotations: propAnnotations,
+  equalScale = false
 }) => {
   const plotRef = useRef(null);
   const themeMode = useThemeMode();
@@ -182,6 +183,9 @@ const DerivativePlotter = ({
     if (yTickMode === 'pi') {
       yaxisExtra = buildPiTickExtra(autoYRange);
     }
+    if (equalScale) {
+      yaxisExtra = { ...yaxisExtra, scaleanchor: 'x', scaleratio: 1 };
+    }
 
     const annotations = propAnnotations || [];
 
@@ -234,7 +238,7 @@ const DerivativePlotter = ({
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
       }
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode, propAnnotations]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode, propAnnotations, equalScale]);
 
   const config = {
     displayModeBar: true,
