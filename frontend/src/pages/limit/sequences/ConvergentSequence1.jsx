@@ -1,109 +1,21 @@
+// UI Pattern: DualSequencePlot — two stacked LimitPlotters (sequence + function)
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/LimitPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
-
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const BackButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.xs || '0.25rem'};
-  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    color: white;
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  }
-`;
-
-const SectionTitle = styled.h2`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const SectionDescription = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const FunctionSection = styled.div`
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  padding: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  box-shadow: ${({ theme }) => theme?.shadows?.sm || '0 1px 2px 0 rgba(0, 0, 0, 0.05)'};
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
-const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
-  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-`;
-
-const Formula = styled.code`
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 18px;
-  font-family: 'Courier New', monospace;
-  display: block;
-  line-height: 1.8;
-  font-weight: bold;
-`;
+import BackButton from '../../../components/layout/BackButton';
+import {
+  PageContainer, Header, SectionTitle, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula,
+  FunctionSection
+} from '../../../components/limit/shared/LimitStyled';
+import { legendPositionConfig, plotStyleConfig } from '../../../constants/limitConfig';
 
 /**
  * Convergent Sequence 1 - u_n = 1/3^n → 0
  */
 const ConvergentSequence1 = () => {
-  const navigate = useNavigate();
-  
-  const [params, setParams] = useState({ 
+  const [params, setParams] = useState({
     base: 2,           // 底数
     maxN: 50,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
@@ -115,33 +27,33 @@ const ConvergentSequence1 = () => {
   const generateSequenceData = useCallback(() => {
     const maxN = params.maxN || 50;
     const base = params.base || 2;
-    
+
     const nValues = [];
     const uValues = [];
-    
+
     for (let n = 0; n <= maxN; n++) {
       nValues.push(n);
       uValues.push(1 / Math.pow(base, n));
     }
-    
+
     const traces = [{
       x: nValues,
       y: uValues,
       type: 'scatter',
       mode: 'lines+markers',
       name: 'uₙ',
-      line: { 
-        color: '#6366f1', 
+      line: {
+        color: '#6366f1',
         width: 2,
         shape: 'spline'
       },
-      marker: { 
-        size: 8, 
+      marker: {
+        size: 8,
         color: '#6366f1',
         symbol: 'circle'
       }
     }];
-    
+
     // ✅ 添加收敛辅助线（y=0）
     traces.push({
       x: [0, maxN],
@@ -149,13 +61,13 @@ const ConvergentSequence1 = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'lim: 0',
-      line: { 
+      line: {
         color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
-        width: 2, 
+        width: 2,
         dash: 'dash' // ✅ 辅助线保持虚线
       }
     });
-    
+
     return traces;
   }, [params]);
 
@@ -164,24 +76,24 @@ const ConvergentSequence1 = () => {
     const maxN = Math.min(params.maxN, 20);
     const base = params.base || 2;
     const numPoints = 200;
-    
+
     const xValues = [];
     const yValues = [];
-    
+
     for (let i = 0; i <= numPoints; i++) {
       const x = 0 + (maxN * i) / numPoints;
       xValues.push(x);
       yValues.push(1 / Math.pow(base, x));
     }
-    
+
     return [{
       x: xValues,
       y: yValues,
       type: 'scatter',
       mode: 'lines',
       name: 'f(x)',
-      line: { 
-        color: '#6366f1', 
+      line: {
+        color: '#6366f1',
         width: 2.5
       }
     }];
@@ -192,52 +104,38 @@ const ConvergentSequence1 = () => {
     { name: 'base', label: 'Base (b)', min: 1.1, max: 10, step: 0.1 }
   ];
 
-  const plotStyleConfig = [
-    { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
-  ];
-
-  const viewRangeConfig = [
+  const generalSettingsConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
-    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
-  ];
-
-  const legendPositionConfig = [
-    { name: 'legendPosition', label: 'Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
-  ];
-
-  const commonParamsConfig = [
     ...legendPositionConfig,
     ...plotStyleConfig,
-    ...viewRangeConfig
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
   ];
 
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
-          ← Back to Limit
-        </BackButton>
+        <BackButton to="/mathematics/1-fundamentals/limit">← Back to Limit</BackButton>
         <SectionTitle>Convergent Sequence: Exponential Decay</SectionTitle>
       </Header>
-      
+
       <SectionDescription>
-        This sequence demonstrates exponential decay. As n increases, the terms rapidly approach zero. 
+        This sequence demonstrates exponential decay. As n increases, the terms rapidly approach zero.
         The larger the base, the faster the convergence.
       </SectionDescription>
 
       <SectionTitle>Sequence: u<sub>n</sub> = 1/a<sup>n</sup></SectionTitle>
-      
+
       <FormulaBox>
         <Formula>
           lim<sub>n→∞</sub> <span style={{ fontSize: '24px' }}>1/a<sup>n</sup></span> = 0
         </Formula>
       </FormulaBox>
-      
+
       <SectionDescription>
-        Adjust the base (a) to see how it affects the rate of convergence. 
+        Adjust the base (a) to see how it affects the rate of convergence.
         Larger bases result in faster decay toward zero.
       </SectionDescription>
-      
+
       <ContentLayout>
         <ControlsPanel>
           {/* 参数分组 */}
@@ -253,7 +151,7 @@ const ConvergentSequence1 = () => {
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={commonParamsConfig}
+              config={generalSettingsConfig}
             />
           </ParameterSection>
         </ControlsPanel>

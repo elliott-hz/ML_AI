@@ -1,9 +1,14 @@
+// UI Pattern: StandardSinglePlot — controls left + single LimitPlotter right
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/LimitPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
+import BackButton from '../../../components/layout/BackButton';
+import {
+  PageContainer, Header, SectionTitle, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
+} from '../../../components/limit/shared/LimitStyled';
+import { commonParamsConfig } from '../../../constants/limitConfig';
 
 const SUPERSCRIPT_MAP = {
   '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
@@ -11,90 +16,6 @@ const SUPERSCRIPT_MAP = {
   '-': '\u207B', '.': '\u00B7'
 };
 const toSup = (s) => String(s).split('').map(c => SUPERSCRIPT_MAP[c] || c).join('');
-
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const BackButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.xs || '0.25rem'};
-  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    color: white;
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  }
-`;
-
-const SectionTitle = styled.h2`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: ${({ theme }) => theme?.spacing?.md || '1rem'};
-`;
-
-const SectionDescription = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
-const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
-  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-`;
-
-const Formula = styled.code`
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 18px;
-  font-family: 'Courier New', monospace;
-  display: block;
-  line-height: 1.8;
-  font-weight: bold;
-`;
 
 /**
  * Power Function Limit - f(x) = a·xⁿ
@@ -104,8 +25,6 @@ const Formula = styled.code`
  *   n < 0:  lim(x→±∞) a·xⁿ = 0
  */
 const PowerFunctionLimit = () => {
-  const navigate = useNavigate();
-
   // 参数状态
   const [params, setParams] = useState({
     coefficient: 1,       // 系数 a
@@ -347,9 +266,7 @@ const PowerFunctionLimit = () => {
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
-           Back to Limit
-        </BackButton>
+        <BackButton to="/mathematics/1-fundamentals/limit">← Back to Limit</BackButton>
         <SectionTitle>Power Function — Limit Visualization</SectionTitle>
       </Header>
 

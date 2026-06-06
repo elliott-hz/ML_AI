@@ -1,97 +1,20 @@
+// UI Pattern: StandardSinglePlot — controls left + single LimitPlotter right
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/LimitPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
-
-// Styled Components
-const PageContainer = styled.div`
-  padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-  max-width: 1400px;
-  margin: 0 auto;
-`;
-
-const Header = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.xl || '2rem'};
-`;
-
-const BackButton = styled.button`
-  background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  color: white;
-  border: none;
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-  padding: ${({ theme }) => `${theme?.spacing?.sm || '0.5rem'} ${theme?.spacing?.md || '1rem'}`};
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    opacity: 0.9;
-    transform: translateX(-2px);
-  }
-`;
-
-const SectionTitle = styled.h1`
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-`;
-
-const SectionDescription = styled.p`
-  color: ${({ theme }) => theme?.colors?.textSecondary || '#cbd5e1'};
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const FormulaBox = styled.div`
-  background: ${({ theme }) => theme?.colors?.inputBg || '#334155'};
-  border-left: 4px solid ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  padding: ${({ theme }) => theme?.spacing?.md || '1rem'};
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-`;
-
-const Formula = styled.code`
-  color: ${({ theme }) => theme?.colors?.secondary || '#06b6d4'};
-  font-size: 18px;
-  font-family: 'Courier New', monospace;
-  display: block;
-  line-height: 1.8;
-  font-weight: bold;
-`;
-
-const ContentLayout = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-  
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
-
-const ControlsPanel = styled.div`
-  flex: 0 0 350px;
-  min-width: 300px;
-`;
-
-const PlotPanel = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
+import BackButton from '../../../components/layout/BackButton';
+import {
+  PageContainer, Header, SectionTitleH1, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
+} from '../../../components/limit/shared/LimitStyled';
+import { commonParamsConfig } from '../../../constants/limitConfig';
 
 /**
  * Infinitesimal Property 2: Bounded Function × Infinitesimal
  * Shows that cos(x)·x → 0 as x → 0
  */
 const InfinitesimalBounded = () => {
-  const navigate = useNavigate();
-  
   // 参数状态
   const [params, setParams] = useState({
     xRange: [-3, 3],     // X轴范围（围绕x=0）
@@ -280,10 +203,8 @@ const InfinitesimalBounded = () => {
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/limit')}>
-          ← Back to Limit
-        </BackButton>
-        <SectionTitle>Infinitesimal Property 2: Bounded × Infinitesimal</SectionTitle>
+        <BackButton to="/mathematics/1-fundamentals/limit">← Back to Limit</BackButton>
+        <SectionTitleH1>Infinitesimal Property 2: Bounded × Infinitesimal</SectionTitleH1>
       </Header>
 
       <SectionDescription>
