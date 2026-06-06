@@ -1,3 +1,4 @@
+// UI Pattern: TabbedDerivativeInverseTrig — ToggleGroup: 6 tabs (arcsin/arccos/arctan/arccot/arcsec/arccsc), per-tab xRange reset
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';

@@ -1,3 +1,4 @@
+// UI Pattern: StandardSinglePlot — single ContentLayout, Delta-t slider converges secant→tangent
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';

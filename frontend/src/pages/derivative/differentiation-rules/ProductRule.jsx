@@ -1,3 +1,4 @@
+// UI Pattern: MultiSectionPlot — ContentLayout (row 1) + PlotGrid2 (row 2, 2 plots)
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';

@@ -1,3 +1,4 @@
+// UI Pattern: TabbedFunction — ToggleGroup: 3 tabs (Sum/Difference/ConstantMult)
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';

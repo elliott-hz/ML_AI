@@ -1,3 +1,4 @@
+// UI Pattern: StandardSinglePlot — single ContentLayout, mu slider for power functions
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';

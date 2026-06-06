@@ -1,3 +1,4 @@
+// UI Pattern: TabbedFunction — ToggleGroup: 6 trig tabs (sin/cos/tan/cot/sec/csc), shared xRange
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
