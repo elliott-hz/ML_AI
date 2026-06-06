@@ -10,6 +10,8 @@ import {
   FormulaBox, Formula
 } from '../../../components/common/LayoutStyled';
 import { commonParamsConfig } from '../../../constants/continuityConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Jump Discontinuity — limit does not exist at x₀
@@ -26,6 +28,9 @@ const DiscontinuityJump = () => {
     aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const generateData = useCallback(() => {
     const { L, R, x0, xRange } = params;
@@ -48,7 +53,7 @@ const DiscontinuityJump = () => {
         traces.push({
           x: leftX, y: leftY, type: 'scatter', mode: 'lines',
           name: `f(x) = ${L.toFixed(1)} (x < x₀)`,
-          line: { color: '#3b82f6', width: 2.5 }
+          line: { color: palette.markers.pointA, width: 2.5 }
         });
       }
     }
@@ -66,7 +71,7 @@ const DiscontinuityJump = () => {
         traces.push({
           x: rightX, y: rightY, type: 'scatter', mode: 'lines',
           name: `f(x) = ${R.toFixed(1)} (x ≥ x₀)`,
-          line: { color: '#22c55e', width: 2.5 }
+          line: { color: palette.mainTraces.secondary, width: 2.5 }
         });
       }
     }
@@ -78,7 +83,7 @@ const DiscontinuityJump = () => {
       x: [x0, x0], y: [L, R],
       type: 'scatter', mode: 'lines',
       name: `jump: ${(L - R).toFixed(1)}`,
-      line: { color: '#ffd700', width: 2, dash: 'dash' }
+      line: { color: palette.limit.limitLine, width: 2, dash: 'dash' }
     });
 
     // Hollow circle at (x0, L) — the left limit value (not the actual point)
@@ -87,9 +92,9 @@ const DiscontinuityJump = () => {
       type: 'scatter', mode: 'markers',
       name: `lim(x→x₀⁻) = ${L.toFixed(1)}`,
       marker: {
-        size: 12, color: '#3b82f6',
+        size: 12, color: palette.markers.pointA,
         symbol: 'circle-open',
-        line: { color: '#3b82f6', width: 2 }
+        line: { color: palette.markers.pointA, width: 2 }
       }
     });
 
@@ -99,17 +104,17 @@ const DiscontinuityJump = () => {
       type: 'scatter', mode: 'markers+text',
       name: `f(x₀) = ${R.toFixed(1)}`,
       marker: {
-        size: 12, color: '#22c55e',
+        size: 12, color: palette.limit.rightLimit,
         symbol: 'circle',
-        line: { color: '#22c55e', width: 2 }
+        line: { color: palette.limit.rightLimit, width: 2 }
       },
       text: [`f(x₀) = ${R.toFixed(1)}`],
       textposition: 'bottom center',
-      textfont: { size: 12, color: '#22c55e' }
+      textfont: { size: 12, color: palette.limit.rightLimit }
     });
 
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   const paramConfig = [
     { name: 'L', label: 'L (left)', min: -3.0, max: 3.0, step: 0.1 },

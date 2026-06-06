@@ -10,6 +10,8 @@ import {
   FormulaBox, FormulaTitle, Formula
 } from '../../../components/common/LayoutStyled';
 import { commonParamsConfig } from '../../../constants/continuityConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Continuity of a Function - Interactive visualization
@@ -28,11 +30,8 @@ const ContinuityOfFunction = () => {
     legendPosition: 'top-right'
   });
 
-  // Get theme color for auxiliary elements
-  const getThemeColor = () => {
-    const themeMode = localStorage.getItem('themeMode') || 'dark';
-    return themeMode === 'dark' ? '#ffd700' : '#f59e0b';
-  };
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const coefficientConfig = [
     {
@@ -76,7 +75,6 @@ const ContinuityOfFunction = () => {
     const x0 = params.x0;
     const dx = params.dx;
     const numPoints = 500;
-    const auxiliaryColor = getThemeColor();
 
     const formatNum = (num) => Number(num).toFixed(2);
 
@@ -106,7 +104,7 @@ const ContinuityOfFunction = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = ${formatNum(a)}x + ${formatNum(b)}`,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       // Horizontal auxiliary line (Δx) from (x0, y0) to (x1, y0)
       {
@@ -116,7 +114,7 @@ const ContinuityOfFunction = () => {
         mode: 'lines',
         name: 'Δx',
         line: {
-          color: auxiliaryColor,
+          color: palette.limit.limitLine,
           width: 1.5,
           dash: 'dash'
         },
@@ -130,7 +128,7 @@ const ContinuityOfFunction = () => {
         mode: 'lines',
         name: 'Δy',
         line: {
-          color: auxiliaryColor,
+          color: palette.limit.limitLine,
           width: 1.5,
           dash: 'dash'
         },
@@ -144,7 +142,7 @@ const ContinuityOfFunction = () => {
         mode: 'text',
         name: 'Δx Label',
         text: [`Δx = ${formatNum(dx)}`],
-        textfont: { color: '#3b82f6', size: 13 },
+        textfont: { color: palette.markers.pointA, size: 13 },
         showlegend: false
       },
       // Δy label beside the vertical line
@@ -155,7 +153,7 @@ const ContinuityOfFunction = () => {
         mode: 'text',
         name: 'Δy Label',
         text: [`Δy = ${formatNum(deltaY)}`],
-        textfont: { color: '#22c55e', size: 13 },
+        textfont: { color: palette.mainTraces.secondary, size: 13 },
         showlegend: false
       },
       // Point at x₀: (x0, y0)
@@ -166,7 +164,7 @@ const ContinuityOfFunction = () => {
         mode: 'markers',
         name: `P(x₀, y₀)`,
         marker: {
-          color: '#3b82f6',
+          color: palette.markers.pointA,
           size: 10,
           symbol: 'circle'
         },
@@ -180,7 +178,7 @@ const ContinuityOfFunction = () => {
         mode: 'markers',
         name: `P(x₀+Δx, y₀+Δy)`,
         marker: {
-          color: '#ef4444',
+          color: palette.limit.hole,
           size: 10,
           symbol: 'circle'
         },
@@ -194,7 +192,7 @@ const ContinuityOfFunction = () => {
         mode: 'text',
         name: 'x₀ Label',
         text: ['x₀'],
-        textfont: { color: auxiliaryColor, size: 14 },
+        textfont: { color: palette.limit.limitLine, size: 14 },
         showlegend: false
       },
       // x₀+Δx label on x-axis
@@ -205,11 +203,11 @@ const ContinuityOfFunction = () => {
         mode: 'text',
         name: 'x Label',
         text: ['x'],
-        textfont: { color: auxiliaryColor, size: 14 },
+        textfont: { color: palette.limit.limitLine, size: 14 },
         showlegend: false
       }
     ];
-  }, [params.coefficientA, params.coefficientB, params.x0, params.dx, params.xRange]);
+  }, [params.coefficientA, params.coefficientB, params.x0, params.dx, params.xRange, themeMode]);
 
   const traces = useMemo(() => generateContinuityData(), [generateContinuityData]);
 

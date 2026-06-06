@@ -8,6 +8,8 @@ import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel
 } from '../../../components/common/LayoutStyled';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * 周期性函数子页面 - 展示正弦函数的周期性特性
@@ -24,6 +26,9 @@ const PeriodicFunctions = () => {
     aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // 周期函数参数配置 - 分组版本
   const periodicCoefficientConfig = [
@@ -98,16 +103,16 @@ const PeriodicFunctions = () => {
           mode: 'lines',
           name: `Peak at x=${formatNum(x)}`,
           line: { 
-            color: '#ffd700', 
-            width: 1, 
-            dash: 'dash' 
+            color: palette.limit.limitLine,
+            width: 1,
+            dash: 'dash'
           },
           showlegend: false
         });
       }
       x -= period;
     }
-    
+
     // 向右扩展
     x = firstPeakX + period;
     while (x <= xMax + period) {
@@ -118,8 +123,8 @@ const PeriodicFunctions = () => {
           type: 'scatter',
           mode: 'lines',
           name: `Peak at x=${formatNum(x)}`,
-          line: { 
-            color: '#ffd700', 
+          line: {
+            color: palette.limit.limitLine,
             width: 1, 
             dash: 'dash' 
           },
@@ -136,11 +141,11 @@ const PeriodicFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = ${formatNum(amplitude)}·sin(${formatNum(frequency)}x + ${formatNum(phase)})`,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       ...auxiliaryLines
     ];
-  }, [periodicParams.a, periodicParams.b, periodicParams.c, periodicParams.xRange]);
+  }, [periodicParams.a, periodicParams.b, periodicParams.c, periodicParams.xRange, themeMode]);
   
   // ✅ 使用 useMemo 缓存数据
   const traces = useMemo(() => generatePeriodicData(), [generatePeriodicData]);

@@ -11,6 +11,8 @@ import {
   QuickSetRow, QuickBtn
 } from '../../../components/common/LayoutStyled';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 const SUBSCRIPT_MAP = {
   '0': '\u2080', '1': '\u2081', '2': '\u2082', '3': '\u2083', '4': '\u2084',
@@ -42,6 +44,9 @@ const LogarithmicFunction = () => {
     aspectRatio: 'auto',
     legendPosition: 'bottom-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const coefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: 0.1, max: 5, step: 0.1 },
@@ -86,7 +91,7 @@ const LogarithmicFunction = () => {
       x: xVals, y: yVals,
       type: 'scatter', mode: 'lines',
       name: `y = ${fmtA} · log${bd.sub}(x)`,
-      line: { color: '#6366f1', width: 2 }
+      line: { color: palette.mainTraces.primary, width: 2 }
     });
 
     // 2. Key points: x = b^k for integer k (capped to avoid freeze when b≈1)
@@ -121,8 +126,8 @@ const LogarithmicFunction = () => {
       name: 'Key points',
       text: ptLabels,
       textposition: 'top center',
-      textfont: { color: '#f59e0b', size: 10, family: 'monospace' },
-      marker: { color: '#06b6d4', size: 8, symbol: 'circle' },
+      textfont: { color: palette.mainTraces.tertiary, size: 10, family: 'monospace' },
+      marker: { color: palette.auxTraces.tangent, size: 8, symbol: 'circle' },
       showlegend: false
     });
 
@@ -132,12 +137,12 @@ const LogarithmicFunction = () => {
       y: [-10, 10],
       type: 'scatter', mode: 'lines',
       name: 'x = 0 (asymptote)',
-      line: { color: '#94a3b8', width: 1, dash: 'dash' },
+      line: { color: palette.limit.boundary, width: 1, dash: 'dash' },
       showlegend: false
     });
 
     return traces;
-  }, [params.a, params.b, params.xRange]);
+  }, [params.a, params.b, params.xRange, themeMode]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

@@ -11,6 +11,8 @@ import {
   QuickSetRow, QuickBtn
 } from '../../../components/common/LayoutStyled';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Exponential Function 页面 - 指数函数可视化
@@ -26,6 +28,9 @@ const ExponentialFunction = () => {
     aspectRatio: 'auto',
     legendPosition: 'top-left'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const coefficientConfig = [
     { name: 'a', label: 'Coefficient (a)', min: 0.1, max: 5, step: 0.1 },
@@ -68,7 +73,7 @@ const ExponentialFunction = () => {
       x: xVals, y: yVals,
       type: 'scatter', mode: 'lines',
       name: `y = ${a.toFixed(1)} · ${baseDisplay}ˣ`,
-      line: { color: '#6366f1', width: 2 }
+      line: { color: palette.mainTraces.primary, width: 2 }
     });
 
     // 2. Integer points with y-value labels
@@ -91,8 +96,8 @@ const ExponentialFunction = () => {
       name: 'Integer points',
       text: intLabels,
       textposition: 'top center',
-      textfont: { color: '#f59e0b', size: 11, family: 'monospace' },
-      marker: { color: '#06b6d4', size: 8, symbol: 'circle' },
+      textfont: { color: palette.mainTraces.tertiary, size: 11, family: 'monospace' },
+      marker: { color: palette.auxTraces.tangent, size: 8, symbol: 'circle' },
       showlegend: false
     });
 
@@ -116,13 +121,13 @@ const ExponentialFunction = () => {
         name: 'factor',
         text: factorLabels,
         textposition: 'middle center',
-        textfont: { color: '#22c55e', size: 13, family: 'monospace', weight: 700 },
+        textfont: { color: palette.mainTraces.secondary, size: 13, family: 'monospace', weight: 700 },
         showlegend: false
       });
     }
 
     return traces;
-  }, [params.a, params.b, params.xRange]);
+  }, [params.a, params.b, params.xRange, themeMode]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

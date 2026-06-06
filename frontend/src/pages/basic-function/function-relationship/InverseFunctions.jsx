@@ -10,6 +10,8 @@ import {
   FormulaBox, FormulaTitle, Formula
 } from '../../../components/common/LayoutStyled';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Inverse Functions 页面 - 反函数可视化
@@ -22,6 +24,9 @@ const InverseFunctions = () => {
     aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // 参数配置 - 分组版本
   const coefficientConfig = [
@@ -89,7 +94,7 @@ const InverseFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `Original: h(t) = ${a.toFixed(1)}t²`,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       {
         x: inverseH,
@@ -97,7 +102,7 @@ const InverseFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `Inverse: t(h) = √(h/${a.toFixed(1)})`,
-        line: { color: '#06b6d4', width: 2 }
+        line: { color: palette.auxTraces.tangent, width: 2 }
       },
       {
         x: lineX,
@@ -105,14 +110,14 @@ const InverseFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'y = x (symmetry axis)',
-        line: { 
-          color: '#94a3b8', 
-          width: 1, 
-          dash: 'dash' 
+        line: {
+          color: palette.limit.boundary,
+          width: 1,
+          dash: 'dash'
         }
       }
     ];
-  }, [params.coefficient, params.xRange]);
+  }, [params.coefficient, params.xRange, themeMode]);
   
   // ✅ 使用 useMemo 缓存数据
   const traces = useMemo(() => generateInverseData(), [generateInverseData]);

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
 import BackButton from '../../../components/layout/BackButton';
 import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { useSplitter } from '../../../hooks/useSplitter';
 
 const PageContainer = styled.div`
@@ -265,6 +266,7 @@ const isInfinite = (v) => !isFinite(v) || Math.abs(v) > 1e8;
  */
 const TrigonometricRatios = () => {
   const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const {
     leftRatio, rightPlotKey, rowRef, onResizeStart,
   } = useSplitter();
@@ -338,8 +340,8 @@ const TrigonometricRatios = () => {
       x: [0, cx, cx, 0], y: [0, 0, cy, 0],
       mode: 'lines+markers', type: 'scatter',
       name: 'Triangle',
-      line: { color: '#6366f1', width: 3 },
-      marker: { size: [10, 10, 10, 1], color: ['#6366f1', '#6366f1', '#6366f1', 'rgba(0,0,0,0)'], symbol: 'circle' },
+      line: { color: palette.mainTraces.primary, width: 3 },
+      marker: { size: [10, 10, 10, 1], color: [palette.mainTraces.primary, palette.mainTraces.primary, palette.mainTraces.primary, 'rgba(0,0,0,0)'], symbol: 'circle' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -350,7 +352,7 @@ const TrigonometricRatios = () => {
     traces.push({
       x: [rx, cx, cx], y: [0, 0, ry],
       mode: 'lines', type: 'scatter',
-      name: 'Right Angle', line: { color: '#94a3b8', width: 1.5 },
+      name: 'Right Angle', line: { color: palette.limit.boundary, width: 1.5 },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -363,7 +365,7 @@ const TrigonometricRatios = () => {
     }
     traces.push({
       x: arcX, y: arcY, mode: 'lines', type: 'scatter',
-      name: 'θ', line: { color: '#f59e0b', width: 2.5 },
+      name: 'θ', line: { color: palette.mainTraces.tertiary, width: 2.5 },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -374,7 +376,7 @@ const TrigonometricRatios = () => {
       x: [labelR * Math.cos(midA)], y: [labelR * Math.sin(midA)],
       mode: 'text', type: 'scatter',
       text: [`θ = ${tDeg}°`], textposition: 'middle center',
-      textfont: { color: '#f59e0b', size: 14, family: 'serif, italic' },
+      textfont: { color: palette.mainTraces.tertiary, size: 14, family: 'serif, italic' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -429,8 +431,8 @@ const TrigonometricRatios = () => {
     const traces = [];
     const sd = makeTrigTrace(Math.sin, '', '', '', xVals, tv);
     const cd = makeTrigTrace(Math.cos, '', '', '', xVals, tv);
-    traces.push({ x: xVals, y: sd.yVals, mode: 'lines', type: 'scatter', name: 'sin(θ)', line: { color: '#6366f1', width: 2 } });
-    traces.push({ x: xVals, y: cd.yVals, mode: 'lines', type: 'scatter', name: 'cos(θ)', line: { color: '#06b6d4', width: 2 } });
+    traces.push({ x: xVals, y: sd.yVals, mode: 'lines', type: 'scatter', name: 'sin(θ)', line: { color: palette.mainTraces.primary, width: 2 } });
+    traces.push({ x: xVals, y: cd.yVals, mode: 'lines', type: 'scatter', name: 'cos(θ)', line: { color: palette.auxTraces.tangent, width: 2 } });
 
     // Faint auxiliary grid lines at key angles
     const keyAngles = [-Math.PI / 2, 0, Math.PI / 2];
@@ -442,11 +444,11 @@ const TrigonometricRatios = () => {
       });
     });
 
-    traces.push({ x: [tv, tv], y: [-1.5, 1.5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: '#f59e0b', width: 2, dash: 'dash' } });
+    traces.push({ x: [tv, tv], y: [-1.5, 1.5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' } });
 
     const mx = [], my = [], mt = [], mc = [];
-    if (sd.interValid) { mx.push(tv); my.push(sd.inter); mt.push(`sin = ${formatVal(sd.inter)}`); mc.push('#6366f1'); }
-    if (cd.interValid) { mx.push(tv); my.push(cd.inter); mt.push(`cos = ${formatVal(cd.inter)}`); mc.push('#06b6d4'); }
+    if (sd.interValid) { mx.push(tv); my.push(sd.inter); mt.push(`sin = ${formatVal(sd.inter)}`); mc.push(palette.mainTraces.primary); }
+    if (cd.interValid) { mx.push(tv); my.push(cd.inter); mt.push(`cos = ${formatVal(cd.inter)}`); mc.push(palette.auxTraces.tangent); }
     if (mx.length) {
       traces.push({
         x: mx, y: my, mode: 'markers+text', type: 'scatter', name: 'Values',
@@ -462,8 +464,8 @@ const TrigonometricRatios = () => {
     const xVals = sampleFunction, tv = theta;
     const traces = [];
     const cfgs = [
-      { fn: (x) => Math.tan(x), name: 'tan(θ)', color: '#f59e0b' },
-      { fn: (x) => 1 / Math.tan(x), name: 'cot(θ)', color: '#10b981' }
+      { fn: (x) => Math.tan(x), name: 'tan(θ)', color: palette.mainTraces.tertiary },
+      { fn: (x) => 1 / Math.tan(x), name: 'cot(θ)', color: palette.mainTraces.secondary }
     ];
     const allMx = [], allMy = [], allMt = [], allMc = [];
     cfgs.forEach(({ fn, name, color }) => {
@@ -471,7 +473,7 @@ const TrigonometricRatios = () => {
       traces.push({ x: xVals, y: d.yVals, mode: 'lines', type: 'scatter', name, line: { color, width: 2 } });
       if (d.interValid) { allMx.push(tv); allMy.push(d.inter); allMt.push(`${name.replace('(θ)', '')} = ${formatVal(d.inter)}`); allMc.push(color); }
     });
-    traces.push({ x: [tv, tv], y: [-5, 5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: '#f59e0b', width: 2, dash: 'dash' } });
+    traces.push({ x: [tv, tv], y: [-5, 5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' } });
     if (allMx.length) traces.push({ x: allMx, y: allMy, mode: 'markers+text', type: 'scatter', name: 'Values', marker: { size: 9, color: allMc, symbol: 'circle', line: { color: '#fff', width: 1 } }, text: allMt, textposition: 'top center', textfont: { size: 10, color: plotTextColor }, hoverinfo: 'text' });
     return traces;
   }, [theta, sampleFunction, themeMode]);
@@ -481,8 +483,8 @@ const TrigonometricRatios = () => {
     const xVals = sampleFunction, tv = theta;
     const traces = [];
     const cfgs = [
-      { fn: (x) => 1 / Math.cos(x), name: 'sec(θ)', color: '#f97316' },
-      { fn: (x) => 1 / Math.sin(x), name: 'csc(θ)', color: '#ec4899' }
+      { fn: (x) => 1 / Math.cos(x), name: 'sec(θ)', color: palette.mainTraces.tertiary },
+      { fn: (x) => 1 / Math.sin(x), name: 'csc(θ)', color: palette.markers.pointB }
     ];
     const allMx = [], allMy = [], allMt = [], allMc = [];
     cfgs.forEach(({ fn, name, color }) => {
@@ -490,7 +492,7 @@ const TrigonometricRatios = () => {
       traces.push({ x: xVals, y: d.yVals, mode: 'lines', type: 'scatter', name, line: { color, width: 2 } });
       if (d.interValid) { allMx.push(tv); allMy.push(d.inter); allMt.push(`${name.replace('(θ)', '')} = ${formatVal(d.inter)}`); allMc.push(color); }
     });
-    traces.push({ x: [tv, tv], y: [-5, 5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: '#f59e0b', width: 2, dash: 'dash' } });
+    traces.push({ x: [tv, tv], y: [-5, 5], mode: 'lines', type: 'scatter', name: `θ = ${(tv * 180 / Math.PI).toFixed(1)}°`, line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' } });
     if (allMx.length) traces.push({ x: allMx, y: allMy, mode: 'markers+text', type: 'scatter', name: 'Values', marker: { size: 9, color: allMc, symbol: 'circle', line: { color: '#fff', width: 1 } }, text: allMt, textposition: 'top center', textfont: { size: 10, color: plotTextColor }, hoverinfo: 'text' });
     return traces;
   }, [theta, sampleFunction, themeMode]);

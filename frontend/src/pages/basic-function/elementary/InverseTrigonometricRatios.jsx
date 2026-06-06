@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
 import BackButton from '../../../components/layout/BackButton';
 import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { useSplitter } from '../../../hooks/useSplitter';
 
 const PageContainer = styled.div`
@@ -297,6 +298,7 @@ const INV_MODES = {
  */
 const InverseTrigonometricRatios = () => {
   const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const {
     leftRatio, rightPlotKey, rowRef, onResizeStart,
   } = useSplitter();
@@ -424,8 +426,8 @@ const InverseTrigonometricRatios = () => {
       x: [0, px, px, 0], y: [0, 0, py, 0],
       mode: 'lines+markers', type: 'scatter',
       name: 'Triangle',
-      line: { color: '#6366f1', width: 3 },
-      marker: { size: [10, 10, 10, 1], color: ['#6366f1', '#6366f1', '#6366f1', 'rgba(0,0,0,0)'], symbol: 'circle' },
+      line: { color: palette.mainTraces.primary, width: 3 },
+      marker: { size: [10, 10, 10, 1], color: [palette.mainTraces.primary, palette.mainTraces.primary, palette.mainTraces.primary, 'rgba(0,0,0,0)'], symbol: 'circle' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -436,7 +438,7 @@ const InverseTrigonometricRatios = () => {
     traces.push({
       x: [rx, px, px], y: [0, 0, ry],
       mode: 'lines', type: 'scatter',
-      name: 'Right Angle', line: { color: '#94a3b8', width: 1.5 },
+      name: 'Right Angle', line: { color: palette.limit.boundary, width: 1.5 },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -449,7 +451,7 @@ const InverseTrigonometricRatios = () => {
     }
     traces.push({
       x: arcX, y: arcY, mode: 'lines', type: 'scatter',
-      name: 'θ', line: { color: '#f59e0b', width: 2.5 },
+      name: 'θ', line: { color: palette.mainTraces.tertiary, width: 2.5 },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -461,7 +463,7 @@ const InverseTrigonometricRatios = () => {
       mode: 'text', type: 'scatter',
       text: [`θ = ${thetaDeg.toFixed(1)}°`],
       textposition: 'middle center',
-      textfont: { color: '#f59e0b', size: 14, family: 'serif, italic' },
+      textfont: { color: palette.mainTraces.tertiary, size: 14, family: 'serif, italic' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -504,7 +506,7 @@ const InverseTrigonometricRatios = () => {
       mode: 'text', type: 'scatter',
       text: [ratioLabel],
       textposition: 'middle center',
-      textfont: { color: '#6366f1', size: 13, weight: 700 },
+      textfont: { color: palette.mainTraces.primary, size: 13, weight: 700 },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -525,14 +527,14 @@ const InverseTrigonometricRatios = () => {
     const arccosY = xVals.map(x => { const v = Math.acos(x); return isFinite(v) ? v : NaN; });
     const interVal = clamp(cVal, -1, 1);
 
-    traces.push({ x: xVals, y: arcsinY, mode: 'lines', type: 'scatter', name: 'arcsin(x)', line: { color: '#6366f1', width: 2 } });
-    traces.push({ x: xVals, y: arccosY, mode: 'lines', type: 'scatter', name: 'arccos(x)', line: { color: '#06b6d4', width: 2 } });
+    traces.push({ x: xVals, y: arcsinY, mode: 'lines', type: 'scatter', name: 'arcsin(x)', line: { color: palette.mainTraces.primary, width: 2 } });
+    traces.push({ x: xVals, y: arccosY, mode: 'lines', type: 'scatter', name: 'arccos(x)', line: { color: palette.auxTraces.tangent, width: 2 } });
 
     // Vertical line at current x
     traces.push({
       x: [interVal, interVal], y: [-Math.PI, Math.PI],
       mode: 'lines', type: 'scatter',
-      line: { color: '#f59e0b', width: 2, dash: 'dash' },
+      line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -540,7 +542,7 @@ const InverseTrigonometricRatios = () => {
     const mx = [], my = [], mt = [], mc = [];
     const as = Math.asin(interVal);
     const ac = Math.acos(interVal);
-    if (isFinite(as)) { mx.push(interVal, interVal); my.push(as, ac); mt.push(`arcsin = ${radToDeg(as)}`, `arccos = ${radToDeg(ac)}`); mc.push('#6366f1', '#06b6d4'); }
+    if (isFinite(as)) { mx.push(interVal, interVal); my.push(as, ac); mt.push(`arcsin = ${radToDeg(as)}`, `arccos = ${radToDeg(ac)}`); mc.push(palette.mainTraces.primary, palette.auxTraces.tangent); }
     if (mx.length) {
       traces.push({
         x: mx, y: my, mode: 'markers+text', type: 'scatter', name: 'Values',
@@ -563,8 +565,8 @@ const InverseTrigonometricRatios = () => {
     const arctanY = xVals.map(x => Math.atan(x));
     const arccotY = xVals.map(x => Math.PI / 2 - Math.atan(x));
 
-    traces.push({ x: xVals, y: arctanY, mode: 'lines', type: 'scatter', name: 'arctan(x)', line: { color: '#f59e0b', width: 2 } });
-    traces.push({ x: xVals, y: arccotY, mode: 'lines', type: 'scatter', name: 'arccot(x)', line: { color: '#10b981', width: 2 } });
+    traces.push({ x: xVals, y: arctanY, mode: 'lines', type: 'scatter', name: 'arctan(x)', line: { color: palette.mainTraces.tertiary, width: 2 } });
+    traces.push({ x: xVals, y: arccotY, mode: 'lines', type: 'scatter', name: 'arccot(x)', line: { color: palette.mainTraces.secondary, width: 2 } });
 
     // Asymptote hints at ±π/2
     traces.push({
@@ -584,7 +586,7 @@ const InverseTrigonometricRatios = () => {
     traces.push({
       x: [cVal, cVal], y: [-Math.PI, Math.PI],
       mode: 'lines', type: 'scatter',
-      line: { color: '#f59e0b', width: 2, dash: 'dash' },
+      line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -592,7 +594,7 @@ const InverseTrigonometricRatios = () => {
     const mt = [`arctan = ${radToDeg(Math.atan(cVal))}`, `arccot = ${radToDeg(Math.PI / 2 - Math.atan(cVal))}`];
     traces.push({
       x: mx, y: my, mode: 'markers+text', type: 'scatter', name: 'Values',
-      marker: { size: 9, color: ['#f59e0b', '#10b981'], symbol: 'circle', line: { color: '#fff', width: 1 } },
+      marker: { size: 9, color: [palette.mainTraces.tertiary, palette.mainTraces.secondary], symbol: 'circle', line: { color: '#fff', width: 1 } },
       text: mt, textposition: 'top center', textfont: { size: 10, color: plotTextColor }, hoverinfo: 'text'
     });
 
@@ -616,8 +618,8 @@ const InverseTrigonometricRatios = () => {
       return Math.asin(1 / x);
     });
 
-    traces.push({ x: xVals, y: arcsecY, mode: 'lines', type: 'scatter', name: 'arcsec(x)', line: { color: '#f97316', width: 2 } });
-    traces.push({ x: xVals, y: arccscY, mode: 'lines', type: 'scatter', name: 'arccsc(x)', line: { color: '#ec4899', width: 2 } });
+    traces.push({ x: xVals, y: arcsecY, mode: 'lines', type: 'scatter', name: 'arcsec(x)', line: { color: palette.mainTraces.tertiary, width: 2 } });
+    traces.push({ x: xVals, y: arccscY, mode: 'lines', type: 'scatter', name: 'arccsc(x)', line: { color: palette.markers.pointB, width: 2 } });
 
     // Vertical lines at x = ±1 (domain boundaries)
     [1, -1].forEach(x => {
@@ -633,7 +635,7 @@ const InverseTrigonometricRatios = () => {
     traces.push({
       x: [cVal, cVal], y: [-Math.PI, Math.PI],
       mode: 'lines', type: 'scatter',
-      line: { color: '#f59e0b', width: 2, dash: 'dash' },
+      line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -643,7 +645,7 @@ const InverseTrigonometricRatios = () => {
       const cv = Math.asin(1 / cVal);
       mx.push(cVal, cVal); my.push(sv, cv);
       mt.push(`arcsec = ${radToDeg(sv)}`, `arccsc = ${radToDeg(cv)}`);
-      mc.push('#f97316', '#ec4899');
+      mc.push(palette.mainTraces.tertiary, palette.markers.pointB);
     }
     if (mx.length) {
       traces.push({

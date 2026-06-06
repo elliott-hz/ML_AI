@@ -8,6 +8,8 @@ import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FunctionSection
 } from '../../../components/common/LayoutStyled';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * 奇偶性函数子页面 - 展示奇函数和偶函数的特性
@@ -33,6 +35,9 @@ const OddEvenFunctions = () => {
     aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // 奇函数参数配置 - 分组版本
   const oddCoefficientConfig = [
@@ -122,7 +127,7 @@ const OddEvenFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = ${formatNum(a)}x³ + ${formatNum(b)}`,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       {
         x: [samplePoint],
@@ -130,8 +135,8 @@ const OddEvenFunctions = () => {
         type: 'scatter',
         mode: 'markers',
         name: `P(${formatNum(samplePoint)}, ${formatNum(sampleY)})`,
-        marker: { 
-          color: '#ffd700', 
+        marker: {
+          color: palette.limit.limitLine,
           symbol: 'circle',
           line: { color: '#fff', width: 1 }
         }
@@ -142,8 +147,8 @@ const OddEvenFunctions = () => {
         type: 'scatter',
         mode: 'markers',
         name: `P'(${formatNum(oppositeX)}, ${formatNum(oppositeY)})`,
-        marker: { 
-          color: '#ffd700', 
+        marker: {
+          color: palette.limit.limitLine,
           symbol: 'circle',
           line: { color: '#fff', width: 1 }
         }
@@ -154,10 +159,10 @@ const OddEvenFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Connection Line',
-        line: { color: '#ffd700', width: 1, dash: 'dash' }
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' }
       }
     ];
-  }, [oddParams.a, oddParams.b, oddParams.samplePoint, oddParams.xRange]);
+  }, [oddParams.a, oddParams.b, oddParams.samplePoint, oddParams.xRange, themeMode]);
   
   // ✅ 新增：偶函数数据生成逻辑
   const generateEvenData = useCallback(() => {
@@ -192,7 +197,7 @@ const OddEvenFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = ${formatNum(a)}x² + ${formatNum(b)}`,
-        line: { color: '#8b5cf6', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       {
         x: [0, 0],
@@ -200,14 +205,14 @@ const OddEvenFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Axis of Symmetry (x=0)',
-        line: { 
-          color: '#ffd700', 
-          width: 1, 
+        line: {
+          color: palette.limit.limitLine,
+          width: 1,
           dash: 'dash'
         }
       }
     ];
-  }, [evenParams.a, evenParams.b, evenParams.xRange]);
+  }, [evenParams.a, evenParams.b, evenParams.xRange, themeMode]);
   
   // ✅ 使用 useMemo 缓存数据
   const oddTraces = useMemo(() => generateOddData(), [generateOddData]);

@@ -10,6 +10,8 @@ import {
   FormulaBox, FormulaTitle, Formula
 } from '../../../components/common/LayoutStyled';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Reciprocal Functions 页面 - 倒函数可视化
@@ -24,6 +26,9 @@ const ReciprocalFunctions = () => {
     aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const coefficientConfig = [
     { name: 'a', label: 'a (slope)', min: 0.1, max: 5, step: 0.1 },
@@ -69,7 +74,7 @@ const ReciprocalFunctions = () => {
       x: fX, y: fY,
       type: 'scatter', mode: 'lines',
       name: `f(x) = ${a.toFixed(1)}x + ${b.toFixed(1)}`,
-      line: { color: '#6366f1', width: 2 }
+      line: { color: palette.mainTraces.primary, width: 2 }
     });
 
     // 2. Reciprocal function g(x) = 1/(a·x + b), split at asymptote
@@ -88,7 +93,7 @@ const ReciprocalFunctions = () => {
         x: leftX, y: leftY,
         type: 'scatter', mode: 'lines',
         name: `g(x) = 1/(${a.toFixed(1)}x + ${b.toFixed(1)})`,
-        line: { color: '#06b6d4', width: 2 },
+        line: { color: palette.auxTraces.tangent, width: 2 },
         legendgroup: 'reciprocal',
       });
 
@@ -106,7 +111,7 @@ const ReciprocalFunctions = () => {
         x: rightX, y: rightY,
         type: 'scatter', mode: 'lines',
         name: `g(x) = 1/(${a.toFixed(1)}x + ${b.toFixed(1)})`,
-        line: { color: '#06b6d4', width: 2 },
+        line: { color: palette.auxTraces.tangent, width: 2 },
         showlegend: false,
         legendgroup: 'reciprocal',
       });
@@ -119,7 +124,7 @@ const ReciprocalFunctions = () => {
         y: [asymYRange(xMin, xMax, a, b, 'min'), asymYRange(xMin, xMax, a, b, 'max')],
         type: 'scatter', mode: 'lines',
         name: `x = ${asymX.toFixed(2)} (asymptote)`,
-        line: { color: '#94a3b8', width: 1, dash: 'dash' }
+        line: { color: palette.limit.boundary, width: 1, dash: 'dash' }
       });
     }
 
@@ -129,11 +134,11 @@ const ReciprocalFunctions = () => {
       y: [0, 0],
       type: 'scatter', mode: 'lines',
       name: 'y = 0 (asymptote)',
-      line: { color: '#94a3b8', width: 1, dash: 'dash' }
+      line: { color: palette.limit.boundary, width: 1, dash: 'dash' }
     });
 
     return traces;
-  }, [params.a, params.b, params.xRange]);
+  }, [params.a, params.b, params.xRange, themeMode]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

@@ -8,6 +8,8 @@ import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FunctionSection
 } from '../../../components/common/LayoutStyled';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * 单调性函数子页面 - 展示单调递增和单调递减函数的特性
@@ -37,6 +39,9 @@ const MonotonicityFunctions = () => {
     aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // 单调递增函数参数配置 - 分组版本
   const increasingCoefficientConfig = [
@@ -131,7 +136,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = ${formatNum(a)}x + ${formatNum(b)}`,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       {
         x: [x1],
@@ -139,14 +144,14 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'markers+text',
         name: `P₁(${formatNum(x1)}, ${formatNum(y1)})`,
-        marker: { 
-          color: '#ffd700', 
+        marker: {
+          color: palette.limit.limitLine,
           symbol: 'circle',
           line: { color: '#fff', width: 1 }
         },
         text: [`P₁`],
         textposition: 'top center',
-        textfont: { color: '#ffd700', size: 12 }
+        textfont: { color: palette.limit.limitLine, size: 12 }
       },
       {
         x: [x2],
@@ -154,14 +159,14 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'markers+text',
         name: `P₂(${formatNum(x2)}, ${formatNum(y2)})`,
-        marker: { 
-          color: '#ffd700', 
+        marker: {
+          color: palette.limit.limitLine,
           symbol: 'circle',
           line: { color: '#fff', width: 1 }
         },
         text: [`P₂`],
         textposition: 'top center',
-        textfont: { color: '#ffd700', size: 12 }
+        textfont: { color: palette.limit.limitLine, size: 12 }
       },
       // 垂线段
       {
@@ -170,7 +175,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₁',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       },
       {
@@ -179,7 +184,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₁',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       },
       {
@@ -188,7 +193,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₂',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       },
       {
@@ -197,11 +202,11 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₂',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       }
     ];
-  }, [increasingParams.a, increasingParams.b, increasingParams.x1, increasingParams.x2, increasingParams.xRange]);
+  }, [increasingParams.a, increasingParams.b, increasingParams.x1, increasingParams.x2, increasingParams.xRange, themeMode]);
   
   // ✅ 新增：单调递减函数数据生成逻辑
   const generateDecreasingData = useCallback(() => {
@@ -236,7 +241,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = -${formatNum(a)}x + ${formatNum(b)}`,
-        line: { color: '#ef4444', width: 2 }
+        line: { color: palette.limit.hole, width: 2 }
       },
       {
         x: [x1],
@@ -244,14 +249,14 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'markers+text',
         name: `P₁(${formatNum(x1)}, ${formatNum(y1)})`,
-        marker: { 
-          color: '#ffd700', 
+        marker: {
+          color: palette.limit.limitLine,
           symbol: 'circle',
           line: { color: '#fff', width: 1 }
         },
         text: [`P₁`],
         textposition: 'top center',
-        textfont: { color: '#ffd700', size: 12 }
+        textfont: { color: palette.limit.limitLine, size: 12 }
       },
       {
         x: [x2],
@@ -259,14 +264,14 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'markers+text',
         name: `P₂(${formatNum(x2)}, ${formatNum(y2)})`,
-        marker: { 
-          color: '#ffd700', 
+        marker: {
+          color: palette.limit.limitLine,
           symbol: 'circle',
           line: { color: '#fff', width: 1 }
         },
         text: [`P₂`],
         textposition: 'top center',
-        textfont: { color: '#ffd700', size: 12 }
+        textfont: { color: palette.limit.limitLine, size: 12 }
       },
       // 垂线段
       {
@@ -275,7 +280,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₁',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       },
       {
@@ -284,7 +289,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₁',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       },
       {
@@ -293,7 +298,7 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Vertical Line P₂',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       },
       {
@@ -302,11 +307,11 @@ const MonotonicityFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Horizontal Line P₂',
-        line: { color: '#ffd700', width: 1, dash: 'dash' },
+        line: { color: palette.limit.limitLine, width: 1, dash: 'dash' },
         showlegend: false
       }
     ];
-  }, [decreasingParams.a, decreasingParams.b, decreasingParams.x1, decreasingParams.x2, decreasingParams.xRange]);
+  }, [decreasingParams.a, decreasingParams.b, decreasingParams.x1, decreasingParams.x2, decreasingParams.xRange, themeMode]);
   
   // ✅ 使用 useMemo 缓存数据
   const increasingTraces = useMemo(() => generateIncreasingData(), [generateIncreasingData]);

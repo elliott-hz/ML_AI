@@ -10,6 +10,8 @@ import {
   FormulaBox, FormulaTitle, Formula
 } from '../../../components/common/LayoutStyled';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Piecewise Functions 页面 - 分段函数可视化
@@ -22,6 +24,9 @@ const PiecewiseFunctions = () => {
     aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // 参数配置 - 分组版本
   const coefficientConfig = [
@@ -98,7 +103,7 @@ const PiecewiseFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = 0 (x < 0)`,
-        line: { color: '#6366f1', width: 2 },
+        line: { color: palette.mainTraces.primary, width: 2 },
         showlegend: false
       },
       {
@@ -107,7 +112,7 @@ const PiecewiseFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: `f(x) = ${formatNum(a)}x (x ≥ 0)`,
-        line: { color: '#6366f1', width: 2 }
+        line: { color: palette.mainTraces.primary, width: 2 }
       },
       {
         x: [0, 0],
@@ -115,14 +120,14 @@ const PiecewiseFunctions = () => {
         type: 'scatter',
         mode: 'lines',
         name: 'Break Point (x=0)',
-        line: { 
-          color: '#ffd700', 
-          width: 1, 
-          dash: 'dash' 
+        line: {
+          color: palette.limit.limitLine,
+          width: 1,
+          dash: 'dash'
         }
       }
     ];
-  }, [params.coefficient, params.xRange]);
+  }, [params.coefficient, params.xRange, themeMode]);
   
   // ✅ 使用 useMemo 缓存数据
   const traces = useMemo(() => generatePiecewiseData(), [generatePiecewiseData]);

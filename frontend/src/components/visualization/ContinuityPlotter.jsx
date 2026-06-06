@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
+import { getPlotLayout, getAuxiliaryColor, getTracePalette } from '../../constants/plotThemeConfig';
 
 export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
@@ -21,6 +21,7 @@ const ContinuityPlotter = ({
 }) => {
   const plotRef = useRef(null);
   const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const styleConfig = useMemo(() => {
     switch (plotStyle) {
@@ -245,7 +246,7 @@ const ContinuityPlotter = ({
   const buttonStyle = {
     marginTop: '0.5rem',
     padding: '0.5rem 1rem',
-    background: 'linear-gradient(135deg, #6366f1, #06b6d4)',
+    background: `linear-gradient(135deg, ${palette.mainTraces.primary}, ${palette.auxTraces.tangent})`,
     color: 'white',
     border: 'none',
     borderRadius: '4px',
@@ -259,7 +260,7 @@ const ContinuityPlotter = ({
     top: '20px',
     right: '10px',
     zIndex: 10,
-    background: '#6366f1',
+    background: palette.mainTraces.primary,
     border: 'none',
     borderRadius: '4px',
     width: '18px',

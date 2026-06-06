@@ -6,6 +6,7 @@ import Cube3D from '../../../components/visualization/Cube3D';
 import Box3D from '../../../components/visualization/Box3D';
 import BackButton from '../../../components/layout/BackButton';
 import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { useSplitter } from '../../../hooks/useSplitter';
 
 // ── Styled Components ──────────────────────────────────
@@ -257,6 +258,7 @@ function formatVal(v) {
 
 export default function PowerFunction() {
   const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const [params, setParams] = useState({ x: 1.5, n: 2 });
   const [plotStyle, setPlotStyle] = useState('medium');
@@ -334,8 +336,8 @@ export default function PowerFunction() {
       // Line segment 0 → x (extends left when x < 0)
       traces.push({
         x: [0, x], y: [0, 0], mode: 'lines+markers', type: 'scatter',
-        line: { color: '#6366f1', width: 3 },
-        marker: { size: 8, color: '#6366f1', symbol: 'circle' },
+        line: { color: palette.mainTraces.primary, width: 3 },
+        marker: { size: 8, color: palette.mainTraces.primary, symbol: 'circle' },
         hoverinfo: 'skip', showlegend: false
       });
       // Length label at midpoint
@@ -349,7 +351,7 @@ export default function PowerFunction() {
       traces.push({
         x: [x], y: [-0.15], mode: 'text', type: 'scatter',
         text: [`x = ${x.toFixed(1)}`],
-        textfont: { color: '#6366f1', size: 11 },
+        textfont: { color: palette.mainTraces.primary, size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
     } else if (n === 2 && ax > 0) {
@@ -360,7 +362,7 @@ export default function PowerFunction() {
         mode: 'lines', type: 'scatter',
         fill: 'toself',
         fillcolor: 'rgba(99, 102, 241, 0.15)',
-        line: { color: '#6366f1', width: 2 },
+        line: { color: palette.mainTraces.primary, width: 2 },
         hoverinfo: 'skip', showlegend: false
       });
       traces.push({
@@ -374,7 +376,7 @@ export default function PowerFunction() {
       traces.push({
         x: [x / 2], y: [hY], mode: 'text', type: 'scatter',
         text: [`${ax.toFixed(1)}`],
-        textfont: { color: '#6366f1', size: 11 },
+        textfont: { color: palette.mainTraces.primary, size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
       // Vertical side label (left of the left edge)
@@ -382,7 +384,7 @@ export default function PowerFunction() {
       traces.push({
         x: [vX], y: [x / 2], mode: 'text', type: 'scatter',
         text: [`${ax.toFixed(1)}`],
-        textfont: { color: '#6366f1', size: 11 },
+        textfont: { color: palette.mainTraces.primary, size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
     } else if (n === 3 && ax > 0) {
@@ -398,7 +400,7 @@ export default function PowerFunction() {
         mode: 'lines', type: 'scatter',
         fill: 'toself',
         fillcolor: 'rgba(99, 102, 241, 0.2)',
-        line: { color: '#6366f1', width: 2 },
+        line: { color: palette.mainTraces.primary, width: 2 },
         hoverinfo: 'skip', showlegend: false
       });
       // Top face (lighter fill)
@@ -408,7 +410,7 @@ export default function PowerFunction() {
         mode: 'lines', type: 'scatter',
         fill: 'toself',
         fillcolor: 'rgba(99, 102, 241, 0.08)',
-        line: { color: '#6366f1', width: 1 },
+        line: { color: palette.mainTraces.primary, width: 1 },
         hoverinfo: 'skip', showlegend: false
       });
       // Right side face (medium fill)
@@ -418,7 +420,7 @@ export default function PowerFunction() {
         mode: 'lines', type: 'scatter',
         fill: 'toself',
         fillcolor: 'rgba(99, 102, 241, 0.13)',
-        line: { color: '#6366f1', width: 1 },
+        line: { color: palette.mainTraces.primary, width: 1 },
         hoverinfo: 'skip', showlegend: false
       });
       // Back edges (dashed)
@@ -448,7 +450,7 @@ export default function PowerFunction() {
       traces.push({
         x: [off + ax / 2], y: [off - 0.25], mode: 'text', type: 'scatter',
         text: [`${ax.toFixed(1)}`],
-        textfont: { color: '#6366f1', size: 11 },
+        textfont: { color: palette.mainTraces.primary, size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
     } else if (n === -1 && ax > 0) {
@@ -463,21 +465,21 @@ export default function PowerFunction() {
         mode: 'lines', type: 'scatter',
         fill: 'toself',
         fillcolor: 'rgba(245, 158, 11, 0.12)',
-        line: { color: '#f59e0b', width: 2 },
+        line: { color: palette.mainTraces.tertiary, width: 2 },
         hoverinfo: 'skip', showlegend: false
       });
       // x label
       traces.push({
         x: [xEnd / 2], y: [sign === 1 ? -0.1 : yEnd - 0.1], mode: 'text', type: 'scatter',
         text: [`x = ${xVal.toFixed(1)}`],
-        textfont: { color: '#f59e0b', size: 11 },
+        textfont: { color: palette.mainTraces.tertiary, size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
       // y label
       traces.push({
         x: [sign === 1 ? -0.15 : xEnd - 0.15], y: [yEnd / 2], mode: 'text', type: 'scatter',
         text: [`1/x = ${(sign * yRecip).toFixed(1)}`],
-        textfont: { color: '#f59e0b', size: 11 },
+        textfont: { color: palette.mainTraces.tertiary, size: 11 },
         hoverinfo: 'skip', showlegend: false
       });
       // Area annotation (center of rectangle)
@@ -519,7 +521,7 @@ export default function PowerFunction() {
       traces.push({
         x: [tMin, tMax], y: [1, 1], mode: 'lines', type: 'scatter',
         name: 'y = 1',
-        line: { color: '#6366f1', width: 2 },
+        line: { color: palette.mainTraces.primary, width: 2 },
         hoverinfo: 'skip', showlegend: false
       });
     } else if (n < 0) {
@@ -536,7 +538,7 @@ export default function PowerFunction() {
         traces.push({
           x: xR, y: yR, mode: 'lines', type: 'scatter',
           name: `y = x${superscript(n)}`,
-          line: { color: '#6366f1', width: 2 },
+          line: { color: palette.mainTraces.primary, width: 2 },
           hoverinfo: 'skip', showlegend: false
         });
       }
@@ -553,7 +555,7 @@ export default function PowerFunction() {
         traces.push({
           x: xL, y: yL, mode: 'lines', type: 'scatter',
           name: `y = x${superscript(n)}`,
-          line: { color: '#6366f1', width: 2 },
+          line: { color: palette.mainTraces.primary, width: 2 },
           hoverinfo: 'skip', showlegend: false
         });
       }
@@ -573,7 +575,7 @@ export default function PowerFunction() {
         traces.push({
           x: xVals, y: yVals, mode: 'lines', type: 'scatter',
           name: `y = x${superscript(n)}`,
-          line: { color: '#6366f1', width: 2 },
+          line: { color: palette.mainTraces.primary, width: 2 },
           hoverinfo: 'skip', showlegend: false
         });
       }
@@ -584,7 +586,7 @@ export default function PowerFunction() {
       x: [xVal, xVal], y: [Math.min(-3, yVal - 0.5), Math.max(3, yVal + 0.5)],
       mode: 'lines', type: 'scatter',
       name: `x = ${xVal.toFixed(1)}`,
-      line: { color: '#f59e0b', width: 2, dash: 'dash' },
+      line: { color: palette.mainTraces.tertiary, width: 2, dash: 'dash' },
       hoverinfo: 'skip', showlegend: false
     });
 
@@ -594,7 +596,7 @@ export default function PowerFunction() {
       traces.push({
         x: [xVal], y: [ptY], mode: 'markers+text', type: 'scatter',
         name: `(${xVal.toFixed(1)}, ${ptY.toFixed(3)})`,
-        marker: { size: 10, color: '#f59e0b', symbol: 'circle', line: { color: '#fff', width: 1 } },
+        marker: { size: 10, color: palette.mainTraces.tertiary, symbol: 'circle', line: { color: '#fff', width: 1 } },
         text: [`(${xVal.toFixed(1)}, ${ptY.toFixed(3)})`],
         textposition: 'top center',
         textfont: { size: 11, color: plotTextColor },

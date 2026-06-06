@@ -10,6 +10,8 @@ import {
   FormulaBox, Formula
 } from '../../../components/common/LayoutStyled';
 import { commonParamsConfig } from '../../../constants/continuityConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Removable Discontinuity — lim f(x) ≠ f(x₀)
@@ -26,6 +28,9 @@ const DiscontinuityRemovable = () => {
     aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
+
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   const generateData = useCallback(() => {
     const { a, b, x0, c, xRange } = params;
@@ -70,7 +75,7 @@ const DiscontinuityRemovable = () => {
         traces.push({
           x: leftX, y: leftY, type: 'scatter', mode: 'lines',
           name: `f(x) = ${a.toFixed(1)}x + ${b.toFixed(1)} (x < x₀)`,
-          line: { color: '#6366f1', width: 2.5 }
+          line: { color: palette.mainTraces.primary, width: 2.5 }
         });
       }
     }
@@ -90,7 +95,7 @@ const DiscontinuityRemovable = () => {
         traces.push({
           x: rightX, y: rightY, type: 'scatter', mode: 'lines',
           name: `f(x) = ${a.toFixed(1)}x + ${b.toFixed(1)} (x > x₀)`,
-          line: { color: '#6366f1', width: 2.5 }
+          line: { color: palette.mainTraces.primary, width: 2.5 }
         });
       }
     }
@@ -101,7 +106,7 @@ const DiscontinuityRemovable = () => {
       y: [Math.min(limitValue, c), Math.max(limitValue, c)],
       type: 'scatter', mode: 'lines',
       name: `gap: ${Math.abs(limitValue - c).toFixed(1)}`,
-      line: { color: '#ffd700', width: 2, dash: 'dash' }
+      line: { color: palette.limit.limitLine, width: 2, dash: 'dash' }
     });
 
     // Hollow circle at (x0, limitValue) — the "true" limit point
@@ -110,13 +115,13 @@ const DiscontinuityRemovable = () => {
       type: 'scatter', mode: 'markers+text',
       name: `lim: ${limitValue.toFixed(1)}`,
       marker: {
-        size: 12, color: '#3b82f6',
+        size: 12, color: palette.markers.pointA,
         symbol: 'circle-open',
-        line: { color: '#3b82f6', width: 2 }
+        line: { color: palette.markers.pointA, width: 2 }
       },
       text: [`lim = ${limitValue.toFixed(1)}`],
       textposition: 'left center',
-      textfont: { size: 12, color: '#3b82f6' }
+      textfont: { size: 12, color: palette.markers.pointA }
     });
 
     // Filled circle at (x0, c) — the actual function value
@@ -125,17 +130,17 @@ const DiscontinuityRemovable = () => {
       type: 'scatter', mode: 'markers+text',
       name: `f(x₀) = ${c.toFixed(1)}`,
       marker: {
-        size: 12, color: '#ef4444',
+        size: 12, color: palette.limit.hole,
         symbol: 'circle',
-        line: { color: '#ef4444', width: 2 }
+        line: { color: palette.limit.hole, width: 2 }
       },
       text: [`f(x₀) = ${c.toFixed(1)}`],
       textposition: 'right center',
-      textfont: { size: 12, color: '#ef4444' }
+      textfont: { size: 12, color: palette.limit.hole }
     });
 
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   const paramConfig = [
     { name: 'a', label: 'a (slope)', min: 0.1, max: 3.0, step: 0.1 },
