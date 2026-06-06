@@ -10,6 +10,8 @@ import {
   ToggleGroup, ToggleBtn
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Inverse Trigonometric Limit — classic limits of inverse trig functions at x = 0
@@ -19,6 +21,8 @@ import { commonParamsConfig } from '../../../constants/limitConfig';
  *   (arccos(kx) − π/2)/(kx) → -1   (arccos x = π/2 − x + o(x))
  */
 const InverseTrigonometricLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const [params, setParams] = useState({
     coefficient: 1,        // 缩放系数 k
     xRange: [-1.5, 1.5],       // X轴范围
@@ -75,9 +79,9 @@ const InverseTrigonometricLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: fnLabel,
+      name: `f(x) = ${fnLabel}`,
       line: {
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         width: 2.5
       }
     }];
@@ -99,7 +103,7 @@ const InverseTrigonometricLimit = () => {
         type: 'scatter',
         mode: 'lines',
         name: `x = ${bound.toFixed(2)}`,
-        line: { color: 'rgba(148,163,184,0.4)', width: 1, dash: 'dot' },
+        line: { color: palette.limit.boundary, width: 1, dash: 'dot' },
         hoverinfo: 'skip', showlegend: false
       });
       traces.push({
@@ -108,7 +112,7 @@ const InverseTrigonometricLimit = () => {
         type: 'scatter',
         mode: 'lines',
         name: `x = ${(-bound).toFixed(2)}`,
-        line: { color: 'rgba(148,163,184,0.4)', width: 1, dash: 'dot' },
+        line: { color: palette.limit.boundary, width: 1, dash: 'dot' },
         hoverinfo: 'skip', showlegend: false
       });
     }
@@ -118,9 +122,9 @@ const InverseTrigonometricLimit = () => {
       y: [limitValue, limitValue],
       type: 'scatter',
       mode: 'lines',
-      name: `lim: ${limitValue}`,
+      name: `lim x→${limitValue}`,
       line: {
-        color: '#ffd700',
+        color: palette.limit.limitLine,
         width: 2,
         dash: 'dash'
       }
@@ -133,7 +137,7 @@ const InverseTrigonometricLimit = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'x = 0',
-      line: { color: '#ef4444', width: 1, dash: 'dot' },
+      line: { color: palette.limit.verticalAsymptote, width: 1, dash: 'dot' },
       hoverinfo: 'skip', showlegend: false
     });
 

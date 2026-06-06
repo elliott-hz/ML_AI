@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
+import { getPlotLayout } from '../../constants/plotThemeConfig';
 
 export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
@@ -46,46 +46,12 @@ const LimitPlotter = ({
     return [];
   }, [data]);
 
-  // ✅ 新增：根据 plotStyle 应用样式到所有 traces
+  // ✅ 根据 plotStyle 应用样式到所有 traces（不覆盖颜色 — 颜色由页面通过 palette 控制）
   const styledData = useMemo(() => {
     if (!plotData || plotData.length === 0) return plotData;
 
-    const auxColor = getAuxiliaryColor(themeMode);
-
     return plotData.map(trace => {
       const newTrace = { ...trace };
-
-      // ✅ 检测是否为辅助元素（通过 name 判断）
-      const isAuxiliaryElement =
-        trace.name && (
-          trace.name.includes('lim:') ||
-          trace.name.includes('Peak') ||
-          trace.name.includes('Break Point') ||
-          trace.name.includes('Vertical Line') ||
-          trace.name.includes('Horizontal Line') ||
-          trace.name.includes('Connection Line') ||
-          trace.name.includes('Axis of Symmetry') ||
-          trace.name.includes('symmetry axis') ||
-          trace.name.includes('P(') ||
-          trace.name.includes("P'") ||
-          trace.name.includes('P₁') ||
-          trace.name.includes('P₂') ||
-          trace.name.startsWith('x=') ||
-          trace.name.startsWith('y=')
-        );
-
-      // ✅ 如果是辅助元素，替换为主题感知的颜色
-      if (isAuxiliaryElement) {
-        if (newTrace.line) {
-          newTrace.line = { ...newTrace.line, color: auxColor };
-        }
-        if (newTrace.marker) {
-          newTrace.marker = { ...newTrace.marker, color: auxColor };
-        }
-        if (newTrace.textfont) {
-          newTrace.textfont = { ...newTrace.textfont, color: auxColor };
-        }
-      }
 
       // 应用线宽样式
       if (newTrace.line) {
@@ -113,7 +79,7 @@ const LimitPlotter = ({
 
       return newTrace;
     });
-  }, [data, plotStyle, styleConfig, themeMode]);
+  }, [data, plotStyle, styleConfig]);
 
   // 自动计算 Y 轴范围 - 仅考虑可见的 traces
   const autoYRange = useMemo(() => {

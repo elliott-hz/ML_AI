@@ -8,6 +8,8 @@ import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
 } from '../../../components/limit/shared/LimitStyled';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Helper function to calculate harmonic number H_n
@@ -36,6 +38,9 @@ const toSubscript = (num) => {
  * Infinite Sum Not Necessarily Infinitesimal - Demonstrates that the sum of infinitely many infinitesimals can diverge
  */
 const InfiniteSumNotInfinitesimal = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   // Separate parameter states for each plot (following OddEvenFunctions pattern)
   const [plot1Params, setPlot1Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 1
@@ -61,24 +66,25 @@ const InfiniteSumNotInfinitesimal = () => {
   // Generate individual infinitesimals: a_n(x) = x/n
   const generateIndividualTerms = useCallback(() => {
     const termIndices = [1, 2, 3, 5, 10];  // Fixed terms to display
-    
+
     const traces = [];
     const [xMin, xMax] = plot1Params.xRange || [-2, 2];
-    
-    termIndices.forEach(n => {
+    const traceColors = [palette.mainTraces.primary, palette.mainTraces.secondary, palette.mainTraces.tertiary, palette.limit.verticalAsymptote, palette.limit.rightLimit];
+
+    termIndices.forEach((n, idx) => {
       const xValues = [xMin, xMax];
       const yValues = xValues.map(x => x / n);
-      
+
       // Use HTML sub tags for proper math formatting in Plotly legends
       const formulaText = `a<sub>${n}</sub>(x) = x/${n}`;
-      
+
       traces.push({
         x: xValues,
         y: yValues,
         type: 'scatter',
         mode: 'lines',
         name: formulaText,
-        line: { width: 2 }
+        line: { width: 2, color: traceColors[idx % traceColors.length] }
       });
     });
     
@@ -88,15 +94,16 @@ const InfiniteSumNotInfinitesimal = () => {
   // Generate partial sums: S_N(x) = H_N · x
   const generatePartialSums = useCallback(() => {
     const N_values = [1, 2, 3, 5, 10];  // Fixed partial sums to display
-    
+
     const traces = [];
     const [xMin, xMax] = plot2Params.xRange || [-2, 2];
-    
-    N_values.forEach(N => {
+    const traceColors = [palette.mainTraces.primary, palette.mainTraces.secondary, palette.mainTraces.tertiary, palette.limit.verticalAsymptote, palette.limit.rightLimit];
+
+    N_values.forEach((N, idx) => {
       const H_N = harmonicNumber(N);
       const xValues = [xMin, xMax];
       const yValues = xValues.map(x => H_N * x);
-      
+
       // Use HTML sub/sup tags for proper math formatting in Plotly legends
       let formulaText;
       if (N === 1) {
@@ -109,14 +116,14 @@ const InfiniteSumNotInfinitesimal = () => {
         // Use summation notation with HTML tags
         formulaText = `S<sub>${N}</sub>(x) = Σ<sup>N</sup><sub>k=1</sub> (x/k)`;
       }
-      
+
       traces.push({
         x: xValues,
         y: yValues,
         type: 'scatter',
         mode: 'lines',
         name: formulaText,
-        line: { width: 2 }
+        line: { width: 2, color: traceColors[idx % traceColors.length] }
       });
     });
     
@@ -141,8 +148,8 @@ const InfiniteSumNotInfinitesimal = () => {
       type: 'scatter',
       mode: 'lines+markers',
       name: 'S<sub>N</sub>(1)',
-      line: { width: 2 },
-      marker: { size: 6 }
+      line: { width: 2, color: palette.mainTraces.primary },
+      marker: { size: 6, color: palette.mainTraces.primary }
     }];
   }, [plot3Params]);
 

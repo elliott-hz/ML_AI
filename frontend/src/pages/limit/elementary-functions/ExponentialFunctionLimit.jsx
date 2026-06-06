@@ -10,6 +10,8 @@ import {
   QuickSetRow, QuickBtn
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Exponential Function Limit — f(x) = a·bˣ
@@ -19,6 +21,8 @@ import { commonParamsConfig } from '../../../constants/limitConfig';
  *   b = 1:  f(x) = a (constant)
  */
 const ExponentialFunctionLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   // 参数状态
   const [params, setParams] = useState({
     coefficient: 1,       // 系数 a
@@ -53,9 +57,9 @@ const ExponentialFunctionLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: `${a.toFixed(1)}·${baseLabel}ˣ`,
+      name: `f(x) = ${a.toFixed(1)}·${baseLabel}ˣ`,
       line: {
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         width: 2.5
       }
     }];
@@ -67,9 +71,9 @@ const ExponentialFunctionLimit = () => {
         y: [0, 0],
         type: 'scatter',
         mode: 'lines',
-        name: 'lim: 0',
+        name: 'lim x→0',
         line: {
-          color: '#ffd700',
+          color: palette.limit.limitLine,
           width: 2,
           dash: 'dash'
         }

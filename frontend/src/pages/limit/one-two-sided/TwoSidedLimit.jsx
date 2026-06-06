@@ -9,13 +9,16 @@ import {
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Two-Sided Limit - Continuous function showing left and right limits are equal
  * f(x) = (x²-1)/(x-1), which simplifies to x+1 for x ≠ 1
  */
 const TwoSidedLimit = () => {
-  // 参数状态
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const [params, setParams] = useState({
     xRange: [-1, 3],     // X轴范围（围绕x=1）
     plotStyle: 'medium', // Plot 样式档位
@@ -71,19 +74,19 @@ const TwoSidedLimit = () => {
           type: 'scatter',
           mode: 'lines',
           name: 'f(x)',
-          line: { 
-            color: '#6366f1', 
+          line: {
+            color: palette.mainTraces.primary,
             width: 2.5
           }
         });
       }
     }
-    
+
     // 第二部分：x > 1
     if (xMax > 1) {
       const xValuesRight = [];
       const yValuesRight = [];
-      
+
       for (let i = 0; i <= numPoints / 2; i++) {
         const x = Math.max(1, xMin) + ((xMax - Math.max(1, xMin)) * i) / (numPoints / 2);
         if (Math.abs(x - 1) > 0.01) { // 避免接近 1
@@ -92,7 +95,7 @@ const TwoSidedLimit = () => {
           yValuesRight.push((x * x - 1) / (x - 1));
         }
       }
-      
+
       if (xValuesRight.length > 0) {
         traces.push({
           x: xValuesRight,
@@ -100,42 +103,42 @@ const TwoSidedLimit = () => {
           type: 'scatter',
           mode: 'lines',
           name: 'f(x)',
-          line: { 
-            color: '#6366f1', 
+          line: {
+            color: palette.mainTraces.primary,
             width: 2.5
           }
         });
       }
     }
-    
+
     // ✅ 添加垂直辅助线（x=1，可去间断点）- 使用动态计算的 Y 范围
     traces.push({
       x: [1, 1],
       y: [auxYMin, auxYMax],
       type: 'scatter',
       mode: 'lines',
-      name: 'x=1',
-      line: { 
-        color: '#ffd700', // 金黄色
-        width: 2, 
-        dash: 'dash' 
+      name: 'x = 1',
+      line: {
+        color: palette.limit.limitLine,
+        width: 2,
+        dash: 'dash'
       }
     });
-    
+
     // ✅ 添加水平辅助线（y=2，极限值）
     traces.push({
       x: [xMin, xMax],
       y: [2, 2],
       type: 'scatter',
       mode: 'lines',
-      name: 'lim: 2',
-      line: { 
-        color: '#ffd700', // 金黄色
-        width: 2, 
-        dash: 'dash' 
+      name: 'lim x→2',
+      line: {
+        color: palette.limit.limitLine,
+        width: 2,
+        dash: 'dash'
       }
     });
-    
+
     // ✅ 添加可去间断点 (1, 2) - 空心点
     traces.push({
       x: [1],
@@ -143,12 +146,12 @@ const TwoSidedLimit = () => {
       type: 'scatter',
       mode: 'markers+text',
       name: 'Hole',
-      marker: { 
-        size: 12, 
-        color: '#ef4444', // 红色
+      marker: {
+        size: 12,
+        color: palette.limit.hole,
         symbol: 'circle-open',
         line: {
-          color: '#ef4444',
+          color: palette.limit.hole,
           width: 2
         }
       },
@@ -156,7 +159,7 @@ const TwoSidedLimit = () => {
       textposition: 'top center',
       textfont: {
         size: 12,
-        color: '#ef4444'
+        color: palette.limit.hole
       }
     });
     

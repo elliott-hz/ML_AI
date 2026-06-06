@@ -10,11 +10,15 @@ import {
   FunctionSection
 } from '../../../components/limit/shared/LimitStyled';
 import { legendPositionConfig, plotStyleConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Divergent Sequence 2 - u_n = sin(n) (oscillating)
  */
 const DivergentSequence2 = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const [params, setParams] = useState({
     maxN: 20,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
@@ -41,13 +45,13 @@ const DivergentSequence2 = () => {
       mode: 'lines+markers',
       name: 'uₙ',
       line: {
-        color: '#6366f1', // ✅ 改为蓝色，与收敛序列一致
+        color: palette.mainTraces.primary, // ✅ 改为蓝色，与收敛序列一致
         width: 2,
         shape: 'spline'
       },
       marker: {
         size: 8,
-        color: '#6366f1', // ✅ 改为蓝色，与收敛序列一致
+        color: palette.mainTraces.primary, // ✅ 改为蓝色，与收敛序列一致
         symbol: 'circle'
       }
     }];
@@ -74,7 +78,7 @@ const DivergentSequence2 = () => {
       mode: 'lines',
       name: 'f(x)',
       line: {
-        color: '#6366f1', // ✅ 改为蓝色，与收敛序列一致
+        color: palette.mainTraces.primary, // ✅ 改为蓝色，与收敛序列一致
         width: 2.5
       }
     }];

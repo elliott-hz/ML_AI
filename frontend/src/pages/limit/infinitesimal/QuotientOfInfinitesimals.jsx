@@ -8,11 +8,16 @@ import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
 } from '../../../components/limit/shared/LimitStyled';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Quotient of Infinitesimals Not Necessarily Infinitesimal - Demonstrates that the quotient of two infinitesimals can be infinitesimal, infinity, or a finite value
  */
 const QuotientOfInfinitesimals = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   // Separate parameter states for each plot
   const [plot1Params, setPlot1Params] = useState({ 
     xRange: [-2, 2],       // X range for Plot 1
@@ -60,7 +65,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x) = x²',
-      line: { width: 2, color: '#6366f1' }
+      line: { width: 2, color: palette.mainTraces.primary }
     });
     
     // Denominator: g(x) = 2x
@@ -80,7 +85,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'g(x) = 2x',
-      line: { width: 2, color: '#8b5cf6' }
+      line: { width: 2, color: palette.mainTraces.secondary }
     });
     
     // Quotient: f(x)/g(x) = x²/2x = x/2
@@ -100,7 +105,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x)/g(x) = x/2 → 0',
-      line: { width: 3, color: '#ef4444' }
+      line: { width: 3, color: palette.limit.hole }
     });
     
     return traces;
@@ -131,7 +136,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x) = 2x',
-      line: { width: 2, color: '#6366f1' }
+      line: { width: 2, color: palette.mainTraces.primary }
     });
     
     // Denominator: g(x) = x²
@@ -151,7 +156,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'g(x) = x²',
-      line: { width: 2, color: '#8b5cf6' }
+      line: { width: 2, color: palette.mainTraces.secondary }
     });
     
     // ✅ Quotient: f(x)/g(x) = 2x/x² = 2/x
@@ -178,7 +183,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x)/g(x) = 2/x → -∞ (left)',
-      line: { width: 3, color: '#ef4444' },
+      line: { width: 3, color: palette.limit.hole },
       visible: true
     });
     
@@ -203,7 +208,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x)/g(x) = 2/x → +∞ (right)',
-      line: { width: 3, color: '#ef4444' },
+      line: { width: 3, color: palette.limit.hole },
       visible: true
     });
     
@@ -235,7 +240,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x) = x',
-      line: { width: 2, color: '#6366f1' }
+      line: { width: 2, color: palette.mainTraces.primary }
     });
     
     // Denominator: g(x) = 2x
@@ -255,7 +260,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'g(x) = 2x',
-      line: { width: 2, color: '#8b5cf6' }
+      line: { width: 2, color: palette.mainTraces.secondary }
     });
     
     // Quotient: f(x)/g(x) = x/2x = 1/2
@@ -275,7 +280,7 @@ const QuotientOfInfinitesimals = () => {
       type: 'scatter',
       mode: 'lines',
       name: 'f(x)/g(x) = 1/2',
-      line: { width: 3, color: '#ef4444' }
+      line: { width: 3, color: palette.limit.hole }
     });
     
     return traces;

@@ -10,6 +10,8 @@ import {
   QuickSetRow, QuickBtn
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 const SUBSCRIPT_MAP = {
   '0': '\u2080', '1': '\u2081', '2': '\u2082', '3': '\u2083', '4': '\u2084',
@@ -38,6 +40,8 @@ const fmtBaseDisplay = (b) => {
  * Logarithmic Function Limit - y = log_b(x), lim(x→0⁺) = -∞, lim(x→+∞) = +∞
  */
 const LogarithmicFunctionLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   // 参数状态
   const [params, setParams] = useState({
     base: 2,             // 底数 b
@@ -69,9 +73,9 @@ const LogarithmicFunctionLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: `log${bd.sub}(x)`,
+      name: `f(x) = log${bd.sub}(x)`,
       line: {
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         width: 2.5
       }
     }];
@@ -84,7 +88,7 @@ const LogarithmicFunctionLimit = () => {
       mode: 'lines',
       name: 'y = 0',
       line: {
-        color: '#ffd700',
+        color: palette.limit.limitLine,
         width: 1.5,
         dash: 'dash'
       }

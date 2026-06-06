@@ -10,6 +10,8 @@ import {
   ToggleGroup, ToggleBtn
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 const toPiLabel = (val) => {
   const halfPi = Math.PI / 2;
@@ -31,6 +33,8 @@ const toPiLabel = (val) => {
  *   arccos(x):  domain [-1, 1], range [0, π], finite endpoint limits
  */
 const InverseTrigIntuitiveLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const [params, setParams] = useState({
     coefficient: 1,
     xRange: [-5, 5],
@@ -58,17 +62,17 @@ const InverseTrigIntuitiveLimit = () => {
       }
       traces.push({
         x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·arctan(x)`, line: { color: '#6366f1', width: 2.5 }
+        name: `f(x) = ${a.toFixed(1)}·arctan(x)`, line: { color: palette.mainTraces.primary, width: 2.5 }
       });
 
       const asy = a * Math.PI / 2;
       traces.push({
         x: [xMin, xMax], y: [asy, asy], type: 'scatter', mode: 'lines',
-        name: `lim:+${toPiLabel(asy)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `lim x→+${toPiLabel(asy)}`, line: { color: palette.limit.limitLine, width: 2, dash: 'dash' }
       });
       traces.push({
         x: [xMin, xMax], y: [-asy, -asy], type: 'scatter', mode: 'lines',
-        name: `lim:${toPiLabel(-asy)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `lim x→${toPiLabel(-asy)}`, line: { color: palette.limit.limitLine, width: 2, dash: 'dash' }
       });
     } else {
       xMin = Math.max(-1, xMin);
@@ -82,7 +86,7 @@ const InverseTrigIntuitiveLimit = () => {
       }
       traces.push({
         x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·${activeFunction}(x)`, line: { color: '#6366f1', width: 2.5 }
+        name: `f(x) = ${a.toFixed(1)}·${activeFunction}(x)`, line: { color: palette.mainTraces.primary, width: 2.5 }
       });
 
       // Domain boundary lines
@@ -90,11 +94,11 @@ const InverseTrigIntuitiveLimit = () => {
       const yHi = activeFunction === 'arcsin' ? a * Math.PI / 2 : a * Math.PI;
       traces.push({
         x: [-1, -1], y: [-8, 8], type: 'scatter', mode: 'lines',
-        name: `x=-1⁺: ${toPiLabel(yLo)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `x → −1⁺: lim = ${toPiLabel(yLo)}`, line: { color: palette.limit.limitLine, width: 2, dash: 'dash' }
       });
       traces.push({
         x: [1, 1], y: [-8, 8], type: 'scatter', mode: 'lines',
-        name: `x=1⁻: ${toPiLabel(yHi)}`, line: { color: '#ffd700', width: 2, dash: 'dash' }
+        name: `x → 1⁻: lim = ${toPiLabel(yHi)}`, line: { color: palette.limit.limitLine, width: 2, dash: 'dash' }
       });
     }
 

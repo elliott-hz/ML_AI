@@ -9,6 +9,8 @@ import {
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Infinitesimal Property 3: Constant × Infinitesimal
@@ -23,6 +25,8 @@ const InfinitesimalConstant = () => {
     aspectRatio: 'auto',  // 显示比例 (auto, 16:9, 4:3)
     legendPosition: 'top-right'
   });
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
 
   // 生成连续函数数据（多条曲线）
   const generateFunctionData = useCallback(() => {
@@ -69,7 +73,7 @@ const InfinitesimalConstant = () => {
       mode: 'lines',
       name: 'α(x) = x',
       line: { 
-        color: '#10b981', // 绿色
+        color: palette.mainTraces.secondary,
         width: 2.5
       }
     });
@@ -91,7 +95,7 @@ const InfinitesimalConstant = () => {
       mode: 'lines',
       name: `g(x) = ${constant}·x`,
       line: { 
-        color: '#ef4444', // 红色（突出显示）
+        color: palette.limit.hole, // 红色（突出显示）
         width: 3
       }
     });
@@ -102,9 +106,9 @@ const InfinitesimalConstant = () => {
       y: [auxYMin, auxYMax],
       type: 'scatter',
       mode: 'lines',
-      name: 'x=0',
+      name: 'x = 0',
       line: { 
-        color: '#ffd700', // 金黄色
+        color: palette.limit.limitLine, // 金黄色
         width: 2, 
         dash: 'dash' 
       }
@@ -116,14 +120,14 @@ const InfinitesimalConstant = () => {
       y: [0, 0],
       type: 'scatter',
       mode: 'lines',
-      name: 'lim: 0',
-      line: { 
-        color: '#ffd700', // 金黄色
-        width: 2, 
-        dash: 'dash' 
+      name: 'lim x→0',
+      line: {
+        color: palette.limit.limitLine, // 金黄色
+        width: 2,
+        dash: 'dash'
       }
     });
-    
+
     // ✅ 添加极限点 (0, 0)
     traces.push({
       x: [0],
@@ -133,14 +137,14 @@ const InfinitesimalConstant = () => {
       name: 'Limit',
       marker: { 
         size: 12, 
-        color: '#ef4444', // 红色
+        color: palette.limit.hole, // 红色
         symbol: 'circle'
       },
       text: ['lim = 0'],
       textposition: 'top center',
       textfont: {
         size: 14,
-        color: '#ef4444',
+        color: palette.limit.hole,
         family: 'Arial, sans-serif'
       }
     });

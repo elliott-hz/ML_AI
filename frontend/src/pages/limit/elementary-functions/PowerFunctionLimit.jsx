@@ -9,6 +9,8 @@ import {
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 const SUPERSCRIPT_MAP = {
   '0': '\u2070', '1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074',
@@ -25,6 +27,8 @@ const toSup = (s) => String(s).split('').map(c => SUPERSCRIPT_MAP[c] || c).join(
  *   n < 0:  lim(x→±∞) a·xⁿ = 0
  */
 const PowerFunctionLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   // 参数状态
   const [params, setParams] = useState({
     coefficient: 1,       // 系数 a
@@ -62,8 +66,8 @@ const PowerFunctionLimit = () => {
       }
       traces.push({
         x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-        name: `${a.toFixed(1)}·x${supExp}`,
-        line: { color: '#6366f1', width: 2.5 }
+        name: `f(x) = ${a.toFixed(1)}·x${supExp}`,
+        line: { color: palette.mainTraces.primary, width: 2.5 }
       });
     } else if (integerExp && nRound < 0) {
       // ── 负整数指数：分两支（x<0 和 x>0），避免 x=0 ──
@@ -80,8 +84,8 @@ const PowerFunctionLimit = () => {
         if (xN.length > 0) {
           traces.push({
             x: xN, y: yN, type: 'scatter', mode: 'lines',
-            name: `${a.toFixed(1)}·x${supExp}`,
-            line: { color: '#6366f1', width: 2.5 }
+            name: `f(x) = ${a.toFixed(1)}·x${supExp}`,
+            line: { color: palette.mainTraces.primary, width: 2.5 }
           });
         }
       }
@@ -98,8 +102,8 @@ const PowerFunctionLimit = () => {
         if (xP.length > 0) {
           traces.push({
             x: xP, y: yP, type: 'scatter', mode: 'lines',
-            name: `${a.toFixed(1)}·x${supExp}`,
-            line: { color: '#6366f1', width: 2.5 }
+            name: `f(x) = ${a.toFixed(1)}·x${supExp}`,
+            line: { color: palette.mainTraces.primary, width: 2.5 }
           });
         }
       }
@@ -118,8 +122,8 @@ const PowerFunctionLimit = () => {
       if (xValues.length > 0) {
         traces.push({
           x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-          name: `${a.toFixed(1)}·x${supExp}`,
-          line: { color: '#6366f1', width: 2.5 }
+          name: `f(x) = ${a.toFixed(1)}·x${supExp}`,
+          line: { color: palette.mainTraces.primary, width: 2.5 }
         });
       }
     } else {
@@ -137,8 +141,8 @@ const PowerFunctionLimit = () => {
       if (xValues.length > 0) {
         traces.push({
           x: xValues, y: yValues, type: 'scatter', mode: 'lines',
-          name: `${a.toFixed(1)}·x${supExp}`,
-          line: { color: '#6366f1', width: 2.5 }
+          name: `f(x) = ${a.toFixed(1)}·x${supExp}`,
+          line: { color: palette.mainTraces.primary, width: 2.5 }
         });
       }
     }
@@ -174,7 +178,7 @@ const PowerFunctionLimit = () => {
         mode: 'lines',
         name: limitLabel,
         line: {
-          color: '#ffd700',
+          color: palette.limit.limitLine,
           width: 2,
           dash: 'dash'
         }
@@ -190,7 +194,7 @@ const PowerFunctionLimit = () => {
         mode: 'lines',
         name: 'x = 0',
         line: {
-          color: '#ef4444',
+          color: palette.limit.verticalAsymptote,
           width: 1.5,
           dash: 'dot'
         }

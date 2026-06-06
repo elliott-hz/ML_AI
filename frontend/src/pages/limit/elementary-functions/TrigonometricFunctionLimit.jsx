@@ -10,6 +10,8 @@ import {
   ToggleGroup, ToggleBtn
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Trigonometric Function Limit - classic finite limits of trig functions
@@ -19,6 +21,8 @@ import { commonParamsConfig } from '../../../constants/limitConfig';
  *   lim(x→0) (1 - cos(kx))/x = 0
  */
 const TrigonometricFunctionLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   // 参数状态
   const [params, setParams] = useState({
     coefficient: 1,        // 缩放系数 k
@@ -68,9 +72,9 @@ const TrigonometricFunctionLimit = () => {
       y: yValues,
       type: 'scatter',
       mode: 'lines',
-      name: fnLabel,
+      name: `f(x) = ${fnLabel}`,
       line: {
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         width: 2.5
       }
     }];
@@ -90,9 +94,9 @@ const TrigonometricFunctionLimit = () => {
       y: [limitValue, limitValue],
       type: 'scatter',
       mode: 'lines',
-      name: `lim: ${limitValue}`,
+      name: `lim x→${limitValue}`,
       line: {
-        color: '#ffd700',
+        color: palette.limit.limitLine,
         width: 2,
         dash: 'dash'
       }
@@ -106,7 +110,7 @@ const TrigonometricFunctionLimit = () => {
       mode: 'lines',
       name: 'x = 0',
       line: {
-        color: '#ef4444',
+        color: palette.limit.verticalAsymptote,
         width: 1,
         dash: 'dot'
       }

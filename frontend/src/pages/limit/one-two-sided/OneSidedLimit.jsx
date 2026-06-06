@@ -9,12 +9,17 @@ import {
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
 } from '../../../components/limit/shared/LimitStyled';
 import { commonParamsConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * One-Sided Limit - Piecewise function showing left and right limits are different
  * f(x) = { x-1, x < 0; 0, x = 0; x+1, x > 0 }
  */
 const OneSidedLimit = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   // 参数状态
   const [params, setParams] = useState({
     xRange: [-2, 2],     // X轴范围（围绕x=0）
@@ -75,13 +80,13 @@ const OneSidedLimit = () => {
           mode: 'lines',
           name: 'f(x) = x-1 (x<0)',
           line: { 
-            color: '#6366f1', 
+            color: palette.mainTraces.primary,
             width: 2.5
           }
         });
       }
     }
-    
+
     // ✅ 第二部分：右半部分 f(x) = x + 1, x > 0
     if (xMax > 0) {
       const xValuesRight = [];
@@ -102,28 +107,28 @@ const OneSidedLimit = () => {
           type: 'scatter',
           mode: 'lines',
           name: 'f(x) = x+1 (x>0)',
-          line: { 
-            color: '#6366f1', 
+          line: {
+            color: palette.mainTraces.primary,
             width: 2.5
           }
         });
       }
     }
-    
+
     // ✅ 添加垂直辅助线（x=0，跳跃点）- 使用动态计算的 Y 范围
     traces.push({
       x: [0, 0],
       y: [auxYMin, auxYMax],
       type: 'scatter',
       mode: 'lines',
-      name: 'x=0',
-      line: { 
-        color: '#ffd700', // 金黄色
-        width: 2, 
-        dash: 'dash' 
+      name: 'x = 0',
+      line: {
+        color: palette.limit.limitLine,
+        width: 2,
+        dash: 'dash'
       }
     });
-    
+
     // ✅ 添加左极限点 (0, -1)
     traces.push({
       x: [0],
@@ -131,19 +136,19 @@ const OneSidedLimit = () => {
       type: 'scatter',
       mode: 'markers+text',
       name: 'Left limit',
-      marker: { 
-        size: 10, 
-        color: '#ef4444', // 红色
+      marker: {
+        size: 10,
+        color: palette.limit.leftLimit,
         symbol: 'circle-open'
       },
       text: ['Left: -1'],
       textposition: 'bottom right',
       textfont: {
         size: 12,
-        color: '#ef4444'
+        color: palette.limit.leftLimit
       }
     });
-    
+
     // ✅ 添加右极限点 (0, 1)
     traces.push({
       x: [0],
@@ -151,16 +156,16 @@ const OneSidedLimit = () => {
       type: 'scatter',
       mode: 'markers+text',
       name: 'Right limit',
-      marker: { 
-        size: 10, 
-        color: '#10b981', // 绿色
+      marker: {
+        size: 10,
+        color: palette.limit.rightLimit,
         symbol: 'circle-open'
       },
       text: ['Right: +1'],
       textposition: 'top right',
       textfont: {
         size: 12,
-        color: '#10b981'
+        color: palette.limit.rightLimit
       }
     });
     

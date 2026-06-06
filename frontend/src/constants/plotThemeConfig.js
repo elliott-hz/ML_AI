@@ -85,6 +85,16 @@ export function getTracePalette(themeMode) {
       tangentPoint: isDark ? '#06b6d4' : '#0891b2', // tangent point — cyan
     },
 
+    // ── 3.3a Limit-specific semantic colors (theme-dependent) ──
+    limit: {
+      limitLine: isDark ? '#ffd700' : '#b45309',        // limit reference lines (horizontal/vertical dashed)
+      leftLimit: isDark ? '#ef4444' : '#dc2626',        // left limit markers and labels
+      rightLimit: isDark ? '#22c55e' : '#16a34a',       // right limit markers and labels
+      verticalAsymptote: isDark ? '#ef4444' : '#dc2626', // vertical asymptote dotted lines
+      hole: isDark ? '#ef4444' : '#dc2626',              // hole / discontinuity markers
+      boundary: 'rgba(148,163,184,0.4)',                 // domain boundary faint dotted lines
+    },
+
     // ── 3.3b Text annotations (theme-dependent) ──
     text: {
       annotation: isDark ? '#f8fafc' : '#0f172a',   // primary text labels

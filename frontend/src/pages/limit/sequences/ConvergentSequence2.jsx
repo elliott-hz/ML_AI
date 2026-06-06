@@ -10,11 +10,15 @@ import {
   FunctionSection
 } from '../../../components/limit/shared/LimitStyled';
 import { legendPositionConfig, plotStyleConfig } from '../../../constants/limitConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 
 /**
  * Convergent Sequence 2 - u_n = n/(n+1) → 1
  */
 const ConvergentSequence2 = () => {
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
   const [params, setParams] = useState({
     maxN: 50,          // 显示的项数
     plotStyle: 'medium', // Plot 样式档位
@@ -41,13 +45,13 @@ const ConvergentSequence2 = () => {
       mode: 'lines+markers',
       name: 'uₙ',
       line: {
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         width: 2,
         shape: 'spline'
       },
       marker: {
         size: 8,
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         symbol: 'circle'
       }
     }];
@@ -58,9 +62,9 @@ const ConvergentSequence2 = () => {
       y: [1, 1],
       type: 'scatter',
       mode: 'lines',
-      name: 'lim: 1',
+      name: 'lim x→1',
       line: {
-        color: '#ffd700', // 金黄色，会被 styledData 自动调整为主题色
+        color: palette.limit.limitLine,
         width: 2,
         dash: 'dash'
       }
@@ -90,7 +94,7 @@ const ConvergentSequence2 = () => {
       mode: 'lines',
       name: 'f(x)',
       line: {
-        color: '#6366f1',
+        color: palette.mainTraces.primary,
         width: 2.5
       }
     }];
