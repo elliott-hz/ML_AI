@@ -1,6 +1,8 @@
 // UI Pattern: TabbedDerivativeInverseTrig — ToggleGroup: 6 tabs (arcsin/arccos/arctan/arccot/arcsec/arccsc), per-tab xRange reset
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
@@ -20,6 +22,10 @@ import {
   ToggleGroup,
   ToggleBtn
 } from '../../../components/derivative/shared/DerivativeStyled';
+
+// Module-level color placeholders — replaced by palette at render time
+const _MC = '#6366f1';
+const _DC = '#ef4444';
 
 /**
  * Inverse trigonometric function tab definitions
@@ -108,8 +114,8 @@ function generateArcsinData(xRange) {
       dy.push(1 / Math.sqrt(1 - x * x));
     }
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arcsin x', line: { color: '#6366f1', width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "1 / √(1 − x²)", line: { color: '#ef4444', width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arcsin x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "1 / √(1 − x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -132,8 +138,8 @@ function generateArccosData(xRange) {
       dy.push(-1 / Math.sqrt(1 - x * x));
     }
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arccos x', line: { color: '#6366f1', width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "−1 / √(1 − x²)", line: { color: '#ef4444', width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arccos x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "−1 / √(1 − x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -152,8 +158,8 @@ function generateArctanData(xRange) {
     dx.push(x);
     dy.push(1 / (1 + x * x));
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arctan x', line: { color: '#6366f1', width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "1 / (1 + x²)", line: { color: '#ef4444', width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arctan x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "1 / (1 + x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -172,8 +178,8 @@ function generateArccotData(xRange) {
     dx.push(x);
     dy.push(-1 / (1 + x * x));
   }
-  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arccot x', line: { color: '#6366f1', width: 2.5 } });
-  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "−1 / (1 + x²)", line: { color: '#ef4444', width: 2, dash: 'dash' } });
+  traces.push({ x: mx, y: my, type: 'scatter', mode: 'lines', name: 'arccot x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: dx, y: dy, type: 'scatter', mode: 'lines', name: "−1 / (1 + x²)", line: { color: _DC, width: 2, dash: 'dash' } });
   return traces;
 }
 
@@ -209,10 +215,10 @@ function generateArcsecData(xRange) {
     }
   }
 
-  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'arcsec x', line: { color: '#6366f1', width: 2.5 } });
-  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'arcsec x', line: { color: '#6366f1', width: 2.5 }, showlegend: false });
-  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "1 / (|x|·√(x²−1))", line: { color: '#ef4444', width: 2, dash: 'dash' } });
-  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "1 / (|x|·√(x²−1))", line: { color: '#ef4444', width: 2, dash: 'dash' }, showlegend: false });
+  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'arcsec x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'arcsec x', line: { color: _MC, width: 2.5 }, showlegend: false });
+  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' }, showlegend: false });
 
   return traces;
 }
@@ -248,10 +254,10 @@ function generateArccscData(xRange) {
     }
   }
 
-  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'arccsc x', line: { color: '#6366f1', width: 2.5 } });
-  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'arccsc x', line: { color: '#6366f1', width: 2.5 }, showlegend: false });
-  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "−1 / (|x|·√(x²−1))", line: { color: '#ef4444', width: 2, dash: 'dash' } });
-  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "−1 / (|x|·√(x²−1))", line: { color: '#ef4444', width: 2, dash: 'dash' }, showlegend: false });
+  traces.push({ x: leftX, y: leftY, type: 'scatter', mode: 'lines', name: 'arccsc x', line: { color: _MC, width: 2.5 } });
+  traces.push({ x: rightX, y: rightY, type: 'scatter', mode: 'lines', name: 'arccsc x', line: { color: _MC, width: 2.5 }, showlegend: false });
+  traces.push({ x: dLeftX, y: dLeftY, type: 'scatter', mode: 'lines', name: "−1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' } });
+  traces.push({ x: dRightX, y: dRightY, type: 'scatter', mode: 'lines', name: "−1 / (|x|·√(x²−1))", line: { color: _DC, width: 2, dash: 'dash' }, showlegend: false });
 
   return traces;
 }
@@ -291,9 +297,16 @@ const InverseTrigonometricFunctions = () => {
     setActiveTab(key);
   };
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   const generateData = useCallback(() => {
-    return DATA_GENERATORS[activeTab](params.xRange);
-  }, [activeTab, params.xRange]);
+    const traces = DATA_GENERATORS[activeTab](params.xRange);
+    return traces.map(t => ({
+      ...t,
+      line: { ...t.line, color: t.line?.color === _MC ? palette.mainTraces.primary : palette.auxTraces.derivative }
+    }));
+  }, [activeTab, params.xRange, palette]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

@@ -1,6 +1,9 @@
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
-export { ASPECT_RATIO_OPTIONS } from './DerivativePlotter';
+import { useThemeMode } from '../../hooks/useThemeMode';
+import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
+
+export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
 /**
  * Continuity Plotter - Specialized for continuity visualization
@@ -17,9 +20,7 @@ const ContinuityPlotter = ({
   legendPosition = 'top-right'
 }) => {
   const plotRef = useRef(null);
-  const [themeMode, setThemeMode] = useState(() => {
-    return localStorage.getItem('themeMode') || 'dark';
-  });
+  const themeMode = useThemeMode();
 
   const styleConfig = useMemo(() => {
     switch (plotStyle) {
@@ -33,19 +34,6 @@ const ContinuityPlotter = ({
         return { lineWidth: 2, pointSize: 8, fontSize: 12, dash: 'dash' };
     }
   }, [plotStyle]);
-
-  useEffect(() => {
-    const handleThemeChange = () => {
-      const newMode = localStorage.getItem('themeMode') || 'dark';
-      setThemeMode(newMode);
-    };
-    const intervalId = setInterval(handleThemeChange, 100);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#dc2626';
-  }, [themeMode]);
 
   const autoYRange = useMemo(() => {
     if (propYRange) return propYRange;
@@ -75,74 +63,113 @@ const ContinuityPlotter = ({
 
   const styledData = useMemo(() => {
     if (!data || data.length === 0) return data;
+
+    const auxColor = getAuxiliaryColor(themeMode);
+
     return data.map(trace => {
       const newTrace = { ...trace };
+
+      // Detect auxiliary elements by name patterns
+      const isAuxiliaryElement =
+        trace.name && (
+          trace.name.includes('Peak') ||
+          trace.name.includes('Break Point') ||
+          trace.name.includes('Vertical Line') ||
+          trace.name.includes('Horizontal Line') ||
+          trace.name.includes('Connection Line') ||
+          trace.name.includes('P(') ||
+          trace.name.includes('Δx') ||
+          trace.name.includes('Δy') ||
+          trace.name.includes('gap') ||
+          trace.name.includes('jump') ||
+          trace.name.includes('Hole') ||
+          trace.name.includes('x₀') ||
+          trace.name.startsWith('x=') ||
+          trace.name.startsWith('y=') ||
+          trace.name.startsWith('lim') ||
+          trace.name.startsWith('f(x₀)')
+        );
+
+      if (isAuxiliaryElement) {
+        if (newTrace.line) {
+          newTrace.line = { ...newTrace.line, color: auxColor };
+        }
+        if (newTrace.marker) {
+          newTrace.marker = { ...newTrace.marker, color: auxColor };
+        }
+        if (newTrace.textfont) {
+          newTrace.textfont = { ...newTrace.textfont, color: auxColor };
+        }
+      }
+
       if (newTrace.line) {
         newTrace.line = {
           ...newTrace.line,
           width: styleConfig.lineWidth
         };
       }
+
       if (newTrace.marker) {
         newTrace.marker = {
           ...newTrace.marker,
           size: styleConfig.pointSize
         };
       }
+
       if (newTrace.textfont) {
         newTrace.textfont = {
           ...newTrace.textfont,
           size: styleConfig.fontSize
         };
       }
+
       return newTrace;
     });
-  }, [data, styleConfig]);
+  }, [data, styleConfig, themeMode]);
 
   const layout = useMemo(() => {
-    const isDark = themeMode === 'dark';
-    const axisColor = isDark ? '#b9b9d3' : '#475569';
+    const plotLayout = getPlotLayout(themeMode);
 
     return {
       title: {
         text: title,
         font: {
           size: styleConfig.fontSize + 6,
-          color: isDark ? '#e0e0e0' : '#0f172a'
+          color: plotLayout.titleFontColor
         }
       },
       xaxis: {
         title: 'x',
         range: propXRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
+        linecolor: plotLayout.axisColor,
         mirror: true
       },
       yaxis: {
         title: 'y',
         range: autoYRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
+        linecolor: plotLayout.axisColor,
         mirror: true
       },
-      plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
-      paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
+      plot_bgcolor: plotLayout.plot_bgcolor,
+      paper_bgcolor: plotLayout.paper_bgcolor,
       margin: { l: 60, r: 20, t: 60, b: 60 },
       showlegend: legendPosition !== 'None',
       legend: {
-        font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
-        bgcolor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.85)',
-        bordercolor: isDark ? '#334155' : '#cbd5e1',
+        font: { color: plotLayout.legend.fontColor, size: styleConfig.fontSize },
+        bgcolor: plotLayout.legend.bgcolor,
+        bordercolor: plotLayout.legend.bordercolor,
         borderwidth: 1,
         x: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02,
         y: legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02,
@@ -206,7 +233,7 @@ const ContinuityPlotter = ({
   const containerStyle = {
     width: '100%',
     height: aspectRatio === 'auto' ? '600px' : 'auto',
-    background: 'var(--theme-card-bg, #1e293b)',
+    background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',

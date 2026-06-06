@@ -1,6 +1,9 @@
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
-export { ASPECT_RATIO_OPTIONS } from './DerivativePlotter';
+import { useThemeMode } from '../../hooks/useThemeMode';
+import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
+
+export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
 /**
  * Build π-format tick config for a given axis range.
@@ -37,7 +40,7 @@ function buildPiTickExtra(range) {
  * 接收已计算好的 Plotly traces 数据并渲染
  */
 const FunctionPlotter = ({
-  data,              // ✅ 新增：直接接收已计算好的 Plotly traces 数组
+  data,
   xRange: propXRange = [-10, 10],
   yRange: propYRange,
   title,
@@ -49,9 +52,7 @@ const FunctionPlotter = ({
   yTickMode = 'auto'
 }) => {
   const plotRef = useRef(null);
-  const [themeMode, setThemeMode] = useState(() => {
-    return localStorage.getItem('themeMode') || 'dark';
-  });
+  const themeMode = useThemeMode();
 
   // 样式映射配置
   const styleConfig = useMemo(() => {
@@ -67,22 +68,6 @@ const FunctionPlotter = ({
     }
   }, [plotStyle]);
 
-  // 监听主题变化
-  useEffect(() => {
-    const handleThemeChange = () => {
-      const newMode = localStorage.getItem('themeMode') || 'dark';
-      setThemeMode(newMode);
-    };
-
-    const intervalId = setInterval(handleThemeChange, 100);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  // 根据主题获取辅助线颜色
-  const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#b45309';
-  }, [themeMode]);
-
   // 自动计算 Y 轴范围（基于传入的数据）
   const autoYRange = useMemo(() => {
     if (propYRange) return propYRange;
@@ -90,7 +75,6 @@ const FunctionPlotter = ({
     let minY = Infinity;
     let maxY = -Infinity;
 
-    // 遍历所有 traces，找到最小和最大值
     data.forEach(trace => {
       if (trace.y && Array.isArray(trace.y)) {
         trace.y.forEach(y => {
@@ -121,7 +105,7 @@ const FunctionPlotter = ({
   const styledData = useMemo(() => {
     if (!data || data.length === 0) return data;
 
-    const auxColor = themeMode === 'dark' ? '#ffd700' : '#b45309';
+    const auxColor = getAuxiliaryColor(themeMode);
 
     return data.map(trace => {
       const newTrace = { ...trace };
@@ -190,8 +174,7 @@ const FunctionPlotter = ({
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
-    const isDark = themeMode === 'dark';
-    const axisColor = isDark ? '#b9b9d3' : '#475569';
+    const plotLayout = getPlotLayout(themeMode);
 
     // π tick extras (only applied when tick mode is 'pi')
     const xaxisExtra = xTickMode === 'pi' ? buildPiTickExtra(propXRange) : {};
@@ -202,43 +185,43 @@ const FunctionPlotter = ({
         text: title,
         font: {
           size: styleConfig.fontSize + 6,
-          color: isDark ? '#e0e0e0' : '#0f172a'
+          color: plotLayout.titleFontColor
         }
       },
       xaxis: {
         title: 'x',
         range: propXRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
+        linecolor: plotLayout.axisColor,
         mirror: true,
         ...xaxisExtra
       },
       yaxis: {
         title: 'y',
         range: autoYRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
+        linecolor: plotLayout.axisColor,
         mirror: true,
         ...yaxisExtra
       },
-      plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
-      paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
+      plot_bgcolor: plotLayout.plot_bgcolor,
+      paper_bgcolor: plotLayout.paper_bgcolor,
       margin: { l: 60, r: 20, t: 60, b: 60 },
       showlegend: legendPosition !== 'None',
       legend: {
-        font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
-        bgcolor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.85)',
-        bordercolor: isDark ? '#334155' : '#cbd5e1',
+        font: { color: plotLayout.legend.fontColor, size: styleConfig.fontSize },
+        bgcolor: plotLayout.legend.bgcolor,
+        bordercolor: plotLayout.legend.bordercolor,
         borderwidth: 1,
         x: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02,
         y: legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02,
@@ -248,14 +231,13 @@ const FunctionPlotter = ({
     };
   }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode]);
 
-  // 配置 Plotly 工具栏
   const config = {
     displayModeBar: true,
     modeBarButtonsToAdd: [],
     modeBarButtonsToRemove: [
       'zoom2d', 'pan2d', 'select2d', 'lasso2d',
       'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
-      'sendDataToCloud' // 移除 Plotly 链接按钮
+      'sendDataToCloud'
     ],
     toImageButtonOptions: {
       format: 'png',
@@ -266,29 +248,22 @@ const FunctionPlotter = ({
     }
   };
 
-  // 使用 useEffect 渲染图表
   useEffect(() => {
     if (plotRef.current && styledData && styledData.length > 0) {
       Plotly.newPlot(plotRef.current, styledData, layout, config);
     }
   }, [styledData, layout, config]);
 
-  // 添加窗口resize监听器，实现自动响应式调整
   useEffect(() => {
     const handleResize = () => {
       if (plotRef.current) {
         Plotly.Plots.resize(plotRef.current);
       }
     };
-
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 处理导出按钮点击
   const handleExport = useCallback(async () => {
     try {
       if (plotRef.current) {
@@ -298,7 +273,6 @@ const FunctionPlotter = ({
           height: 800,
           scale: 2
         });
-
         const link = document.createElement('a');
         link.href = imageData;
         link.download = `${title.replace(/\s+/g, '_')}_${Date.now()}.png`;
@@ -309,11 +283,10 @@ const FunctionPlotter = ({
     }
   }, [title]);
 
-  // 简单的内联样式 - 使用 CSS 变量支持主题切换
   const containerStyle = {
     width: '100%',
     height: aspectRatio === 'auto' ? '600px' : 'auto',
-    background: 'var(--theme-card-bg, #1e293b)',
+    background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -353,14 +326,12 @@ const FunctionPlotter = ({
 
   const handleFullscreenToggle = useCallback(() => {
     if (!document.fullscreenElement) {
-      // Enter fullscreen
       if (plotRef.current) {
         plotRef.current.requestFullscreen().catch(err => {
           console.log(`Error attempting to enable full-screen mode: ${err.message}`);
         });
       }
     } else {
-      // Exit fullscreen
       if (document.exitFullscreen) {
         document.exitFullscreen();
       }

@@ -1,5 +1,7 @@
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
+import { useThemeMode } from '../../hooks/useThemeMode';
+import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
 
 export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
@@ -20,9 +22,7 @@ const DerivativePlotter = ({
   yTickMode = 'auto'  // 'auto' | 'pi'
 }) => {
   const plotRef = useRef(null);
-  const [themeMode, setThemeMode] = useState(() => {
-    return localStorage.getItem('themeMode') || 'dark';
-  });
+  const themeMode = useThemeMode();
 
   const styleConfig = useMemo(() => {
     switch (plotStyle) {
@@ -36,19 +36,6 @@ const DerivativePlotter = ({
         return { lineWidth: 2, pointSize: 8, fontSize: 12, dash: 'dash' };
     }
   }, [plotStyle]);
-
-  useEffect(() => {
-    const handleThemeChange = () => {
-      const newMode = localStorage.getItem('themeMode') || 'dark';
-      setThemeMode(newMode);
-    };
-    const intervalId = setInterval(handleThemeChange, 100);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#dc2626'; // Dark: yellow, Light: red
-  }, [themeMode]);
 
   const autoYRange = useMemo(() => {
     if (propYRange) return propYRange;
@@ -74,8 +61,8 @@ const DerivativePlotter = ({
       return [center - 1.3, center + 1.3];
     }
     if (range <= 2) {
-      const padding = range * 0.15;
-      return [minY - padding, maxY + padding];
+      const p = range * 0.15;
+      return [minY - p, maxY + p];
     }
     return [minY - padding, maxY + padding];
   }, [data, propYRange]);
@@ -84,7 +71,7 @@ const DerivativePlotter = ({
   const styledData = useMemo(() => {
     if (!data || data.length === 0) return data;
 
-    const auxColor = getAuxiliaryColor();
+    const auxColor = getAuxiliaryColor(themeMode);
 
     return data.map(trace => {
       const newTrace = { ...trace };
@@ -150,11 +137,10 @@ const DerivativePlotter = ({
 
       return newTrace;
     });
-  }, [data, styleConfig, getAuxiliaryColor]);
+  }, [data, styleConfig, themeMode]);
 
   const layout = useMemo(() => {
-    const isDark = themeMode === 'dark';
-    const axisColor = isDark ? '#b9b9d3' : '#475569';
+    const plotLayout = getPlotLayout(themeMode);
 
     // Shared helper: generate π-format tick config for a given axis range
     const buildPiTickExtra = (range) => {
@@ -201,43 +187,43 @@ const DerivativePlotter = ({
         text: title,
         font: {
           size: styleConfig.fontSize + 6,
-          color: isDark ? '#e0e0e0' : '#0f172a'
+          color: plotLayout.titleFontColor
         }
       },
       xaxis: {
         title: 'x',
         range: propXRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
+        linecolor: plotLayout.axisColor,
         mirror: true,
         ...xaxisExtra
       },
       yaxis: {
         title: 'y',
         range: autoYRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
+        linecolor: plotLayout.axisColor,
         mirror: true,
         ...yaxisExtra
       },
-      plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
-      paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
+      plot_bgcolor: plotLayout.plot_bgcolor,
+      paper_bgcolor: plotLayout.paper_bgcolor,
       margin: { l: 60, r: 20, t: 60, b: 60 },
       showlegend: legendPosition !== 'None',
       legend: {
-        font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
-        bgcolor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.85)',
-        bordercolor: isDark ? '#334155' : '#cbd5e1',
+        font: { color: plotLayout.legend.fontColor, size: styleConfig.fontSize },
+        bgcolor: plotLayout.legend.bgcolor,
+        bordercolor: plotLayout.legend.bordercolor,
         borderwidth: 1,
         x: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02,
         y: legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02,
@@ -301,7 +287,7 @@ const DerivativePlotter = ({
   const containerStyle = {
     width: '100%',
     height: aspectRatio === 'auto' ? '600px' : 'auto',
-    background: 'var(--theme-card-bg, #1e293b)',
+    background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',

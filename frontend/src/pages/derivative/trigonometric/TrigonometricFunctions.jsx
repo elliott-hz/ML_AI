@@ -1,6 +1,8 @@
 // UI Pattern: TabbedFunction — ToggleGroup: 6 trig tabs (sin/cos/tan/cot/sec/csc), shared xRange
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
@@ -25,6 +27,10 @@ import {
 const ASYMPTOTE_EPS = 0.05;
 const Y_CLAMP = 500;
 
+// Module-level color placeholders — replaced by palette at render time
+const _MC = '#6366f1';
+const _DC = '#ef4444';
+
 /**
  * Trigonometric function tab definitions
  */
@@ -36,8 +42,8 @@ const FUNCTIONS = {
     formulaTitle: 'Derivative of Sine:',
     formula: 'f(x) = sin x<br/><br/>f\'(x) = cos x',
     plotTitle: "(sin x)' = cos x",
-    mainColor: '#6366f1',
-    derivColor: '#ef4444'
+    mainColor: _MC,
+    derivColor: _DC
   },
   cos: {
     label: 'cos',
@@ -46,8 +52,8 @@ const FUNCTIONS = {
     formulaTitle: 'Derivative of Cosine:',
     formula: 'f(x) = cos x<br/><br/>f\'(x) = −sin x',
     plotTitle: "(cos x)' = −sin x",
-    mainColor: '#6366f1',
-    derivColor: '#ef4444'
+    mainColor: _MC,
+    derivColor: _DC
   },
   tan: {
     label: 'tan',
@@ -56,8 +62,8 @@ const FUNCTIONS = {
     formulaTitle: 'Derivative of Tangent:',
     formula: 'f(x) = tan x<br/><br/>f\'(x) = sec²x = 1 / cos²x',
     plotTitle: "(tan x)' = sec²x",
-    mainColor: '#6366f1',
-    derivColor: '#ef4444'
+    mainColor: _MC,
+    derivColor: _DC
   },
   cot: {
     label: 'cot',
@@ -66,8 +72,8 @@ const FUNCTIONS = {
     formulaTitle: 'Derivative of Cotangent:',
     formula: 'f(x) = cot x<br/><br/>f\'(x) = −csc²x = −1 / sin²x',
     plotTitle: "(cot x)' = −csc²x",
-    mainColor: '#6366f1',
-    derivColor: '#ef4444'
+    mainColor: _MC,
+    derivColor: _DC
   },
   sec: {
     label: 'sec',
@@ -76,8 +82,8 @@ const FUNCTIONS = {
     formulaTitle: 'Derivative of Secant:',
     formula: 'f(x) = sec x = 1 / cos x<br/><br/>f\'(x) = sec x · tan x = sin x / cos²x',
     plotTitle: "(sec x)' = sec x·tan x",
-    mainColor: '#6366f1',
-    derivColor: '#ef4444'
+    mainColor: _MC,
+    derivColor: _DC
   },
   csc: {
     label: 'csc',
@@ -86,8 +92,8 @@ const FUNCTIONS = {
     formulaTitle: 'Derivative of Cosecant:',
     formula: 'f(x) = csc x = 1 / sin x<br/><br/>f\'(x) = −csc x · cot x = −cos x / sin²x',
     plotTitle: "(csc x)' = −csc x·cot x",
-    mainColor: '#6366f1',
-    derivColor: '#ef4444'
+    mainColor: _MC,
+    derivColor: _DC
   }
 };
 
@@ -109,8 +115,8 @@ function generateSinData(xRange) {
   }
 
   return [
-    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'sin x', line: { color: '#6366f1', width: 2.5 } },
-    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: 'cos x (derivative)', line: { color: '#ef4444', width: 2, dash: 'dash' } }
+    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'sin x', line: { color: _MC, width: 2.5 } },
+    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: 'cos x (derivative)', line: { color: _DC, width: 2, dash: 'dash' } }
   ];
 }
 
@@ -130,8 +136,8 @@ function generateCosData(xRange) {
   }
 
   return [
-    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'cos x', line: { color: '#6366f1', width: 2.5 } },
-    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: '−sin x (derivative)', line: { color: '#ef4444', width: 2, dash: 'dash' } }
+    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: 'cos x', line: { color: _MC, width: 2.5 } },
+    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: '−sin x (derivative)', line: { color: _DC, width: 2, dash: 'dash' } }
   ];
 }
 
@@ -163,8 +169,8 @@ function generateAsymptoticData(xRange, { fn, derivFn, fnName, derivName, asympt
   }
 
   return [
-    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: fnName, line: { color: '#6366f1', width: 2.5 } },
-    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: derivName, line: { color: '#ef4444', width: 2, dash: 'dash' } }
+    { x: mainX, y: mainY, type: 'scatter', mode: 'lines', name: fnName, line: { color: _MC, width: 2.5 } },
+    { x: derivX, y: derivY, type: 'scatter', mode: 'lines', name: derivName, line: { color: _DC, width: 2, dash: 'dash' } }
   ];
 }
 
@@ -238,9 +244,16 @@ const TrigonometricFunctions = () => {
   const xRange = [params.piXRange[0] * Math.PI, params.piXRange[1] * Math.PI];
   const isAsymptotic = ASYMPTOTIC_FUNCS.has(activeTab);
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   const generateData = useCallback(() => {
-    return DATA_GENERATORS[activeTab](xRange);
-  }, [activeTab, xRange]);
+    const traces = DATA_GENERATORS[activeTab](xRange);
+    return traces.map(t => ({
+      ...t,
+      line: { ...t.line, color: t.line?.color === _MC ? palette.mainTraces.primary : palette.auxTraces.derivative }
+    }));
+  }, [activeTab, xRange, palette]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

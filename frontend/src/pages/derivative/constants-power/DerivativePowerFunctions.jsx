@@ -1,6 +1,8 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout, mu slider for power functions
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
@@ -66,6 +68,9 @@ const DerivativePowerFunctions = () => {
     return `${c}x${exp}`.trim();
   };
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   const generateData = useCallback(() => {
     const mu = params.mu;
     const [xMin, xMax] = params.xRange;
@@ -115,7 +120,7 @@ const DerivativePowerFunctions = () => {
       x: cleanMainX, y: cleanMainY,
       type: 'scatter', mode: 'lines',
       name: `f(x) = x${muExp}`,
-      line: { color: '#6366f1', width: 2.5 }
+      line: { color: palette.mainTraces.primary, width: 2.5 }
     });
 
     // 2. Derivative f'(x) = μ·x^(μ-1)
@@ -147,11 +152,11 @@ const DerivativePowerFunctions = () => {
       x: cleanDerivX, y: cleanDerivY,
       type: 'scatter', mode: 'lines',
       name: `f'(x) = ${mu}x${derivMuExp}`,
-      line: { color: '#ef4444', width: 2, dash: 'dash' }
+      line: { color: palette.auxTraces.derivative, width: 2, dash: 'dash' }
     });
 
     return traces;
-  }, [params]);
+  }, [params, palette]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

@@ -1,6 +1,8 @@
 // UI Pattern: StandardSinglePlot (QuickSetRow variant) — base a slider + quick-set e button
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
@@ -48,6 +50,9 @@ const LogarithmicFunctions = () => {
     ? "(ln x)' = 1 / x"
     : `(log${aSub} x)' = 1 / (x · ln ${params.a.toFixed(1)})`;
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   const generateData = useCallback(() => {
     const [xMin, xMax] = params.xRange;
     const numPoints = 500;
@@ -73,16 +78,16 @@ const LogarithmicFunctions = () => {
       x: mainX, y: mainY,
       type: 'scatter', mode: 'lines',
       name: isNatural ? 'ln x' : `log${aSub} x`,
-      line: { color: '#6366f1', width: 2.5 }
+      line: { color: palette.mainTraces.primary, width: 2.5 }
     });
     traces.push({
       x: derivX, y: derivY,
       type: 'scatter', mode: 'lines',
       name: isNatural ? "1 / x (derivative)" : `1/(x·ln ${params.a.toFixed(1)}) (derivative)`,
-      line: { color: '#ef4444', width: 2, dash: 'dash' }
+      line: { color: palette.auxTraces.derivative, width: 2, dash: 'dash' }
     });
     return traces;
-  }, [params]);
+  }, [params, palette]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

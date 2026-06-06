@@ -1,10 +1,13 @@
-import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
-export { ASPECT_RATIO_OPTIONS } from './DerivativePlotter';
+import { useThemeMode } from '../../hooks/useThemeMode';
+import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
+
+export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
 /**
  * Limit Plotter 组件 - 支持极限函数可视化的展示
- * 
+ *
  * 新架构：纯渲染引擎，接收预计算的 data prop
  * 所有业务逻辑已迁移到子页面层
  */
@@ -13,15 +16,13 @@ const LimitPlotter = ({
   yRange: propYRange,
   title,
   plotStyle = 'medium',
-  aspectRatio = 'auto', // 显示比例 (auto, 16:9, 4:3)
-  data, // 直接传入 Plotly traces 数组（唯一数据源）
+  aspectRatio = 'auto',
+  data,
   legendPosition = 'top-right',
   yTickMode = 'auto'  // 'auto' | 'pi'
 }) => {
   const plotRef = useRef(null);
-  const [themeMode, setThemeMode] = useState(() => {
-    return localStorage.getItem('themeMode') || 'dark';
-  });
+  const themeMode = useThemeMode();
 
   // 样式映射配置
   const styleConfig = useMemo(() => {
@@ -37,43 +38,25 @@ const LimitPlotter = ({
     }
   }, [plotStyle]);
 
-  // 监听主题变化
-  useEffect(() => {
-    const handleThemeChange = () => {
-      const newMode = localStorage.getItem('themeMode') || 'dark';
-      setThemeMode(newMode);
-    };
-
-    // 每 100ms 检查一次主题是否变化
-    const intervalId = setInterval(handleThemeChange, 100);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  // 根据主题获取辅助线颜色
-  const getAuxiliaryColor = useCallback(() => {
-    return themeMode === 'dark' ? '#ffd700' : '#b45309'; // Dark: 亮黄, Light: 琥珀色（更醒目）
-  }, [themeMode]);
-
   // ✅ 新增：如果外部传入了 data，直接使用（新接口）
   const plotData = useMemo(() => {
     if (data && Array.isArray(data)) {
       return data;
     }
-    
-    // 如果没有传入 data，返回空数组（所有业务逻辑已迁移到子页面）
     return [];
   }, [data]);
 
-  // ✅ 新增：根据 plotStyle 应用样式到所有 traces（参考 FunctionPlotter.jsx）
+  // ✅ 新增：根据 plotStyle 应用样式到所有 traces
   const styledData = useMemo(() => {
     if (!plotData || plotData.length === 0) return plotData;
-    
+
+    const auxColor = getAuxiliaryColor(themeMode);
+
     return plotData.map(trace => {
       const newTrace = { ...trace };
-      
+
       // ✅ 检测是否为辅助元素（通过 name 判断）
-      const isAuxiliaryElement = 
+      const isAuxiliaryElement =
         trace.name && (
           trace.name.includes('lim:') ||
           trace.name.includes('Peak') ||
@@ -87,34 +70,23 @@ const LimitPlotter = ({
           trace.name.includes("P'") ||
           trace.name.includes('P₁') ||
           trace.name.includes('P₂') ||
-          trace.name.startsWith('x=') ||  // ✅ 新增：垂直辅助线
-          trace.name.startsWith('y=')     // ✅ 新增：水平辅助线
+          trace.name.startsWith('x=') ||
+          trace.name.startsWith('y=')
         );
-      
+
       // ✅ 如果是辅助元素，替换为主题感知的颜色
       if (isAuxiliaryElement) {
         if (newTrace.line) {
-          newTrace.line = {
-            ...newTrace.line,
-            color: getAuxiliaryColor()
-          };
+          newTrace.line = { ...newTrace.line, color: auxColor };
         }
-        
         if (newTrace.marker) {
-          newTrace.marker = {
-            ...newTrace.marker,
-            color: getAuxiliaryColor()
-          };
+          newTrace.marker = { ...newTrace.marker, color: auxColor };
         }
-        
         if (newTrace.textfont) {
-          newTrace.textfont = {
-            ...newTrace.textfont,
-            color: getAuxiliaryColor()
-          };
+          newTrace.textfont = { ...newTrace.textfont, color: auxColor };
         }
       }
-      
+
       // 应用线宽样式
       if (newTrace.line) {
         newTrace.line = {
@@ -122,7 +94,7 @@ const LimitPlotter = ({
           width: styleConfig.lineWidth
         };
       }
-      
+
       // 应用点大小样式（如果有 markers）
       if (newTrace.marker) {
         newTrace.marker = {
@@ -130,7 +102,7 @@ const LimitPlotter = ({
           size: styleConfig.pointSize
         };
       }
-      
+
       // 应用字体大小样式（如果有 text）
       if (newTrace.textfont) {
         newTrace.textfont = {
@@ -138,26 +110,22 @@ const LimitPlotter = ({
           size: styleConfig.fontSize
         };
       }
-      
+
       return newTrace;
     });
-  }, [data, plotStyle, styleConfig, getAuxiliaryColor, themeMode]);
+  }, [data, plotStyle, styleConfig, themeMode]);
 
   // 自动计算 Y 轴范围 - 仅考虑可见的 traces
   const autoYRange = useMemo(() => {
-    // 如果外部传入了 yRange，优先使用它
     if (propYRange) return propYRange;
-    
-    // 从 data 中提取 Y 范围 - 只考虑可见的 traces
+
     if (data && Array.isArray(data)) {
       let minVal = Infinity;
       let maxVal = -Infinity;
-      
-      // 遍历所有 traces，提取 Y 值的范围（仅考虑 visible !== false 的 traces）
+
       data.forEach(trace => {
-        // ✅ 跳过隐藏的 traces（visible === false）
         if (trace.visible === false) return;
-        
+
         if (trace.y && Array.isArray(trace.y)) {
           trace.y.forEach(val => {
             if (!isNaN(val) && isFinite(val) && Math.abs(val) < 10000) {
@@ -167,36 +135,30 @@ const LimitPlotter = ({
           });
         }
       });
-      
-      // 如果没有找到有效值，返回默认范围
+
       if (minVal === Infinity || maxVal === -Infinity) {
         return [-10, 10];
       }
-      
-      // 添加非对称边距（上部多留，下部少留）- 进一步减小边距
+
       const range = maxVal - minVal;
-      
-      // 对于极小范围的函数，强制最小显示范围为 1.2（上部留 0.6，下部留 0.6）
+
       if (range < 1.2) {
         const center = (minVal + maxVal) / 2;
         return [center - 0.6, center + 0.6];
       }
-      
-      // 正常情况：上部留 8%，下部留 3%
+
       const topPadding = range * 0.08;
       const bottomPadding = range * 0.03;
-      
+
       return [minVal - bottomPadding, maxVal + topPadding];
     }
-    
-    // 默认返回范围
+
     return [-10, 10];
   }, [data, propYRange]);
 
   // 配置 Plotly 布局 - 根据主题模式动态设置颜色
   const layout = useMemo(() => {
-    const isDark = themeMode === 'dark';
-    const axisColor = isDark ? '#b9b9d3' : '#475569'; // 边框颜色
+    const plotLayout = getPlotLayout(themeMode);
 
     // Pi tick formatter for y-axis
     const buildPiTickExtra = (range) => {
@@ -238,45 +200,43 @@ const LimitPlotter = ({
       title: {
         text: title,
         font: {
-          size: styleConfig.fontSize + 6, // 标题字体稍大
-          color: isDark ? '#e0e0e0' : '#0f172a'
+          size: styleConfig.fontSize + 6,
+          color: plotLayout.titleFontColor
         }
       },
       xaxis: {
         title: 'n',
         range: propXRange || (data && data.length > 0 && data[0].x ? [Math.min(...data[0].x), Math.max(...data[0].x)] : [0, 50]),
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
-        // 添加四面边框
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
-        mirror: true // 让轴线在两侧都显示，形成闭合框
+        linecolor: plotLayout.axisColor,
+        mirror: true
       },
       yaxis: {
         title: 'Value',
         range: autoYRange,
-        gridcolor: isDark ? '#334155' : '#cbd5e1',
-        zerolinecolor: isDark ? '#475569' : '#94a3b8',
-        tickfont: { color: isDark ? '#94a3b8' : '#475569', size: styleConfig.fontSize },
-        titlefont: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize + 2 },
-        // 添加四面边框
+        gridcolor: plotLayout.gridcolor,
+        zerolinecolor: plotLayout.zerolinecolor,
+        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
         showline: true,
         linewidth: 1,
-        linecolor: axisColor,
-        mirror: true, // 让轴线在两侧都显示，形成闭合框
+        linecolor: plotLayout.axisColor,
+        mirror: true,
         ...yaxisExtra
       },
-      plot_bgcolor: isDark ? '#1e293b' : '#ffffff',
-      paper_bgcolor: isDark ? '#1e293b' : '#ffffff',
+      plot_bgcolor: plotLayout.plot_bgcolor,
+      paper_bgcolor: plotLayout.paper_bgcolor,
       margin: { l: 60, r: 20, t: 60, b: 60 },
       showlegend: legendPosition !== 'None',
       legend: {
-        font: { color: isDark ? '#e0e0e0' : '#0f172a', size: styleConfig.fontSize },
-        bgcolor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.85)',
-        bordercolor: isDark ? '#334155' : '#cbd5e1',
+        font: { color: plotLayout.legend.fontColor, size: styleConfig.fontSize },
+        bgcolor: plotLayout.legend.bgcolor,
+        bordercolor: plotLayout.legend.bordercolor,
         borderwidth: 1,
         x: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02,
         y: legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02,
@@ -286,14 +246,13 @@ const LimitPlotter = ({
     };
   }, [title, propXRange, autoYRange, themeMode, styleConfig, data, legendPosition, yTickMode]);
 
-  // 配置 Plotly 工具栏
   const config = {
     displayModeBar: true,
     modeBarButtonsToAdd: [],
     modeBarButtonsToRemove: [
       'zoom2d', 'pan2d', 'select2d', 'lasso2d',
       'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
-      'sendDataToCloud' // 移除 Plotly 链接按钮
+      'sendDataToCloud'
     ],
     toImageButtonOptions: {
       format: 'png',
@@ -304,33 +263,26 @@ const LimitPlotter = ({
     }
   };
 
-  // 使用 useEffect 渲染图表
   useEffect(() => {
     if (plotRef.current) {
       Plotly.newPlot(plotRef.current, styledData, layout, config);
     }
   }, [styledData, layout, config]);
 
-  // 添加窗口resize监听器，实现自动响应式调整
   useEffect(() => {
     const handleResize = () => {
       if (plotRef.current) {
         Plotly.Plots.resize(plotRef.current);
       }
     };
-
     window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 简单的内联样式 - 使用 CSS 变量支持主题切换
   const containerStyle = {
     width: '100%',
-    height: aspectRatio === 'auto' ? '600px' : 'auto', // Auto 模式使用固定高度，其他模式由 aspect-ratio 决定
-    background: 'var(--theme-card-bg, #1e293b)',
+    height: aspectRatio === 'auto' ? '600px' : 'auto',
+    background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
     borderRadius: '8px',
     padding: '1rem',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
@@ -358,14 +310,12 @@ const LimitPlotter = ({
 
   const handleFullscreenToggle = useCallback(() => {
     if (!document.fullscreenElement) {
-      // Enter fullscreen
       if (plotRef.current) {
         plotRef.current.requestFullscreen().catch(err => {
           console.log(`Error attempting to enable full-screen mode: ${err.message}`);
         });
       }
     } else {
-      // Exit fullscreen
       if (document.exitFullscreen) {
         document.exitFullscreen();
       }

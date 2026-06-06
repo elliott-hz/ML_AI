@@ -1,6 +1,8 @@
 // UI Pattern: TabbedFunction — ToggleGroup: 3 tabs (Sum/Difference/ConstantMult)
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
 import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
@@ -69,6 +71,9 @@ const LinearityRule = () => {
   const uLabelStr = `u(x) = ${params.a.toFixed(1)} + ${params.b.toFixed(1)}x${fmtExp(params.m)}`;
   const vLabelStr = `v(x) = ${params.c.toFixed(1)} + ${params.d.toFixed(1)}x${fmtExp(params.n)}`;
 
+  const themeMode = useThemeMode();
+  const palette = getTracePalette(themeMode);
+
   const generateData = useCallback(() => {
     const [xMin, xMax] = params.xRange;
     const x0 = params.x0;
@@ -79,16 +84,16 @@ const LinearityRule = () => {
     if (activeTab === 'sum') {
       combinedFn = (x) => uFn(x) + vFn(x);
       combLabel = 'u(x) + v(x)';
-      combColor = '#ef4444';
+      combColor = palette.auxTraces.combined;
     } else if (activeTab === 'difference') {
       combinedFn = (x) => uFn(x) - vFn(x);
       combLabel = 'u(x) − v(x)';
-      combColor = '#ef4444';
+      combColor = palette.auxTraces.combined;
     } else {
       const C = params.C;
       combinedFn = (x) => C * uFn(x);
       combLabel = `${C.toFixed(1)}·u(x)`;
-      combColor = '#ef4444';
+      combColor = palette.auxTraces.combined;
     }
 
     const genTrace = (fn) => {
@@ -112,7 +117,7 @@ const LinearityRule = () => {
       x: uData.xs, y: uData.ys,
       type: 'scatter', mode: 'lines',
       name: uLabelStr,
-      line: { color: '#6366f1', width: 2.5 }
+      line: { color: palette.mainTraces.primary, width: 2.5 }
     });
 
     // v(x) only for sum/difference
@@ -122,7 +127,7 @@ const LinearityRule = () => {
         x: vData.xs, y: vData.ys,
         type: 'scatter', mode: 'lines',
         name: vLabelStr,
-        line: { color: '#22c55e', width: 2.5 }
+        line: { color: palette.mainTraces.secondary, width: 2.5 }
       });
     }
 
@@ -148,7 +153,7 @@ const LinearityRule = () => {
       x: [x0, x0], y: [yMin - pad, yMax + pad],
       type: 'scatter', mode: 'lines',
       name: `x₀ = ${x0.toFixed(1)}`,
-      line: { color: '#f59e0b', width: 1.5, dash: 'dot' }
+      line: { color: palette.markers.evalX0, width: 1.5, dash: 'dot' }
     });
 
     // ── Tangents at x₀ (with slope in legend) ──
@@ -178,9 +183,9 @@ const LinearityRule = () => {
       });
     };
 
-    addTangent2(uFn, 'u', uPrimeVal, '#6366f1');
+    addTangent2(uFn, 'u', uPrimeVal, palette.mainTraces.primary);
     if (activeTab !== 'constant-multiple') {
-      addTangent2(vFn, 'v', vPrimeVal, '#22c55e');
+      addTangent2(vFn, 'v', vPrimeVal, palette.mainTraces.secondary);
     }
     addTangent2(
       combinedFn,
@@ -194,7 +199,7 @@ const LinearityRule = () => {
       x: [x0], y: [uFn(x0)],
       type: 'scatter', mode: 'markers',
       name: '',
-      marker: { color: '#6366f1', size: 8, symbol: 'circle' },
+      marker: { color: palette.mainTraces.primary, size: 8, symbol: 'circle' },
       showlegend: false
     });
     if (activeTab !== 'constant-multiple') {
@@ -202,7 +207,7 @@ const LinearityRule = () => {
         x: [x0], y: [vFn(x0)],
         type: 'scatter', mode: 'markers',
         name: '',
-        marker: { color: '#22c55e', size: 8, symbol: 'circle' },
+        marker: { color: palette.mainTraces.secondary, size: 8, symbol: 'circle' },
         showlegend: false
       });
     }
@@ -210,12 +215,12 @@ const LinearityRule = () => {
       x: [x0], y: [combinedFn(x0)],
       type: 'scatter', mode: 'markers',
       name: '',
-      marker: { color: '#ef4444', size: 8, symbol: 'circle' },
+      marker: { color: palette.auxTraces.combined, size: 8, symbol: 'circle' },
       showlegend: false
     });
 
     return traces;
-  }, [params, activeTab, uFn, vFn, numDeriv, uLabelStr, vLabelStr]);
+  }, [params, activeTab, uFn, vFn, numDeriv, uLabelStr, vLabelStr, palette]);
 
   const traces = useMemo(() => generateData(), [generateData]);
 

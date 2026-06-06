@@ -19,6 +19,7 @@ function App() {
     const newMode = themeMode === 'dark' ? 'light' : 'dark';
     setThemeMode(newMode);
     localStorage.setItem('themeMode', newMode);
+    window.dispatchEvent(new CustomEvent('qwen-theme-change', { detail: newMode }));
   };
 
   // 将 toggleTheme 函数暴露给全局，供其他组件使用
