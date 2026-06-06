@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
+import BackButton from '../../../components/layout/BackButton';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -16,27 +16,6 @@ const Header = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
   margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-`;
-
-const BackButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme?.spacing?.xs || '0.25rem'};
-  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.sm || '4px'};
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: ${({ theme }) => theme?.spacing?.lg || '1.5rem'};
-
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    color: white;
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  }
 `;
 
 const SectionTitle = styled.h2`
@@ -84,8 +63,6 @@ const PlotPanel = styled.div`
  * 奇偶性函数子页面 - 展示奇函数和偶函数的特性
  */
 const OddEvenFunctions = () => {
-  const navigate = useNavigate();
-  
   // 奇函数参数状态
   const [oddParams, setOddParams] = useState({ 
     a: 1,              // 系数
@@ -289,9 +266,7 @@ const OddEvenFunctions = () => {
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>
-          ← Back to Basic Function
-        </BackButton>
+        <BackButton to="/mathematics/1-fundamentals/basic-function" />
         <SectionTitle>Odd & Even Functions</SectionTitle>
       </Header>
       

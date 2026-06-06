@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
+import BackButton from '../../../components/layout/BackButton';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { useSplitter } from '../../../hooks/useSplitter';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -19,22 +20,6 @@ const Header = styled.div`
   gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
   margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
   flex-shrink: 0;
-`;
-
-const BackButton = styled.button`
-  background: transparent;
-  border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  }
 `;
 
 const Title = styled.h1`
@@ -310,32 +295,22 @@ const INV_MODES = {
  * resulting angle θ = arcsin(x), arccos(x), etc.
  */
 const InverseTrigonometricRatios = () => {
-  const navigate = useNavigate();
+  const themeMode = useThemeMode();
+  const {
+    leftRatio, rightPlotKey, rowRef, onResizeStart,
+  } = useSplitter();
 
   const [params, setParams] = useState({ value: 0.5 });
   const [plotStyle, setPlotStyle] = useState('medium');
   const [activePlot, setActivePlot] = useState('arcsin-arccos');
-  const [leftRatio, setLeftRatio] = useState(38);
   const [rightAspect, setRightAspect] = useState('auto');
   const [legendPos, setLegendPos] = useState('top-right');
-  const [rightPlotKey, setRightPlotKey] = useState(0);
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
-  const rowRef = useRef(null);
-  const dragging = useRef(false);
-
-  // Theme detection (same polling approach as the plotters)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const mode = localStorage.getItem('themeMode') || 'dark';
-      setThemeMode(mode);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
 
   const plotTextColor = themeMode === 'dark' ? '#f8fafc' : '#1e293b';
   const plotSubTextColor = themeMode === 'dark' ? '#94a3b8' : '#475569';
   const auxGridColor = themeMode === 'dark' ? 'rgba(148, 163, 184, 0.2)' : 'rgba(100, 116, 139, 0.3)';
 
+  // Force remount right plot after fullscreen exit
   useEffect(() => {
     const onFullscreenChange = () => {
       if (!document.fullscreenElement) {
@@ -681,33 +656,15 @@ const InverseTrigonometricRatios = () => {
   }, [cVal, themeMode]);
 
   const handleSlider = (key) => (e) => {
-    setParams(p => ({ ...p, [key]: parseFloat(e.target.value) }));
+    const val = parseFloat(e.target.value);
+    if (isNaN(val)) return;
+    setParams(p => ({ ...p, [key]: val }));
   };
-
-  // ── Splitter drag handlers ──
-  const onResizeStart = useCallback((e) => {
-    e.preventDefault();
-    dragging.current = true;
-    const onMove = (ev) => {
-      if (!dragging.current || !rowRef.current) return;
-      const rect = rowRef.current.getBoundingClientRect();
-      const pct = ((ev.clientX - rect.left) / rect.width) * 100;
-      setLeftRatio(Math.max(20, Math.min(60, pct)));
-    };
-    const onUp = () => {
-      dragging.current = false;
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      setRightPlotKey(k => k + 1);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  }, []);
 
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>← Basic</BackButton>
+        <BackButton to="/mathematics/1-fundamentals/basic-function">← Basic</BackButton>
         <Title>Inverse Trigonometric Ratios</Title>
       </Header>
 

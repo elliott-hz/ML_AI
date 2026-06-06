@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
+import BackButton from '../../../components/layout/BackButton';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { useSplitter } from '../../../hooks/useSplitter';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme?.spacing?.xl || '2rem'};
@@ -19,22 +20,6 @@ const Header = styled.div`
   gap: ${({ theme }) => theme?.spacing?.md || '1rem'};
   margin-bottom: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
   flex-shrink: 0;
-`;
-
-const BackButton = styled.button`
-  background: transparent;
-  border: 2px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  color: ${({ theme }) => theme?.colors?.textPrimary || '#f8fafc'};
-  padding: ${({ theme }) => theme?.spacing?.sm || '0.5rem'} ${({ theme }) => theme?.spacing?.md || '1rem'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.md || '8px'};
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  &:hover {
-    background: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-    border-color: ${({ theme }) => theme?.colors?.primary || '#6366f1'};
-  }
 `;
 
 const Title = styled.h1`
@@ -278,27 +263,16 @@ const isInfinite = (v) => !isFinite(v) || Math.abs(v) > 1e8;
  * TrigonometricRatios — interactive exploration of the 6 trig ratios.
  */
 const TrigonometricRatios = () => {
-  const navigate = useNavigate();
+  const themeMode = useThemeMode();
+  const {
+    leftRatio, rightPlotKey, rowRef, onResizeStart,
+  } = useSplitter();
 
   const [params, setParams] = useState({ angle: 45 });
   const [plotStyle, setPlotStyle] = useState('medium');
   const [activePlot, setActivePlot] = useState('sin-cos');
-  const [leftRatio, setLeftRatio] = useState(38);
   const [rightAspect, setRightAspect] = useState('auto');
   const [legendPos, setLegendPos] = useState('top-right');
-  const [rightPlotKey, setRightPlotKey] = useState(0);
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('themeMode') || 'dark');
-  const rowRef = useRef(null);
-  const dragging = useRef(false);
-
-  // Theme detection (same polling approach as the plotters)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const mode = localStorage.getItem('themeMode') || 'dark';
-      setThemeMode(mode);
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
 
   const plotTextColor = themeMode === 'dark' ? '#f8fafc' : '#1e293b';
   const plotSubTextColor = themeMode === 'dark' ? '#94a3b8' : '#475569';
@@ -521,34 +495,15 @@ const TrigonometricRatios = () => {
   }, [theta, sampleFunction, themeMode]);
   
   const handleSlider = (key) => (e) => {
-    setParams(p => ({ ...p, [key]: parseFloat(e.target.value) }));
+    const val = parseFloat(e.target.value);
+    if (isNaN(val)) return;
+    setParams(p => ({ ...p, [key]: val }));
   };
-
-  // ── Splitter drag handlers ──
-  const onResizeStart = useCallback((e) => {
-    e.preventDefault();
-    dragging.current = true;
-    const onMove = (ev) => {
-      if (!dragging.current || !rowRef.current) return;
-      const rect = rowRef.current.getBoundingClientRect();
-      const pct = ((ev.clientX - rect.left) / rect.width) * 100;
-      setLeftRatio(Math.max(20, Math.min(60, pct)));
-    };
-    const onUp = () => {
-      dragging.current = false;
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      // Remount right plot with new dimensions
-      setRightPlotKey(k => k + 1);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  }, []);
 
   return (
     <PageContainer>
       <Header>
-        <BackButton onClick={() => navigate('/mathematics/1-fundamentals/basic-function')}>← Basic</BackButton>
+        <BackButton to="/mathematics/1-fundamentals/basic-function">← Basic</BackButton>
         <Title>Trigonometric Ratios</Title>
       </Header>
 
@@ -557,7 +512,7 @@ const TrigonometricRatios = () => {
         <SliderGroup>
           <SliderItem>
             <label>Angle</label>
-            <input type="range" min={-180} max={180} step={10} value={params.angle} onChange={handleSlider('angle')} />
+            <input type="range" min={-180} max={180} step={5} value={params.angle} onChange={handleSlider('angle')} />
             <span className="val">{params.angle}°</span>
           </SliderItem>
         </SliderGroup>
