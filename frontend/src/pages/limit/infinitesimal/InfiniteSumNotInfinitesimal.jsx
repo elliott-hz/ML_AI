@@ -89,7 +89,7 @@ const InfiniteSumNotInfinitesimal = () => {
     });
     
     return traces;
-  }, [plot1Params.xRange]);
+  }, [plot1Params.xRange, themeMode]);
 
   // Generate partial sums: S_N(x) = H_N · x
   const generatePartialSums = useCallback(() => {
@@ -128,7 +128,7 @@ const InfiniteSumNotInfinitesimal = () => {
     });
     
     return traces;
-  }, [plot2Params.xRange]);
+  }, [plot2Params.xRange, themeMode]);
 
   // Generate growth curve: S_N(1) = H_N vs N
   const generateGrowthCurve = useCallback(() => {
@@ -151,7 +151,7 @@ const InfiniteSumNotInfinitesimal = () => {
       line: { width: 2, color: palette.mainTraces.primary },
       marker: { size: 6, color: palette.mainTraces.primary }
     }];
-  }, [plot3Params]);
+  }, [plot3Params, themeMode]);
 
   // ✅ Use useMemo to cache data (following OddEvenFunctions pattern)
   const plot1Traces = useMemo(() => generateIndividualTerms(), [generateIndividualTerms]);

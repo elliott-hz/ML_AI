@@ -117,7 +117,7 @@ const TrigonometricFunctionLimit = () => {
     });
 
     return traces;
-  }, [params, activeFunction]);
+  }, [params, activeFunction, themeMode]);
 
   // 参数配置
   const coefficientConfig = [

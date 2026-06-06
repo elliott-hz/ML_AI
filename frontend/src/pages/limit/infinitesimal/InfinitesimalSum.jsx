@@ -198,7 +198,7 @@ const InfinitesimalSum = () => {
     });
     
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   // 参数配置
   const plotStyleConfig = [

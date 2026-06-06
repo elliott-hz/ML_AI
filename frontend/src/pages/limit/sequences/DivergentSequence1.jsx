@@ -55,7 +55,7 @@ const DivergentSequence1 = () => {
         symbol: 'circle'
       }
     }];
-  }, [params]);
+  }, [params, themeMode]);
 
   // 生成连续原函数数据
   const generateFunctionData = useCallback(() => {
@@ -82,7 +82,7 @@ const DivergentSequence1 = () => {
         width: 2.5
       }
     }];
-  }, [params]);
+  }, [params, themeMode]);
 
   const generalSettingsConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 50, step: 5 },

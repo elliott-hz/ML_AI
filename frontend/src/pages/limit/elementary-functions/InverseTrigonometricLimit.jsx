@@ -142,7 +142,7 @@ const InverseTrigonometricLimit = () => {
     });
 
     return traces;
-  }, [params, activeFunction]);
+  }, [params, activeFunction, themeMode]);
 
   const coefficientConfig = [
     {

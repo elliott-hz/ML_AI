@@ -103,7 +103,7 @@ const InverseTrigIntuitiveLimit = () => {
     }
 
     return traces;
-  }, [params, activeFunction]);
+  }, [params, activeFunction, themeMode]);
 
   const coefficientConfig = [
     { name: 'coefficient', label: 'Coefficient (a)', min: 0.5, max: 5, step: 0.1, type: 'slider' }

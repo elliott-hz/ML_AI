@@ -71,7 +71,7 @@ const ConvergentSequence2 = () => {
     });
 
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   // 生成连续原函数数据
   const generateFunctionData = useCallback(() => {
@@ -98,7 +98,7 @@ const ConvergentSequence2 = () => {
         width: 2.5
       }
     }];
-  }, [params]);
+  }, [params, themeMode]);
 
   const generalSettingsConfig = [
     { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },

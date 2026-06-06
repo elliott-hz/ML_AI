@@ -81,7 +81,7 @@ const ExponentialFunctionLimit = () => {
     }
 
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   // 参数配置
   const functionConfig = [

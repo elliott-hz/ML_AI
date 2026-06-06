@@ -109,7 +109,7 @@ const QuotientOfInfinitesimals = () => {
     });
     
     return traces;
-  }, [plot1Params.xRange]);
+  }, [plot1Params.xRange, themeMode]);
 
   // Generate Plot 2 data: 2x/x² → ∞ (infinity)
   const generatePlot2Data = useCallback(() => {
@@ -213,7 +213,7 @@ const QuotientOfInfinitesimals = () => {
     });
     
     return traces;
-  }, [plot2Params.xRange]);
+  }, [plot2Params.xRange, themeMode]);
 
   // Generate Plot 3 data: x/2x → 1/2 (finite value)
   const generatePlot3Data = useCallback(() => {
@@ -284,7 +284,7 @@ const QuotientOfInfinitesimals = () => {
     });
     
     return traces;
-  }, [plot3Params.xRange]);
+  }, [plot3Params.xRange, themeMode]);
 
   // ✅ Use useMemo to cache data
   const plot1Traces = useMemo(() => generatePlot1Data(), [generatePlot1Data]);

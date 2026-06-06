@@ -95,7 +95,7 @@ const LogarithmicFunctionLimit = () => {
     });
 
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   // 参数配置
   const baseConfig = [

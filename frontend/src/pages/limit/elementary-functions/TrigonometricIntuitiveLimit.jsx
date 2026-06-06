@@ -124,7 +124,7 @@ const TrigonometricIntuitiveLimit = () => {
     }
 
     return traces;
-  }, [params, activeFunction]);
+  }, [params, activeFunction, themeMode]);
 
   const coefficientConfig = [
     { name: 'coefficient', label: 'Frequency (k)', min: 0.5, max: 3, step: 0.1, type: 'slider' }

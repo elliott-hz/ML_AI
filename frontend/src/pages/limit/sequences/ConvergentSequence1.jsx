@@ -73,7 +73,7 @@ const ConvergentSequence1 = () => {
     });
 
     return traces;
-  }, [params]);
+  }, [params, themeMode]);
 
   // 生成连续原函数数据
   const generateFunctionData = useCallback(() => {
@@ -101,7 +101,7 @@ const ConvergentSequence1 = () => {
         width: 2.5
       }
     }];
-  }, [params]);
+  }, [params, themeMode]);
 
   // 参数配置 - 分组版本
   const coefficientConfig = [
