@@ -1,6 +1,6 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel (ParameterControls + ParameterSection) and content layout
 import React, { useState, useCallback } from 'react';
-import LimitPlotter from '../../../components/visualization/LimitPlotter';
+import ContinuityPlotter from '../../../components/visualization/ContinuityPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';
@@ -157,10 +157,11 @@ const DiscontinuityJump = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <LimitPlotter
+          <ContinuityPlotter
             data={generateData()}
             xRange={params.xRange}
             title={`Jump Discontinuity at x₀ = ${params.x0.toFixed(1)}`}
+            showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
