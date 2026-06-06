@@ -78,17 +78,6 @@ const DerivativeConstants = () => {
       line: { color: '#ef4444', width: 2, dash: 'dash' }
     });
 
-    // 3. Annotation: (C)' = 0
-    traces.push({
-      x: [xMax - (xMax - xMin) * 0.15],
-      y: [C - Math.abs(C) * 0.5 - 0.3],
-      type: 'scatter', mode: 'text',
-      name: 'annotation',
-      text: [`(${C.toFixed(1)})' = 0`],
-      textfont: { color: '#ef4444', size: 14 },
-      showlegend: false
-    });
-
     return traces;
   }, [params]);
 
