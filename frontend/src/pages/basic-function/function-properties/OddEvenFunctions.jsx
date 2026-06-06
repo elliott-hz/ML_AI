@@ -1,3 +1,4 @@
+// UI Pattern: MultiSectionPlot — multiple function sections (odd/even), each with its own content layout and controls
 import React, { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';

@@ -1,3 +1,4 @@
+// UI Pattern: SplitPlotWithControls — dual plot layout with resizable splitter, inverse trigonometric visualization, and ratio cards
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';

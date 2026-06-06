@@ -1,3 +1,4 @@
+// UI Pattern: SplitPlotWithControls — dual plot layout (FunctionPlotter + Cube3D/Box3D) with resizable splitter and toggle controls
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
