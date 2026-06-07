@@ -1,5 +1,6 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel and content layout
 import React, { useState, useMemo, useCallback } from 'react';
+import { ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getTracePalette } from '../../constants/plotThemeConfig';
 import PartialDerivativePlotter from '../../components/visualization/PartialDerivativePlotter';
@@ -19,19 +20,13 @@ import { plotStyleConfig, legendPositionConfig } from '../../constants/partialDe
  * y = f(x) = x²
  * Demonstrates that a unary function has exactly one input:
  * y changes ONLY when x changes.
- *
- * Visuals:
- *   - f(x) = x² curve
- *   - Point A at (x₀, x₀²)
- *   - Vertical dashed projection to x-axis
- *   - Horizontal dashed projection to y-axis
- *   - Tangent line at A showing slope f'(x₀) = 2x₀
  */
 const MotivationUnary = () => {
   const [params, setParams] = useState({
     x0: 1.5,
     xRange: [-3, 3],
     plotStyle: 'medium',
+    aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
 
@@ -84,7 +79,7 @@ const MotivationUnary = () => {
       marker: { color: palette.markers.evalX0, size: 12, symbol: 'circle', line: { color: '#fff', width: 2 } }
     });
 
-    // 4. Vertical projection: A → x-axis (y=0)
+    // 4. Vertical projection
     traces.push({
       x: [x0, x0], y: [0, y0],
       type: 'scatter', mode: 'lines',
@@ -92,7 +87,7 @@ const MotivationUnary = () => {
       showlegend: false
     });
 
-    // 5. Horizontal projection: A → y-axis (x=0)
+    // 5. Horizontal projection
     traces.push({
       x: [0, x0], y: [y0, y0],
       type: 'scatter', mode: 'lines',
@@ -105,7 +100,6 @@ const MotivationUnary = () => {
 
   const plotData = useMemo(() => generateData(), [generateData]);
 
-  // Labels via annotations
   const annotationOffset = 18;
   const annotations = useMemo(() => [
     {
@@ -128,13 +122,18 @@ const MotivationUnary = () => {
     }
   ], [x0, y0, palette]);
 
-  const commonParamsConfig = [
-    ...legendPositionConfig,
-    ...plotStyleConfig,
+  const viewRangeConfig = [
     {
       name: 'xRange', label: 'X Range', type: 'range',
       min: -5, max: 5, step: 1, default: [-3, 3]
-    }
+    },
+    { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
+  ];
+
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    ...viewRangeConfig
   ];
 
   return (
@@ -191,6 +190,7 @@ const MotivationUnary = () => {
             title="y = x² — One Input, One Output"
             showExportButton={false}
             plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
             annotations={annotations}
           />
