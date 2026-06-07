@@ -21,6 +21,7 @@ const PartialDerivativePlotter = ({
   scene: propScene
 }) => {
   const plotRef = useRef(null);
+  const hasInitialized = useRef(false);
   const themeMode = useThemeMode();
   const plotLayout = useMemo(() => getPlotLayout(themeMode), [themeMode]);
   const palette = getTracePalette(themeMode);
@@ -87,7 +88,6 @@ const PartialDerivativePlotter = ({
           yaxis: { title: { text: 'y', font: { color: plotLayout.axisLabelColor, size: 14 } }, range: propScene.yRange || [0, 3], dtick: propScene.dtick || 0.5, ...axisBase },
           zaxis: { title: { text: 'z', font: { color: plotLayout.axisLabelColor, size: 14 } }, range: propScene.zRange || [0, 18], dtick: (propScene.dtick || 0.5) * 6, ...axisBase },
           bgcolor: plotLayout.plot_bgcolor,
-          camera: propScene.camera || { eye: { x: 2.8, y: -2.8, z: 1.5 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } },
           aspectmode: 'manual',
           aspectratio: propScene.aspectratio || { x: 1, y: 1, z: 1 }
         },
@@ -148,7 +148,21 @@ const PartialDerivativePlotter = ({
 
   useEffect(() => {
     if (!plotRef.current) return;
-    Plotly.newPlot(plotRef.current, styledData, layout, mergedConfig);
+    const gd = plotRef.current;
+
+    if (!hasInitialized.current) {
+      // First render: use newPlot to set everything including camera
+      Plotly.newPlot(gd, styledData, layout, mergedConfig).then(() => {
+        hasInitialized.current = true;
+        // Set initial camera for 3D scenes
+        if (propScene && propScene.camera) {
+          Plotly.relayout(gd, 'scene.camera', propScene.camera);
+        }
+      });
+    } else {
+      // Subsequent: only update traces, preserve camera & layout
+      Plotly.react(gd, styledData, layout, mergedConfig);
+    }
     return () => { if (plotRef.current) Plotly.purge(plotRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [styledData, layout, mergedConfig]);
