@@ -18,7 +18,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula,
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 /**
  * Reciprocal Rule — (1/x)' = -1/x²

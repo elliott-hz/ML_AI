@@ -21,7 +21,7 @@ import {
   Formula,
   ToggleGroup,
   ToggleBtn
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 // Module-level color placeholders — replaced by palette at render time
 const _MC = '#6366f1';

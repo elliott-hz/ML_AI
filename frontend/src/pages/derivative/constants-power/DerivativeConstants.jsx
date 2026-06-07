@@ -19,7 +19,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 /**
  * Derivative of Constants: (C)' = 0

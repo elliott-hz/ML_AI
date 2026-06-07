@@ -19,7 +19,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 /**
  * Average Velocity → Instantaneous Velocity

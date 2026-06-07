@@ -21,7 +21,7 @@ import {
   Formula,
   QuickSetRow,
   QuickBtn
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 // Convert integer digit to Unicode subscript
 const SUB = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];

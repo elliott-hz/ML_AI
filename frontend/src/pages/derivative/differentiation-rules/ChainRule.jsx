@@ -19,7 +19,7 @@ import {
   ControlsBar,
   LiveValueRow,
   LiveValueLabel
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 const PlotGrid2 = styled.div`
   display: grid;

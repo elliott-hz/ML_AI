@@ -31,6 +31,12 @@
               "name": "Derivative",
               "path": "/mathematics/1-fundamentals/derivative",
               "component": "Derivative"
+            },
+            {
+              "id": "math_1_5",
+              "name": "Partial Derivative",
+              "path": "/mathematics/1-fundamentals/derivative/partial-derivative",
+              "component": "PartialDerivative"
             }
           ]
         },

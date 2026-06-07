@@ -20,7 +20,7 @@ import {
   FormulaTitle,
   Formula,
   PlotGrid2,
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 // ─── Unicode superscript ───────────────────────────────────────────
 const SUP = {

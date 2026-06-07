@@ -51,6 +51,9 @@ import ProductRule from '../pages/derivative/differentiation-rules/ProductRule';
 import ReciprocalRule from '../pages/derivative/differentiation-rules/ReciprocalRule';
 import QuotientRule from '../pages/derivative/differentiation-rules/QuotientRule';
 import ChainRule from '../pages/derivative/differentiation-rules/ChainRule';
+import PartialDerivative from '../pages/PartialDerivative';
+import MotivationUnary from '../pages/partial-derivative/MotivationUnary';
+import MotivationBinary from '../pages/partial-derivative/MotivationBinary';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -126,6 +129,7 @@ const AppRoutes = () => {
 
         {/* 数学模块 - Derivative 主页面 */}
         <Route path="/mathematics/1-fundamentals/derivative" element={<Derivative />} />
+        <Route path="/mathematics/1-fundamentals/derivative/partial-derivative" element={<PartialDerivative />} />
 
         {/* 数学模块 - Derivative 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/1-fundamentals/derivative/avg-instant-velocity" element={<AverageInstantaneousVelocity />} />
@@ -142,6 +146,10 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/derivative/reciprocal-rule" element={<ReciprocalRule />} />
         <Route path="/mathematics/1-fundamentals/derivative/quotient-rule" element={<QuotientRule />} />
         <Route path="/mathematics/1-fundamentals/derivative/chain-rule" element={<ChainRule />} />
+
+        {/* 数学模块 - Partial Derivative 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/1-fundamentals/derivative/partial-derivative/unary" element={<MotivationUnary />} />
+        <Route path="/mathematics/1-fundamentals/derivative/partial-derivative/binary" element={<MotivationBinary />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />

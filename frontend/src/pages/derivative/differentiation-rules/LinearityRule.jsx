@@ -20,7 +20,7 @@ import {
   Formula,
   ToggleGroup,
   ToggleBtn
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 // ─── Unicode superscript ───────────────────────────────────────────
 const SUP = {

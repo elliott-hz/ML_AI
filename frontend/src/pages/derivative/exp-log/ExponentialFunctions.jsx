@@ -21,7 +21,7 @@ import {
   Formula,
   QuickSetRow,
   QuickBtn
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 /**
  * Combined Exponential Functions — general base aˣ with quick-set to eˣ

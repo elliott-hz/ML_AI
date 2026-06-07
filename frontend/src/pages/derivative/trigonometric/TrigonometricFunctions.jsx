@@ -21,7 +21,7 @@ import {
   Formula,
   ToggleGroup,
   ToggleBtn
-} from '../../../components/derivative/shared/DerivativeStyled';
+} from '../../../components/style/DerivativeStyled';
 
 // Threshold to detect proximity to asymptotes
 const ASYMPTOTE_EPS = 0.05;
