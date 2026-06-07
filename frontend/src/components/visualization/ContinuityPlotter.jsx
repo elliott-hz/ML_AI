@@ -1,9 +1,11 @@
+import { ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
+export { ASPECT_RATIO_OPTIONS };
 import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getAuxiliaryColor, getTracePalette } from '../../constants/plotThemeConfig';
 
-export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
+
 
 /**
  * Continuity Plotter - Specialized for continuity visualization

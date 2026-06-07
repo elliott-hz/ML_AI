@@ -2,11 +2,18 @@
  * plotThemeConfig — single source of truth for ALL plot-related colors.
  *
  * Levels:
+ *   L1 — Shared constants like ASPECT_RATIO_OPTIONS
  *   L2 — Plot layout colors (bg, grid, axis, title, legend)
  *   L3 — Trace palette (main traces, aux traces, markers, text annotations)
  *
  * Import in plotters and page components instead of hardcoding hex values.
  */
+
+// ──────────────────────────────────────────────
+// L1: Shared constants
+// ──────────────────────────────────────────────
+
+export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
 // ──────────────────────────────────────────────
 // L2: Plot layout colors

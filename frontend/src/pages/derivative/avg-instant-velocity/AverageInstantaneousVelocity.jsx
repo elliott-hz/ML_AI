@@ -4,7 +4,8 @@ import { getTracePalette, getAuxiliaryColor } from '../../../constants/plotTheme
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
-import DerivativePlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/DerivativePlotter';
+import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
+import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';

@@ -1,6 +1,7 @@
 // UI Pattern: MultiSectionPlot — multiple function sections (increasing/decreasing), each with its own content layout and controls
 import React, { useState, useMemo, useCallback } from 'react';
-import FunctionPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/FunctionPlotter';
+import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
+import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';

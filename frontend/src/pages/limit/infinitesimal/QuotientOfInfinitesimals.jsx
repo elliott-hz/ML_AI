@@ -1,6 +1,7 @@
 // UI Pattern: MultiPlotVertical — 3 independent sections with separate controls + plots
 import React, { useState, useMemo, useCallback } from 'react';
-import LimitPlotter, { ASPECT_RATIO_OPTIONS } from '../../../components/visualization/LimitPlotter';
+import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
+import LimitPlotter from '../../../components/visualization/LimitPlotter';
 import ParameterControls from '../../../components/visualization/ParameterControls';
 import ParameterSection from '../../../components/visualization/ParameterSection';
 import BackButton from '../../../components/layout/BackButton';

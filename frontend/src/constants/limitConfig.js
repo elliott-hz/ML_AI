@@ -1,4 +1,4 @@
-import { ASPECT_RATIO_OPTIONS } from '../components/visualization/LimitPlotter';
+import { ASPECT_RATIO_OPTIONS } from './plotThemeConfig';
 
 export const plotStyleConfig = [
   { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
