@@ -48,8 +48,8 @@ const QuotientRule = () => {
   const navigate = useNavigate();
 
   const [params, setParams] = useState({
-    a: 2, b: 1, m: 4,     // u(x) = 2 + x⁴
-    c: 2, d: 1, n: 1,     // v(x) = 2 + x (linear)
+    a: 2, b: 1, m: 3,     // u(x) = 2 + x³
+    c: 2, d: -1.5, n: 1,     // v(x) = 2 - 1.5x
     x0: 1,
     dx: 0.1,
     xRange: [-3, 5],
