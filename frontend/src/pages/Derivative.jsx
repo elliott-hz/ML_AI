@@ -233,6 +233,14 @@ const Derivative = () => {
             the total area increase splits into three regions.
           </ButtonDescription>
         </FeatureButton>
+        <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/reciprocal-rule')}>
+          <ButtonTitle>Reciprocal Rule</ButtonTitle>
+          <ButtonDescription>
+            (1/u)' = −u'/u². The hyperbola xy=1 has constant area — when x grows,
+            y must shrink to keep the rectangle area at 1. This conservation law
+            is the key to the quotient rule.
+          </ButtonDescription>
+        </FeatureButton>
         <FeatureButton onClick={() => navigate('/mathematics/1-fundamentals/derivative/quotient-rule')}>
           <ButtonTitle>Quotient Rule</ButtonTitle>
           <ButtonDescription>
