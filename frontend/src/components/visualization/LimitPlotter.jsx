@@ -216,6 +216,7 @@ const LimitPlotter = ({
 
   const config = {
     displayModeBar: true,
+    displaylogo: false,
     modeBarButtonsToAdd: [],
     modeBarButtonsToRemove: [
       'zoom2d', 'pan2d', 'select2d', 'lasso2d',

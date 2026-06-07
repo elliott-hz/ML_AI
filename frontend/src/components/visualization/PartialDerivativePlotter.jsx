@@ -132,6 +132,7 @@ const PartialDerivativePlotter = ({
   // Config — modebar ALWAYS on (showExportButton only controls custom PNG button below)
   const mergedConfig = {
     displayModeBar: true,
+    displaylogo: false,
     modeBarButtonsToAdd: [],
     modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d', 'sendDataToCloud'],
     toImageButtonOptions: { format: 'png', filename: `${(title || 'plot').replace(/\s+/g, '_')}_${Date.now()}`, height: 800, width: 1200, scale: 2 }
