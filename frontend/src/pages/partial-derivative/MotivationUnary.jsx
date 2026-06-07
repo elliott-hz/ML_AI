@@ -113,21 +113,35 @@ const MotivationUnary = () => {
       showlegend: false
     });
 
-    // 6. x₀ label on x-axis
-    const xAxisY = (Math.min(...ys) - 0.3);
-    traces.push({
-      x: [x0], y: [xAxisY],
-      type: 'scatter', mode: 'markers+text',
-      name: '',
-      marker: { color: palette.markers.evalX0, size: 6, symbol: 'x-thin' },
-      text: ['x₀'],
-      textposition: 'bottom center',
-      textfont: { color: palette.markers.evalX0, size: 13, weight: 700 },
-      showlegend: false
-    });
+    // 6. x₀ label via annotation (handled separately below)
 
     return traces;
   }, [params, x0, y0, deriv, palette]);
+
+  // Labels via annotations — equal pixel distance from axes
+  const annotationOffset = 18;
+  const annotations = useMemo(() => [
+    {
+      x: x0, y: 0,
+      xref: 'x', yref: 'y',
+      text: 'x₀',
+      showarrow: false,
+      xanchor: 'center',
+      yanchor: 'top',
+      yshift: -annotationOffset,
+      font: { color: palette.markers.evalX0, size: 13, weight: 700 }
+    },
+    {
+      x: 0, y: y0,
+      xref: 'x', yref: 'y',
+      text: 'f(x₀)',
+      showarrow: false,
+      xanchor: 'right',
+      yanchor: 'middle',
+      xshift: -annotationOffset,
+      font: { color: palette.markers.evalX0, size: 13, weight: 700 }
+    }
+  ], [x0, y0, palette]);
 
   return (
     <PageContainer>
@@ -184,6 +198,7 @@ const MotivationUnary = () => {
         <PlotPanel>
           <DerivativePlotter
             data={plotData}
+            annotations={annotations}
             xRange={params.xRange}
             title="y = x² — One Input, One Output"
             showExportButton={false}
