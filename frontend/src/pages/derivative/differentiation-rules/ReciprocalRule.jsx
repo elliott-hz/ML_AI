@@ -57,6 +57,13 @@ const ReciprocalRule = () => {
   const dx = params.dx;
   const y0 = yFn(x0);
   const yp = derivFn(x0);
+  const dy = yFn(x0 + dx) - y0;
+  const ydGainLoss = dx >= 0 ? 'gain' : 'loss';
+  const ydLabel = dx >= 0 ? 'y·dx' : '-y·dx';
+  const ydValue = dx >= 0 ? (y0 * dx) : (-y0 * dx);
+  const xdyGainLoss = dx >= 0 ? 'loss' : 'gain';
+  const xdyLabel = dx >= 0 ? '-x·dy' : 'x·dy';
+  const xdyValue = dx >= 0 ? (-x0 * dy) : (x0 * dy);
 
   // ── Plot 1: Hyperbola + rectangle + decomposition (merged) ────
   const plot1Data = useMemo(() => {
@@ -106,32 +113,32 @@ const ReciprocalRule = () => {
       line: { color: palette.mainTraces.primary, width: 2 }
     });
 
-    // 2. Green strip — right side, y·dx (gain)
+    // 2. Green strip — y·dx area (positive when dx>0)
     traces.push({
       x: [x0, x1, x1, x0, x0], y: [0, 0, y0, y0, 0],
       type: 'scatter', mode: 'lines',
       fill: 'toself', fillcolor: palette.fills.positive,
-      name: `y·dx = ${(y0 * dx).toFixed(4)} (gain)`,
+      name: `${ydLabel} = ${ydValue.toFixed(4)} (${ydGainLoss})`,
       line: { color: palette.mainTraces.secondary, width: 1.5 }
     });
 
-    // 3. Red strip — top, -x·dy (loss)
+    // 3. Red strip — x·dy area (negative when dx>0 → use -x·dy)
     traces.push({
       x: [0, x0, x0, 0, 0], y: [y1, y1, y0, y0, y1],
       type: 'scatter', mode: 'lines',
       fill: 'toself', fillcolor: palette.fills.negative,
-      name: `-x·dy = ${(-x0 * dy).toFixed(4)} (loss)`,
+      name: `${xdyLabel} = ${xdyValue.toFixed(4)} (${xdyGainLoss})`,
       line: { color: palette.auxTraces.combined, width: 1.5 }
     });
 
-    // 4. Corner — dx·dy (second-order)
-    const cornerArea = dx * dy;
-    if (isFinite(cornerArea) && Math.abs(cornerArea) > 1e-10) {
+    // 4. Corner — -dx·dy (area, always positive since dx·dy < 0)
+    const cornerArea = -dx * dy;
+    if (isFinite(cornerArea) && cornerArea > 1e-10) {
       traces.push({
         x: [x0, x1, x1, x0, x0], y: [y1, y1, y0, y0, y1],
         type: 'scatter', mode: 'lines',
         fill: 'toself', fillcolor: palette.fills.accent,
-        name: `dx·dy = ${cornerArea.toFixed(5)}`,
+        name: `-dx·dy = ${cornerArea.toFixed(5)}`,
         line: { color: '#a855f7', width: 1.5 }
       });
     }
@@ -189,22 +196,22 @@ const ReciprocalRule = () => {
     traces.push({
       x: [(x0 + x1) / 2], y: [y0 / 2],
       type: 'scatter', mode: 'text',
-      text: ['y·dx (gain)'],
+      text: [`${ydLabel} (${ydGainLoss})`],
       textfont: { color: palette.text.annotation, size: 11, family: 'monospace' },
       showlegend: false
     });
     traces.push({
       x: [x0 / 2], y: [(y0 + y1) / 2],
       type: 'scatter', mode: 'text',
-      text: ['-x·dy (loss)'],
+      text: [`${xdyLabel} (${xdyGainLoss})`],
       textfont: { color: palette.text.annotation, size: 11, family: 'monospace' },
       showlegend: false
     });
-    if (isFinite(cornerArea) && Math.abs(cornerArea) > 1e-10) {
+    if (isFinite(cornerArea) && cornerArea > 1e-10) {
       traces.push({
         x: [(x0 + x1) / 2], y: [(y0 + y1) / 2],
         type: 'scatter', mode: 'text',
-        text: ['dx·dy'],
+        text: ['-dx·dy'],
         textfont: { color: palette.text.annotation, size: 10, family: 'monospace' },
         showlegend: false
       });
@@ -244,15 +251,15 @@ const ReciprocalRule = () => {
         <Formula>
           y = 1/x &nbsp;⇒&nbsp; x·y = 1 (constant area)<br/><br/>
           When x → x+dx: area must stay 1<br/>
-          y·dx − x·(−dy) + dx·dy = 0 &nbsp; (gain − loss + corner)<br/>
+          y·dx − x·(−dy) + dx·dy = 0 &nbsp; ({dx >= 0 ? 'gain − loss' : 'loss − gain'} + corner)<br/>
           Neglect dx·dy: &nbsp; y·dx = −x·dy<br/>
           ⇒ &nbsp; dy/dx = −y/x = −1/x²<br/><br/>
           <strong>(1/x)' = −1/x²</strong><br/><br/>
           At x₀ = {x0.toFixed(2)}: &nbsp;
           y = {isFinite(y0) ? y0.toFixed(3) : '?'}, &nbsp;
           y' = {isFinite(yp) ? yp.toFixed(3) : '?'}<br/>
-          y·dx = {(y0 * dx).toFixed(4)}, &nbsp;
-          −x·dy = {(-x0 * (1/(x0+dx) - y0)).toFixed(4)}
+          {ydLabel} = {ydValue.toFixed(4)}, &nbsp;
+          {xdyLabel} = {xdyValue.toFixed(4)}
         </Formula>
       </FormulaBox>
 
@@ -263,7 +270,7 @@ const ReciprocalRule = () => {
             <ParameterControls parameters={params} onChange={setParams}
               config={[
                 { name: 'x0', label: 'x₀', min: 0.5, max: 5, step: 0.1 },
-                { name: 'dx', label: 'dx (increment)', min: 0.001, max: 0.5, step: 0.1 }
+                { name: 'dx', label: 'dx (increment)', min: -0.4, max: 0.4, step: 0.05 }
               ]}
             />
           </ParameterSection>
