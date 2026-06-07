@@ -136,9 +136,9 @@ const MotivationUnary = () => {
       xref: 'x', yref: 'y',
       text: 'f(x₀)',
       showarrow: false,
-      xanchor: 'right',
+      xanchor: x0 >= 0 ? 'right' : 'left',
       yanchor: 'middle',
-      xshift: -annotationOffset,
+      xshift: x0 >= 0 ? -annotationOffset : annotationOffset,
       font: { color: palette.markers.evalX0, size: 13, weight: 700 }
     }
   ], [x0, y0, palette]);
