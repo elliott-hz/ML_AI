@@ -1,34 +1,17 @@
-// UI Pattern: StandardSinglePlot — single ContentLayout, one 2D plot (Plotly direct)
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import Plotly from 'plotly.js/dist/plotly.min.js';
-import { useNavigate } from 'react-router-dom';
+// UI Pattern: StandardSinglePlot — single plot with controls panel and content layout
+import React, { useState, useMemo, useCallback } from 'react';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { getTracePalette, ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
+import { getTracePalette } from '../../constants/plotThemeConfig';
+import PartialDerivativePlotter from '../../components/visualization/PartialDerivativePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 import BackButton from '../../components/layout/BackButton';
 import {
-  PageContainer,
-  Header,
-  SectionTitleH1,
-  SectionDescription,
-  ContentLayout,
-  ControlsPanel,
-  PlotPanel,
-  FormulaBox,
-  FormulaTitle,
-  Formula
+  PageContainer, Header, SectionTitleH1, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel,
+  FormulaBox, FormulaTitle, Formula
 } from '../../components/common/LayoutStyled';
-
-const PlotContainer = styled.div`
-  width: 100%;
-  height: 500px;
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  overflow: hidden;
-`;
+import { plotStyleConfig, legendPositionConfig } from '../../constants/partialDerivativeConfig';
 
 /**
  * MotivationUnary — Unary Single-Variable Function
@@ -45,11 +28,10 @@ const PlotContainer = styled.div`
  *   - Tangent line at A showing slope f'(x₀) = 2x₀
  */
 const MotivationUnary = () => {
-  const navigate = useNavigate();
-
   const [params, setParams] = useState({
     x0: 1.5,
     xRange: [-3, 3],
+    plotStyle: 'medium',
     legendPosition: 'top-right'
   });
 
@@ -58,15 +40,10 @@ const MotivationUnary = () => {
 
   const x0 = params.x0;
   const y0 = x0 * x0;
-  const deriv = 2 * x0;  // f'(x) = 2x
+  const deriv = 2 * x0;
 
-  // ── Compute y range from xRange to keep plot stable ─────
-  const [xMin, xMax] = params.xRange;
-  const yMax = Math.max(xMin * xMin, xMax * xMax);
-  const yRange = [yMax > 4 ? -0.5 : -0.3, yMax + 0.5];
-
-  // ── Traces ──────────────────────────────────────────────
-  const plotData = useMemo(() => {
+  const generateData = useCallback(() => {
+    const [xMin, xMax] = params.xRange;
     const numPoints = 400;
     const step = (xMax - xMin) / numPoints;
 
@@ -111,7 +88,6 @@ const MotivationUnary = () => {
     traces.push({
       x: [x0, x0], y: [0, y0],
       type: 'scatter', mode: 'lines',
-      name: 'y depends on x',
       line: { color: palette.markers.evalX0, width: 2, dash: 'dot' },
       showlegend: false
     });
@@ -120,15 +96,16 @@ const MotivationUnary = () => {
     traces.push({
       x: [0, x0], y: [y0, y0],
       type: 'scatter', mode: 'lines',
-      name: '',
       line: { color: palette.markers.evalX0, width: 2, dash: 'dot' },
       showlegend: false
     });
 
     return traces;
-  }, [params, x0, y0, deriv, palette, xMin, xMax]);
+  }, [params.xRange, x0, y0, deriv, palette]);
 
-  // ── Labels via annotations ──────────────────────────────
+  const plotData = useMemo(() => generateData(), [generateData]);
+
+  // Labels via annotations
   const annotationOffset = 18;
   const annotations = useMemo(() => [
     {
@@ -136,8 +113,7 @@ const MotivationUnary = () => {
       xref: 'x', yref: 'y',
       text: 'x₀',
       showarrow: false,
-      xanchor: 'center',
-      yanchor: 'top',
+      xanchor: 'center', yanchor: 'top',
       yshift: -annotationOffset,
       font: { color: palette.markers.evalX0, size: 13, weight: 700 }
     },
@@ -146,74 +122,20 @@ const MotivationUnary = () => {
       xref: 'x', yref: 'y',
       text: 'f(x₀)',
       showarrow: false,
-      xanchor: x0 >= 0 ? 'right' : 'left',
-      yanchor: 'middle',
+      xanchor: x0 >= 0 ? 'right' : 'left', yanchor: 'middle',
       xshift: x0 >= 0 ? -annotationOffset : annotationOffset,
       font: { color: palette.markers.evalX0, size: 13, weight: 700 }
     }
   ], [x0, y0, palette]);
 
-  // ── Theme-aware layout ──────────────────────────────────
-  const isDark = themeMode === 'dark';
-  const bgColor = isDark ? '#0f172a' : '#f8fafc';
-  const axisColor = isDark ? '#94a3b8' : '#475569';
-  const gridColor = isDark ? '#1e293b' : '#e2e8f0';
-  const zeroLineColor = isDark ? '#334155' : '#94a3b8';
-  const tickColor = isDark ? '#64748b' : '#94a3b8';
-  const legendBg = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(248, 250, 252, 0.85)';
-
-  const layout = useMemo(() => ({
-    xaxis: {
-      title: { text: 'x', font: { color: axisColor, size: 14 } },
-      range: params.xRange,
-      gridcolor: gridColor,
-      gridwidth: 0.5,
-      zerolinecolor: zeroLineColor,
-      zerolinewidth: 1.5,
-      tickfont: { color: tickColor, size: 11 },
-      dtick: 1
-    },
-    yaxis: {
-      title: { text: 'y', font: { color: axisColor, size: 14 } },
-      range: yRange,
-      gridcolor: gridColor,
-      gridwidth: 0.5,
-      zerolinecolor: zeroLineColor,
-      zerolinewidth: 1.5,
-      tickfont: { color: tickColor, size: 11 }
-    },
-    plot_bgcolor: bgColor,
-    paper_bgcolor: 'transparent',
-    margin: { l: 50, r: 20, t: 40, b: 50 },
-    title: {
-      text: 'y = x² — One Input, One Output',
-      font: { color: axisColor, size: 15 }
-    },
-    showlegend: true,
-    legend: {
-      x: 1.02,
-      y: 1,
-      font: { color: axisColor, size: 11 },
-      bgcolor: legendBg,
-      bordercolor: gridColor,
-      borderwidth: 1
-    },
-    annotations,
-    hovermode: 'closest'
-  }), [params.xRange, yRange, bgColor, axisColor, gridColor, zeroLineColor, tickColor, legendBg, annotations]);
-
-  // ── Plotly render ────────────────────────────────────────
-  const plotRef = useRef(null);
-
-  useEffect(() => {
-    if (!plotRef.current) return;
-    Plotly.newPlot(plotRef.current, plotData, layout, {
-      displayModeBar: false,
-      displaylogo: false,
-      responsive: true
-    });
-    return () => { if (plotRef.current) Plotly.purge(plotRef.current); };
-  }, [plotData, layout]);
+  const commonParamsConfig = [
+    ...legendPositionConfig,
+    ...plotStyleConfig,
+    {
+      name: 'xRange', label: 'X Range', type: 'range',
+      min: -5, max: 5, step: 1, default: [-3, 3]
+    }
+  ];
 
   return (
     <PageContainer>
@@ -257,16 +179,21 @@ const MotivationUnary = () => {
             <ParameterControls
               parameters={params}
               onChange={setParams}
-              config={[
-                { name: 'legendPosition', label: 'Legend', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] },
-                { name: 'xRange', label: 'X Range', type: 'range', min: -5, max: 5, step: 1, default: [-3, 3] }
-              ]}
+              config={commonParamsConfig}
             />
           </ParameterSection>
         </ControlsPanel>
 
         <PlotPanel>
-          <PlotContainer ref={plotRef} id="plotly-unary" />
+          <PartialDerivativePlotter
+            data={plotData}
+            xRange={params.xRange}
+            title="y = x² — One Input, One Output"
+            showExportButton={false}
+            plotStyle={params.plotStyle}
+            legendPosition={params.legendPosition}
+            annotations={annotations}
+          />
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

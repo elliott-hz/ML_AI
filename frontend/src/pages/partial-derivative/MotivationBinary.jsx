@@ -1,38 +1,17 @@
-// UI Pattern: StandardSinglePlot — single ContentLayout, one 3D plot
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+// UI Pattern: StandardSinglePlot — single ContentLayout with one 3D plot via PartialDerivativePlotter
+import React, { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import Plotly from 'plotly.js/dist/plotly.min.js';
-import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getTracePalette } from '../../constants/plotThemeConfig';
+import PartialDerivativePlotter from '../../components/visualization/PartialDerivativePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 import BackButton from '../../components/layout/BackButton';
 import {
-  PageContainer,
-  Header,
-  SectionTitleH1,
-  SectionDescription,
-  ContentLayout,
-  ControlsPanel,
-  PlotPanel,
-  FormulaBox,
-  FormulaTitle,
-  Formula
+  PageContainer, Header, SectionTitleH1, SectionDescription,
+  ContentLayout, ControlsPanel, PlotPanel,
+  FormulaBox, FormulaTitle, Formula
 } from '../../components/common/LayoutStyled';
-
-const PlotContainer = styled.div`
-  width: 100%;
-  height: 500px;
-  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
-  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
-  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
-  overflow: hidden;
-
-  .js-plotly-plot .plotly .main-svg {
-    border-radius: 8px;
-  }
-`;
 
 const Note = styled.p`
   color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};
@@ -57,8 +36,6 @@ const Note = styled.p`
  *   - Projection to yz-plane (x=0)
  */
 const MotivationBinary = () => {
-  const navigate = useNavigate();
-
   const [params, setParams] = useState({
     x0: 1.5,
     y0: 1.0,
@@ -71,12 +48,9 @@ const MotivationBinary = () => {
   const x0 = params.x0;
   const y0 = params.y0;
   const z0 = x0 * x0 + y0 * y0;
-
-  // Partial derivatives: ∂z/∂x = 2x, ∂z/∂y = 2y
   const dzdx = 2 * x0;
   const dzdy = 2 * y0;
 
-  // Range for the surface plot [0, 3]
   const range = [0, 3];
   const n = params.resolution;
   const step = (range[1] - range[0]) / n;
@@ -111,20 +85,18 @@ const MotivationBinary = () => {
     };
   }, [n]);
 
-  // ── Projection & point traces ───────────────────────────
+  // ── Overlay traces ──────────────────────────────────────
   const overlayTraces = useMemo(() => {
     const traces = [];
 
-    // Helper: line between two 3D points
-    const line3d = (p1, p2, color, width = 2, dash = 'solid', name = '', showLegend = false) => ({
+    const line3d = (p1, p2, color, width = 2, dash = 'solid') => ({
       type: 'scatter3d',
       mode: 'lines',
       x: [p1[0], p2[0]],
       y: [p1[1], p2[1]],
       z: [p1[2], p2[2]],
       line: { color, width, dash },
-      name,
-      showlegend: showLegend,
+      showlegend: false,
       hovertemplate: ''
     });
 
@@ -145,143 +117,53 @@ const MotivationBinary = () => {
       showlegend: true
     });
 
-    // Projection 1: A → xy-plane (z=0)  — red
-    traces.push(line3d(
-      [x0, y0, z0],
-      [x0, y0, 0],
-      palette.markers.evalX0, 2, 'dash', '', false
-    ));
+    // Projection 1: A → xy-plane (z=0)
+    traces.push(line3d([x0, y0, z0], [x0, y0, 0], palette.markers.evalX0, 2, 'dash'));
 
-    // Projection 2: A → xz-plane (y=0)  — yellow
-    traces.push(line3d(
-      [x0, y0, z0],
-      [x0, 0, z0],
-      palette.mainTraces.secondary, 2, 'dash', '', false
-    ));
+    // Projection 2: A → xz-plane (y=0)
+    traces.push(line3d([x0, y0, z0], [x0, 0, z0], palette.mainTraces.secondary, 2, 'dash'));
 
-    // Projection 3: A → yz-plane (x=0)  — cyan
-    traces.push(line3d(
-      [x0, y0, z0],
-      [0, y0, z0],
-      '#22d3ee', 2, 'dash', '', false
-    ));
+    // Projection 3: A → yz-plane (x=0)
+    traces.push(line3d([x0, y0, z0], [0, y0, z0], '#22d3ee', 2, 'dash'));
 
-    // Footprint markers on each plane
+    // Footprint markers
     traces.push({
-      type: 'scatter3d',
-      mode: 'markers',
-      x: [x0],
-      y: [y0],
-      z: [0],
+      type: 'scatter3d', mode: 'markers',
+      x: [x0], y: [y0], z: [0],
       marker: { color: palette.markers.evalX0, size: 5, symbol: 'circle' },
-      name: '(x₀, y₀, 0)',
       showlegend: false
     });
     traces.push({
-      type: 'scatter3d',
-      mode: 'markers',
-      x: [x0],
-      y: [0],
-      z: [z0],
+      type: 'scatter3d', mode: 'markers',
+      x: [x0], y: [0], z: [z0],
       marker: { color: palette.mainTraces.secondary, size: 5, symbol: 'circle' },
-      name: '(x₀, 0, z₀)',
       showlegend: false
     });
     traces.push({
-      type: 'scatter3d',
-      mode: 'markers',
-      x: [0],
-      y: [y0],
-      z: [z0],
+      type: 'scatter3d', mode: 'markers',
+      x: [0], y: [y0], z: [z0],
       marker: { color: '#22d3ee', size: 5, symbol: 'circle' },
-      name: '(0, y₀, z₀)',
       showlegend: false
     });
 
     return traces;
   }, [x0, y0, z0, palette]);
 
-  // ── Camera: X→right, Y→out of screen, Z→up ────────────
-  const camera = useMemo(() => ({
-    eye: { x: 2.8, y: -2.8, z: 1.5 },
-    center: { x: 1.5, y: 1.5, z: 3 },
-    up: { x: 0, y: 0, z: 1 }
-  }), []);
+  const allData = useMemo(() => [surfaceData, ...overlayTraces], [surfaceData, overlayTraces]);
 
-  const isDark = themeMode === 'dark';
-  const sceneBg = isDark ? '#0f172a' : '#f8fafc';
-  const axisColor = isDark ? '#94a3b8' : '#475569';
-  const gridColor = isDark ? '#1e293b' : '#e2e8f0';
-  const zeroLineColor = isDark ? '#334155' : '#94a3b8';
-  const tickColor = isDark ? '#64748b' : '#94a3b8';
-  const legendBg = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(248, 250, 252, 0.85)';
-
-  const layout = useMemo(() => ({
-    scene: {
-      xaxis: {
-        title: { text: 'x', font: { color: axisColor, size: 14 } },
-        range: [0, 3.2],
-        dtick: 0.5,
-        gridcolor: gridColor,
-        gridwidth: 0.5,
-        zerolinecolor: zeroLineColor,
-        zerolinewidth: 1.5,
-        tickfont: { color: tickColor, size: 11 }
-      },
-      yaxis: {
-        title: { text: 'y', font: { color: axisColor, size: 14 } },
-        range: [0, 3.2],
-        dtick: 0.5,
-        gridcolor: gridColor,
-        gridwidth: 0.5,
-        zerolinecolor: zeroLineColor,
-        zerolinewidth: 1.5,
-        tickfont: { color: tickColor, size: 11 }
-      },
-      zaxis: {
-        title: { text: 'z', font: { color: axisColor, size: 14 } },
-        range: [0, 18],
-        dtick: 3,
-        gridcolor: gridColor,
-        gridwidth: 0.5,
-        zerolinecolor: zeroLineColor,
-        zerolinewidth: 1.5,
-        tickfont: { color: tickColor, size: 11 }
-      },
-      bgcolor: sceneBg,
-      camera,
-      aspectmode: 'manual',
-      aspectratio: { x: 1, y: 1, z: 1.1 }
+  // ── Scene config for 3D ─────────────────────────────────
+  const scene = useMemo(() => ({
+    xRange: [0, 3.2],
+    yRange: [0, 3.2],
+    zRange: [0, 18],
+    dtick: 0.5,
+    camera: {
+      eye: { x: 2.8, y: -2.8, z: 1.5 },
+      center: { x: 1.5, y: 1.5, z: 3 },
+      up: { x: 0, y: 0, z: 1 }
     },
-    paper_bgcolor: 'transparent',
-    plot_bgcolor: sceneBg,
-    margin: { l: 0, r: 0, t: 0, b: 0 },
-    autosize: true,
-    legend: {
-      x: 1.05,
-      y: 1,
-      font: { color: axisColor, size: 11 },
-      bgcolor: legendBg,
-      bordercolor: gridColor,
-      borderwidth: 1
-    }
-  }), [camera, isDark]);
-
-  const plotConfig = useMemo(() => ({
-    displayModeBar: true,
-    displaylogo: false,
-    modeBarButtonsToRemove: ['sendDataToCloud', 'lasso2d', 'select2d'],
-    toImageButtonOptions: { format: 'png', filename: 'binary-function-3d', scale: 2 }
+    aspectratio: { x: 1, y: 1, z: 1.1 }
   }), []);
-
-  const plotRef = useRef(null);
-
-  useEffect(() => {
-    if (!plotRef.current) return;
-    const allData = [surfaceData, ...overlayTraces];
-    Plotly.newPlot(plotRef.current, allData, layout, plotConfig);
-    return () => { if (plotRef.current) Plotly.purge(plotRef.current); };
-  }, [surfaceData, overlayTraces, layout, plotConfig]);
 
   return (
     <PageContainer>
@@ -329,7 +211,12 @@ const MotivationBinary = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <PlotContainer ref={plotRef} id="plotly-3d" />
+          <PartialDerivativePlotter
+            data={allData}
+            title="z = x² + y² — Two Inputs, One Output"
+            showExportButton={false}
+            scene={scene}
+          />
           <Note>
             Drag to rotate · Scroll to zoom ·
             <span style={{ color: palette.markers.evalX0 }}> ●</span> xy-plane ·
