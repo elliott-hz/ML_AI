@@ -18,7 +18,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula
-} from '../../components/style/PartialDerivativeStyled';
+} from '../../components/common/LayoutStyled';
 
 /**
  * MotivationUnary — Unary Single-Variable Function

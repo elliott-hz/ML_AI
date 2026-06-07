@@ -1,7 +1,7 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout, one 3D plot
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import Plot from 'react-plotly.js';
+import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useNavigate } from 'react-router-dom';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getTracePalette } from '../../constants/plotThemeConfig';
@@ -19,11 +19,15 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula
-} from '../../components/style/PartialDerivativeStyled';
+} from '../../components/common/LayoutStyled';
 
 const PlotContainer = styled.div`
   width: 100%;
   height: 500px;
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border: 1px solid ${({ theme }) => theme?.colors?.border || '#334155'};
+  border-radius: ${({ theme }) => theme?.borderRadius?.lg || '12px'};
+  overflow: hidden;
 
   .js-plotly-plot .plotly .main-svg {
     border-radius: 8px;
@@ -197,52 +201,71 @@ const MotivationBinary = () => {
     return traces;
   }, [x0, y0, z0, palette]);
 
-  // ── Camera position ─────────────────────────────────────
+  // ── Camera: X→right, Y→out of screen, Z→up ────────────
   const camera = useMemo(() => ({
-    eye: { x: 3.5, y: -3.5, z: 2.5 },
-    center: { x: 1.5, y: 1.5, z: 2 },
+    eye: { x: 2.8, y: -2.8, z: 1.5 },
+    center: { x: 1.5, y: 1.5, z: 3 },
     up: { x: 0, y: 0, z: 1 }
   }), []);
+
+  const isDark = themeMode === 'dark';
+  const sceneBg = isDark ? '#0f172a' : '#f8fafc';
+  const axisColor = isDark ? '#94a3b8' : '#475569';
+  const gridColor = isDark ? '#1e293b' : '#e2e8f0';
+  const zeroLineColor = isDark ? '#334155' : '#94a3b8';
+  const tickColor = isDark ? '#64748b' : '#94a3b8';
+  const legendBg = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(248, 250, 252, 0.85)';
 
   const layout = useMemo(() => ({
     scene: {
       xaxis: {
-        title: { text: 'x', font: { color: '#94a3b8' } },
-        range,
+        title: { text: 'x', font: { color: axisColor, size: 14 } },
+        range: [0, 3.2],
         dtick: 0.5,
-        gridcolor: '#334155',
-        zerolinecolor: '#475569'
+        gridcolor: gridColor,
+        gridwidth: 0.5,
+        zerolinecolor: zeroLineColor,
+        zerolinewidth: 1.5,
+        tickfont: { color: tickColor, size: 11 }
       },
       yaxis: {
-        title: { text: 'y', font: { color: '#94a3b8' } },
-        range,
+        title: { text: 'y', font: { color: axisColor, size: 14 } },
+        range: [0, 3.2],
         dtick: 0.5,
-        gridcolor: '#334155',
-        zerolinecolor: '#475569'
+        gridcolor: gridColor,
+        gridwidth: 0.5,
+        zerolinecolor: zeroLineColor,
+        zerolinewidth: 1.5,
+        tickfont: { color: tickColor, size: 11 }
       },
       zaxis: {
-        title: { text: 'z', font: { color: '#94a3b8' } },
+        title: { text: 'z', font: { color: axisColor, size: 14 } },
         range: [0, 18],
-        dtick: 2,
-        gridcolor: '#334155',
-        zerolinecolor: '#475569'
+        dtick: 3,
+        gridcolor: gridColor,
+        gridwidth: 0.5,
+        zerolinecolor: zeroLineColor,
+        zerolinewidth: 1.5,
+        tickfont: { color: tickColor, size: 11 }
       },
-      bgcolor: 'transparent',
+      bgcolor: sceneBg,
       camera,
       aspectmode: 'manual',
-      aspectratio: { x: 1, y: 1, z: 1.2 }
+      aspectratio: { x: 1, y: 1, z: 1.1 }
     },
     paper_bgcolor: 'transparent',
-    plot_bgcolor: 'transparent',
+    plot_bgcolor: sceneBg,
     margin: { l: 0, r: 0, t: 0, b: 0 },
     autosize: true,
     legend: {
       x: 1.05,
       y: 1,
-      font: { color: '#cbd5e1', size: 11 },
-      bgcolor: 'rgba(30, 41, 59, 0.8)'
+      font: { color: axisColor, size: 11 },
+      bgcolor: legendBg,
+      bordercolor: gridColor,
+      borderwidth: 1
     }
-  }), [camera]);
+  }), [camera, isDark]);
 
   const plotConfig = useMemo(() => ({
     displayModeBar: true,
@@ -250,6 +273,15 @@ const MotivationBinary = () => {
     modeBarButtonsToRemove: ['sendDataToCloud', 'lasso2d', 'select2d'],
     toImageButtonOptions: { format: 'png', filename: 'binary-function-3d', scale: 2 }
   }), []);
+
+  const plotRef = useRef(null);
+
+  useEffect(() => {
+    if (!plotRef.current) return;
+    const allData = [surfaceData, ...overlayTraces];
+    Plotly.newPlot(plotRef.current, allData, layout, plotConfig);
+    return () => { if (plotRef.current) Plotly.purge(plotRef.current); };
+  }, [surfaceData, overlayTraces, layout, plotConfig]);
 
   return (
     <PageContainer>
@@ -297,15 +329,7 @@ const MotivationBinary = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <PlotContainer>
-            <Plot
-              data={[surfaceData, ...overlayTraces]}
-              layout={layout}
-              config={plotConfig}
-              useResizeHandler
-              style={{ width: '100%', height: '100%' }}
-            />
-          </PlotContainer>
+          <PlotContainer ref={plotRef} id="plotly-3d" />
           <Note>
             Drag to rotate · Scroll to zoom ·
             <span style={{ color: palette.markers.evalX0 }}> ●</span> xy-plane ·
