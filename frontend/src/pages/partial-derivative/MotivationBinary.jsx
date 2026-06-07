@@ -1,8 +1,10 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout with one 3D plot via PartialDerivativePlotter
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
+import { ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getTracePalette } from '../../constants/plotThemeConfig';
+import { legendPositionConfig } from '../../constants/partialDerivativeConfig';
 import PartialDerivativePlotter from '../../components/visualization/PartialDerivativePlotter';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
@@ -27,19 +29,14 @@ const Note = styled.p`
  * z = f(x, y) = x² + y²  (paraboloid, x,y ≥ 0)
  * Demonstrates that a binary function has two independent inputs:
  * z changes when EITHER x changes OR y changes.
- *
- * Visuals:
- *   - 3D surface plot of z = x² + y²
- *   - Point A at (x₀, y₀, z₀)
- *   - Projection to xy-plane (z=0)
- *   - Projection to xz-plane (y=0)
- *   - Projection to yz-plane (x=0)
  */
 const MotivationBinary = () => {
   const [params, setParams] = useState({
     x0: 1.5,
     y0: 1.0,
-    resolution: 30
+    resolution: 30,
+    aspectRatio: '1:1',
+    legendPosition: 'top-right'
   });
 
   const themeMode = useThemeMode();
@@ -66,24 +63,18 @@ const MotivationBinary = () => {
       x: xVals,
       y: yVals,
       z: zVals,
-      colorscale: [
-        [0, '#1e3a5f'],
-        [0.25, '#2563eb'],
-        [0.5, '#6366f1'],
-        [0.75, '#a855f7'],
-        [1, '#e879f9']
-      ],
+      colorscale: palette.surface.colorscale,
       opacity: 0.85,
       contours: {
-        x: { show: true, color: '#94a3b8', width: 0.5 },
-        y: { show: true, color: '#94a3b8', width: 0.5 },
-        z: { show: true, color: '#94a3b8', width: 0.5 }
+        x: { show: true, color: palette.surface.contour, width: 0.5 },
+        y: { show: true, color: palette.surface.contour, width: 0.5 },
+        z: { show: true, color: palette.surface.contour, width: 0.5 }
       },
       showscale: false,
       name: 'z = x² + y²',
       hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.2f}<extra></extra>'
     };
-  }, [n]);
+  }, [n, palette]);
 
   // ── Overlay traces ──────────────────────────────────────
   const overlayTraces = useMemo(() => {
@@ -117,32 +108,32 @@ const MotivationBinary = () => {
       showlegend: true
     });
 
+    const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
+
     // Projection 1: A → xy-plane (z=0)
-    traces.push(line3d([x0, y0, z0], [x0, y0, 0], palette.markers.evalX0, 2, 'dash'));
-
+    traces.push(line3d([x0, y0, z0], [x0, y0, 0], planeXY, 2, 'dash'));
     // Projection 2: A → xz-plane (y=0)
-    traces.push(line3d([x0, y0, z0], [x0, 0, z0], palette.mainTraces.secondary, 2, 'dash'));
-
+    traces.push(line3d([x0, y0, z0], [x0, 0, z0], planeXZ, 2, 'dash'));
     // Projection 3: A → yz-plane (x=0)
-    traces.push(line3d([x0, y0, z0], [0, y0, z0], '#22d3ee', 2, 'dash'));
+    traces.push(line3d([x0, y0, z0], [0, y0, z0], planeYZ, 2, 'dash'));
 
     // Footprint markers
     traces.push({
       type: 'scatter3d', mode: 'markers',
       x: [x0], y: [y0], z: [0],
-      marker: { color: palette.markers.evalX0, size: 5, symbol: 'circle' },
+      marker: { color: planeXY, size: 5, symbol: 'circle' },
       showlegend: false
     });
     traces.push({
       type: 'scatter3d', mode: 'markers',
       x: [x0], y: [0], z: [z0],
-      marker: { color: palette.mainTraces.secondary, size: 5, symbol: 'circle' },
+      marker: { color: planeXZ, size: 5, symbol: 'circle' },
       showlegend: false
     });
     traces.push({
       type: 'scatter3d', mode: 'markers',
       x: [0], y: [y0], z: [z0],
-      marker: { color: '#22d3ee', size: 5, symbol: 'circle' },
+      marker: { color: planeYZ, size: 5, symbol: 'circle' },
       showlegend: false
     });
 
@@ -152,18 +143,31 @@ const MotivationBinary = () => {
   const allData = useMemo(() => [surfaceData, ...overlayTraces], [surfaceData, overlayTraces]);
 
   // ── Scene config for 3D ─────────────────────────────────
-  const scene = useMemo(() => ({
-    xRange: [0, 3.2],
-    yRange: [0, 3.2],
-    zRange: [0, 18],
-    dtick: 0.5,
-    camera: {
-      eye: { x: 2.8, y: -2.8, z: 1.5 },
-      center: { x: 1.5, y: 1.5, z: 3 },
-      up: { x: 0, y: 0, z: 1 }
-    },
-    aspectratio: { x: 1, y: 1, z: 1.1 }
-  }), []);
+  const scene = useMemo(() => {
+    // Parse aspectRatio to aspectratio object
+    let ar = { x: 1, y: 1, z: 1 };
+    if (params.aspectRatio !== 'auto') {
+      const [w, h] = params.aspectRatio.split(':').map(Number);
+      if (w && h) {
+        // For 3D, scale z to match the visual proportion
+        ar = { x: w, y: h, z: Math.min(w, h) };
+      }
+    }
+    return {
+      xRange: [0, 3.2],
+      yRange: [0, 3.2],
+      zRange: [0, 18],
+      dtick: 0.5,
+      camera: {
+        eye: { x: 2.5, y: -2.5, z: 1.5 },
+        center: { x: 1.5, y: 1.5, z: 6 },
+        up: { x: 0, y: 0, z: 1 }
+      },
+      aspectratio: ar
+    };
+  }, [params.aspectRatio]);
+
+  const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
 
   return (
     <PageContainer>
@@ -208,6 +212,17 @@ const MotivationBinary = () => {
               ]}
             />
           </ParameterSection>
+
+          <ParameterSection title="General Settings">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={[
+                ...legendPositionConfig,
+                { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
+              ]}
+            />
+          </ParameterSection>
         </ControlsPanel>
 
         <PlotPanel>
@@ -216,12 +231,14 @@ const MotivationBinary = () => {
             title="z = x² + y² — Two Inputs, One Output"
             showExportButton={false}
             scene={scene}
+            aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
           />
           <Note>
             Drag to rotate · Scroll to zoom ·
-            <span style={{ color: palette.markers.evalX0 }}> ●</span> xy-plane ·
-            <span style={{ color: palette.mainTraces.secondary }}> ●</span> xz-plane ·
-            <span style={{ color: '#22d3ee' }}> ●</span> yz-plane
+            <span style={{ color: planeXY }}> ●</span> xy-plane ·
+            <span style={{ color: planeXZ }}> ●</span> xz-plane ·
+            <span style={{ color: planeYZ }}> ●</span> yz-plane
           </Note>
         </PlotPanel>
       </ContentLayout>

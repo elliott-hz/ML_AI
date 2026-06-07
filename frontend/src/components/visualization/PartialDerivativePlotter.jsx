@@ -61,6 +61,19 @@ const PartialDerivativePlotter = ({
 
   // Build layout
   const layout = useMemo(() => {
+    const legX = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02;
+    const legY = legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02;
+    const legXanchor = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 'right' : 'left';
+    const legYanchor = legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom';
+
+    const legendBase = {
+      font: { color: plotLayout.legend.fontColor, size: 11 },
+      bgcolor: plotLayout.legend.bgcolor,
+      bordercolor: plotLayout.legend.bordercolor,
+      borderwidth: 1,
+      x: legX, y: legY, xanchor: legXanchor, yanchor: legYanchor
+    };
+
     if (propScene) {
       const axisBase = {
         gridcolor: plotLayout.gridcolor, gridwidth: 0.5,
@@ -75,20 +88,15 @@ const PartialDerivativePlotter = ({
           zaxis: { title: { text: 'z', font: { color: plotLayout.axisLabelColor, size: 14 } }, range: propScene.zRange || [0, 18], dtick: (propScene.dtick || 0.5) * 6, ...axisBase },
           bgcolor: plotLayout.plot_bgcolor,
           camera: propScene.camera || { eye: { x: 2.8, y: -2.8, z: 1.5 }, center: { x: 0, y: 0, z: 0 }, up: { x: 0, y: 0, z: 1 } },
-          aspectmode: 'manual', aspectratio: propScene.aspectratio || { x: 1, y: 1, z: 1.1 }
+          aspectmode: 'manual',
+          aspectratio: propScene.aspectratio || { x: 1, y: 1, z: 1 }
         },
-        paper_bgcolor: plotLayout.paper_bgcolor, margin: { l: 0, r: 0, t: 30, b: 0 }, autosize: true,
+        paper_bgcolor: plotLayout.paper_bgcolor, margin: { l: 0, r: 0, t: 30, b: 0 },
+        showlegend: legendPosition !== 'None',
         title: title ? { text: title, font: { color: plotLayout.titleFontColor, size: styleConfig.fontSize + 6 } } : undefined,
-        legend: legendPosition !== 'None'
-          ? { font: { color: plotLayout.legend.fontColor, size: 11 }, bgcolor: plotLayout.legend.bgcolor, bordercolor: plotLayout.legend.bordercolor, borderwidth: 1 }
-          : undefined
+        legend: legendPosition !== 'None' ? legendBase : undefined
       };
     }
-
-    const legX = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02;
-    const legY = legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02;
-    const legXanchor = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 'right' : 'left';
-    const legYanchor = legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom';
 
     return {
       annotations: annotations || [],

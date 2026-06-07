@@ -109,6 +109,23 @@ export function getTracePalette(themeMode) {
       formula: isDark ? '#e0e0e0' : '#0f172a',      // formula annotations
     },
 
+    // ── 3.3c 3D surface colors ──
+    surface: {
+      colorscale: [
+        [0, '#1e3a5f'],
+        [0.25, '#2563eb'],
+        [0.5, '#6366f1'],
+        [0.75, '#a855f7'],
+        [1, '#e879f9']
+      ],
+      planeProjection: [
+        isDark ? '#f59e0b' : '#d97706',   // xy-plane projection — amber (evalX0)
+        isDark ? '#22c55e' : '#16a34a',   // xz-plane projection — green (mainTraces.secondary)
+        '#22d3ee'                          // yz-plane projection — cyan (theme-independent)
+      ],
+      contour: isDark ? '#94a3b8' : '#64748b',
+    },
+
     // ── 3.4 Fills (semi-transparent for area charts) ──
     fills: {
       primary: 'rgba(99, 102, 241, 0.15)',     // uv rectangle fill — indigo
