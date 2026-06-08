@@ -40,12 +40,14 @@ const PartialDerivative = () => {
     m: 2,
     b: 1.0,
     n: 2,
-    xc: 0,
-    yc: 0,
-    c: -2,
+    xc: 2,
+    yc: 2,
+    c: 0,
     direction: true,   // true = bowl up, false = bowl down
-    x0: 1.0,
-    y0: 0.5,
+    x0: 2.5,
+    y0: 1.5,
+    xRange: [0, 4],
+    yRange: [0, 4],
     resolution: 30,
     aspectRatio: 'auto',
     legendPosition: 'top-right',
@@ -55,10 +57,13 @@ const PartialDerivative = () => {
   const themeMode = useThemeMode();
   const palette = getTracePalette(themeMode);
 
-  const { a, m, b, n, xc, yc, c, direction, x0, y0 } = params;
+  const { a, m, b, n, xc, yc, c, direction, x0, y0, xRange, yRange } = params;
 
   // ── Function & derived values ───────────────────────────
   const dir = direction ? 1 : -1; // convert boolean → ±1
+
+  // ── Combined range for Plotter3D crossSection ──────────
+  const crossRange = [Math.min(xRange[0], yRange[0]), Math.max(xRange[1], yRange[1])];
 
   // ── Unicode superscript ─────────────────────────────────
   const sup = (n) => String(n).split('').map(c => ({'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','.':'·'})[c] || c).join('');
@@ -73,15 +78,13 @@ const PartialDerivative = () => {
   const dzdx = dir * a * m * Math.pow(x0 - xc, m - 1);
   const dzdy = dir * b * n * Math.pow(y0 - yc, n - 1);
 
-  const range = [-3, 3];
   const res = params.resolution;
-  const step = (range[1] - range[0]) / res;
 
   // ── Dynamic zRange ──────────────────────────────────────
   const zBounds = useMemo(() => {
     // sample at 9 key points (corners + edges + centre)
-    const xs = [-3, xc, 3];
-    const ys = [-3, yc, 3];
+    const xs = [xRange[0], xc, xRange[1]];
+    const ys = [yRange[0], yc, yRange[1]];
     let zMin = Infinity, zMax = -Infinity;
     for (const x of xs) {
       for (const y of ys) {
@@ -92,12 +95,14 @@ const PartialDerivative = () => {
     }
     const pad = Math.max((zMax - zMin) * 0.15, 1);
     return [zMin - pad, zMax + pad];
-  }, [a, m, b, n, xc, yc, c, dir]);
+  }, [a, m, b, n, xc, yc, c, dir, xRange, yRange]);
 
   // ── Surface data ────────────────────────────────────────
   const surfaceData = useMemo(() => {
-    const xVals = Array.from({ length: res + 1 }, (_, i) => range[0] + i * step);
-    const yVals = Array.from({ length: res + 1 }, (_, i) => range[0] + i * step);
+    const xStep = (xRange[1] - xRange[0]) / res;
+    const yStep = (yRange[1] - yRange[0]) / res;
+    const xVals = Array.from({ length: res + 1 }, (_, i) => xRange[0] + i * xStep);
+    const yVals = Array.from({ length: res + 1 }, (_, i) => yRange[0] + i * yStep);
     const zVals = yVals.map(y => xVals.map(x => fn(x, y)));
 
     const dirLabel = dir === 1 ? '↑' : '↓';
@@ -123,7 +128,6 @@ const PartialDerivative = () => {
   const planeSurfaces = useMemo(() => {
     const [xyColor, xzColor, yzColor] = palette.surface.planeProjection;
     const [zMin, zMax] = zBounds;
-    const r = 3;
 
     const mesh = (verts, color) => ({
       type: 'mesh3d',
@@ -138,12 +142,15 @@ const PartialDerivative = () => {
       showlegend: false
     });
 
+    const [xMin, xMax] = xRange;
+    const [yMin, yMax] = yRange;
+
     return [
-      mesh([[-r, -r, 0], [ r, -r, 0], [ r,  r, 0], [-r,  r, 0]], xyColor),  // xy-plane  z=0
-      mesh([[-r,  0, zMin], [ r, 0, zMin], [ r, 0, zMax], [-r, 0, zMax]], xzColor),  // xz-plane  y=0
-      mesh([[ 0, -r, zMin], [ 0, r, zMin], [ 0, r, zMax], [ 0,-r, zMax]], yzColor),  // yz-plane  x=0
+      mesh([[xMin, yMin, 0], [xMax, yMin, 0], [xMax, yMax, 0], [xMin, yMax, 0]], xyColor),  // xy-plane  z=0
+      mesh([[xMin, 0, zMin], [xMax, 0, zMin], [xMax, 0, zMax], [xMin, 0, zMax]], xzColor),  // xz-plane  y=0
+      mesh([[0, yMin, zMin], [0, yMax, zMin], [0, yMax, zMax], [0, yMin, zMax]], yzColor),  // yz-plane  x=0
     ];
-  }, [palette, zBounds]);
+  }, [palette, zBounds, xRange, yRange]);
 
   // ── Tangent + marker overlay traces ─────────────────────
   const overlayTraces = useMemo(() => {
@@ -162,12 +169,12 @@ const PartialDerivative = () => {
     });
 
     // ── Tangent in x-direction (∂z/∂x) — full x-range ────
-    const tX = Array.from({ length: N + 1 }, (_, i) => range[0] + (range[1] - range[0]) * i / N);
+    const tX = Array.from({ length: N + 1 }, (_, i) => xRange[0] + (xRange[1] - xRange[0]) * i / N);
     const tanX = tX.map(x => ({ x, y: y0, z: z0 + dzdx * (x - x0) }));
     traces.push(tanTrace(tanX, palette.surface.crossSection.fx, `∂z/∂x = ${dzdx.toFixed(2)}`));
 
     // ── Tangent in y-direction (∂z/∂y) — full y-range ────
-    const tY = Array.from({ length: N + 1 }, (_, i) => range[0] + (range[1] - range[0]) * i / N);
+    const tY = Array.from({ length: N + 1 }, (_, i) => yRange[0] + (yRange[1] - yRange[0]) * i / N);
     const tanY = tY.map(y => ({ x: x0, y, z: z0 + dzdy * (y - y0) }));
     traces.push(tanTrace(tanY, palette.surface.crossSection.fy, `∂z/∂y = ${dzdy.toFixed(2)}`));
 
@@ -202,15 +209,16 @@ const PartialDerivative = () => {
     traces.push({ type: 'scatter3d', mode: 'markers', x: [0],   y: [y0], z: [z0],  marker: { color: planeYZ, size: 4 }, showlegend: false });
 
     return traces;
-  }, [x0, y0, z0, dzdx, dzdy, palette]);
+  }, [x0, y0, z0, dzdx, dzdy, palette, xRange, yRange]);
 
   const allData = useMemo(() => [surfaceData, ...planeSurfaces, ...overlayTraces], [surfaceData, planeSurfaces, overlayTraces]);
 
   // ── Scene config ────────────────────────────────────────
   const scene = useMemo(() => {
+    const pad = 0.2;
     const base = {
-      xRange: [-3.2, 3.2],
-      yRange: [-3.2, 3.2],
+      xRange: [xRange[0] - pad, xRange[1] + pad],
+      yRange: [yRange[0] - pad, yRange[1] + pad],
       zRange: zBounds,
       dtick: Math.max(Math.round((zBounds[1] - zBounds[0]) / 8 * 2) / 2, 0.5),
       camera: {
@@ -231,7 +239,7 @@ const PartialDerivative = () => {
       }
     }
     return base;
-  }, [params.aspectRatio, zBounds]);
+  }, [params.aspectRatio, zBounds, xRange, yRange]);
 
   const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
   const dirLabel = dir === 1 ? 'up' : 'down';
@@ -292,8 +300,8 @@ const PartialDerivative = () => {
               parameters={params}
               onChange={setParams}
               config={[
-                { name: 'xc', label: 'xc (x-centre)', min: -2, max: 2, step: 0.1 },
-                { name: 'yc', label: 'yc (y-centre)', min: -2, max: 2, step: 0.1 },
+                { name: 'xc', label: 'xc (bowl centre x)', min: -3, max: 3, step: 0.1 },
+                { name: 'yc', label: 'yc (bowl centre y)', min: -3, max: 3, step: 0.1 },
                 { name: 'c', label: 'c (z-offset)', min: -5, max: 5, step: 0.1 }
               ]}
             />
@@ -304,8 +312,19 @@ const PartialDerivative = () => {
               parameters={params}
               onChange={setParams}
               config={[
-                { name: 'x0', label: 'x₀', min: -2.8, max: 2.8, step: 0.1 },
-                { name: 'y0', label: 'y₀', min: -2.8, max: 2.8, step: 0.1 }
+                { name: 'x0', label: 'x₀', min: 0.1, max: 3.8, step: 0.1 },
+                { name: 'y0', label: 'y₀', min: 0.1, max: 3.8, step: 0.1 }
+              ]}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="View Range">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={[
+                { name: 'xRange', label: 'X Range', type: 'range', min: -6, max: 6, step: 0.5, default: [0, 4] },
+                { name: 'yRange', label: 'Y Range', type: 'range', min: -6, max: 6, step: 0.5, default: [0, 4] }
               ]}
             />
           </ParameterSection>
@@ -335,7 +354,7 @@ const PartialDerivative = () => {
             crossSection={{
               x0, y0,
               fn,
-              range,
+              range: crossRange,
               colorX: palette.surface.crossSection.fx,
               colorY: palette.surface.crossSection.fy
             }}
@@ -345,8 +364,8 @@ const PartialDerivative = () => {
                 parameters={params}
                 onChange={setParams}
                 config={[
-                  { name: 'x0', label: 'x₀', min: -2.8, max: 2.8, step: 0.1 },
-                  { name: 'y0', label: 'y₀', min: -2.8, max: 2.8, step: 0.1 }
+                  { name: 'x0', label: 'x₀', min: 0.1, max: 3.8, step: 0.1 },
+                  { name: 'y0', label: 'y₀', min: 0.1, max: 3.8, step: 0.1 }
                 ]}
               />
             </ParameterSection>
