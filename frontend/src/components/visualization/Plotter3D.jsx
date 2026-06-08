@@ -224,7 +224,7 @@ const Plotter3D = ({
             zIndex: 10,
             display: 'flex',
             gap: 16,
-            background: 'rgba(30,41,59,0.85)',
+            background: plotLayout.paper_bgcolor + 'e0',
             backdropFilter: 'blur(4px)',
             borderRadius: 8,
             padding: '8px 16px'
