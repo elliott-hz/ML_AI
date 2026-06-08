@@ -173,10 +173,36 @@ const PartialDerivative = () => {
     const tanX = tX.map(x => ({ x, y: y0, z: z0 + dzdx * (x - x0) }));
     traces.push(tanTrace(tanX, palette.surface.crossSection.fx, `∂z/∂x = ${dzdx.toFixed(2)}`));
 
+    // ── L1 label at x-tangent end ─────────────────────────
+    const l1x = xRange[1];
+    const l1Off = (yRange[1] - yRange[0]) * 0.07;
+    const l1z = z0 + dzdx * (l1x - x0);
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [l1x], y: [y0 + l1Off], z: [l1z],
+      text: ['L₁'],
+      textfont: { color: palette.surface.crossSection.fx, size: 18, weight: 800 },
+      textposition: 'middle right',
+      showlegend: false, hoverinfo: 'none'
+    });
+
     // ── Tangent in y-direction (∂z/∂y) — full y-range ────
     const tY = Array.from({ length: N + 1 }, (_, i) => yRange[0] + (yRange[1] - yRange[0]) * i / N);
     const tanY = tY.map(y => ({ x: x0, y, z: z0 + dzdy * (y - y0) }));
     traces.push(tanTrace(tanY, palette.surface.crossSection.fy, `∂z/∂y = ${dzdy.toFixed(2)}`));
+
+    // ── L2 label at y-tangent end ─────────────────────────
+    const l2y = yRange[1];
+    const l2Off = (xRange[1] - xRange[0]) * 0.07;
+    const l2z = z0 + dzdy * (l2y - y0);
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x0 + l2Off], y: [l2y], z: [l2z],
+      text: ['L₂'],
+      textfont: { color: palette.surface.crossSection.fy, size: 18, weight: 800 },
+      textposition: 'middle right',
+      showlegend: false, hoverinfo: 'none'
+    });
 
     // ── Point A on surface ────────────────────────────────
     traces.push({
