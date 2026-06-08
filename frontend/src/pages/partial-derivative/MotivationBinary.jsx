@@ -35,7 +35,7 @@ const MotivationBinary = () => {
     x0: 1.5,
     y0: 1.0,
     resolution: 30,
-    aspectRatio: '1:1',
+    aspectRatio: 'auto',
     legendPosition: 'top-right'
   });
 
@@ -155,9 +155,10 @@ const MotivationBinary = () => {
         up: { x: 0, y: 0, z: 1 }
       }
     };
-    // auto → aspectmode:'data'；指定比例 → manual + normalized aspectratio
+    // auto → manual 比例 z:2（不过度拉伸）；指定比例 → 归一化后透传
     if (params.aspectRatio === 'auto') {
-      base.aspectmode = 'data';
+      base.aspectmode = 'manual';
+      base.aspectratio = { x: 1, y: 1, z: 2 };
     } else {
       const [w, h] = params.aspectRatio.split(':').map(Number);
       if (w && h) {
