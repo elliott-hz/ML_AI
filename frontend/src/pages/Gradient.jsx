@@ -97,6 +97,17 @@ const Gradient = () => {
     }
   ];
 
+  // Group 2: Directional Derivative
+  const directionalDerivativeCards = [
+    {
+      id: 'directional-derivative',
+      icon: '',
+      title: 'Directional Derivative: D_θf',
+      description: 'The directional derivative measures change in any direction θ, not just along the axes. Explore the 2D Gaussian bell curve with both a 3D surface view and a 2D contour map showing the direction arrow vs the gradient.',
+      path: '/mathematics/1-fundamentals/gradient/directional-derivative'
+    }
+  ];
+
   return (
     <PageContainer>
       <Header>
@@ -113,6 +124,20 @@ const Gradient = () => {
       <GroupTitle>Partial Derivative</GroupTitle>
       <CardGrid>
         {partialDerivativeCards.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => navigate(feature.path)}
+          >
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </CardGrid>
+
+      {/* Group 2: Directional Derivative */}
+      <GroupTitle>Directional Derivative</GroupTitle>
+      <CardGrid>
+        {directionalDerivativeCards.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => navigate(feature.path)}
