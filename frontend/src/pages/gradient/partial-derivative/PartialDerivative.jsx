@@ -107,7 +107,7 @@ const PartialDerivative = () => {
       y: yVals,
       z: zVals,
       colorscale: palette.surface.colorscale,
-      opacity: 0.85,
+      opacity: 0.55,
       contours: {
         x: { show: true, color: palette.surface.contour, width: 0.5 },
         y: { show: true, color: palette.surface.contour, width: 0.5 },
@@ -282,7 +282,7 @@ const PartialDerivative = () => {
                 { name: 'm', label: 'm (x exponent)', min: 1, max: 4, step: 1 },
                 { name: 'b', label: 'b (y coeff)', min: 0.1, max: 3, step: 0.1 },
                 { name: 'n', label: 'n (y exponent)', min: 1, max: 4, step: 1 },
-                { name: 'direction', label: '↑ Bowl Up', type: 'toggle' }
+                { name: 'direction', label: '↑ Bowl Up', type: 'toggle', showToggleLabel: false }
               ]}
             />
           </ParameterSection>

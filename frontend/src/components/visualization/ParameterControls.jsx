@@ -146,17 +146,19 @@ const ParameterControls = ({ parameters, onChange, config }) => {
                 transition: 'left 0.2s ease',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
               }} />
-              <span style={{
-                position: 'absolute',
-                width: '100%',
-                textAlign: 'center',
-                lineHeight: '26px',
-                fontSize: '10px',
-                fontWeight: '700',
-                letterSpacing: '0.5px'
-              }}>
-                {parameters[param.name] !== false ? 'ON' : 'OFF'}
-              </span>
+              {param.showToggleLabel !== false && (
+                <span style={{
+                  position: 'absolute',
+                  width: '100%',
+                  textAlign: 'center',
+                  lineHeight: '26px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  letterSpacing: '0.5px'
+                }}>
+                  {parameters[param.name] !== false ? 'ON' : 'OFF'}
+                </span>
+              )}
             </button>
           ) : param.type === 'select' ? (
             // 下拉框类型
