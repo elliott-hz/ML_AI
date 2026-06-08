@@ -87,6 +87,13 @@ const Gradient = () => {
       title: 'Binary Function: z = x² + y²',
       description: 'A two-variable function has two independent inputs: z = f(x, y). z changes when either x changes or y changes. Explore the 3D paraboloid with point A and its projections onto coordinate planes.',
       path: '/mathematics/1-fundamentals/gradient/partial-derivative/binary'
+    },
+    {
+      id: 'partial-derivative',
+      icon: '',
+      title: 'Partial Derivatives: ∂z/∂x and ∂z/∂y',
+      description: 'The partial derivative isolates the effect of one variable at a time. Adjust the parameters a·x^m + b·y^n to control surface curvature and see the tangent lines that represent ∂z/∂x and ∂z/∂y in 3D.',
+      path: '/mathematics/1-fundamentals/gradient/partial-derivative'
     }
   ];
 
