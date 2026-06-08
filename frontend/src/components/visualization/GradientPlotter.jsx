@@ -4,7 +4,7 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig';
 
 /**
- * PartialDerivativePlotter — Theme-aware 2D plotter for the Partial Derivative module.
+ * GradientPlotter — Theme-aware 2D plotter for the Gradient module.
  *
  * API + visual rendering matches FunctionPlotter. For 3D scenes use Plotter3D.
  *
@@ -13,7 +13,7 @@ import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig'
  *   aspectRatio, legendPosition, annotations, children
  *   children — 全屏时左上角浮动控制面板
  */
-const PartialDerivativePlotter = ({
+const GradientPlotter = ({
   data,
   xRange: propXRange = [-10, 10],
   yRange: propYRange,
@@ -248,4 +248,4 @@ const PartialDerivativePlotter = ({
   );
 };
 
-export default PartialDerivativePlotter;
+export default GradientPlotter;

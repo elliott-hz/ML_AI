@@ -1,18 +1,18 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel and content layout
 import React, { useState, useMemo, useCallback } from 'react';
-import { ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
-import { useThemeMode } from '../../hooks/useThemeMode';
-import { getTracePalette } from '../../constants/plotThemeConfig';
-import PartialDerivativePlotter from '../../components/visualization/PartialDerivativePlotter';
-import ParameterControls from '../../components/visualization/ParameterControls';
-import ParameterSection from '../../components/visualization/ParameterSection';
-import BackButton from '../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
+import { useThemeMode } from '../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../constants/plotThemeConfig';
+import GradientPlotter from '../../../components/visualization/GradientPlotter';
+import ParameterControls from '../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../components/visualization/ParameterSection';
+import BackButton from '../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitleH1, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel,
   FormulaBox, FormulaTitle, Formula
-} from '../../components/common/LayoutStyled';
-import { plotStyleConfig, legendPositionConfig } from '../../constants/partialDerivativeConfig';
+} from '../../../components/common/LayoutStyled';
+import { plotStyleConfig, legendPositionConfig } from '../../../constants/partialDerivativeConfig';
 
 /**
  * MotivationUnary — Unary Single-Variable Function
@@ -139,8 +139,8 @@ const MotivationUnary = () => {
   return (
     <PageContainer>
       <Header>
-        <BackButton to="/mathematics/1-fundamentals/derivative/partial-derivative">
-          ← Back to Partial Derivative
+        <BackButton to="/mathematics/1-fundamentals/gradient">
+          ← Back to Gradient
         </BackButton>
         <SectionTitleH1>Unary Function: y = f(x)</SectionTitleH1>
       </Header>
@@ -184,7 +184,7 @@ const MotivationUnary = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <PartialDerivativePlotter
+          <GradientPlotter
             data={plotData}
             xRange={params.xRange}
             title="y = x² — One Input, One Output"
@@ -201,7 +201,7 @@ const MotivationUnary = () => {
                 { name: 'x0', label: 'x₀', min: -2.9, max: 2.9, step: 0.1 }
               ]}
             />
-          </PartialDerivativePlotter>
+          </GradientPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

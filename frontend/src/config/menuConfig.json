@@ -34,9 +34,9 @@
             },
             {
               "id": "math_1_5",
-              "name": "Partial Derivative",
-              "path": "/mathematics/1-fundamentals/derivative/partial-derivative",
-              "component": "PartialDerivative"
+              "name": "Gradient",
+              "path": "/mathematics/1-fundamentals/gradient",
+              "component": "Gradient"
             }
           ]
         },

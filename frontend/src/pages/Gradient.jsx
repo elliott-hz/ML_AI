@@ -67,45 +67,45 @@ const ButtonDescription = styled.p`
 `;
 
 /**
- * PartialDerivative 主页面 — 展示偏导数的概念和可视化
+ * Gradient 主页面 — 展示梯度的概念、偏导数及其可视化
  */
-const PartialDerivative = () => {
+const Gradient = () => {
   const navigate = useNavigate();
 
-  // Group 1: Motivation of Partial Derivative
-  const motivation = [
+  // Group 1: Partial Derivative (demoted from former L3)
+  const partialDerivativeCards = [
     {
       id: 'unary',
       icon: '',
       title: 'Unary Function: y = x²',
       description: 'A single-variable function has exactly one input: y = f(x). When x changes, y changes — there is only one path to follow. See the tangent, the projection lines, and the derivative f\'(x) = 2x.',
-      path: '/mathematics/1-fundamentals/derivative/partial-derivative/unary'
+      path: '/mathematics/1-fundamentals/gradient/partial-derivative/unary'
     },
     {
       id: 'binary',
       icon: '',
       title: 'Binary Function: z = x² + y²',
       description: 'A two-variable function has two independent inputs: z = f(x, y). z changes when either x changes or y changes. Explore the 3D paraboloid with point A and its projections onto coordinate planes.',
-      path: '/mathematics/1-fundamentals/derivative/partial-derivative/binary'
+      path: '/mathematics/1-fundamentals/gradient/partial-derivative/binary'
     }
   ];
 
   return (
     <PageContainer>
       <Header>
-        <Title>Partial Derivative</Title>
+        <Title>Gradient</Title>
         <Subtitle>
-          For functions of multiple variables, the partial derivative measures how the function
-          changes when <em>one</em> variable changes while the others are held constant.
-          The notation ∂f/∂x (\"partial f over partial x\") emphasizes that we are only looking
-          at the contribution of x, treating all other inputs as frozen.
+          The gradient ∇f generalizes the derivative to multi-variable functions.
+          For a scalar function f(x₁, ..., xₙ), the gradient is a vector of all partial
+          derivatives: ∇f = (∂f/∂x₁, ..., ∂f/∂xₙ). It points in the direction of steepest
+          ascent and its magnitude indicates the rate of change.
         </Subtitle>
       </Header>
 
-      {/* Group 1: Motivation of Partial Derivative */}
-      <GroupTitle>Motivation of Partial Derivative</GroupTitle>
+      {/* Group 1: Partial Derivative */}
+      <GroupTitle>Partial Derivative</GroupTitle>
       <CardGrid>
-        {motivation.map((feature) => (
+        {partialDerivativeCards.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => navigate(feature.path)}
@@ -119,4 +119,4 @@ const PartialDerivative = () => {
   );
 };
 
-export default PartialDerivative;
+export default Gradient;
