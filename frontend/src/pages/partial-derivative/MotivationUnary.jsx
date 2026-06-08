@@ -193,7 +193,15 @@ const MotivationUnary = () => {
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
             annotations={annotations}
-          />
+          >
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={[
+                { name: 'x0', label: 'x₀', min: -2.9, max: 2.9, step: 0.1 }
+              ]}
+            />
+          </PartialDerivativePlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

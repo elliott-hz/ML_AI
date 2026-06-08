@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useMemo, useEffect, useRef, useCallback, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig';
@@ -7,6 +7,11 @@ import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig'
  * PartialDerivativePlotter — Theme-aware 2D plotter for the Partial Derivative module.
  *
  * API + visual rendering matches FunctionPlotter. For 3D scenes use Plotter3D.
+ *
+ * Props:
+ *   data, xRange, yRange, title, showExportButton, plotStyle,
+ *   aspectRatio, legendPosition, annotations, children
+ *   children — 全屏时左上角浮动控制面板
  */
 const PartialDerivativePlotter = ({
   data,
@@ -17,10 +22,13 @@ const PartialDerivativePlotter = ({
   plotStyle = 'medium',
   aspectRatio = 'auto',
   legendPosition = 'top-right',
-  annotations
+  annotations,
+  children
 }) => {
   const plotRef = useRef(null);
   const hasInitialized = useRef(false);
+  const outerRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const themeMode = useThemeMode();
   const plotLayout = useMemo(() => getPlotLayout(themeMode), [themeMode]);
   const palette = getTracePalette(themeMode);
@@ -149,8 +157,8 @@ const PartialDerivativePlotter = ({
 
   const handleFullscreenToggle = useCallback(() => {
     if (!document.fullscreenElement) {
-      if (plotRef.current) {
-        plotRef.current.requestFullscreen().catch(err => {
+      if (outerRef.current) {
+        outerRef.current.requestFullscreen().catch(err => {
           console.log(`Error attempting to enable full-screen mode: ${err.message}`);
         });
       }
@@ -159,6 +167,12 @@ const PartialDerivativePlotter = ({
         document.exitFullscreen();
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const onFS = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFS);
+    return () => document.removeEventListener('fullscreenchange', onFS);
   }, []);
 
   const containerStyle = {
@@ -191,7 +205,7 @@ const PartialDerivativePlotter = ({
   };
 
   return (
-    <div style={containerStyle}>
+    <div ref={outerRef} style={containerStyle}>
       <button
         onClick={handleFullscreenToggle}
         style={fullscreenButtonStyle}
@@ -202,6 +216,11 @@ const PartialDerivativePlotter = ({
         </svg>
       </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
+      {isFullscreen && children && (
+        <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 10 }}>
+          {children}
+        </div>
+      )}
       {showExportButton && (
         <button
           onClick={handleExport}

@@ -250,17 +250,7 @@ const Plotter3D = ({
       </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
       {isFullscreen && children && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 8,
-            left: 8,
-            zIndex: 10,
-            background: plotLayout.paper_bgcolor,
-            borderRadius: 8,
-            padding: '4px 8px'
-          }}
-        >
+        <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 10 }}>
           {children}
         </div>
       )}
