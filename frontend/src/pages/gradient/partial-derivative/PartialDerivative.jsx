@@ -49,7 +49,7 @@ const PartialDerivative = () => {
     xRange: [0, 4],
     yRange: [0, 4],
     resolution: 30,
-    aspectRatio: 'auto',
+    aspectRatio: '4:3',
     legendPosition: 'top-right',
     plotStyle: 'medium'
   });
