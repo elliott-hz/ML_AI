@@ -208,6 +208,22 @@ const DirectionalDerivative = () => {
       textposition: 'middle right', showlegend: false, hoverinfo: 'none'
     });
 
+    // ── Direction line L: O → Q ──────────────────────────
+    const lColor = palette.mainTraces.secondary;
+    traces.push({
+      type: 'scatter3d', mode: 'lines',
+      x: [x1, x2], y: [y1, y2], z: [zO, zQ],
+      line: { color: lColor, width: 3 },
+      name: 'L',
+      showlegend: true
+    });
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [(x1 + x2) / 2], y: [(y1 + y2) / 2], z: [(zO + zQ) / 2],
+      text: ['L'], textfont: { color: lColor, size: 16, weight: 800 },
+      textposition: 'top right', showlegend: false, hoverinfo: 'none'
+    });
+
     return traces;
   }, [
     x1, y1, zO, x2, y2, zQ, xP, yP, zP,
@@ -298,8 +314,39 @@ const DirectionalDerivative = () => {
         line: { color: dxColor, width: 2, dash: 'dash' }, showlegend: false, hoverinfo: 'none' },
       // ρ
       { type: 'scatter', mode: 'lines', x: [xP, x2], y: [yP, y2],
-        line: { color: rhoColor, width: 2.5, dash: 'dash' }, showlegend: false, hoverinfo: 'none' }
+        line: { color: rhoColor, width: 2.5, dash: 'dash' }, showlegend: false, hoverinfo: 'none' },
+      // L direction line O → Q
+      { type: 'scatter', mode: 'lines',
+        x: [x1, x2], y: [y1, y2],
+        line: { color: palette.mainTraces.secondary, width: 2.5 },
+        name: 'L', showlegend: true }
     ];
+
+    // ── Angle θ arc at P ──────────────────────────────
+    const thetaRad = Math.atan2(y2 - y1, x2 - x1);
+    const arcR = Math.min(xRange[1] - xRange[0], yRange[1] - yRange[0]) * 0.04;
+    const nArc = 20;
+    const arcPts = Array.from({ length: nArc + 1 }, (_, i) => {
+      const a = (thetaRad * i) / nArc;
+      return { x: x1 + arcR * Math.cos(a), y: y1 + arcR * Math.sin(a) };
+    });
+    d.push({
+      type: 'scatter', mode: 'lines',
+      x: arcPts.map(p => p.x),
+      y: arcPts.map(p => p.y),
+      line: { color: palette.mainTraces.secondary, width: 2 },
+      showlegend: false, hoverinfo: 'none'
+    });
+    const thetaMid = thetaRad / 2;
+    d.push({
+      type: 'scatter', mode: 'text',
+      x: [x1 + arcR * 0.7 * Math.cos(thetaMid)],
+      y: [y1 + arcR * 0.7 * Math.sin(thetaMid)],
+      text: ['θ'],
+      textfont: { color: palette.mainTraces.secondary, size: 12, weight: 700 },
+      textposition: 'middle center',
+      showlegend: false, hoverinfo: 'none'
+    });
 
     const legX = params.legendPosition === 'top-right' || params.legendPosition === 'bottom-right' ? 0.98 : 0.02;
     const legY = params.legendPosition === 'top-right' || params.legendPosition === 'top-left' ? 0.98 : 0.02;
