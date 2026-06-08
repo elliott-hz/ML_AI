@@ -236,7 +236,7 @@ const MotivationBinary = () => {
             scene={scene}
             legendPosition={params.legendPosition}
           >
-            <ParameterSection title="Evaluation Point" style={{ margin: 0, border: 'none', background: 'transparent' }}>
+            <ParameterSection title="Evaluation Point" style={{ margin: 0, border: 'none', background: 'transparent', padding: 0 }}>
               <ParameterControls
                 parameters={params}
                 onChange={setParams}

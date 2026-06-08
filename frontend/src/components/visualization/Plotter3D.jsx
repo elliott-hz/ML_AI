@@ -222,12 +222,9 @@ const Plotter3D = ({
             top: 8,
             left: 8,
             zIndex: 10,
-            display: 'flex',
-            gap: 16,
-            background: plotLayout.paper_bgcolor + 'e0',
-            backdropFilter: 'blur(4px)',
+            background: plotLayout.paper_bgcolor,
             borderRadius: 8,
-            padding: '8px 16px'
+            padding: '4px 8px'
           }}
         >
           {children}
