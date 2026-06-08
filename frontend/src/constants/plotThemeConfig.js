@@ -125,7 +125,7 @@ export function getTracePalette(themeMode) {
       ],
       contour: isDark ? '#94a3b8' : '#64748b',
       crossSection: {
-        fx: isDark ? '#ffffff' : '#f8fafc',   // f(x) at y₀ — 白色
+        fx: isDark ? '#60a5fa' : '#2563eb',   // f(x) at y₀ — 蓝色
         fy: isDark ? '#facc15' : '#d97706',   // f(y) at x₀ — 金色/琥珀
       },
     },

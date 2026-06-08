@@ -43,7 +43,7 @@ const PartialDerivative = () => {
     xc: 0,
     yc: 0,
     c: -2,
-    direction: 1,      // 1 = bowl up, -1 = bowl down
+    direction: true,   // true = bowl up, false = bowl down
     x0: 1.0,
     y0: 0.5,
     resolution: 30,
@@ -58,7 +58,7 @@ const PartialDerivative = () => {
   const { a, m, b, n, xc, yc, c, direction, x0, y0 } = params;
 
   // ── Function & derived values ───────────────────────────
-  const dir = direction; // ±1
+  const dir = direction ? 1 : -1; // convert boolean → ±1
   const fn = (x, y) => dir * (a * Math.pow(x - xc, m) + b * Math.pow(y - yc, n)) + c;
   const z0 = fn(x0, y0);
   const dzdx = dir * a * m * Math.pow(x0 - xc, m - 1);
@@ -113,32 +113,28 @@ const PartialDerivative = () => {
   // ── Tangent + marker overlay traces ─────────────────────
   const overlayTraces = useMemo(() => {
     const traces = [];
+    const N = 30;
 
-    // Helper: parametric tangent line (dense points for smooth 3D curve)
+    // Helper: parametric tangent line, full range, dashed
     const tanTrace = (pts, color, name) => ({
       type: 'scatter3d', mode: 'lines',
       x: pts.map(p => p.x),
       y: pts.map(p => p.y),
       z: pts.map(p => p.z),
-      line: { color, width: 6 },
+      line: { color, width: 5, dash: 'dash' },
       name,
       showlegend: true
     });
 
-    // ── Tangent in x-direction (∂z/∂x) ────────────────────
-    const tanSpan = 1.5;
-    const txMin = Math.max(range[0], x0 - tanSpan);
-    const txMax = Math.min(range[1], x0 + tanSpan);
-    const tX = Array.from({ length: 20 }, (_, i) => txMin + (txMax - txMin) * i / 19);
+    // ── Tangent in x-direction (∂z/∂x) — full x-range ────
+    const tX = Array.from({ length: N + 1 }, (_, i) => range[0] + (range[1] - range[0]) * i / N);
     const tanX = tX.map(x => ({ x, y: y0, z: z0 + dzdx * (x - x0) }));
-    traces.push(tanTrace(tanX, palette.auxTraces.tangent, `∂z/∂x = ${dzdx.toFixed(2)}`));
+    traces.push(tanTrace(tanX, palette.surface.crossSection.fx, `∂z/∂x = ${dzdx.toFixed(2)}`));
 
-    // ── Tangent in y-direction (∂z/∂y) ────────────────────
-    const tyMin = Math.max(range[0], y0 - tanSpan);
-    const tyMax = Math.min(range[1], y0 + tanSpan);
-    const tY = Array.from({ length: 20 }, (_, i) => tyMin + (tyMax - tyMin) * i / 19);
+    // ── Tangent in y-direction (∂z/∂y) — full y-range ────
+    const tY = Array.from({ length: N + 1 }, (_, i) => range[0] + (range[1] - range[0]) * i / N);
     const tanY = tY.map(y => ({ x: x0, y, z: z0 + dzdy * (y - y0) }));
-    traces.push(tanTrace(tanY, palette.auxTraces.derivative, `∂z/∂y = ${dzdy.toFixed(2)}`));
+    traces.push(tanTrace(tanY, palette.surface.crossSection.fy, `∂z/∂y = ${dzdy.toFixed(2)}`));
 
     // ── Point A on surface ────────────────────────────────
     traces.push({
@@ -220,9 +216,11 @@ const PartialDerivative = () => {
         constant. The surface shows a parametric bowl <strong>z = d·(a·(x−xc)<sup>m</sup> + b·(y−yc)<sup>n</sup>) + c</strong>
         where <strong>d = {dirLabel}</strong> controls the bowl direction, <strong>(xc, yc, c)</strong> shifts
         the bowl centre, and <strong>m, n</strong> adjust the curvature. The
-        <span style={{ color: palette.auxTraces.tangent }}><strong> cyan</strong></span> and
-        <span style={{ color: palette.auxTraces.derivative }}><strong> red</strong></span> tangent
-        lines show ∂z/∂x and ∂z/∂y at the evaluation point.
+        <span style={{ color: palette.surface.crossSection.fx }}><strong> first cross-section</strong></span>
+        (varying x at y₀) and its <span style={{ color: palette.surface.crossSection.fx }}><strong>dashed tangent</strong></span>
+        show ∂z/∂x; the <span style={{ color: palette.surface.crossSection.fy }}><strong> second cross-section</strong></span>
+        (varying y at x₀) and its <span style={{ color: palette.surface.crossSection.fy }}><strong>dashed tangent</strong></span>
+        show ∂z/∂y.
       </SectionDescription>
 
       <FormulaBox>
@@ -249,7 +247,7 @@ const PartialDerivative = () => {
                 { name: 'm', label: 'm (x exponent)', min: 1, max: 4, step: 1 },
                 { name: 'b', label: 'b (y coeff)', min: 0.1, max: 3, step: 0.1 },
                 { name: 'n', label: 'n (y exponent)', min: 1, max: 4, step: 1 },
-                { name: 'direction', label: 'Direction', type: 'toggle', onValue: 1, offValue: -1, onLabel: '↑ Bowl Up', offLabel: '↓ Bowl Down' }
+                { name: 'direction', label: '↑ Bowl Up', type: 'toggle' }
               ]}
             />
           </ParameterSection>
@@ -319,8 +317,8 @@ const PartialDerivative = () => {
           </Plotter3D>
           <Note>
             Drag to rotate · Scroll to zoom ·
-            <span style={{ color: palette.auxTraces.tangent }}> ●</span> ∂z/∂x ·
-            <span style={{ color: palette.auxTraces.derivative }}> ●</span> ∂z/∂y ·
+            <span style={{ color: palette.surface.crossSection.fx }}> ●</span> ∂z/∂x tangent ·
+            <span style={{ color: palette.surface.crossSection.fy }}> ●</span> ∂z/∂y tangent ·
             <span style={{ color: planeXY }}> ●</span> xy ·
             <span style={{ color: planeXZ }}> ●</span> xz ·
             <span style={{ color: planeYZ }}> ●</span> yz
