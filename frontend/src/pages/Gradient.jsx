@@ -102,7 +102,7 @@ const Gradient = () => {
     {
       id: 'directional-derivative',
       icon: '',
-      title: 'Directional Derivative: D_θf',
+      title: <>Directional Derivative D<sub>&theta;</sub>f</>,
       description: 'The directional derivative measures change in any direction θ, not just along the axes. Explore the 2D Gaussian bell curve with both a 3D surface view and a 2D contour map showing the direction arrow vs the gradient.',
       path: '/mathematics/1-fundamentals/gradient/directional-derivative'
     }
