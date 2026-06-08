@@ -27,6 +27,7 @@ const Plotter3D = ({
   showExportButton = true,
   plotStyle = 'medium',
   legendPosition = 'top-right',
+  height = '600px',
   children,
   crossSection
 }) => {
@@ -223,7 +224,7 @@ const Plotter3D = ({
       ref={outerRef}
       style={{
         width: '100%',
-        height: '600px',
+        height,
         background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
         borderRadius: '8px',
         padding: '1rem',

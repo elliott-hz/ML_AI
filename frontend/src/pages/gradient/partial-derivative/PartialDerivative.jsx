@@ -59,6 +59,15 @@ const PartialDerivative = () => {
 
   // ── Function & derived values ───────────────────────────
   const dir = direction ? 1 : -1; // convert boolean → ±1
+
+  // ── Unicode superscript ─────────────────────────────────
+  const sup = (n) => String(n).split('').map(c => ({'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','.':'·'})[c] || c).join('');
+  const fmt = (v, decimals = 1) => Number(v.toFixed(decimals)).toString();
+  const term = (coeff, varName, center, exp) => {
+    const v = center === 0 ? varName : `(${varName}${center > 0 ? '−' : '+'}${fmt(Math.abs(center))})`;
+    return `${fmt(coeff)}·${v}${sup(exp)}`;
+  };
+
   const fn = (x, y) => dir * (a * Math.pow(x - xc, m) + b * Math.pow(y - yc, n)) + c;
   const z0 = fn(x0, y0);
   const dzdx = dir * a * m * Math.pow(x0 - xc, m - 1);
@@ -105,7 +114,7 @@ const PartialDerivative = () => {
         z: { show: true, color: palette.surface.contour, width: 0.5 }
       },
       showscale: false,
-      name: `z = ${dirLabel}(${a}·(x${xc < 0 ? xc : '+' + xc})^${m} + ${b}·(y${yc < 0 ? yc : '+' + yc})^${n})${c < 0 ? c : '+' + c}`,
+      name: `z = ${term(a, 'x', xc, m)} + ${term(b, 'y', yc, n)} ${c >= 0 ? '+' : '−'} ${fmt(Math.abs(c))}`,
       hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.2f}<extra></extra>'
     };
   }, [res, a, m, b, n, xc, yc, c, dir, palette]);
@@ -168,7 +177,7 @@ const PartialDerivative = () => {
       x: [x0], y: [y0], z: [z0],
       marker: {
         color: palette.markers.evalX0,
-        size: 10, symbol: 'circle',
+        size: 12, symbol: 'circle',
         line: { color: '#fff', width: 2 }
       },
       name: `A = (${x0.toFixed(1)}, ${y0.toFixed(1)}, ${z0.toFixed(2)})`,
@@ -187,10 +196,10 @@ const PartialDerivative = () => {
     traces.push(l3([x0, y0, z0], [x0, 0, z0], planeXZ));            // → xz-plane (y=0)
     traces.push(l3([x0, y0, z0], [0, y0, z0], planeYZ));            // → yz-plane (x=0)
 
-    // Footprints
-    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [y0], z: [0],    marker: { color: planeXY, size: 5 }, showlegend: false });
-    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [0],   z: [z0],  marker: { color: planeXZ, size: 5 }, showlegend: false });
-    traces.push({ type: 'scatter3d', mode: 'markers', x: [0],   y: [y0], z: [z0],  marker: { color: planeYZ, size: 5 }, showlegend: false });
+    // Footprints (≈ ⅓ of point A size)
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [y0], z: [0],    marker: { color: planeXY, size: 4 }, showlegend: false });
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [0],   z: [z0],  marker: { color: planeXZ, size: 4 }, showlegend: false });
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [0],   y: [y0], z: [z0],  marker: { color: planeYZ, size: 4 }, showlegend: false });
 
     return traces;
   }, [x0, y0, z0, dzdx, dzdy, palette]);
@@ -317,8 +326,9 @@ const PartialDerivative = () => {
         <PlotPanel>
           <Plotter3D
             data={allData}
-            title={`z = ${dir}·(${a}·(x-${xc})^${m} + ${b}·(y-${yc})^${n}) + ${c}`}
+            title={`z = ${dirLabel}·(${term(a, 'x', xc, m)} + ${term(b, 'y', yc, n)}) + ${fmt(c)}`}
             showExportButton={false}
+            height="750px"
             scene={scene}
             plotStyle={params.plotStyle}
             legendPosition={params.legendPosition}
