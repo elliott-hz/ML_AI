@@ -26,18 +26,26 @@ const Note = styled.p`
 /**
  * PartialDerivative — Partial Derivatives on a Parametric Surface
  *
- * z = f(x, y) = a·x^m + b·y^n
+ * z = d·(a·(x-xc)^m + b·(y-yc)^n) + c
+ *   where d = ±1 (direction), controls bowl up or down
+ *   (xc, yc, c) shifts the bowl centre in 3D space
+ *   m, n are integers to avoid negative-base power issues
+ *
  * Visualises the partial derivatives ∂z/∂x and ∂z/∂y as tangent lines
  * along the cross-section curves at the evaluation point.
  */
 const PartialDerivative = () => {
   const [params, setParams] = useState({
     a: 1.0,
-    m: 2.0,
+    m: 2,
     b: 1.0,
-    n: 2.0,
-    x0: 1.5,
-    y0: 1.0,
+    n: 2,
+    xc: 0,
+    yc: 0,
+    c: -2,
+    direction: 1,      // 1 = bowl up, -1 = bowl down
+    x0: 1.0,
+    y0: 0.5,
     resolution: 30,
     aspectRatio: 'auto',
     legendPosition: 'top-right',
@@ -47,17 +55,35 @@ const PartialDerivative = () => {
   const themeMode = useThemeMode();
   const palette = getTracePalette(themeMode);
 
-  const { a, m, b, n, x0, y0 } = params;
-  const z0 = a * Math.pow(x0, m) + b * Math.pow(y0, n);
-  const dzdx = a * m * Math.pow(x0, m - 1);
-  const dzdy = b * n * Math.pow(y0, n - 1);
+  const { a, m, b, n, xc, yc, c, direction, x0, y0 } = params;
 
-  const range = [0, 3];
+  // ── Function & derived values ───────────────────────────
+  const dir = direction; // ±1
+  const fn = (x, y) => dir * (a * Math.pow(x - xc, m) + b * Math.pow(y - yc, n)) + c;
+  const z0 = fn(x0, y0);
+  const dzdx = dir * a * m * Math.pow(x0 - xc, m - 1);
+  const dzdy = dir * b * n * Math.pow(y0 - yc, n - 1);
+
+  const range = [-3, 3];
   const res = params.resolution;
   const step = (range[1] - range[0]) / res;
 
-  // ── Function helper ─────────────────────────────────────
-  const fn = (x, y) => a * Math.pow(x, m) + b * Math.pow(y, n);
+  // ── Dynamic zRange ──────────────────────────────────────
+  const zBounds = useMemo(() => {
+    // sample at 9 key points (corners + edges + centre)
+    const xs = [-3, xc, 3];
+    const ys = [-3, yc, 3];
+    let zMin = Infinity, zMax = -Infinity;
+    for (const x of xs) {
+      for (const y of ys) {
+        const z = fn(x, y);
+        if (z < zMin) zMin = z;
+        if (z > zMax) zMax = z;
+      }
+    }
+    const pad = Math.max((zMax - zMin) * 0.15, 1);
+    return [zMin - pad, zMax + pad];
+  }, [a, m, b, n, xc, yc, c, dir]);
 
   // ── Surface data ────────────────────────────────────────
   const surfaceData = useMemo(() => {
@@ -65,6 +91,7 @@ const PartialDerivative = () => {
     const yVals = Array.from({ length: res + 1 }, (_, i) => range[0] + i * step);
     const zVals = yVals.map(y => xVals.map(x => fn(x, y)));
 
+    const dirLabel = dir === 1 ? '↑' : '↓';
     return {
       type: 'surface',
       x: xVals,
@@ -78,63 +105,40 @@ const PartialDerivative = () => {
         z: { show: true, color: palette.surface.contour, width: 0.5 }
       },
       showscale: false,
-      name: `z = ${a}·x^${m} + ${b}·y^${n}`,
+      name: `z = ${dirLabel}(${a}·(x${xc < 0 ? xc : '+' + xc})^${m} + ${b}·(y${yc < 0 ? yc : '+' + yc})^${n})${c < 0 ? c : '+' + c}`,
       hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.2f}<extra></extra>'
     };
-  }, [res, a, m, b, n, palette]);
+  }, [res, a, m, b, n, xc, yc, c, dir, palette]);
 
   // ── Tangent + marker overlay traces ─────────────────────
   const overlayTraces = useMemo(() => {
     const traces = [];
 
-    const line3d = (p1, p2, color, dash = 'solid', width = 3, name = '') => ({
-      type: 'scatter3d',
-      mode: 'lines',
-      x: [p1[0], p2[0]],
-      y: [p1[1], p2[1]],
-      z: [p1[2], p2[2]],
-      line: { color, dash, width },
-      showlegend: !!name,
+    // Helper: parametric tangent line (dense points for smooth 3D curve)
+    const tanTrace = (pts, color, name) => ({
+      type: 'scatter3d', mode: 'lines',
+      x: pts.map(p => p.x),
+      y: pts.map(p => p.y),
+      z: pts.map(p => p.z),
+      line: { color, width: 6 },
       name,
-      hovertemplate: ''
+      showlegend: true
     });
 
-    // ── Tangent line in x-direction (∂z/∂x) ──────────────
-    const tanSpan = 1.2;
+    // ── Tangent in x-direction (∂z/∂x) ────────────────────
+    const tanSpan = 1.5;
     const txMin = Math.max(range[0], x0 - tanSpan);
     const txMax = Math.min(range[1], x0 + tanSpan);
     const tX = Array.from({ length: 20 }, (_, i) => txMin + (txMax - txMin) * i / 19);
-    const tanX = tX.map(x => ({
-      x, y: y0,
-      z: z0 + dzdx * (x - x0)
-    }));
-    traces.push({
-      type: 'scatter3d', mode: 'lines',
-      x: tanX.map(p => p.x),
-      y: tanX.map(p => p.y),
-      z: tanX.map(p => p.z),
-      line: { color: palette.auxTraces.tangent, width: 6 },
-      name: `∂z/∂x = ${dzdx.toFixed(2)}`,
-      showlegend: true
-    });
+    const tanX = tX.map(x => ({ x, y: y0, z: z0 + dzdx * (x - x0) }));
+    traces.push(tanTrace(tanX, palette.auxTraces.tangent, `∂z/∂x = ${dzdx.toFixed(2)}`));
 
-    // ── Tangent line in y-direction (∂z/∂y) ──────────────
+    // ── Tangent in y-direction (∂z/∂y) ────────────────────
     const tyMin = Math.max(range[0], y0 - tanSpan);
     const tyMax = Math.min(range[1], y0 + tanSpan);
     const tY = Array.from({ length: 20 }, (_, i) => tyMin + (tyMax - tyMin) * i / 19);
-    const tanY = tY.map(y => ({
-      x: x0, y,
-      z: z0 + dzdy * (y - y0)
-    }));
-    traces.push({
-      type: 'scatter3d', mode: 'lines',
-      x: tanY.map(p => p.x),
-      y: tanY.map(p => p.y),
-      z: tanY.map(p => p.z),
-      line: { color: palette.auxTraces.derivative, width: 6 },
-      name: `∂z/∂y = ${dzdy.toFixed(2)}`,
-      showlegend: true
-    });
+    const tanY = tY.map(y => ({ x: x0, y, z: z0 + dzdy * (y - y0) }));
+    traces.push(tanTrace(tanY, palette.auxTraces.derivative, `∂z/∂y = ${dzdy.toFixed(2)}`));
 
     // ── Point A on surface ────────────────────────────────
     traces.push({
@@ -142,65 +146,51 @@ const PartialDerivative = () => {
       x: [x0], y: [y0], z: [z0],
       marker: {
         color: palette.markers.evalX0,
-        size: 10,
-        symbol: 'circle',
+        size: 10, symbol: 'circle',
         line: { color: '#fff', width: 2 }
       },
       name: `A = (${x0.toFixed(1)}, ${y0.toFixed(1)}, ${z0.toFixed(2)})`,
       showlegend: true
     });
 
-    // ── Projection lines ──────────────────────────────────
+    // ── Projection lines (to coordinate planes) ──────────
     const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
-    traces.push(line3d([x0, y0, z0], [x0, y0, 0], planeXY, 'dash'));
-    traces.push(line3d([x0, y0, z0], [x0, 0, z0], planeXZ, 'dash'));
-    traces.push(line3d([x0, y0, z0], [0, y0, z0], planeYZ, 'dash'));
+    const l3 = (p1, p2, color, dash = 'dash') => ({
+      type: 'scatter3d', mode: 'lines',
+      x: [p1[0], p2[0]], y: [p1[1], p2[1]], z: [p1[2], p2[2]],
+      line: { color, dash }, showlegend: false, hovertemplate: ''
+    });
 
-    // Footprint markers
-    traces.push({
-      type: 'scatter3d', mode: 'markers',
-      x: [x0], y: [y0], z: [0],
-      marker: { color: planeXY, size: 5, symbol: 'circle' },
-      showlegend: false
-    });
-    traces.push({
-      type: 'scatter3d', mode: 'markers',
-      x: [x0], y: [0], z: [z0],
-      marker: { color: planeXZ, size: 5, symbol: 'circle' },
-      showlegend: false
-    });
-    traces.push({
-      type: 'scatter3d', mode: 'markers',
-      x: [0], y: [y0], z: [z0],
-      marker: { color: planeYZ, size: 5, symbol: 'circle' },
-      showlegend: false
-    });
+    traces.push(l3([x0, y0, z0], [x0, y0, 0], planeXY));            // → xy-plane (z=0)
+    traces.push(l3([x0, y0, z0], [x0, 0, z0], planeXZ));            // → xz-plane (y=0)
+    traces.push(l3([x0, y0, z0], [0, y0, z0], planeYZ));            // → yz-plane (x=0)
+
+    // Footprints
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [y0], z: [0],    marker: { color: planeXY, size: 5 }, showlegend: false });
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [0],   z: [z0],  marker: { color: planeXZ, size: 5 }, showlegend: false });
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [0],   y: [y0], z: [z0],  marker: { color: planeYZ, size: 5 }, showlegend: false });
 
     return traces;
-  }, [x0, y0, z0, dzdx, dzdy, a, m, b, n, palette]);
+  }, [x0, y0, z0, dzdx, dzdy, palette]);
 
   const allData = useMemo(() => [surfaceData, ...overlayTraces], [surfaceData, overlayTraces]);
-
-  // ── Dynamic zRange ──────────────────────────────────────
-  const maxZ = a * Math.pow(range[1], m) + b * Math.pow(range[1], n);
-  const zRange = [0, Math.max(maxZ * 1.15, 1)];
 
   // ── Scene config ────────────────────────────────────────
   const scene = useMemo(() => {
     const base = {
-      xRange: [0, 3.2],
-      yRange: [0, 3.2],
-      zRange,
-      dtick: Math.max(Math.round(zRange[1] / 8 * 2) / 2, 0.5),
+      xRange: [-3.2, 3.2],
+      yRange: [-3.2, 3.2],
+      zRange: zBounds,
+      dtick: Math.max(Math.round((zBounds[1] - zBounds[0]) / 8 * 2) / 2, 0.5),
       camera: {
-        eye: { x: 1.8, y: -1.8, z: 1.2 },
+        eye: { x: 2.5, y: -2.5, z: 1.5 },
         center: { x: 0, y: 0, z: 0 },
         up: { x: 0, y: 0, z: 1 }
       }
     };
     if (params.aspectRatio === 'auto') {
       base.aspectmode = 'manual';
-      base.aspectratio = { x: 1, y: 1, z: 2 };
+      base.aspectratio = { x: 1, y: 1, z: 1.2 };
     } else {
       const [w, h] = params.aspectRatio.split(':').map(Number);
       if (w && h) {
@@ -210,9 +200,10 @@ const PartialDerivative = () => {
       }
     }
     return base;
-  }, [params.aspectRatio, zRange]);
+  }, [params.aspectRatio, zBounds]);
 
   const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
+  const dirLabel = dir === 1 ? 'up' : 'down';
 
   return (
     <PageContainer>
@@ -226,20 +217,20 @@ const PartialDerivative = () => {
       <SectionDescription>
         For a binary function <strong>z = f(x, y)</strong>, the <strong>partial derivative</strong>
         measures how <em>z</em> changes when <em>only one</em> input varies while the other is held
-        constant. The surface below shows <strong>z = a·x<sup>m</sup> + b·y<sup>n</sup></strong>.
-        The two highlighted curves are <em>cross-sections</em> through the surface at y₀ (varying x)
-        and at x₀ (varying y). The <span style={{ color: palette.auxTraces.tangent }}><strong>cyan</strong></span>
-        and <span style={{ color: palette.auxTraces.derivative }}><strong>red</strong></span> tangent
-        lines show ∂z/∂x and ∂z/∂y respectively — the instantaneous rate of change along each
-        cross-section.
+        constant. The surface shows a parametric bowl <strong>z = d·(a·(x−xc)<sup>m</sup> + b·(y−yc)<sup>n</sup>) + c</strong>
+        where <strong>d = {dirLabel}</strong> controls the bowl direction, <strong>(xc, yc, c)</strong> shifts
+        the bowl centre, and <strong>m, n</strong> adjust the curvature. The
+        <span style={{ color: palette.auxTraces.tangent }}><strong> cyan</strong></span> and
+        <span style={{ color: palette.auxTraces.derivative }}><strong> red</strong></span> tangent
+        lines show ∂z/∂x and ∂z/∂y at the evaluation point.
       </SectionDescription>
 
       <FormulaBox>
-        <FormulaTitle>Parametric Two-Variable Function:</FormulaTitle>
+        <FormulaTitle>Parametric Bowl Function:</FormulaTitle>
         <Formula>
-          z = f(x, y) = {a}·x<sup>{m}</sup> + {b}·y<sup>{n}</sup><br/><br/>
-          Partial derivative w.r.t x: &nbsp; <strong>∂z/∂x = {a}·{m}·x<sup>{m - 1}</sup></strong> &nbsp; (hold y constant)<br/>
-          Partial derivative w.r.t y: &nbsp; <strong>∂z/∂y = {b}·{n}·y<sup>{n - 1}</sup></strong> &nbsp; (hold x constant)<br/><br/>
+          z = {dir}·({a}·(x − {xc})<sup>{m}</sup> + {b}·(y − {yc})<sup>{n}</sup>) + ({c})<br/><br/>
+          ∂z/∂x = {dir}·{a}·{m}·(x − {xc})<sup>{m - 1}</sup> &nbsp; (hold y constant)<br/>
+          ∂z/∂y = {dir}·{b}·{n}·(y − {yc})<sup>{n - 1}</sup> &nbsp; (hold x constant)<br/><br/>
           At (x₀, y₀) = ({x0.toFixed(1)}, {y0.toFixed(1)}):<br/>
           z₀ = {z0.toFixed(3)} &nbsp;
           ∂z/∂x = {dzdx.toFixed(3)} &nbsp;
@@ -249,15 +240,28 @@ const PartialDerivative = () => {
 
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Curvature Control">
+          <ParameterSection title="Bowl Shape">
             <ParameterControls
               parameters={params}
               onChange={setParams}
               config={[
                 { name: 'a', label: 'a (x coeff)', min: 0.1, max: 3, step: 0.1 },
-                { name: 'm', label: 'm (x exponent)', min: 1, max: 4, step: 0.5 },
+                { name: 'm', label: 'm (x exponent)', min: 1, max: 4, step: 1 },
                 { name: 'b', label: 'b (y coeff)', min: 0.1, max: 3, step: 0.1 },
-                { name: 'n', label: 'n (y exponent)', min: 1, max: 4, step: 0.5 }
+                { name: 'n', label: 'n (y exponent)', min: 1, max: 4, step: 1 },
+                { name: 'direction', label: 'Direction', type: 'toggle', onValue: 1, offValue: -1, onLabel: '↑ Bowl Up', offLabel: '↓ Bowl Down' }
+              ]}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Bowl Centre">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={[
+                { name: 'xc', label: 'xc (x-centre)', min: -2, max: 2, step: 0.1 },
+                { name: 'yc', label: 'yc (y-centre)', min: -2, max: 2, step: 0.1 },
+                { name: 'c', label: 'c (z-offset)', min: -5, max: 5, step: 0.1 }
               ]}
             />
           </ParameterSection>
@@ -267,8 +271,8 @@ const PartialDerivative = () => {
               parameters={params}
               onChange={setParams}
               config={[
-                { name: 'x0', label: 'x₀', min: 0.1, max: 2.9, step: 0.1 },
-                { name: 'y0', label: 'y₀', min: 0.1, max: 2.9, step: 0.1 }
+                { name: 'x0', label: 'x₀', min: -2.8, max: 2.8, step: 0.1 },
+                { name: 'y0', label: 'y₀', min: -2.8, max: 2.8, step: 0.1 }
               ]}
             />
           </ParameterSection>
@@ -289,7 +293,7 @@ const PartialDerivative = () => {
         <PlotPanel>
           <Plotter3D
             data={allData}
-            title={`z = ${a}·x^${m} + ${b}·y^${n} — Partial Derivatives`}
+            title={`z = ${dir}·(${a}·(x-${xc})^${m} + ${b}·(y-${yc})^${n}) + ${c}`}
             showExportButton={false}
             scene={scene}
             plotStyle={params.plotStyle}
@@ -307,16 +311,16 @@ const PartialDerivative = () => {
                 parameters={params}
                 onChange={setParams}
                 config={[
-                  { name: 'x0', label: 'x₀', min: 0.1, max: 2.9, step: 0.1 },
-                  { name: 'y0', label: 'y₀', min: 0.1, max: 2.9, step: 0.1 }
+                  { name: 'x0', label: 'x₀', min: -2.8, max: 2.8, step: 0.1 },
+                  { name: 'y0', label: 'y₀', min: -2.8, max: 2.8, step: 0.1 }
                 ]}
               />
             </ParameterSection>
           </Plotter3D>
           <Note>
             Drag to rotate · Scroll to zoom ·
-            <span style={{ color: palette.auxTraces.tangent }}> ●</span> ∂z/∂x tangent ·
-            <span style={{ color: palette.auxTraces.derivative }}> ●</span> ∂z/∂y tangent ·
+            <span style={{ color: palette.auxTraces.tangent }}> ●</span> ∂z/∂x ·
+            <span style={{ color: palette.auxTraces.derivative }}> ●</span> ∂z/∂y ·
             <span style={{ color: planeXY }}> ●</span> xy ·
             <span style={{ color: planeXZ }}> ●</span> xz ·
             <span style={{ color: planeYZ }}> ●</span> yz
