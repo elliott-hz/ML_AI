@@ -81,13 +81,13 @@ const MotivationBinary = () => {
   const overlayTraces = useMemo(() => {
     const traces = [];
 
-    const line3d = (p1, p2, color, width = 2, dash = 'solid') => ({
+    const line3d = (p1, p2, color, dash = 'solid') => ({
       type: 'scatter3d',
       mode: 'lines',
       x: [p1[0], p2[0]],
       y: [p1[1], p2[1]],
       z: [p1[2], p2[2]],
-      line: { color, width, dash },
+      line: { color, dash },
       showlegend: false,
       hovertemplate: ''
     });
@@ -109,43 +109,14 @@ const MotivationBinary = () => {
       showlegend: true
     });
 
-    // ── Highlight: f(x) = x² + y₀² (沿 x 方向，固定 y=y₀) ──
-    const curveN = 50;
-    const curvX = Array.from({ length: curveN + 1 }, (_, i) => 3 * i / curveN);
-    const curvY_fixed = curvX.map(x => ({ x, y: y0, z: x * x + y0 * y0 }));
-    traces.push({
-      type: 'scatter3d',
-      mode: 'lines',
-      x: curvY_fixed.map(p => p.x),
-      y: curvY_fixed.map(p => p.y),
-      z: curvY_fixed.map(p => p.z),
-      line: { color: palette.mainTraces.primary, width: 6 },
-      name: `f(x) = x² + ${y0.toFixed(1)}²`,
-      showlegend: true
-    });
-
-    // ── Highlight: f(y) = x₀² + y² (沿 y 方向，固定 x=x₀) ──
-    const curvY = Array.from({ length: curveN + 1 }, (_, i) => 3 * i / curveN);
-    const curvX_fixed = curvY.map(y => ({ x: x0, y, z: x0 * x0 + y * y }));
-    traces.push({
-      type: 'scatter3d',
-      mode: 'lines',
-      x: curvX_fixed.map(p => p.x),
-      y: curvX_fixed.map(p => p.y),
-      z: curvX_fixed.map(p => p.z),
-      line: { color: palette.mainTraces.secondary, width: 6 },
-      name: `f(y) = ${x0.toFixed(1)}² + y²`,
-      showlegend: true
-    });
-
     const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
 
     // Projection 1: A → xy-plane (z=0)
-    traces.push(line3d([x0, y0, z0], [x0, y0, 0], planeXY, 2, 'dash'));
+    traces.push(line3d([x0, y0, z0], [x0, y0, 0], planeXY, 'dash'));
     // Projection 2: A → xz-plane (y=0)
-    traces.push(line3d([x0, y0, z0], [x0, 0, z0], planeXZ, 2, 'dash'));
+    traces.push(line3d([x0, y0, z0], [x0, 0, z0], planeXZ, 'dash'));
     // Projection 3: A → yz-plane (x=0)
-    traces.push(line3d([x0, y0, z0], [0, y0, z0], planeYZ, 2, 'dash'));
+    traces.push(line3d([x0, y0, z0], [0, y0, z0], planeYZ, 'dash'));
 
     // Footprint markers
     traces.push({
@@ -267,6 +238,13 @@ const MotivationBinary = () => {
             scene={scene}
             plotStyle={params.plotStyle}
             legendPosition={params.legendPosition}
+            crossSection={{
+              x0, y0,
+              fn: (x, y) => x * x + y * y,
+              range: [0, 3],
+              colorX: palette.surface.crossSection.fx,
+              colorY: palette.surface.crossSection.fy
+            }}
           >
             <ParameterSection title="Evaluation Point" style={{ margin: 0, border: 'none', background: 'transparent', padding: 0 }}>
               <ParameterControls

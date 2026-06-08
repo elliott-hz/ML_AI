@@ -124,6 +124,10 @@ export function getTracePalette(themeMode) {
         '#22d3ee'                          // yz-plane projection — cyan (theme-independent)
       ],
       contour: isDark ? '#94a3b8' : '#64748b',
+      crossSection: {
+        fx: isDark ? '#ffffff' : '#f8fafc',   // f(x) at y₀ — 白色
+        fy: isDark ? '#facc15' : '#d97706',   // f(y) at x₀ — 金色/琥珀
+      },
     },
 
     // ── 3.4 Fills (semi-transparent for area charts) ──

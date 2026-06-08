@@ -17,6 +17,8 @@ import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig'
  *   plotStyle       — thin | medium | thick | extra-thick
  *   legendPosition  — None | top-right | top-left | bottom-left | bottom-right
  *   children        — 浮动控制面板，渲染在容器顶部（全屏时仍可见）
+ *   crossSection    — { x0, y0, fn, range, colorX, colorY } 二元函数截面线
+ *                     f(x) at y₀ + f(y) at x₀，自动生成 2 条 scatter3d 高亮曲线
  */
 const Plotter3D = ({
   data,
@@ -25,7 +27,8 @@ const Plotter3D = ({
   showExportButton = true,
   plotStyle = 'medium',
   legendPosition = 'top-right',
-  children
+  children,
+  crossSection
 }) => {
   const plotRef = useRef(null);
   const hasInitialized = useRef(false);
@@ -99,17 +102,48 @@ const Plotter3D = ({
     };
   }, [propScene, title, styleConfig, plotLayout, legendPosition]);
 
-  // ── Style traces ────────────────────────────────────────
+  // ── Cross-section curves (二元函数截面线) ──────────────
+  // 生成 f(x) at y₀ 和 f(y) at x₀ 两条高亮 scatter3d
+  const crossData = useMemo(() => {
+    if (!crossSection) return [];
+    const { x0, y0, fn, range, colorX, colorY } = crossSection;
+    const [rMin, rMax] = range;
+    const N = 50;
+    const step = (rMax - rMin) / N;
+
+    const xs = Array.from({ length: N + 1 }, (_, i) => rMin + i * step);
+    const fx = xs.map(x => ({ x, y: y0, z: fn(x, y0) }));
+    const fy = xs.map(y => ({ x: x0, y, z: fn(x0, y) }));
+
+    return [
+      {
+        type: 'scatter3d', mode: 'lines',
+        x: fx.map(p => p.x), y: fx.map(p => p.y), z: fx.map(p => p.z),
+        line: { color: colorX || '#ffffff', width: 8 },
+        name: `f(x) at y₀ = ${y0.toFixed(1)}`,
+        showlegend: true
+      },
+      {
+        type: 'scatter3d', mode: 'lines',
+        x: fy.map(p => p.x), y: fy.map(p => p.y), z: fy.map(p => p.z),
+        line: { color: colorY || '#facc15', width: 8 },
+        name: `f(y) at x₀ = ${x0.toFixed(1)}`,
+        showlegend: true
+      }
+    ];
+  }, [crossSection]);
+
+  // ── Style traces (包含 cross-section) ──────────────────
   const styledData = useMemo(() => {
-    if (!data) return [];
-    return data.map(trace => {
+    const all = [...(data || []), ...crossData];
+    return all.map(trace => {
       const t = { ...trace };
-      if (t.line)   t.line   = { ...t.line,   width: styleConfig.lineWidth };
+      if (t.line)   t.line   = { ...t.line,   width: t.line.width || styleConfig.lineWidth };
       if (t.marker) t.marker = { ...t.marker, size: styleConfig.pointSize };
       if (t.textfont) t.textfont = { ...t.textfont, size: styleConfig.fontSize };
       return t;
     });
-  }, [data, styleConfig]);
+  }, [data, crossData, styleConfig]);
 
   // ── Config ──────────────────────────────────────────────
   const mergedConfig = {
