@@ -110,6 +110,32 @@ const PartialDerivative = () => {
     };
   }, [res, a, m, b, n, xc, yc, c, dir, palette]);
 
+  // ── Coordinate plane surfaces (semi-transparent) ───────
+  const planeSurfaces = useMemo(() => {
+    const [xyColor, xzColor, yzColor] = palette.surface.planeProjection;
+    const [zMin, zMax] = zBounds;
+    const r = 3;
+
+    const mesh = (verts, color) => ({
+      type: 'mesh3d',
+      x: verts.map(v => v[0]),
+      y: verts.map(v => v[1]),
+      z: verts.map(v => v[2]),
+      i: [0, 0], j: [1, 2], k: [2, 3],
+      color,
+      opacity: 0.12,
+      showscale: false,
+      hoverinfo: 'none',
+      showlegend: false
+    });
+
+    return [
+      mesh([[-r, -r, 0], [ r, -r, 0], [ r,  r, 0], [-r,  r, 0]], xyColor),  // xy-plane  z=0
+      mesh([[-r,  0, zMin], [ r, 0, zMin], [ r, 0, zMax], [-r, 0, zMax]], xzColor),  // xz-plane  y=0
+      mesh([[ 0, -r, zMin], [ 0, r, zMin], [ 0, r, zMax], [ 0,-r, zMax]], yzColor),  // yz-plane  x=0
+    ];
+  }, [palette, zBounds]);
+
   // ── Tangent + marker overlay traces ─────────────────────
   const overlayTraces = useMemo(() => {
     const traces = [];
@@ -169,7 +195,7 @@ const PartialDerivative = () => {
     return traces;
   }, [x0, y0, z0, dzdx, dzdy, palette]);
 
-  const allData = useMemo(() => [surfaceData, ...overlayTraces], [surfaceData, overlayTraces]);
+  const allData = useMemo(() => [surfaceData, ...planeSurfaces, ...overlayTraces], [surfaceData, planeSurfaces, overlayTraces]);
 
   // ── Scene config ────────────────────────────────────────
   const scene = useMemo(() => {
