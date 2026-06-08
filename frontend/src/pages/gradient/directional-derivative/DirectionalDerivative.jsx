@@ -43,7 +43,7 @@ const DirectionalDerivative = () => {
     xRange: [-3, 3],
     yRange: [-3, 3],
     resolution: 40,
-    aspectRatio: '4:3',
+    aspectRatio: '1:1',
     legendPosition: 'top-right',
     plotStyle: 'medium'
   });
@@ -363,15 +363,17 @@ const DirectionalDerivative = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <Plotter3D
-            data={all3DData}
-            title="Gaussian Bell — 3D Surface"
-            showExportButton={false}
-            height="450px"
-            scene={scene}
-            plotStyle={params.plotStyle}
-            legendPosition={params.legendPosition}
-          />
+          <div style={{ width: '100%', aspectRatio: '4 / 3' }}>
+            <Plotter3D
+              data={all3DData}
+              title="Gaussian Bell — 3D Surface"
+              showExportButton={false}
+              height="100%"
+              scene={scene}
+              plotStyle={params.plotStyle}
+              legendPosition={params.legendPosition}
+            />
+          </div>
 
           <ContourWrapper>
             <div ref={contourRef} style={{ width: '100%', height: '100%' }} />
