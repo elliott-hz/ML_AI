@@ -108,6 +108,35 @@ const MotivationBinary = () => {
       showlegend: true
     });
 
+    // ── Highlight: f(x) = x² + y₀² (沿 x 方向，固定 y=y₀) ──
+    const curveN = 50;
+    const curvX = Array.from({ length: curveN + 1 }, (_, i) => 3 * i / curveN);
+    const curvY_fixed = curvX.map(x => ({ x, y: y0, z: x * x + y0 * y0 }));
+    traces.push({
+      type: 'scatter3d',
+      mode: 'lines',
+      x: curvY_fixed.map(p => p.x),
+      y: curvY_fixed.map(p => p.y),
+      z: curvY_fixed.map(p => p.z),
+      line: { color: palette.mainTraces.primary, width: 6 },
+      name: `f(x) = x² + ${y0.toFixed(1)}²`,
+      showlegend: true
+    });
+
+    // ── Highlight: f(y) = x₀² + y² (沿 y 方向，固定 x=x₀) ──
+    const curvY = Array.from({ length: curveN + 1 }, (_, i) => 3 * i / curveN);
+    const curvX_fixed = curvY.map(y => ({ x: x0, y, z: x0 * x0 + y * y }));
+    traces.push({
+      type: 'scatter3d',
+      mode: 'lines',
+      x: curvX_fixed.map(p => p.x),
+      y: curvX_fixed.map(p => p.y),
+      z: curvX_fixed.map(p => p.z),
+      line: { color: palette.mainTraces.secondary, width: 6 },
+      name: `f(y) = ${x0.toFixed(1)}² + y²`,
+      showlegend: true
+    });
+
     const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;
 
     // Projection 1: A → xy-plane (z=0)
