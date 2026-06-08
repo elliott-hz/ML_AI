@@ -325,7 +325,12 @@ const PowerFunctionLimit = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'coefficient', label: 'Coefficient (a)', min: 0.5, max: 5, step: 0.1 },
+              { name: 'exponent', label: 'Exponent (n)', min: -3, max: 3, step: 0.1 },
+            ]} />
+          </LimitPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

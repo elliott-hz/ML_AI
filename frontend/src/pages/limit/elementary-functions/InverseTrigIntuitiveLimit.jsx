@@ -187,7 +187,11 @@ const InverseTrigIntuitiveLimit = () => {
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
             yTickMode="pi"
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'coefficient', label: 'Coefficient (a)', min: 0.5, max: 5, step: 0.1 },
+            ]} />
+          </LimitPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

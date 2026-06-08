@@ -153,7 +153,11 @@ const ConvergentSequence2 = () => {
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
             title={`Sequence: uₙ = n/(n+1)`}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
+            ]} />
+          </LimitPlotter>
 
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>

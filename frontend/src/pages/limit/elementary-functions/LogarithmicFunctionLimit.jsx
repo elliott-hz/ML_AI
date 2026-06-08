@@ -206,7 +206,11 @@ const LogarithmicFunctionLimit = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'base', label: 'Base (b)', min: 0.3, max: 5, step: 0.1 },
+            ]} />
+          </LimitPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

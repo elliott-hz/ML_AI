@@ -270,7 +270,11 @@ const InfiniteSumNotInfinitesimal = () => {
             aspectRatio={plot1Params.aspectRatio}
             legendPosition={plot1Params.legendPosition}
             title="Each term is an infinitesimal"
-          />
+          >
+            <ParameterControls parameters={plot1Params} onChange={setPlot1Params} config={[
+              { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
+            ]} />
+          </LimitPlotter>
         </PlotPanel>
       </ContentLayout>
 

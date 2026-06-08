@@ -171,7 +171,12 @@ const ConvergentSequence1 = () => {
             title={`Sequence: uₙ = 1/${params.base}ⁿ`}
             showLimitLine={true}
             limitValue={0}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'base', label: 'Base (b)', min: 1.1, max: 10, step: 0.1 },
+              { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 100, step: 10 },
+            ]} />
+          </LimitPlotter>
 
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>

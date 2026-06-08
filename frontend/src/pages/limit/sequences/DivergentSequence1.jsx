@@ -137,7 +137,11 @@ const DivergentSequence1 = () => {
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
             title={`Sequence: uₙ = n²`}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'maxN', label: 'Number of Terms (N)', min: 10, max: 50, step: 5 },
+            ]} />
+          </LimitPlotter>
 
           {/* 原函数图像 */}
           <div style={{ marginTop: '1rem' }}>

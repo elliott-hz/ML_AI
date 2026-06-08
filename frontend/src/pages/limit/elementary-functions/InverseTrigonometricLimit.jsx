@@ -237,7 +237,11 @@ const InverseTrigonometricLimit = () => {
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
             yTickMode="pi"
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'coefficient', label: 'Coefficient (k)', min: 0.5, max: 3, step: 0.1 },
+            ]} />
+          </LimitPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

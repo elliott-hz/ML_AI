@@ -242,7 +242,11 @@ const InfinitesimalConstant = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'constant', label: 'Constant (c)', min: 1, max: 10, step: 0.5 },
+            ]} />
+          </LimitPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>
