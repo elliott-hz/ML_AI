@@ -69,6 +69,7 @@ const DirectionalDerivative = () => {
   const deltaX = xP - x2;
   const deltaY = yP - y2;
   const rho = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+  const thetaRad = Math.atan2(y2 - y1, x2 - x1);
 
   // ── 3D Surface data ─────────────────────────────────────
   const surfaceData = useMemo(() => {
@@ -323,7 +324,6 @@ const DirectionalDerivative = () => {
     ];
 
     // ── Angle θ arc at P ──────────────────────────────
-    const thetaRad = Math.atan2(y2 - y1, x2 - x1);
     const arcR = Math.min(xRange[1] - xRange[0], yRange[1] - yRange[0]) * 0.04;
     const nArc = 20;
     const arcPts = Array.from({ length: nArc + 1 }, (_, i) => {
@@ -380,7 +380,7 @@ const DirectionalDerivative = () => {
       hovermode: 'closest'
     };
     return { contourData: d, contourLayout: l };
-  }, [res, xRange, yRange, x1, y1, x2, y2, xP, yP, params.legendPosition, plotLayout, palette]);
+  }, [res, xRange, yRange, x1, y1, x2, y2, xP, yP, thetaRad, params.legendPosition, plotLayout, palette]);
 
   // ── Render contour ──────────────────────────────────────
   const config = {
@@ -413,26 +413,33 @@ const DirectionalDerivative = () => {
         <BackButton to="/mathematics/1-fundamentals/gradient">
           ← Back to Gradient
         </BackButton>
-        <SectionTitleH1>Gaussian Bell: Points O &amp; Q</SectionTitleH1>
+        <SectionTitleH1>Directional Derivative</SectionTitleH1>
       </Header>
 
       <SectionDescription>
-        The 2D Gaussian bell curve <strong>z = (1/2π)·e<sup>−½(x²+y²)</sup></strong>.
+        The <strong>directional derivative</strong> D<sub>L</sub>f measures the rate of change
+        of a multi-variable function along an <em>arbitrary direction</em> L, not just along the
+        coordinate axes. It generalises partial derivatives: D<sub>L</sub>f = ∇f · u, where
+        u is the unit vector in direction L.<br/><br/>
+        The surface is the 2D Gaussian bell <strong>z = (1/2π)·e<sup>−½(x²+y²)</sup></strong>.
         <strong>O</strong> and <strong>Q</strong> are two adjustable points on the surface.
         The <strong>QXY plane</strong> is the horizontal plane at z = z<sub>Q</sub>.
         <strong>P</strong> is the foot of the perpendicular from O onto the QXY plane.
-        The dashed lines show Δx, Δy, and the distance ρ between P and Q.
+        The line <strong>L</strong> (O→Q) defines the direction. The arc marks the angle θ
+        between L and the x-axis. Dashed lines show Δx, Δy, Δz, and ρ.
       </SectionDescription>
 
       <FormulaBox>
-        <FormulaTitle>Gaussian Bell:</FormulaTitle>
+        <FormulaTitle>Directional Derivative:</FormulaTitle>
         <Formula>
           f(x, y) = (1 / 2π)·e<sup>−½(x²+y²)</sup><br/><br/>
           O = ({x1.toFixed(2)}, {y1.toFixed(2)}, {zO.toFixed(4)})<br/>
           Q = ({x2.toFixed(2)}, {y2.toFixed(2)}, {zQ.toFixed(4)})<br/>
-          P = ({xP.toFixed(2)}, {yP.toFixed(2)}, {zP.toFixed(4)}) &nbsp; (foot to QXY plane)<br/><br/>
-          Δx = {deltaX.toFixed(3)} &nbsp; Δy = {deltaY.toFixed(3)}<br/>
-          ρ = √(Δx² + Δy²) = <strong>{rho.toFixed(4)}</strong>
+          P = ({xP.toFixed(2)}, {yP.toFixed(2)}, {zP.toFixed(4)})<br/><br/>
+          Direction L: &nbsp; θ = {(thetaRad * 180 / Math.PI).toFixed(1)}°<br/>
+          Δx = {deltaX.toFixed(3)} &nbsp; Δy = {deltaY.toFixed(3)} &nbsp; Δz = {(zO - zQ).toFixed(4)}<br/>
+          ρ = √(Δx² + Δy²) = <strong>{rho.toFixed(4)}</strong><br/>
+          Slope along L ≈ Δz / ρ = <strong>{((zO - zQ) / rho).toFixed(4)}</strong>
         </Formula>
       </FormulaBox>
 

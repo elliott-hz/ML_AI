@@ -97,13 +97,13 @@ const Gradient = () => {
     }
   ];
 
-  // Group 2: Gaussian Bell
-  const gaussianBellCards = [
+  // Group 2: Directional Derivative
+  const directionalDerivativeCards = [
     {
-      id: 'gaussian-bell',
+      id: 'directional-derivative',
       icon: '',
-      title: <>Gaussian Bell: O &amp; Q Points</>,
-      description: 'Explore the 2D Gaussian bell curve with two adjustable points O and Q. The QXY plane is projected at z_Q; P is the foot of the perpendicular from O to that plane. Dashed lines show Δx, Δy, and distance φ between P and Q on both a 3D surface and a 2D contour map.',
+      title: <>Directional Derivative D<sub>L</sub>f</>,
+      description: 'The directional derivative measures the rate of change along an arbitrary direction L, not just the axes. Explore the 2D Gaussian bell curve with adjustable points O and Q — the line L = O→Q defines the direction, with Δx, Δy, Δz, ρ and angle θ shown in both 3D and contour views.',
       path: '/mathematics/1-fundamentals/gradient/directional-derivative'
     }
   ];
@@ -134,10 +134,10 @@ const Gradient = () => {
         ))}
       </CardGrid>
 
-      {/* Group 2: Gaussian Bell */}
-      <GroupTitle>Gaussian Bell Comparison</GroupTitle>
+      {/* Group 2: Directional Derivative */}
+      <GroupTitle>Directional Derivative</GroupTitle>
       <CardGrid>
-        {gaussianBellCards.map((feature) => (
+        {directionalDerivativeCards.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => navigate(feature.path)}
