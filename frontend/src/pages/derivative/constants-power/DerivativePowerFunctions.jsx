@@ -231,7 +231,9 @@ const DerivativePowerFunctions = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[{ name: 'mu', label: 'μ (power exponent)', min: -4, max: 4, step: 1 }]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

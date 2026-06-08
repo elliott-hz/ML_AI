@@ -269,7 +269,9 @@ const AverageInstantaneousVelocity = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[{ name: 'dt', label: 'Δt', min: -2.0, max: 2.0, step: 0.01 }]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

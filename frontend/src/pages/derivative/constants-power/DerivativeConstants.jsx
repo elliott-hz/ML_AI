@@ -151,7 +151,9 @@ const DerivativeConstants = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[{ name: 'C', label: 'C', min: -10, max: 10, step: 0.5 }]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

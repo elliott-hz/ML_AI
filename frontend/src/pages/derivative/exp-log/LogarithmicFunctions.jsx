@@ -162,7 +162,9 @@ const LogarithmicFunctions = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[{ name: 'a', label: 'a (base, a > 0, a ≠ 1)', min: 0.5, max: 5, step: 0.1 }]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

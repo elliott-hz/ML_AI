@@ -1,6 +1,4 @@
-import { ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
-export { ASPECT_RATIO_OPTIONS };
-import React, { useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getAuxiliaryColor } from '../../constants/plotThemeConfig';
@@ -21,12 +19,15 @@ const DerivativePlotter = ({
   plotStyle = 'medium',
   aspectRatio = 'auto',
   legendPosition = 'top-right',
-  xTickMode = 'auto', // 'auto' | 'pi'
-  yTickMode = 'auto',  // 'auto' | 'pi'
+  xTickMode = 'auto',
+  yTickMode = 'auto',
   annotations: propAnnotations,
-  equalScale = false
+  equalScale = false,
+  children
 }) => {
   const plotRef = useRef(null);
+  const outerRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const themeMode = useThemeMode();
 
   const styleConfig = useMemo(() => {
@@ -347,8 +348,8 @@ const DerivativePlotter = ({
 
   const handleFullscreenToggle = useCallback(() => {
     if (!document.fullscreenElement) {
-      if (plotRef.current) {
-        plotRef.current.requestFullscreen().catch(err => {
+      if (outerRef.current) {
+        outerRef.current.requestFullscreen().catch(err => {
           console.log(`Error attempting to enable full-screen mode: ${err.message}`);
         });
       }
@@ -359,8 +360,14 @@ const DerivativePlotter = ({
     }
   }, []);
 
+  useEffect(() => {
+    const onFS = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFS);
+    return () => document.removeEventListener('fullscreenchange', onFS);
+  }, []);
+
   return (
-    <div style={containerStyle}>
+    <div ref={outerRef} style={containerStyle}>
       <button
         onClick={handleFullscreenToggle}
         style={fullscreenButtonStyle}
@@ -371,6 +378,16 @@ const DerivativePlotter = ({
         </svg>
       </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
+      {isFullscreen && children && (
+        <div style={{
+          position: 'absolute', top: 20, left: 20, zIndex: 10,
+          background: themeMode === 'dark' ? 'rgba(30,41,59,0.9)' : 'rgba(255,255,255,0.9)',
+          border: themeMode === 'dark' ? '1px solid rgba(148,163,184,0.2)' : '1px solid rgba(148,163,184,0.4)',
+          borderRadius: 8, padding: '8px 12px'
+        }}>
+          {children}
+        </div>
+      )}
       {showExportButton && (
         <button onClick={handleExport} style={buttonStyle}>
            Export Image (PNG)

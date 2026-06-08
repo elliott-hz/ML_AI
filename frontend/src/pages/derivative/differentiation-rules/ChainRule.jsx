@@ -392,7 +392,15 @@ const ChainRule = () => {
           plotStyle={params.plotStyle}
           aspectRatio={params.aspectRatio}
           legendPosition={params.legendPosition}
-        />
+        >
+          <ParameterControls parameters={params} onChange={setParams} config={[
+            { name: 'a', label: 'a (g(x) slope)', min: -3, max: 3, step: 0.1 },
+            { name: 'b', label: 'b (g(x) intercept)', min: -5, max: 5, step: 0.5 },
+            { name: 'p', label: 'p (f(z) linear)', min: -3, max: 3, step: 0.1 },
+            { name: 'q', label: 'q (f(z) const)', min: -5, max: 5, step: 0.5 },
+            { name: 'x0', label: 'x₀', min: -4, max: 4, step: 0.1 }
+          ]} />
+        </DerivativePlotter>
         <DerivativePlotter
           data={plot2Data}
           xRange={zRange}

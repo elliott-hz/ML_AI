@@ -442,7 +442,12 @@ const ProductRule = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'x0', label: 'x₀', min: 0.2, max: 2, step: 0.1 },
+              { name: 'dx', label: 'dx (increment)', min: 0.05, max: 0.5, step: 0.05 }
+            ]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
 

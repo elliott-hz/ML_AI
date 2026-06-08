@@ -298,7 +298,11 @@ const ReciprocalRule = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'x0', label: 'x₀', min: 0.3, max: 4, step: 0.1 }
+            ]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

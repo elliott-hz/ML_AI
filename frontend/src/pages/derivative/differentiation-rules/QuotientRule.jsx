@@ -592,7 +592,12 @@ const QuotientRule = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'x0', label: 'x₀', min: -10, max: 10, step: 0.1 },
+              { name: 'dx', label: 'dx (increment)', min: 0.001, max: 0.5, step: 0.001 }
+            ]} />
+          </DerivativePlotter>
         </PlotPanel>
       </ContentLayout>
 

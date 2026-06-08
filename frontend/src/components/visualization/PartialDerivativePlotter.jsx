@@ -217,7 +217,12 @@ const PartialDerivativePlotter = ({
       </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
       {isFullscreen && children && (
-        <div style={{ position: 'absolute', top: 20, left: 20, zIndex: 10 }}>
+        <div style={{
+          position: 'absolute', top: 20, left: 20, zIndex: 10,
+          background: themeMode === 'dark' ? 'rgba(30,41,59,0.9)' : 'rgba(255,255,255,0.9)',
+          border: themeMode === 'dark' ? '1px solid rgba(148,163,184,0.2)' : '1px solid rgba(148,163,184,0.4)',
+          borderRadius: 8, padding: '8px 12px'
+        }}>
           {children}
         </div>
       )}
