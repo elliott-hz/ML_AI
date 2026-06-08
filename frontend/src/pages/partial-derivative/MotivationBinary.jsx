@@ -5,7 +5,7 @@ import { ASPECT_RATIO_OPTIONS } from '../../constants/plotThemeConfig';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getTracePalette } from '../../constants/plotThemeConfig';
 import { legendPositionConfig } from '../../constants/partialDerivativeConfig';
-import PartialDerivativePlotter from '../../components/visualization/PartialDerivativePlotter';
+import Plotter3D from '../../components/visualization/Plotter3D';
 import ParameterControls from '../../components/visualization/ParameterControls';
 import ParameterSection from '../../components/visualization/ParameterSection';
 import BackButton from '../../components/layout/BackButton';
@@ -226,12 +226,11 @@ const MotivationBinary = () => {
         </ControlsPanel>
 
         <PlotPanel>
-          <PartialDerivativePlotter
+          <Plotter3D
             data={allData}
             title="z = x² + y² — Two Inputs, One Output"
             showExportButton={false}
             scene={scene}
-            aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
           />
           <Note>

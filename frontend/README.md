@@ -32,11 +32,12 @@ frontend/
 │   │   │   ├── DerivativePlotter.jsx        # 导数专用绘图器
 │   │   │   ├── LimitPlotter.jsx             # 极限专用绘图器
 │   │   │   ├── ContinuityPlotter.jsx        # 连续性专用绘图器
-│   │   │   ├── PartialDerivativePlotter.jsx # 偏导数绘图器 (2D/3D)
+│   │   │   ├── PartialDerivativePlotter.jsx # 偏导数绘图器 (2D)
+│   │   │   ├── Plotter3D.jsx                # 通用 3D 场景绘图器 (surface/scatter3d/…)
 │   │   │   ├── ParameterControls.jsx        # 参数控制面板 (滑块/输入框/下拉/开关)
 │   │   │   ├── ParameterSection.jsx         # 参数分区容器
-│   │   │   ├── Cube3D.jsx                   # 3D 立方体 (Plotly mesh3d)
-│   │   │   └── Box3D.jsx                    # 3D 矩形盒 (Plotly mesh3d)
+│   │   │   ├── Cube3D.jsx                   # 3D 立方体 (Plotly mesh3d, 定制)
+│   │   │   └── Box3D.jsx                    # 3D 矩形盒 (Plotly mesh3d, 定制)
 │   │   ├── derivative/        # 导数模块共享组件
 │   │   ├── limit/shared/      # 极限模块共享 styled 布局
 │   │   └── style/             # 导数模块共享 styled 布局 (DerivativeStyled)
@@ -182,9 +183,18 @@ PageComponent
 | `DerivativePlotter` | 导数图 (f + f') | 2D | π-tick, 辅助迹线颜色 |
 | `LimitPlotter` | 极限图 | 2D | 极限语义颜色 (leftLimit, rightLimit, asymptote) |
 | `ContinuityPlotter` | 连续性图 | 2D | 断点标记 (hole, jump) |
-| `PartialDerivativePlotter` | 偏导数图 | 2D/3D | scene prop 触发 3D 模式, 相机控制 |
+| `PartialDerivativePlotter` | 偏导数图 | 2D | π-tick, 投影线注释 |
 
-**共同接口**: `{ data, xRange, yRange?, title, showExportButton, plotStyle, aspectRatio, legendPosition }`
+**3D 场景绘图器**（独立于 2D plotter 体系）：
+
+| 组件 | 用途 | 依赖 | 场景 |
+|---|---|---|---|
+| `Plotter3D` | 通用 3D 场景 (surface, scatter3d, mesh3d, ...) | `scene` 对象 (xRange, yRange, zRange, camera, aspectratio) | 偏导数、方向导数、梯度等 |
+| `Cube3D` | 立方体 mesh3d (定制) | Plotly mesh3d 直接 渲染 | n=2 时 x²·y=1 |
+| `Box3D` | 矩形盒 mesh3d (定制) | Plotly mesh3d 直接渲染 | n=-2 时 x²·y=1 |
+
+**共同接口 (2D Plotters)**: `{ data, xRange, yRange?, title, showExportButton, plotStyle, aspectRatio, legendPosition }`
+**Plotter3D 接口**: `{ data, scene (required), title, showExportButton, plotStyle, legendPosition }`
 
 **共同行为**:
 - 首次渲染 `Plotly.newPlot`，后续 `Plotly.react`（保留相机/布局状态）
@@ -361,6 +371,7 @@ const PageName = () => {
 - 模块间绘图逻辑独立演进，互不影响
 - 后续可添加模块专属的布局、颜色语义、注释、3D 支持等
 - 现已有 5 个模块绘图器：`FunctionPlotter`、`LimitPlotter`、`ContinuityPlotter`、`DerivativePlotter`、`PartialDerivativePlotter`
+- 3D 场景使用 `Plotter3D`（通用 surface/scatter3d 场景），`Cube3D` 和 `Box3D` 是 mesh3d 定制组件，不可替代 Plotter3D
 
 新建绘图器时：直接复制 `FunctionPlotter.jsx`，重命名组件，子页面改引用即可。API 接口保持一致。
 

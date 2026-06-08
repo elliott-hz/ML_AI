@@ -4,20 +4,26 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig';
 
 /**
- * PartialDerivativePlotter — Theme-aware 2D plotter for the Partial Derivative module.
+ * Plotter3D — Pure 3D scene plotter.
  *
- * API + visual rendering matches FunctionPlotter. For 3D scenes use Plotter3D.
+ * Reusable foundation for all 3D visualization pages.
+ * Renders a Plotly 3D scene with support for surface, scatter3d, mesh3d, etc.
+ *
+ * Props:
+ *   data            — Plotly trace array (surface, scatter3d, mesh3d, …)
+ *   scene           — { xRange, yRange, zRange, dtick, camera?, aspectratio? }  (REQUIRED)
+ *   title           — chart title
+ *   showExportButton — show PNG export button (default true)
+ *   plotStyle       — thin | medium | thick | extra-thick
+ *   legendPosition  — None | top-right | top-left | bottom-left | bottom-right
  */
-const PartialDerivativePlotter = ({
+const Plotter3D = ({
   data,
-  xRange: propXRange = [-10, 10],
-  yRange: propYRange,
+  scene: propScene,
   title,
   showExportButton = true,
   plotStyle = 'medium',
-  aspectRatio = 'auto',
-  legendPosition = 'top-right',
-  annotations
+  legendPosition = 'top-right'
 }) => {
   const plotRef = useRef(null);
   const hasInitialized = useRef(false);
@@ -34,65 +40,58 @@ const PartialDerivativePlotter = ({
     }
   }, [plotStyle]);
 
-  // Auto Y range
-  const autoYRange = useMemo(() => {
-    if (propYRange) return propYRange;
-    let minY = Infinity, maxY = -Infinity;
-    (data || []).forEach(trace => {
-      if (trace.y && Array.isArray(trace.y)) {
-        trace.y.forEach(y => {
-          if (y !== null && !isNaN(y) && isFinite(y) && Math.abs(y) < 10000) {
-            if (y < minY) minY = y;
-            if (y > maxY) maxY = y;
-          }
-        });
-      }
-    });
-    if (minY === Infinity || maxY === -Infinity) return [-10, 10];
-    const range = maxY - minY;
-    const padding = Math.max(range * 0.1, 1);
-    if (range < 2) {
-      const center = (minY + maxY) / 2;
-      return [center - 1, center + 1];
-    }
-    return [minY - padding, maxY + padding];
-  }, [data, propYRange]);
-
-  // Layout (2D only)
+  // ── Layout ──────────────────────────────────────────────
   const layout = useMemo(() => {
     const legX = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02;
     const legY = legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02;
     const legXanchor = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 'right' : 'left';
     const legYanchor = legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom';
 
-    return {
-      annotations: annotations || [],
-      title: title ? { text: title, font: { color: plotLayout.titleFontColor, size: styleConfig.fontSize + 6 } } : undefined,
-      xaxis: {
-        title: 'x',
-        range: propXRange, gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
-        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
-        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
-        showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true
-      },
-      yaxis: {
-        title: 'y',
-        range: autoYRange, gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
-        tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
-        titlefont: { color: plotLayout.axisLabelColor, size: styleConfig.fontSize + 2 },
-        showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true
-      },
-      plot_bgcolor: plotLayout.plot_bgcolor, paper_bgcolor: plotLayout.paper_bgcolor,
-      margin: { l: 60, r: 20, t: 60, b: 60 },
-      showlegend: legendPosition !== 'None',
-      legend: legendPosition !== 'None'
-        ? { font: { color: plotLayout.legend.fontColor, size: styleConfig.fontSize }, bgcolor: plotLayout.legend.bgcolor, bordercolor: plotLayout.legend.bordercolor, borderwidth: 1, x: legX, y: legY, xanchor: legXanchor, yanchor: legYanchor }
-        : undefined,
-      hovermode: 'closest'
+    const legendBase = {
+      font: { color: plotLayout.legend.fontColor, size: 11 },
+      bgcolor: plotLayout.legend.bgcolor,
+      bordercolor: plotLayout.legend.bordercolor,
+      borderwidth: 1,
+      x: legX, y: legY, xanchor: legXanchor, yanchor: legYanchor
     };
-  }, [propXRange, autoYRange, title, styleConfig, plotLayout, legendPosition, annotations]);
 
-  // Apply style to traces
+    const axisBase = {
+      gridcolor: plotLayout.gridcolor, gridwidth: 0.5,
+      zerolinecolor: plotLayout.zerolinecolor, zerolinewidth: 1.5,
+      tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+      showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true
+    };
+
+    return {
+      scene: {
+        xaxis: {
+          title: { text: 'x', font: { color: plotLayout.axisLabelColor, size: 14 } },
+          range: propScene.xRange, dtick: propScene.dtick || 0.5,
+          ...axisBase
+        },
+        yaxis: {
+          title: { text: 'y', font: { color: plotLayout.axisLabelColor, size: 14 } },
+          range: propScene.yRange, dtick: propScene.dtick || 0.5,
+          ...axisBase
+        },
+        zaxis: {
+          title: { text: 'z', font: { color: plotLayout.axisLabelColor, size: 14 } },
+          range: propScene.zRange, dtick: (propScene.dtick || 0.5) * 6,
+          ...axisBase
+        },
+        bgcolor: plotLayout.plot_bgcolor,
+        aspectmode: 'manual',
+        aspectratio: propScene.aspectratio || { x: 1, y: 1, z: 1 }
+      },
+      paper_bgcolor: plotLayout.paper_bgcolor,
+      margin: { l: 0, r: 0, t: 30, b: 0 },
+      showlegend: legendPosition !== 'None',
+      title: title ? { text: title, font: { color: plotLayout.titleFontColor, size: styleConfig.fontSize + 6 } } : undefined,
+      legend: legendPosition !== 'None' ? legendBase : undefined
+    };
+  }, [propScene, title, styleConfig, plotLayout, legendPosition]);
+
+  // ── Style traces ────────────────────────────────────────
   const styledData = useMemo(() => {
     if (!data) return [];
     return data.map(trace => {
@@ -104,6 +103,7 @@ const PartialDerivativePlotter = ({
     });
   }, [data, styleConfig]);
 
+  // ── Config ──────────────────────────────────────────────
   const mergedConfig = {
     displayModeBar: true,
     displaylogo: false,
@@ -112,6 +112,7 @@ const PartialDerivativePlotter = ({
     toImageButtonOptions: { format: 'png', filename: `${(title || 'plot').replace(/\s+/g, '_')}_${Date.now()}`, height: 800, width: 1200, scale: 2 }
   };
 
+  // ── Render ──────────────────────────────────────────────
   useEffect(() => {
     if (!plotRef.current) return;
     const gd = plotRef.current;
@@ -119,6 +120,9 @@ const PartialDerivativePlotter = ({
     if (!hasInitialized.current) {
       Plotly.newPlot(gd, styledData, layout, mergedConfig).then(() => {
         hasInitialized.current = true;
+        if (propScene && propScene.camera) {
+          Plotly.relayout(gd, 'scene.camera', propScene.camera);
+        }
       });
     } else {
       Plotly.react(gd, styledData, layout, mergedConfig);
@@ -133,6 +137,16 @@ const PartialDerivativePlotter = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const containerRef = useCallback((node) => {
+    if (node) {
+      const observer = new ResizeObserver(() => {
+        if (plotRef.current) Plotly.Plots.resize(plotRef.current);
+      });
+      observer.observe(node);
+    }
+  }, []);
+
+  // ── Export ──────────────────────────────────────────────
   const handleExport = useCallback(async () => {
     try {
       if (plotRef.current) {
@@ -161,40 +175,30 @@ const PartialDerivativePlotter = ({
     }
   }, []);
 
-  const containerStyle = {
-    width: '100%',
-    height: aspectRatio === 'auto' ? '600px' : 'auto',
-    background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
-    borderRadius: '8px',
-    padding: '1rem',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    marginBottom: '1rem',
-    aspectRatio: aspectRatio === 'auto' ? 'unset' : aspectRatio.replace(':', '/'),
-    position: 'relative'
-  };
-
-  const fullscreenButtonStyle = {
-    position: 'absolute',
-    top: '20px',
-    right: '10px',
-    zIndex: 10,
-    background: palette.mainTraces.primary,
-    border: 'none',
-    borderRadius: '4px',
-    width: '18px',
-    height: '18px',
-    cursor: 'pointer',
-    color: '#ffffff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  };
-
   return (
-    <div style={containerStyle}>
+    <div
+      ref={containerRef}
+      style={{
+        width: '100%',
+        height: '600px',
+        background: `var(--theme-card-bg, ${themeMode === 'dark' ? '#1e293b' : '#ffffff'})`,
+        borderRadius: '8px',
+        padding: '1rem',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        marginBottom: '1rem',
+        position: 'relative'
+      }}
+    >
       <button
         onClick={handleFullscreenToggle}
-        style={fullscreenButtonStyle}
+        style={{
+          position: 'absolute', top: '20px', right: '10px', zIndex: 10,
+          background: palette.mainTraces.primary,
+          border: 'none', borderRadius: '4px',
+          width: '18px', height: '18px',
+          cursor: 'pointer', color: '#ffffff',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}
         title="Toggle Fullscreen"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -208,13 +212,10 @@ const PartialDerivativePlotter = ({
           style={{
             marginTop: '0.5rem',
             padding: '0.5rem 1rem',
-            background: `linear-gradient(135deg, ${palette.mainTraces.primary}, ${palette.auxTraces.tangent})`,
+            background: `linear-gradient(135deg, ${palette.mainTraces.primary}, ${palette.auxTraces?.tangent || palette.mainTraces.secondary})`,
             color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '500'
+            border: 'none', borderRadius: '4px',
+            cursor: 'pointer', fontSize: '14px', fontWeight: '500'
           }}
         >
           Export Image (PNG)
@@ -224,4 +225,4 @@ const PartialDerivativePlotter = ({
   );
 };
 
-export default PartialDerivativePlotter;
+export default Plotter3D;
