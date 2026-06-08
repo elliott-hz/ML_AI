@@ -200,7 +200,12 @@ const ReciprocalFunctions = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'a', label: 'a (slope)', min: 0.1, max: 5, step: 0.1 },
+              { name: 'b', label: 'b (intercept)', min: -5, max: 5, step: 0.5 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

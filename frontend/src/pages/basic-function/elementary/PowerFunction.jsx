@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
+import ParameterControls from '../../../components/visualization/ParameterControls';
 import Cube3D from '../../../components/visualization/Cube3D';
 import Box3D from '../../../components/visualization/Box3D';
 import BackButton from '../../../components/layout/BackButton';
@@ -694,7 +695,11 @@ export default function PowerFunction() {
               title={n === 1 ? 'Line Segment' : n === 2 ? 'Square (Area)' : n === 3 ? 'Cube (Volume)' : n === -1 ? 'Rectangle (xy = 1)' : n === 0 ? 'Constant y = 1' : `Power y = x${superscript(n)}`}
               plotStyle={plotStyle}
               showExportButton={false}
-            />
+            >
+              <ParameterControls parameters={params} onChange={setParams} config={[
+                { name: 'n', label: '\u03bc', min: -3, max: 3, step: 1 },
+              ]} />
+            </FunctionPlotter>
           </PlotInner>
           )}
           <Resizer onMouseDown={onResizeStart} />

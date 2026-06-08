@@ -374,7 +374,14 @@ const MonotonicityFunctions = () => {
             plotStyle={increasingParams.plotStyle}
             aspectRatio={increasingParams.aspectRatio}
             legendPosition={increasingParams.legendPosition}
-          />
+          >
+            <ParameterControls parameters={increasingParams} onChange={setIncreasingParams} config={[
+              { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
+              { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 },
+              { name: 'x1', label: 'Point P1 (x₁)', min: -8, max: 8, step: 0.5 },
+              { name: 'x2', label: 'Point P2 (x₂)', min: -8, max: 8, step: 0.5 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
 
@@ -422,7 +429,14 @@ const MonotonicityFunctions = () => {
             plotStyle={decreasingParams.plotStyle}
             aspectRatio={decreasingParams.aspectRatio}
             legendPosition={decreasingParams.legendPosition}
-          />
+          >
+            <ParameterControls parameters={decreasingParams} onChange={setDecreasingParams} config={[
+              { name: 'a', label: 'Slope (a)', min: 0.1, max: 5, step: 0.1 },
+              { name: 'b', label: 'Intercept (b)', min: -10, max: 10, step: 0.5 },
+              { name: 'x1', label: 'Point P1 (x₁)', min: -8, max: 8, step: 0.5 },
+              { name: 'x2', label: 'Point P2 (x₂)', min: -8, max: 8, step: 0.5 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

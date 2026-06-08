@@ -210,7 +210,12 @@ const LogarithmicFunction = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'a', label: 'Coefficient (a)', min: 0.1, max: 5, step: 0.1 },
+              { name: 'b', label: 'Base (b)', min: 0.5, max: 10, step: 0.5 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

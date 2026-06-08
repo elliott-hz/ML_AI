@@ -200,7 +200,13 @@ const PeriodicFunctions = () => {
             plotStyle={periodicParams.plotStyle}
             aspectRatio={periodicParams.aspectRatio}
             legendPosition={periodicParams.legendPosition}
-          />
+          >
+            <ParameterControls parameters={periodicParams} onChange={setPeriodicParams} config={[
+              { name: 'a', label: 'Amplitude (a)', min: 0.1, max: 5, step: 0.1 },
+              { name: 'b', label: 'Frequency (b)', min: 0.1, max: 5, step: 0.1 },
+              { name: 'c', label: 'Phase (c)', min: -Math.PI, max: Math.PI, step: 0.1 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

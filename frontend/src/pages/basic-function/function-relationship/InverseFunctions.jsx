@@ -173,7 +173,11 @@ const InverseFunctions = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'coefficient', label: 'Coefficient (a)', min: 0.1, max: 5, step: 0.1 },
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

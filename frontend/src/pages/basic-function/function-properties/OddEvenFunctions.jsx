@@ -275,7 +275,12 @@ const OddEvenFunctions = () => {
             plotStyle={oddParams.plotStyle}
             aspectRatio={oddParams.aspectRatio}
             legendPosition={oddParams.legendPosition}
-          />
+          >
+            <ParameterControls parameters={oddParams} onChange={setOddParams} config={[
+              { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
+              { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
 
@@ -315,7 +320,12 @@ const OddEvenFunctions = () => {
             plotStyle={evenParams.plotStyle}
             aspectRatio={evenParams.aspectRatio}
             legendPosition={evenParams.legendPosition}
-          />
+          >
+            <ParameterControls parameters={evenParams} onChange={setEvenParams} config={[
+              { name: 'a', label: 'Coefficient (a)', min: -5, max: 5, step: 0.1 },
+              { name: 'b', label: 'Offset (b)', min: -10, max: 10, step: 0.5 }
+            ]} />
+          </FunctionPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>
