@@ -27,14 +27,19 @@ const ContourWrapper = styled.div`
 `;
 
 /**
- * GaussianBell — 2D Gaussian bell curve with 3D surface + 2D contour
+ * GaussianBellPoints — 2D Gaussian bell with adjustable points O, Q
  *
  * z = f(x,y) = (1/2π)·exp(−½(x²+y²))
- *
- * Shows the 3D bell curve above and its 2D contour map below.
+ * O is on the surface; Q is lower on the surface.
+ * The QXY plane (z = z_Q) is shown. P is the foot of the perpendicular
+ * from O onto the QXY plane. deltaX, deltaY, φ connect P and Q.
  */
 const DirectionalDerivative = () => {
   const [params, setParams] = useState({
+    x1: 0.3,
+    y1: 0.3,
+    x2: 1.3,
+    y2: 1.0,
     xRange: [-3, 3],
     yRange: [-3, 3],
     resolution: 40,
@@ -49,11 +54,21 @@ const DirectionalDerivative = () => {
   const palette = getTracePalette(themeMode);
   const plotLayout = getPlotLayout(themeMode);
 
-  const { xRange, yRange } = params;
+  const { x1, y1, x2, y2, xRange, yRange } = params;
   const res = params.resolution;
 
   // ── Gaussian bell curve ─────────────────────────────────
   const fn = (x, y) => (1 / (2 * Math.PI)) * Math.exp(-0.5 * (x * x + y * y));
+  const zO = fn(x1, y1);
+  const zQ = fn(x2, y2);
+  const zP = zQ;  // P is on the QXY plane (z = z_Q)
+
+  // P = foot of perpendicular from O to QXY plane
+  const xP = x1, yP = y1;
+
+  const deltaX = xP - x2;
+  const deltaY = yP - y2;
+  const rho = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
   // ── 3D Surface data ─────────────────────────────────────
   const surfaceData = useMemo(() => {
@@ -69,7 +84,7 @@ const DirectionalDerivative = () => {
       y: yVals,
       z: zVals,
       colorscale: palette.surface.colorscale,
-      opacity: 0.8,
+      opacity: 0.55,
       contours: {
         x: { show: false },
         y: { show: false },
@@ -81,17 +96,135 @@ const DirectionalDerivative = () => {
     };
   }, [res, xRange, yRange, palette]);
 
-  // ── Overlay traces (3D) — none ─────────────────────────
-  const overlay3D = useMemo(() => [], []);
+  // ── Helper: trace generator ─────────────────────────────
+  const line3 = (pts, color, dash, width) => ({
+    type: 'scatter3d', mode: 'lines',
+    x: pts.map(p => p[0]),
+    y: pts.map(p => p[1]),
+    z: pts.map(p => p[2]),
+    line: { color, dash: dash || 'solid', width: width || 3 },
+    showlegend: false, hoverinfo: 'none'
+  });
+
+  // ── Overlay traces (3D) ─────────────────────────────────
+  const overlay3D = useMemo(() => {
+    const traces = [];
+
+    // ── QXY plane (horizontal at z = z_Q) ─────────────────
+    traces.push({
+      type: 'mesh3d',
+      x: [xRange[0], xRange[1], xRange[1], xRange[0]],
+      y: [yRange[0], yRange[0], yRange[1], yRange[1]],
+      z: [zQ, zQ, zQ, zQ],
+      opacity: 0.15,
+      color: palette.auxTraces.combined,
+      showscale: false,
+      showlegend: false,
+      hovertemplate: ''
+    });
+
+    // ── Point O on surface ────────────────────────────────
+    traces.push({
+      type: 'scatter3d', mode: 'markers',
+      x: [x1], y: [y1], z: [zO],
+      marker: { color: palette.mainTraces.primary, size: 12, symbol: 'circle', line: { color: '#fff', width: 2 } },
+      name: 'O',
+      showlegend: true
+    });
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x1], y: [y1], z: [zO],
+      text: ['O'], textfont: { color: palette.mainTraces.primary, size: 18, weight: 800 },
+      textposition: 'top right', showlegend: false, hoverinfo: 'none'
+    });
+
+    // ── Point Q on surface ────────────────────────────────
+    traces.push({
+      type: 'scatter3d', mode: 'markers',
+      x: [x2], y: [y2], z: [zQ],
+      marker: { color: palette.auxTraces.tangent, size: 12, symbol: 'circle', line: { color: '#fff', width: 2 } },
+      name: 'Q',
+      showlegend: true
+    });
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x2], y: [y2], z: [zQ],
+      text: ['Q'], textfont: { color: palette.auxTraces.tangent, size: 18, weight: 800 },
+      textposition: 'top right', showlegend: false, hoverinfo: 'none'
+    });
+
+    // ── Point P on QXY plane ──────────────────────────────
+    const pColor = palette.auxTraces.derivative;
+    traces.push({
+      type: 'scatter3d', mode: 'markers',
+      x: [xP], y: [yP], z: [zP],
+      marker: { color: pColor, size: 10, symbol: 'diamond', line: { color: '#fff', width: 1.5 } },
+      name: 'P (foot)',
+      showlegend: true
+    });
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [xP], y: [yP], z: [zP],
+      text: ['P'], textfont: { color: pColor, size: 18, weight: 800 },
+      textposition: 'bottom right', showlegend: false, hoverinfo: 'none'
+    });
+
+    // ── Vertical dashed line O → P (perpendicular) ────────
+    traces.push(line3(
+      [[x1, y1, zO], [xP, yP, zP]],
+      palette.mainTraces.primary, 'dash', 2.5
+    ));
+
+    // ── deltaX: dashed line from P to (x2, yP, zP) ────────
+    const dxColor = palette.auxTraces.combined;
+    traces.push(line3(
+      [[xP, yP, zP], [x2, yP, zP]],
+      dxColor, 'dash', 2.5
+    ));
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [(xP + x2) / 2], y: [yP], z: [zP],
+      text: ['Δx'], textfont: { color: dxColor, size: 14, weight: 800 },
+      textposition: 'bottom center', showlegend: false, hoverinfo: 'none'
+    });
+
+    // ── deltaY: dashed line from (x2, yP, zP) to Q ────────
+    traces.push(line3(
+      [[x2, yP, zP], [x2, y2, zP]],
+      dxColor, 'dash', 2.5
+    ));
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x2], y: [(yP + y2) / 2], z: [zP],
+      text: ['Δy'], textfont: { color: dxColor, size: 14, weight: 800 },
+      textposition: 'middle right', showlegend: false, hoverinfo: 'none'
+    });
+
+    // ── ρ = distance PQ (diagonal dashed line) ────────────
+    const rhoColor = palette.mainTraces.secondary;
+    traces.push(line3(
+      [[xP, yP, zP], [x2, y2, zP]],
+      rhoColor, 'dash', 3
+    ));
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [(xP + x2) / 2], y: [(yP + y2) / 2], z: [zP],
+      text: ['ρ'], textfont: { color: rhoColor, size: 16, weight: 800 },
+      textposition: 'middle right', showlegend: false, hoverinfo: 'none'
+    });
+
+    return traces;
+  }, [
+    x1, y1, zO, x2, y2, zQ, xP, yP, zP,
+    deltaX, deltaY, rho, xRange, yRange, palette
+  ]);
 
   const all3DData = useMemo(() => [surfaceData, ...overlay3D], [surfaceData, overlay3D]);
 
   // ── 3D Scene ────────────────────────────────────────────
   const zMax3D = 1 / (2 * Math.PI);
   const scene = useMemo(() => {
-    // compute reasonable x/y dtick based on range span
     const xSpan = xRange[1] - xRange[0];
-    const ySpan = yRange[1] - yRange[0];
     const dtickXY = xSpan > 6 ? 2 : xSpan > 4 ? 1.5 : 1;
 
     const base = {
@@ -128,6 +261,10 @@ const DirectionalDerivative = () => {
     const yVals = Array.from({ length: N + 1 }, (_, i) => yRange[0] + i * yStep);
     const zVals = yVals.map(y => xVals.map(x => fn(x, y)));
 
+    const pColor = palette.auxTraces.derivative;
+    const dxColor = palette.auxTraces.combined;
+    const rhoColor = palette.mainTraces.secondary;
+
     const d = [
       {
         type: 'contour',
@@ -145,7 +282,28 @@ const DirectionalDerivative = () => {
         line: { color: '#ffffff', width: 0.5 },
         showscale: false,
         hoverinfo: 'none'
-      }
+      },
+      // O marker
+      { type: 'scatter', mode: 'markers', x: [x1], y: [y1],
+        marker: { color: palette.mainTraces.primary, size: 14, symbol: 'circle', line: { color: '#fff', width: 2 } },
+        name: 'O', showlegend: true },
+      // Q marker
+      { type: 'scatter', mode: 'markers', x: [x2], y: [y2],
+        marker: { color: palette.auxTraces.tangent, size: 14, symbol: 'circle', line: { color: '#fff', width: 2 } },
+        name: 'Q', showlegend: true },
+      // P marker
+      { type: 'scatter', mode: 'markers', x: [xP], y: [yP],
+        marker: { color: pColor, size: 10, symbol: 'diamond', line: { color: '#fff', width: 1.5 } },
+        name: 'P (foot)', showlegend: true },
+      // deltaX
+      { type: 'scatter', mode: 'lines', x: [xP, x2], y: [yP, yP],
+        line: { color: dxColor, width: 2, dash: 'dash' }, showlegend: false, hoverinfo: 'none' },
+      // deltaY
+      { type: 'scatter', mode: 'lines', x: [x2, x2], y: [yP, y2],
+        line: { color: dxColor, width: 2, dash: 'dash' }, showlegend: false, hoverinfo: 'none' },
+      // ρ
+      { type: 'scatter', mode: 'lines', x: [xP, x2], y: [yP, y2],
+        line: { color: rhoColor, width: 2.5, dash: 'dash' }, showlegend: false, hoverinfo: 'none' }
     ];
 
     const legX = params.legendPosition === 'top-right' || params.legendPosition === 'bottom-right' ? 0.98 : 0.02;
@@ -180,7 +338,7 @@ const DirectionalDerivative = () => {
       hovermode: 'closest'
     };
     return { contourData: d, contourLayout: l };
-  }, [res, xRange, yRange, params.legendPosition, plotLayout, palette]);
+  }, [res, xRange, yRange, x1, y1, x2, y2, xP, yP, params.legendPosition, plotLayout, palette]);
 
   // ── Render contour ──────────────────────────────────────
   const config = {
@@ -213,26 +371,53 @@ const DirectionalDerivative = () => {
         <BackButton to="/mathematics/1-fundamentals/gradient">
           ← Back to Gradient
         </BackButton>
-        <SectionTitleH1>Gaussian Bell Curve</SectionTitleH1>
+        <SectionTitleH1>Gaussian Bell: Points O &amp; Q</SectionTitleH1>
       </Header>
 
       <SectionDescription>
-        The 2D Gaussian bell curve <strong>z = (1/2π)·e<sup>−½(x²+y²)</sup></strong> is a
-        fundamental function in statistics and machine learning. Its peak is at the origin
-        (x=0, y=0) with value 1/2π ≈ 0.159. The 3D surface view above and the contour map
-        below show the characteristic bell shape — symmetric, smooth, and decaying to zero
-        in all directions.
+        The 2D Gaussian bell curve <strong>z = (1/2π)·e<sup>−½(x²+y²)</sup></strong>.
+        <strong>O</strong> and <strong>Q</strong> are two adjustable points on the surface.
+        The <strong>QXY plane</strong> is the horizontal plane at z = z<sub>Q</sub>.
+        <strong>P</strong> is the foot of the perpendicular from O onto the QXY plane.
+        The dashed lines show Δx, Δy, and the distance ρ between P and Q.
       </SectionDescription>
 
       <FormulaBox>
-        <FormulaTitle>2D Gaussian Bell:</FormulaTitle>
+        <FormulaTitle>Gaussian Bell:</FormulaTitle>
         <Formula>
-          f(x, y) = (1 / 2π)·e<sup>−½(x²+y²)</sup>
+          f(x, y) = (1 / 2π)·e<sup>−½(x²+y²)</sup><br/><br/>
+          O = ({x1.toFixed(2)}, {y1.toFixed(2)}, {zO.toFixed(4)})<br/>
+          Q = ({x2.toFixed(2)}, {y2.toFixed(2)}, {zQ.toFixed(4)})<br/>
+          P = ({xP.toFixed(2)}, {yP.toFixed(2)}, {zP.toFixed(4)}) &nbsp; (foot to QXY plane)<br/><br/>
+          Δx = {deltaX.toFixed(3)} &nbsp; Δy = {deltaY.toFixed(3)}<br/>
+          ρ = √(Δx² + Δy²) = <strong>{rho.toFixed(4)}</strong>
         </Formula>
       </FormulaBox>
 
       <ContentLayout>
         <ControlsPanel>
+          <ParameterSection title="Point O">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={[
+                { name: 'x1', label: 'x\u1D40', min: -2.8, max: 2.8, step: 0.1 },
+                { name: 'y1', label: 'y\u1D40', min: -2.8, max: 2.8, step: 0.1 }
+              ]}
+            />
+          </ParameterSection>
+
+          <ParameterSection title="Point Q">
+            <ParameterControls
+              parameters={params}
+              onChange={setParams}
+              config={[
+                { name: 'x2', label: 'x\u2092', min: -2.8, max: 2.8, step: 0.1 },
+                { name: 'y2', label: 'y\u2092', min: -2.8, max: 2.8, step: 0.1 }
+              ]}
+            />
+          </ParameterSection>
+
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
