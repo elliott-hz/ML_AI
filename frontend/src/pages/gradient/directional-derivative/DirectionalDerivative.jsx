@@ -27,19 +27,14 @@ const ContourWrapper = styled.div`
 `;
 
 /**
- * DirectionalDerivative — Directional Derivative on a 2D Gaussian
+ * GaussianBell — 2D Gaussian bell curve with 3D surface + 2D contour
  *
  * z = f(x,y) = (1/2π)·exp(−½(x²+y²))
- * At point (x₀,y₀), the directional derivative in direction θ is:
- *   D_θ f = ∇f·(cosθ, sinθ) = fx·cosθ + fy·sinθ
  *
  * Shows the 3D bell curve above and its 2D contour map below.
  */
 const DirectionalDerivative = () => {
   const [params, setParams] = useState({
-    x0: 0.5,
-    y0: 0.3,
-    theta: 45,         // direction angle in degrees
     xRange: [-3, 3],
     yRange: [-3, 3],
     resolution: 40,
@@ -54,20 +49,11 @@ const DirectionalDerivative = () => {
   const palette = getTracePalette(themeMode);
   const plotLayout = getPlotLayout(themeMode);
 
-  const { x0, y0, theta, xRange, yRange } = params;
-  const thetaRad = theta * Math.PI / 180;
+  const { xRange, yRange } = params;
   const res = params.resolution;
 
   // ── Gaussian bell curve ─────────────────────────────────
-  // z = (1/2π)·exp(−½(x²+y²))
   const fn = (x, y) => (1 / (2 * Math.PI)) * Math.exp(-0.5 * (x * x + y * y));
-  const z0 = fn(x0, y0);
-
-  // Partial derivatives
-  // ∂f/∂x = −x·f(x,y),  ∂f/∂y = −y·f(x,y)
-  const fx = -x0 * z0;
-  const fy = -y0 * z0;
-  const dirDeriv = fx * Math.cos(thetaRad) + fy * Math.sin(thetaRad);
 
   // ── 3D Surface data ─────────────────────────────────────
   const surfaceData = useMemo(() => {
@@ -95,43 +81,8 @@ const DirectionalDerivative = () => {
     };
   }, [res, xRange, yRange, palette]);
 
-  // ── Overlay traces (3D) ─────────────────────────────────
-  const overlay3D = useMemo(() => {
-    const traces = [];
-
-    // Point A
-    traces.push({
-      type: 'scatter3d', mode: 'markers',
-      x: [x0], y: [y0], z: [z0],
-      marker: { color: palette.markers.evalX0, size: 12, symbol: 'circle', line: { color: '#fff', width: 2 } },
-      name: `A = (${x0.toFixed(2)}, ${y0.toFixed(2)}, ${z0.toFixed(4)})`,
-      showlegend: true
-    });
-
-    // Direction arrow on surface: short segment in direction θ
-    const arrowLen = Math.min(xRange[1] - xRange[0], yRange[1] - yRange[0]) * 0.12;
-    const dx = arrowLen * Math.cos(thetaRad);
-    const dy = arrowLen * Math.sin(thetaRad);
-    const dz = fn(x0 + dx, y0 + dy) - z0;
-    const n = 8;
-    const arrowPts = Array.from({ length: n + 1 }, (_, i) => {
-      const t = i / n;
-      return { x: x0 + dx * t, y: y0 + dy * t, z: z0 + dz * t };
-    });
-
-    traces.push({
-      type: 'scatter3d', mode: 'lines+markers',
-      x: arrowPts.map(p => p.x),
-      y: arrowPts.map(p => p.y),
-      z: arrowPts.map(p => p.z),
-      line: { color: palette.auxTraces.tangent, width: 5 },
-      marker: { color: palette.auxTraces.tangent, size: 4, symbol: 'arrow' },
-      name: `θ = ${theta}°`,
-      showlegend: true
-    });
-
-    return traces;
-  }, [x0, y0, z0, thetaRad, theta, xRange, yRange, palette]);
+  // ── Overlay traces (3D) — none ─────────────────────────
+  const overlay3D = useMemo(() => [], []);
 
   const all3DData = useMemo(() => [surfaceData, ...overlay3D], [surfaceData, overlay3D]);
 
@@ -177,12 +128,6 @@ const DirectionalDerivative = () => {
     const yVals = Array.from({ length: N + 1 }, (_, i) => yRange[0] + i * yStep);
     const zVals = yVals.map(y => xVals.map(x => fn(x, y)));
 
-    // Gradient arrow (true direction of steepest ascent)
-    const gradScale = Math.min(xRange[1] - xRange[0], yRange[1] - yRange[0]) * 0.2;
-    const gLen = Math.sqrt(fx * fx + fy * fy);
-    const gNormX = gLen > 0 ? fx / gLen : 0;
-    const gNormY = gLen > 0 ? fy / gLen : 0;
-
     const d = [
       {
         type: 'contour',
@@ -200,34 +145,6 @@ const DirectionalDerivative = () => {
         line: { color: '#ffffff', width: 0.5 },
         showscale: false,
         hoverinfo: 'none'
-      },
-      // Point A on contour
-      {
-        type: 'scatter', mode: 'markers',
-        x: [x0], y: [y0],
-        marker: { color: palette.markers.evalX0, size: 14, symbol: 'circle', line: { color: '#fff', width: 2 } },
-        name: `A (${x0.toFixed(2)}, ${y0.toFixed(2)})`,
-        showlegend: true
-      },
-      // Direction arrow (θ) as scatter with line+marker
-      {
-        type: 'scatter', mode: 'lines+markers',
-        x: [x0, x0 + Math.cos(thetaRad) * gradScale * 0.8],
-        y: [y0, y0 + Math.sin(thetaRad) * gradScale * 0.8],
-        line: { color: palette.auxTraces.tangent, width: 3 },
-        marker: { color: palette.auxTraces.tangent, size: 8, symbol: 'arrow' },
-        name: `Direction θ = ${theta}°`,
-        showlegend: true
-      },
-      // Gradient vector (∇f) for comparison
-      {
-        type: 'scatter', mode: 'lines+markers',
-        x: [x0, x0 + gNormX * gradScale],
-        y: [y0, y0 + gNormY * gradScale],
-        line: { color: palette.auxTraces.derivative, width: 2.5, dash: 'dash' },
-        marker: { color: palette.auxTraces.derivative, size: 6, symbol: 'arrow' },
-        name: `∇f (steepest)`,
-        showlegend: true
       }
     ];
 
@@ -263,7 +180,7 @@ const DirectionalDerivative = () => {
       hovermode: 'closest'
     };
     return { contourData: d, contourLayout: l };
-  }, [res, xRange, yRange, x0, y0, thetaRad, theta, fx, fy, params.legendPosition, plotLayout, palette]);
+  }, [res, xRange, yRange, params.legendPosition, plotLayout, palette]);
 
   // ── Render contour ──────────────────────────────────────
   const config = {
@@ -296,48 +213,26 @@ const DirectionalDerivative = () => {
         <BackButton to="/mathematics/1-fundamentals/gradient">
           ← Back to Gradient
         </BackButton>
-        <SectionTitleH1>Directional Derivative: D<sub>θ</sub>f</SectionTitleH1>
+        <SectionTitleH1>Gaussian Bell Curve</SectionTitleH1>
       </Header>
 
       <SectionDescription>
-        The <strong>directional derivative</strong> D<sub>θ</sub>f measures the rate of change
-        of a multi-variable function in an <em>arbitrary direction</em> θ. It generalises the
-        partial derivatives (which follow the axes) to any unit vector u = (cosθ, sinθ):
-        <br/>
-        <strong>D<sub>θ</sub>f = ∇f · u = (∂f/∂x)·cosθ + (∂f/∂y)·sinθ</strong>
-        <br/>
-        The surface below is the 2D Gaussian bell curve
-        <strong> z = (1/2π)·e<sup>−½(x²+y²)</sup></strong>.
-        The 3D view shows the direction arrow on the surface; the contour map below shows the
-        direction arrow (solid) vs the gradient ∇f (dashed, steepest ascent).
+        The 2D Gaussian bell curve <strong>z = (1/2π)·e<sup>−½(x²+y²)</sup></strong> is a
+        fundamental function in statistics and machine learning. Its peak is at the origin
+        (x=0, y=0) with value 1/2π ≈ 0.159. The 3D surface view above and the contour map
+        below show the characteristic bell shape — symmetric, smooth, and decaying to zero
+        in all directions.
       </SectionDescription>
 
       <FormulaBox>
-        <FormulaTitle>2D Gaussian & Directional Derivative:</FormulaTitle>
+        <FormulaTitle>2D Gaussian Bell:</FormulaTitle>
         <Formula>
-          f(x, y) = (1 / 2π)·e<sup>−½(x²+y²)</sup><br/><br/>
-          ∂f/∂x = −x·f(x,y) &nbsp; ∂f/∂y = −y·f(x,y)<br/><br/>
-          At (x₀, y₀) = ({x0.toFixed(2)}, {y0.toFixed(2)}): &nbsp; z₀ = {z0.toFixed(4)}<br/>
-          ∇f = ({fx.toFixed(4)}, {fy.toFixed(4)})<br/>
-          D<sub>θ</sub>f = ∇f·(cosθ, sinθ) = <strong>{dirDeriv.toFixed(4)}</strong>
-          &nbsp; (θ = {theta}°)
+          f(x, y) = (1 / 2π)·e<sup>−½(x²+y²)</sup>
         </Formula>
       </FormulaBox>
 
       <ContentLayout>
         <ControlsPanel>
-          <ParameterSection title="Evaluation Point">
-            <ParameterControls
-              parameters={params}
-              onChange={setParams}
-              config={[
-                { name: 'x0', label: 'x₀', min: -2.8, max: 2.8, step: 0.1 },
-                { name: 'y0', label: 'y₀', min: -2.8, max: 2.8, step: 0.1 },
-                { name: 'theta', label: 'θ (deg)', min: 0, max: 360, step: 5 }
-              ]}
-            />
-          </ParameterSection>
-
           <ParameterSection title="View Range">
             <ParameterControls
               parameters={params}
