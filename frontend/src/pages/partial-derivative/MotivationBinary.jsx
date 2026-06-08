@@ -235,7 +235,18 @@ const MotivationBinary = () => {
             showExportButton={false}
             scene={scene}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterSection title="Evaluation Point" style={{ margin: 0, border: 'none', background: 'transparent' }}>
+              <ParameterControls
+                parameters={params}
+                onChange={setParams}
+                config={[
+                  { name: 'x0', label: 'x₀', min: 0.1, max: 2.9, step: 0.1 },
+                  { name: 'y0', label: 'y₀', min: 0.1, max: 2.9, step: 0.1 }
+                ]}
+              />
+            </ParameterSection>
+          </Plotter3D>
           <Note>
             Drag to rotate · Scroll to zoom ·
             <span style={{ color: planeXY }}> ●</span> xy-plane ·

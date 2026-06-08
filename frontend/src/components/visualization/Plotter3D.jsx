@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useMemo, useEffect, useRef, useCallback, useState } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig';
@@ -16,6 +16,7 @@ import { getPlotLayout, getTracePalette } from '../../constants/plotThemeConfig'
  *   showExportButton — show PNG export button (default true)
  *   plotStyle       — thin | medium | thick | extra-thick
  *   legendPosition  — None | top-right | top-left | bottom-left | bottom-right
+ *   children        — 浮动控制面板，渲染在容器顶部（全屏时仍可见）
  */
 const Plotter3D = ({
   data,
@@ -23,10 +24,13 @@ const Plotter3D = ({
   title,
   showExportButton = true,
   plotStyle = 'medium',
-  legendPosition = 'top-right'
+  legendPosition = 'top-right',
+  children
 }) => {
   const plotRef = useRef(null);
   const hasInitialized = useRef(false);
+  const outerRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const themeMode = useThemeMode();
   const plotLayout = useMemo(() => getPlotLayout(themeMode), [themeMode]);
   const palette = getTracePalette(themeMode);
@@ -145,19 +149,6 @@ const Plotter3D = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const containerRef = useCallback((node) => {
-    if (node) {
-      const observer = new ResizeObserver(() => {
-        if (plotRef.current) Plotly.Plots.resize(plotRef.current);
-      });
-      observer.observe(node);
-      // 把 observer 存到 DOM 节点上，方便 disconnect
-      node._resizeObserver = observer;
-    } else if (node === null && plotRef.current?.parentElement?._resizeObserver) {
-      plotRef.current.parentElement._resizeObserver.disconnect();
-    }
-  }, []);
-
   // ── Export ──────────────────────────────────────────────
   const handleExport = useCallback(async () => {
     try {
@@ -175,8 +166,8 @@ const Plotter3D = ({
 
   const handleFullscreenToggle = useCallback(() => {
     if (!document.fullscreenElement) {
-      if (plotRef.current) {
-        plotRef.current.requestFullscreen().catch(err => {
+      if (outerRef.current) {
+        outerRef.current.requestFullscreen().catch(err => {
           console.log(`Error attempting to enable full-screen mode: ${err.message}`);
         });
       }
@@ -187,9 +178,15 @@ const Plotter3D = ({
     }
   }, []);
 
+  useEffect(() => {
+    const onFSChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFSChange);
+    return () => document.removeEventListener('fullscreenchange', onFSChange);
+  }, []);
+
   return (
     <div
-      ref={containerRef}
+      ref={outerRef}
       style={{
         width: '100%',
         height: '600px',
@@ -218,6 +215,24 @@ const Plotter3D = ({
         </svg>
       </button>
       <div ref={plotRef} style={{ width: '100%', height: '100%' }} />
+      {isFullscreen && children && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 8,
+            left: 8,
+            zIndex: 10,
+            display: 'flex',
+            gap: 16,
+            background: 'rgba(30,41,59,0.85)',
+            backdropFilter: 'blur(4px)',
+            borderRadius: 8,
+            padding: '8px 16px'
+          }}
+        >
+          {children}
+        </div>
+      )}
       {showExportButton && (
         <button
           onClick={handleExport}
