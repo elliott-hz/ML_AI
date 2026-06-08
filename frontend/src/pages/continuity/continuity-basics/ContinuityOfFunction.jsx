@@ -274,7 +274,12 @@ const ContinuityOfFunction = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[
+              { name: 'x0', label: 'x₀', min: -1, max: 3, step: 0.05 },
+              { name: 'dx', label: 'Δx', min: -2.0, max: 2.0, step: 0.01 }
+            ]} />
+          </ContinuityPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

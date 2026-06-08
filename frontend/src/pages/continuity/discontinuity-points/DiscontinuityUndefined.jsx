@@ -175,7 +175,9 @@ const DiscontinuityUndefined = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[{ name: 'a', label: 'a (hole at x=a)', min: -2.0, max: 2.0, step: 0.1 }]} />
+          </ContinuityPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>

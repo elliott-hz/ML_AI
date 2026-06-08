@@ -199,7 +199,9 @@ const DiscontinuityRemovable = () => {
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
             legendPosition={params.legendPosition}
-          />
+          >
+            <ParameterControls parameters={params} onChange={setParams} config={[{ name: 'x0', label: 'x₀', min: -2.0, max: 2.0, step: 0.1 }]} />
+          </ContinuityPlotter>
         </PlotPanel>
       </ContentLayout>
     </PageContainer>
