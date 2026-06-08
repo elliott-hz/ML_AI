@@ -144,27 +144,29 @@ const MotivationBinary = () => {
 
   // ── Scene config for 3D ─────────────────────────────────
   const scene = useMemo(() => {
-    // Parse aspectRatio to aspectratio object
-    let ar = { x: 1, y: 1, z: 1 };
-    if (params.aspectRatio !== 'auto') {
-      const [w, h] = params.aspectRatio.split(':').map(Number);
-      if (w && h) {
-        // For 3D, scale z to match the visual proportion
-        ar = { x: w, y: h, z: Math.min(w, h) };
-      }
-    }
-    return {
+    const base = {
       xRange: [0, 3.2],
       yRange: [0, 3.2],
       zRange: [0, 18],
       dtick: 0.5,
       camera: {
-        eye: { x: 2.5, y: -2.5, z: 1.5 },
-        center: { x: 1.5, y: 1.5, z: 6 },
+        eye: { x: 1.8, y: -1.8, z: 1.2 },
+        center: { x: 0, y: 0, z: 0 },
         up: { x: 0, y: 0, z: 1 }
-      },
-      aspectratio: ar
+      }
     };
+    // auto → aspectmode:'data'；指定比例 → manual + normalized aspectratio
+    if (params.aspectRatio === 'auto') {
+      base.aspectmode = 'data';
+    } else {
+      const [w, h] = params.aspectRatio.split(':').map(Number);
+      if (w && h) {
+        const maxDim = Math.max(w, h);
+        base.aspectmode = 'manual';
+        base.aspectratio = { x: w / maxDim, y: h / maxDim, z: 0.8 };
+      }
+    }
+    return base;
   }, [params.aspectRatio]);
 
   const [planeXY, planeXZ, planeYZ] = palette.surface.planeProjection;

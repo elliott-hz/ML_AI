@@ -62,27 +62,31 @@ const Plotter3D = ({
       showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true
     };
 
-    return {
-      scene: {
-        xaxis: {
-          title: { text: 'x', font: { color: plotLayout.axisLabelColor, size: 14 } },
-          range: propScene.xRange, dtick: propScene.dtick || 0.5,
-          ...axisBase
-        },
-        yaxis: {
-          title: { text: 'y', font: { color: plotLayout.axisLabelColor, size: 14 } },
-          range: propScene.yRange, dtick: propScene.dtick || 0.5,
-          ...axisBase
-        },
-        zaxis: {
-          title: { text: 'z', font: { color: plotLayout.axisLabelColor, size: 14 } },
-          range: propScene.zRange, dtick: (propScene.dtick || 0.5) * 6,
-          ...axisBase
-        },
-        bgcolor: plotLayout.plot_bgcolor,
-        aspectmode: 'manual',
-        aspectratio: propScene.aspectratio || { x: 1, y: 1, z: 1 }
+    const sceneConfig = {
+      xaxis: {
+        title: { text: 'x', font: { color: plotLayout.axisLabelColor, size: 14 } },
+        range: propScene.xRange, dtick: propScene.dtick || 0.5,
+        ...axisBase
       },
+      yaxis: {
+        title: { text: 'y', font: { color: plotLayout.axisLabelColor, size: 14 } },
+        range: propScene.yRange, dtick: propScene.dtick || 0.5,
+        ...axisBase
+      },
+      zaxis: {
+        title: { text: 'z', font: { color: plotLayout.axisLabelColor, size: 14 } },
+        range: propScene.zRange, dtick: (propScene.dtick || 0.5) * 6,
+        ...axisBase
+      },
+      bgcolor: plotLayout.plot_bgcolor
+    };
+
+    // aspectmode + aspectratio 从 scene 透传
+    if (propScene.aspectmode) sceneConfig.aspectmode = propScene.aspectmode;
+    if (propScene.aspectratio) sceneConfig.aspectratio = propScene.aspectratio;
+
+    return {
+      scene: sceneConfig,
       paper_bgcolor: plotLayout.paper_bgcolor,
       margin: { l: 0, r: 0, t: 30, b: 0 },
       showlegend: legendPosition !== 'None',
@@ -119,10 +123,14 @@ const Plotter3D = ({
 
     if (!hasInitialized.current) {
       Plotly.newPlot(gd, styledData, layout, mergedConfig).then(() => {
-        hasInitialized.current = true;
-        if (propScene && propScene.camera) {
-          Plotly.relayout(gd, 'scene.camera', propScene.camera);
-        }
+        // 等一帧确保容器布局稳定后再 resize + 设 camera
+        requestAnimationFrame(() => {
+          Plotly.Plots.resize(gd);
+          hasInitialized.current = true;
+          if (propScene?.camera) {
+            Plotly.relayout(gd, { 'scene.camera': propScene.camera });
+          }
+        });
       });
     } else {
       Plotly.react(gd, styledData, layout, mergedConfig);
@@ -143,6 +151,10 @@ const Plotter3D = ({
         if (plotRef.current) Plotly.Plots.resize(plotRef.current);
       });
       observer.observe(node);
+      // 把 observer 存到 DOM 节点上，方便 disconnect
+      node._resizeObserver = observer;
+    } else if (node === null && plotRef.current?.parentElement?._resizeObserver) {
+      plotRef.current.parentElement._resizeObserver.disconnect();
     }
   }, []);
 
