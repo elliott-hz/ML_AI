@@ -173,13 +173,13 @@ const PartialDerivative = () => {
     const tanX = tX.map(x => ({ x, y: y0, z: z0 + dzdx * (x - x0) }));
     traces.push(tanTrace(tanX, palette.surface.crossSection.fx, `∂z/∂x = ${dzdx.toFixed(2)}`));
 
-    // ── L1 label at x-tangent end ─────────────────────────
-    const l1x = xRange[1];
+    // ── L1 label at x-tangent end (higher-z side) ─────────
+    const l1End = dzdx >= 0 ? xRange[1] : xRange[0];
     const l1Off = (yRange[1] - yRange[0]) * 0.07;
-    const l1z = z0 + dzdx * (l1x - x0);
+    const l1z = z0 + dzdx * (l1End - x0);
     traces.push({
       type: 'scatter3d', mode: 'text',
-      x: [l1x], y: [y0 + l1Off], z: [l1z],
+      x: [l1End], y: [y0 + l1Off], z: [l1z],
       text: ['L₁'],
       textfont: { color: palette.surface.crossSection.fx, size: 18, weight: 800 },
       textposition: 'middle right',
@@ -191,13 +191,13 @@ const PartialDerivative = () => {
     const tanY = tY.map(y => ({ x: x0, y, z: z0 + dzdy * (y - y0) }));
     traces.push(tanTrace(tanY, palette.surface.crossSection.fy, `∂z/∂y = ${dzdy.toFixed(2)}`));
 
-    // ── L2 label at y-tangent end ─────────────────────────
-    const l2y = yRange[1];
+    // ── L2 label at y-tangent end (higher-z side) ─────────
+    const l2End = dzdy >= 0 ? yRange[1] : yRange[0];
     const l2Off = (xRange[1] - xRange[0]) * 0.07;
-    const l2z = z0 + dzdy * (l2y - y0);
+    const l2z = z0 + dzdy * (l2End - y0);
     traces.push({
       type: 'scatter3d', mode: 'text',
-      x: [x0 + l2Off], y: [l2y], z: [l2z],
+      x: [x0 + l2Off], y: [l2End], z: [l2z],
       text: ['L₂'],
       textfont: { color: palette.surface.crossSection.fy, size: 18, weight: 800 },
       textposition: 'middle right',
@@ -229,10 +229,10 @@ const PartialDerivative = () => {
     traces.push(l3([x0, y0, z0], [x0, 0, z0], planeXZ));            // → xz-plane (y=0)
     traces.push(l3([x0, y0, z0], [0, y0, z0], planeYZ));            // → yz-plane (x=0)
 
-    // Footprints (≈ ⅓ of point A size)
-    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [y0], z: [0],    marker: { color: planeXY, size: 4 }, showlegend: false });
-    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [0],   z: [z0],  marker: { color: planeXZ, size: 4 }, showlegend: false });
-    traces.push({ type: 'scatter3d', mode: 'markers', x: [0],   y: [y0], z: [z0],  marker: { color: planeYZ, size: 4 }, showlegend: false });
+    // Footprints (½ of point A size)
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [y0], z: [0],    marker: { color: planeXY, size: 6 }, showlegend: false });
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [x0], y: [0],   z: [z0],  marker: { color: planeXZ, size: 6 }, showlegend: false });
+    traces.push({ type: 'scatter3d', mode: 'markers', x: [0],   y: [y0], z: [z0],  marker: { color: planeYZ, size: 6 }, showlegend: false });
 
     return traces;
   }, [x0, y0, z0, dzdx, dzdy, palette, xRange, yRange]);

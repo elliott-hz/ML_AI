@@ -140,7 +140,7 @@ const Plotter3D = ({
     return all.map(trace => {
       const t = { ...trace };
       if (t.line)   t.line   = { ...t.line,   width: t.line.width || styleConfig.lineWidth };
-      if (t.marker) t.marker = { ...t.marker, size: styleConfig.pointSize };
+      if (t.marker) t.marker = { ...t.marker, size: t.marker.size ?? styleConfig.pointSize };
       if (t.textfont) t.textfont = { ...t.textfont, size: styleConfig.fontSize };
       return t;
     });
