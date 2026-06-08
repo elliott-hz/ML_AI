@@ -36,7 +36,8 @@ const MotivationBinary = () => {
     y0: 1.0,
     resolution: 30,
     aspectRatio: 'auto',
-    legendPosition: 'top-right'
+    legendPosition: 'top-right',
+    plotStyle: 'medium'
   });
 
   const themeMode = useThemeMode();
@@ -251,7 +252,8 @@ const MotivationBinary = () => {
               onChange={setParams}
               config={[
                 ...legendPositionConfig,
-                { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS }
+                { name: 'aspectRatio', label: 'Aspect Ratio', type: 'select', options: ASPECT_RATIO_OPTIONS },
+                { name: 'plotStyle', label: 'Plot Style', type: 'select', options: ['thin', 'medium', 'thick', 'extra-thick'] }
               ]}
             />
           </ParameterSection>
@@ -263,6 +265,7 @@ const MotivationBinary = () => {
             title="z = x² + y² — Two Inputs, One Output"
             showExportButton={false}
             scene={scene}
+            plotStyle={params.plotStyle}
             legendPosition={params.legendPosition}
           >
             <ParameterSection title="Evaluation Point" style={{ margin: 0, border: 'none', background: 'transparent', padding: 0 }}>

@@ -37,10 +37,10 @@ const Plotter3D = ({
 
   const styleConfig = useMemo(() => {
     switch (plotStyle) {
-      case 'thin':        return { lineWidth: 1, pointSize: 4, fontSize: 10 };
-      case 'thick':       return { lineWidth: 4, pointSize: 12, fontSize: 16 };
-      case 'extra-thick': return { lineWidth: 6, pointSize: 16, fontSize: 18 };
-      default:            return { lineWidth: 2, pointSize: 8, fontSize: 12 };
+      case 'thin':        return { lineWidth: 1, pointSize: 4, fontSize: 10, tickFontSize: 9 };
+      case 'thick':       return { lineWidth: 4, pointSize: 12, fontSize: 16, tickFontSize: 12 };
+      case 'extra-thick': return { lineWidth: 6, pointSize: 16, fontSize: 18, tickFontSize: 13 };
+      default:            return { lineWidth: 2, pointSize: 8, fontSize: 12, tickFontSize: 10 };
     }
   }, [plotStyle]);
 
@@ -62,7 +62,7 @@ const Plotter3D = ({
     const axisBase = {
       gridcolor: plotLayout.gridcolor, gridwidth: 0.5,
       zerolinecolor: plotLayout.zerolinecolor, zerolinewidth: 1.5,
-      tickfont: { color: plotLayout.tickFontColor, size: styleConfig.fontSize },
+      tickfont: { color: plotLayout.tickFontColor, size: styleConfig.tickFontSize },
       showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true
     };
 
