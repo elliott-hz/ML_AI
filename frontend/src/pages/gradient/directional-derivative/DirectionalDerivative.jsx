@@ -38,11 +38,11 @@ const DirectionalDerivative = () => {
   const [params, setParams] = useState({
     x1: 0.3,
     y1: 0.3,
-    x2: 1.3,
-    y2: 1.0,
+    x2: 1.0,
+    y2: 1.8,
     xRange: [-3, 3],
     yRange: [-3, 3],
-    resolution: 40,
+    resolution: 80,
     aspectRatio: '1:1',
     legendPosition: 'top-right',
     plotStyle: 'medium'
@@ -83,45 +83,34 @@ const DirectionalDerivative = () => {
       x: xVals,
       y: yVals,
       z: zVals,
-      colorscale: palette.surface.colorscale,
-      opacity: 0.55,
-      contours: {
-        x: { show: false },
-        y: { show: false },
-        z: { show: true, color: palette.surface.contour, width: 0.5 }
-      },
-      showscale: false,
+      colorscale: [
+        [0, '#0c2d4d'],
+        [0.2, '#1b5e8a'],
+        [0.4, '#2d8bbd'],
+        [0.6, '#5ec0c0'],
+        [0.8, '#d4b84c'],
+        [1, '#e86e3a']
+      ],
+      opacity: 0.5,
+      showscale: true,
       name: 'Gaussian Bell',
       hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.4f}<extra></extra>'
     };
   }, [res, xRange, yRange, palette]);
 
   // ── Helper: trace generator ─────────────────────────────
-  const line3 = (pts, color, dash, width) => ({
+  const line3 = (pts, color, dash) => ({
     type: 'scatter3d', mode: 'lines',
     x: pts.map(p => p[0]),
     y: pts.map(p => p[1]),
     z: pts.map(p => p[2]),
-    line: { color, dash: dash || 'solid', width: width || 3 },
+    line: { color, dash: dash || 'solid' },
     showlegend: false, hoverinfo: 'none'
   });
 
   // ── Overlay traces (3D) ─────────────────────────────────
   const overlay3D = useMemo(() => {
     const traces = [];
-
-    // ── QXY plane (horizontal at z = z_Q) ─────────────────
-    traces.push({
-      type: 'mesh3d',
-      x: [xRange[0], xRange[1], xRange[1], xRange[0]],
-      y: [yRange[0], yRange[0], yRange[1], yRange[1]],
-      z: [zQ, zQ, zQ, zQ],
-      opacity: 0.15,
-      color: palette.auxTraces.combined,
-      showscale: false,
-      showlegend: false,
-      hovertemplate: ''
-    });
 
     // ── Point O on surface ────────────────────────────────
     traces.push({
@@ -169,17 +158,23 @@ const DirectionalDerivative = () => {
       textposition: 'bottom right', showlegend: false, hoverinfo: 'none'
     });
 
-    // ── Vertical dashed line O → P (perpendicular) ────────
+    // ── Δz: Vertical dashed line O → P (perpendicular) ──
     traces.push(line3(
       [[x1, y1, zO], [xP, yP, zP]],
-      palette.mainTraces.primary, 'dash', 2.5
+      palette.mainTraces.primary, 'dash'
     ));
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x1], y: [y1], z: [(zO + zP) / 2],
+      text: ['Δz'], textfont: { color: palette.mainTraces.primary, size: 14, weight: 800 },
+      textposition: 'middle right', showlegend: false, hoverinfo: 'none'
+    });
 
     // ── deltaX: dashed line from P to (x2, yP, zP) ────────
     const dxColor = palette.auxTraces.combined;
     traces.push(line3(
       [[xP, yP, zP], [x2, yP, zP]],
-      dxColor, 'dash', 2.5
+      dxColor, 'dash'
     ));
     traces.push({
       type: 'scatter3d', mode: 'text',
@@ -191,7 +186,7 @@ const DirectionalDerivative = () => {
     // ── deltaY: dashed line from (x2, yP, zP) to Q ────────
     traces.push(line3(
       [[x2, yP, zP], [x2, y2, zP]],
-      dxColor, 'dash', 2.5
+      dxColor, 'dash'
     ));
     traces.push({
       type: 'scatter3d', mode: 'text',
@@ -204,7 +199,7 @@ const DirectionalDerivative = () => {
     const rhoColor = palette.mainTraces.secondary;
     traces.push(line3(
       [[xP, yP, zP], [x2, y2, zP]],
-      rhoColor, 'dash', 3
+      rhoColor, 'dash'
     ));
     traces.push({
       type: 'scatter3d', mode: 'text',
