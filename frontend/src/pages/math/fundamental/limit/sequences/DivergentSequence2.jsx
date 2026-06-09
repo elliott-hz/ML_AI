@@ -1,18 +1,18 @@
 // UI Pattern: DualSequencePlot — two stacked LimitPlotters (sequence + function)
 import React, { useState, useCallback } from 'react';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import LimitPlotter from '../../../components/visualization/LimitPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import LimitPlotter from '../../../../../components/visualization/LimitPlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula,
   FunctionSection
-} from '../../../components/limit/shared/LimitStyled';
-import { legendPositionConfig, plotStyleConfig } from '../../../constants/limitConfig';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
+} from '../../../../../components/limit/shared/LimitStyled';
+import { legendPositionConfig, plotStyleConfig } from '../../../../../constants/limitConfig';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
 
 /**
  * Divergent Sequence 2 - u_n = sin(n) (oscillating)

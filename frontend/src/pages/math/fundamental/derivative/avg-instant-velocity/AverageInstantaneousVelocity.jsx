@@ -1,14 +1,14 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout, Delta-t slider converges secant→tangent
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette, getAuxiliaryColor } from '../../../constants/plotThemeConfig';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette, getAuxiliaryColor } from '../../../../../constants/plotThemeConfig';
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { plotStyleConfig, legendPositionConfig } from '../../../../../constants/derivativeConfig';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import DerivativePlotter from '../../../../../components/visualization/DerivativePlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer,
   Header,
@@ -20,7 +20,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula
-} from '../../../components/style/DerivativeStyled';
+} from '../../../../../components/style/DerivativeStyled';
 
 /**
  * Average Velocity → Instantaneous Velocity

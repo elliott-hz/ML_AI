@@ -1,14 +1,14 @@
 // UI Pattern: TabbedDerivativeInverseTrig — ToggleGroup: 6 tabs (arcsin/arccos/arctan/arccot/arcsec/arccsc), per-tab xRange reset
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import { plotStyleConfig, legendPositionConfig } from '../../../../../constants/derivativeConfig';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import DerivativePlotter from '../../../../../components/visualization/DerivativePlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer,
   Header,
@@ -22,7 +22,7 @@ import {
   Formula,
   ToggleGroup,
   ToggleBtn
-} from '../../../components/style/DerivativeStyled';
+} from '../../../../../components/style/DerivativeStyled';
 
 // Module-level color placeholders — replaced by palette at render time
 const _MC = '#6366f1';

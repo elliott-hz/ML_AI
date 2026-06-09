@@ -1,14 +1,14 @@
 // UI Pattern: SplitPlotWithControls — dual plot layout (FunctionPlotter + Cube3D/Box3D) with resizable splitter and toggle controls
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
-import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import Cube3D from '../../../components/visualization/Cube3D';
-import Box3D from '../../../components/visualization/Box3D';
-import BackButton from '../../../components/layout/BackButton';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import { useSplitter } from '../../../hooks/useSplitter';
+import FunctionPlotter from '../../../../../components/visualization/FunctionPlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import Cube3D from '../../../../../components/visualization/Cube3D';
+import Box3D from '../../../../../components/visualization/Box3D';
+import BackButton from '../../../../../components/layout/BackButton';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import { useSplitter } from '../../../../../hooks/useSplitter';
 
 // ── Styled Components ──────────────────────────────────
 

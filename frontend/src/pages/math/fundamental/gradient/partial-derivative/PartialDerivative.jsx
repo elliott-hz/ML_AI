@@ -1,19 +1,19 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout with one 3D plot via Plotter3D
 import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import { legendPositionConfig } from '../../../constants/gradientConfig';
-import Plotter3D from '../../../components/visualization/Plotter3D';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import { legendPositionConfig } from '../../../../../constants/gradientConfig';
+import Plotter3D from '../../../../../components/visualization/Plotter3D';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitleH1, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel,
   FormulaBox, FormulaTitle, Formula
-} from '../../../components/common/LayoutStyled';
+} from '../../../../../components/common/LayoutStyled';
 
 const Note = styled.p`
   color: ${({ theme }) => theme?.colors?.textSecondary || '#94a3b8'};

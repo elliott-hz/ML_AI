@@ -1,16 +1,16 @@
 // UI Pattern: MultiSectionPlot — multiple function sections, each with its own content layout and controls
 import React, { useState, useMemo, useCallback } from 'react';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import FunctionPlotter from '../../../../../components/visualization/FunctionPlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel
-} from '../../../components/common/LayoutStyled';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
+} from '../../../../../components/common/LayoutStyled';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
 
 /**
  * 周期性函数子页面 - 展示正弦函数的周期性特性

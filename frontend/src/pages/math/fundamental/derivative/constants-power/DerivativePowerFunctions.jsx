@@ -1,14 +1,14 @@
 // UI Pattern: StandardSinglePlot — single ContentLayout, mu slider for power functions
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import { plotStyleConfig, legendPositionConfig } from '../../../../../constants/derivativeConfig';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import DerivativePlotter from '../../../../../components/visualization/DerivativePlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer,
   Header,
@@ -20,7 +20,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula
-} from '../../../components/style/DerivativeStyled';
+} from '../../../../../components/style/DerivativeStyled';
 
 /**
  * Derivative of Power Functions: (x^μ)' = μ·x^(μ-1)

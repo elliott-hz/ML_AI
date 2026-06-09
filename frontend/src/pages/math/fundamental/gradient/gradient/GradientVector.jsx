@@ -2,19 +2,19 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Plotly from 'plotly.js/dist/plotly.min.js';
 import styled from 'styled-components';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette, getPlotLayout } from '../../../constants/plotThemeConfig';
-import { legendPositionConfig } from '../../../constants/gradientConfig';
-import Plotter3D from '../../../components/visualization/Plotter3D';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette, getPlotLayout } from '../../../../../constants/plotThemeConfig';
+import { legendPositionConfig } from '../../../../../constants/gradientConfig';
+import Plotter3D from '../../../../../components/visualization/Plotter3D';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitleH1, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel,
   FormulaBox, FormulaTitle, Formula
-} from '../../../components/common/LayoutStyled';
+} from '../../../../../components/common/LayoutStyled';
 
 const DualPlotRow = styled.div`
   display: flex;

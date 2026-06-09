@@ -1,13 +1,13 @@
 // UI Pattern: ContentLayout — Controls + single combined plot
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import DerivativePlotter from '../../../../../components/visualization/DerivativePlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer,
   Header,
@@ -19,7 +19,7 @@ import {
   FormulaBox,
   FormulaTitle,
   Formula,
-} from '../../../components/style/DerivativeStyled';
+} from '../../../../../components/style/DerivativeStyled';
 
 /**
  * Reciprocal Rule — (1/x)' = -1/x²

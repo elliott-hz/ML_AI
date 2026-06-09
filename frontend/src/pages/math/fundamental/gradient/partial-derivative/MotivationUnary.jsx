@@ -1,18 +1,18 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel and content layout
 import React, { useState, useMemo, useCallback } from 'react';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import GradientPlotter from '../../../components/visualization/GradientPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import GradientPlotter from '../../../../../components/visualization/GradientPlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitleH1, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel,
   FormulaBox, FormulaTitle, Formula
-} from '../../../components/common/LayoutStyled';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/gradientConfig';
+} from '../../../../../components/common/LayoutStyled';
+import { plotStyleConfig, legendPositionConfig } from '../../../../../constants/gradientConfig';
 
 /**
  * MotivationUnary — Unary Single-Variable Function

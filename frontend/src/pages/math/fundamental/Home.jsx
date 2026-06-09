@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import CardGrid from '../components/CardGrid';
+import CardGrid from '../../../components/CardGrid';
 
 const HomeContainer = styled.div`
   max-width: 1200px;

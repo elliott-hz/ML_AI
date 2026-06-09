@@ -50,16 +50,20 @@ frontend/
 │   │   ├── limitConfig.js               # 极限模块配置
 │   │   ├── continuityConfig.js          # 连续性模块配置
 │   │   ├── derivativeConfig.js          # 导数模块配置
-│   │   └── partialDerivativeConfig.js   # 偏导数模块配置
+│   │   └── gradientConfig.js   # 梯度/偏导数模块配置
 │   ├── hooks/
 │   │   ├── useThemeMode.js    # 主题模式 hook (dark/light + 跨标签同步)
 │   │   └── useSplitter.js     # 可拖拽分屏 hook (双图布局)
 │   ├── pages/                 # 5 个知识模块 (共 ~44 个可视化子页面)
-│   │   ├── basic-function/    # 基本函数 (11 子页面)
-│   │   ├── limit/             # 极限     (13 子页面)
-│   │   ├── continuity/        # 连续性   (4 子页面)
-│   │   ├── derivative/        # 导数     (11 子页面)
-│   │   └── partial-derivative/# 偏导数   (2 子页面)
+│   │   └── math/
+│   │       ├── fundamental/   # 基础数学模块
+│   │       │   ├── basic-function/    # 基本函数 (11 子页面)
+│   │       │   ├── limit/             # 极限     (13 子页面)
+│   │       │   ├── continuity/        # 连续性   (4 子页面)
+│   │       │   ├── derivative/        # 导数     (11 子页面)
+│   │       │   ├── gradient/          # 梯度     (5 子页面)
+│   │       │   └── partial-derivative/# 偏导数   (2 子页面)
+│   │       └── calculus/     # 微积分模块（即将添加）
 │   ├── routes/
 │   │   └── AppRoutes.jsx      # 路由定义 (扁平结构，虚拟层级路径)
 │   ├── styles/
@@ -336,8 +340,8 @@ const PageName = () => {
 
 | # | 文件 | 作用 | 依赖 |
 |---|---|---|---|
-| 1 | `src/pages/<TopicName>.jsx` | Hub 页（卡片网格导航） | `CardGrid`（唯一共享导入），内联 styled-components |
-| 2 | `src/pages/<topic-name>/` | 子页面目录（N 个 .jsx） | `LayoutStyled`、`ParameterControls`、`ParameterSection`、`BackButton`、`useThemeMode`、`getTracePalette`、模块 config、**模块专属绘图器** |
+| 1 | `src/pages/math/fundamental/<TopicName>.jsx` | Hub 页（卡片网格导航） | `CardGrid`（唯一共享导入），内联 styled-components |
+| 2 | `src/pages/math/fundamental/<topic-name>/` | 子页面目录（N 个 .jsx） | `LayoutStyled`、`ParameterControls`、`ParameterSection`、`BackButton`、`useThemeMode`、`getTracePalette`、模块 config、**模块专属绘图器** |
 | 3 | `src/constants/<topicName>Config.js` | 模块配置常量 | 导出 `plotStyleConfig`、`legendPositionConfig`、可选的 `commonParamsConfig` |
 | 4 | `src/components/visualization/<TopicName>Plotter.jsx` | **模块专属绘图器（必建）** | 以 `FunctionPlotter` 为基础模版，复制后按需定制；依赖 `plotly.js`、`useThemeMode`、`getPlotLayout`、`getTracePalette` |
 
@@ -353,7 +357,7 @@ const PageName = () => {
 **L3 模块的完整依赖链（子页面角度）：**
 
 ```
-子页面 (src/pages/<topic>/<SubPage>.jsx)
+子页面 (src/pages/math/fundamental/<topic>/<SubPage>.jsx)
   ├── BackButton               → react-router-dom useNavigate
   ├── LayoutStyled              → styled-components (10+ 命名导出)
   ├── ParameterControls         → react-range Range 组件
@@ -380,18 +384,18 @@ const PageName = () => {
 
 | # | 操作 | 文件 |
 |---|---|---|
-| 1 | **新建** | `src/pages/<topic>/<new-group>/<NewPage>.jsx`（每个子页面一个文件） |
+| 1 | **新建** | `src/pages/math/fundamental/<topic>/<new-group>/<NewPage>.jsx`（每个子页面一个文件） |
 | 2 | **修改** | `src/routes/AppRoutes.jsx` — 添加 import + `<Route>` |
-| 3 | **修改** | `src/pages/<TopicName>.jsx` — 添加新 `<GroupTitle>` + `<CardGrid>` 及对应的数据数组 |
+| 3 | **修改** | `src/pages/math/fundamental/<TopicName>.jsx` — 添加新 `<GroupTitle>` + `<CardGrid>` 及对应的数据数组 |
 
 
 ### Scenario C: 在现有分组中新增单个子页面
 
 | # | 操作 | 文件 |
 |---|---|---|
-| 1 | **新建** | `src/pages/<topic>/<existing-group>/<NewPage>.jsx` |
+| 1 | **新建** | `src/pages/math/fundamental/<topic>/<existing-group>/<NewPage>.jsx` |
 | 2 | **修改** | `src/routes/AppRoutes.jsx` — 添加 import + `<Route>` |
-| 3 | **修改** | `src/pages/<TopicName>.jsx` — 在对应分组的卡片数组中追加一个对象 |
+| 3 | **修改** | `src/pages/math/fundamental/<TopicName>.jsx` — 在对应分组的卡片数组中追加一个对象 |
 
 
 ### 关键原则

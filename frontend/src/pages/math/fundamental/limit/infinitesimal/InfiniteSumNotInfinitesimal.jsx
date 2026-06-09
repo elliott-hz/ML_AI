@@ -1,16 +1,16 @@
 // UI Pattern: MultiPlotVertical — 3 independent sections with separate controls + plots
 import React, { useState, useMemo, useCallback } from 'react';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import LimitPlotter from '../../../components/visualization/LimitPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import LimitPlotter from '../../../../../components/visualization/LimitPlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
-} from '../../../components/limit/shared/LimitStyled';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
+} from '../../../../../components/limit/shared/LimitStyled';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
 
 /**
  * Helper function to calculate harmonic number H_n

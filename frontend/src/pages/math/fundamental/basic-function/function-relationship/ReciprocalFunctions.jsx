@@ -1,18 +1,18 @@
 // UI Pattern: StandardSinglePlot — single plot with controls panel (ParameterControls + ParameterSection) and content layout
 import React, { useState, useMemo, useCallback } from 'react';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import FunctionPlotter from '../../../components/visualization/FunctionPlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import FunctionPlotter from '../../../../../components/visualization/FunctionPlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitleH1, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel,
   FormulaBox, FormulaTitle, Formula
-} from '../../../components/common/LayoutStyled';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/basicFunctionConfig';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
+} from '../../../../../components/common/LayoutStyled';
+import { plotStyleConfig, legendPositionConfig } from '../../../../../constants/basicFunctionConfig';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
 
 /**
  * Reciprocal Functions 页面 - 倒函数可视化

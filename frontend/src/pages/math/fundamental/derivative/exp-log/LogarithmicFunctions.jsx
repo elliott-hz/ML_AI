@@ -1,14 +1,14 @@
 // UI Pattern: StandardSinglePlot (QuickSetRow variant) — base a slider + quick-set e button
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useThemeMode } from '../../../hooks/useThemeMode';
-import { getTracePalette } from '../../../constants/plotThemeConfig';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/derivativeConfig';
-import { ASPECT_RATIO_OPTIONS } from '../../../constants/plotThemeConfig';
-import DerivativePlotter from '../../../components/visualization/DerivativePlotter';
-import ParameterControls from '../../../components/visualization/ParameterControls';
-import ParameterSection from '../../../components/visualization/ParameterSection';
-import BackButton from '../../../components/layout/BackButton';
+import { useThemeMode } from '../../../../../hooks/useThemeMode';
+import { getTracePalette } from '../../../../../constants/plotThemeConfig';
+import { plotStyleConfig, legendPositionConfig } from '../../../../../constants/derivativeConfig';
+import { ASPECT_RATIO_OPTIONS } from '../../../../../constants/plotThemeConfig';
+import DerivativePlotter from '../../../../../components/visualization/DerivativePlotter';
+import ParameterControls from '../../../../../components/visualization/ParameterControls';
+import ParameterSection from '../../../../../components/visualization/ParameterSection';
+import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer,
   Header,
@@ -22,7 +22,7 @@ import {
   Formula,
   QuickSetRow,
   QuickBtn
-} from '../../../components/style/DerivativeStyled';
+} from '../../../../../components/style/DerivativeStyled';
 
 // Convert integer digit to Unicode subscript
 const SUB = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
