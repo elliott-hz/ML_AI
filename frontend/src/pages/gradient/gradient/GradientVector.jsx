@@ -392,6 +392,7 @@ const GradientVector = () => {
       ],
       contours: { coloring: 'heatmap', showlabels: true },
       line: { color: '#ffffff', width: 0.5 },
+      opacity: 0.8,
       showscale: false,
       hoverinfo: 'none'
     });
@@ -534,17 +535,23 @@ const GradientVector = () => {
       title: { text: 'Contour Map — Gradient & Direction', font: { color: plotLayout.titleFontColor, size: 14 } },
       xaxis: {
         title: 'x', range: xRange,
-        gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
+        showgrid: true, gridcolor: '#64748b', gridwidth: 1,
+        zeroline: true, zerolinecolor: '#94a3b8', zerolinewidth: 2,
         tickfont: { color: plotLayout.tickFontColor, size: 11 },
         titlefont: { color: plotLayout.axisLabelColor, size: 12 },
-        showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true
+        showline: true, linewidth: 1.5, linecolor: plotLayout.axisColor, mirror: true,
+        ticks: 'outside', ticklen: 6, tickwidth: 1.5, tickcolor: plotLayout.axisColor,
+        showticklabels: true, dtick: 1
       },
       yaxis: {
         title: 'y', range: yRange,
-        gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
+        showgrid: true, gridcolor: '#64748b', gridwidth: 1,
+        zeroline: true, zerolinecolor: '#94a3b8', zerolinewidth: 2,
         tickfont: { color: plotLayout.tickFontColor, size: 11 },
         titlefont: { color: plotLayout.axisLabelColor, size: 12 },
-        showline: true, linewidth: 1, linecolor: plotLayout.axisColor, mirror: true,
+        showline: true, linewidth: 1.5, linecolor: plotLayout.axisColor, mirror: true,
+        ticks: 'outside', ticklen: 6, tickwidth: 1.5, tickcolor: plotLayout.axisColor,
+        showticklabels: true, dtick: 1,
         scaleanchor: 'x', scaleratio: 1
       },
       plot_bgcolor: plotLayout.plot_bgcolor,
