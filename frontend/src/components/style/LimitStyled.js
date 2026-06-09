@@ -14,7 +14,7 @@ export {
   FunctionSection,
   QuickSetRow,
   QuickBtn
-} from '../../common/LayoutStyled';
+} from '../common/LayoutStyled';
 
 import styled from 'styled-components';
 

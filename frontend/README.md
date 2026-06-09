@@ -39,8 +39,7 @@ frontend/
 │   │   │   ├── Cube3D.jsx                   # 3D 立方体 (Plotly mesh3d, 定制)
 │   │   │   └── Box3D.jsx                    # 3D 矩形盒 (Plotly mesh3d, 定制)
 │   │   ├── derivative/        # 导数模块共享组件
-│   │   ├── limit/shared/      # 极限模块共享 styled 布局
-│   │   └── style/             # 导数模块共享 styled 布局 (DerivativeStyled)
+│   │   └── style/             # 导数模块共享 styled 布局 (DerivativeStyled) + 极限模块 (LimitStyled)
 │   ├── config/
 │   │   ├── menuConfig.js      # 菜单配置入口 (re-export JSON)
 │   │   └── menuConfig.json    # 菜单数据 (L1 → L2 → L3 树形结构)

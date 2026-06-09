@@ -8,7 +8,7 @@ import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitle, SectionDescription,
   ContentLayout, ControlsPanel, PlotPanel, FormulaBox, Formula
-} from '../../../../../components/limit/shared/LimitStyled';
+} from '../../../../../components/style/LimitStyled';
 import { commonParamsConfig } from '../../../../../constants/limitConfig';
 import { useThemeMode } from '../../../../../hooks/useThemeMode';
 import { getTracePalette } from '../../../../../constants/plotThemeConfig';
