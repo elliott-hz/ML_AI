@@ -365,8 +365,40 @@ const GradientVector = () => {
       palette.text.muted, 1, 'dot'
     ));
 
+    // ── Partial derivative tangent lines at O ────────────────
+    const tanLen = scale * 1.5;
+    // ∂f/∂x tangent: along x-direction, z slope = gradX
+    traces.push(line3(
+      [[x0 - tanLen, y0, zO - tanLen * gradX],
+       [x0 + tanLen, y0, zO + tanLen * gradX]],
+      palette.surface.crossSection.fx, 3, 'dash'
+    ));
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x0 + tanLen], y: [y0], z: [zO + tanLen * gradX],
+      text: ['∂z/∂x'],
+      textfont: { color: palette.surface.crossSection.fx, size: 14, weight: 800 },
+      textposition: 'top right',
+      showlegend: false, hoverinfo: 'none'
+    });
+
+    // ∂f/∂y tangent: along y-direction, z slope = gradY
+    traces.push(line3(
+      [[x0, y0 - tanLen, zO - tanLen * gradY],
+       [x0, y0 + tanLen, zO + tanLen * gradY]],
+      palette.surface.crossSection.fy, 3, 'dash'
+    ));
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x0], y: [y0 + tanLen], z: [zO + tanLen * gradY],
+      text: ['∂z/∂y'],
+      textfont: { color: palette.surface.crossSection.fy, size: 14, weight: 800 },
+      textposition: 'top right',
+      showlegend: false, hoverinfo: 'none'
+    });
+
     return traces;
-  }, [x0, y0, zO, gradX, gradY, gradMag, gEndX, gEndY, dEndX, dEndY, eX, eY, dirDeriv, scale, palette]);
+  }, [x0, y0, zO, gradX, gradY, gradMag, gEndX, gEndY, dEndX, dEndY, eX, eY, dirDeriv, scale, xRange, yRange, palette]);
 
   const all3DData = useMemo(() => [surfaceData, ...overlay3D], [surfaceData, overlay3D]);
 
