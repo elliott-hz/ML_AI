@@ -85,16 +85,10 @@ const Summation = () => {
   // Group 2: Summation
   const summationCards = [
     {
-      id: 'finity-partition',
-      title: 'Finity Partition',
-      description: 'Approximating area using finite partitions — rectangles and the Riemann sum approach.',
-      path: '/mathematics/2-calculus/summation/finity-partition'
-    },
-    {
-      id: 'limit-approximation',
-      title: 'Limit Approximation',
-      description: 'Taking the limit of the partition to obtain the exact area — the definite integral.',
-      path: '/mathematics/2-calculus/summation/limit-approximation'
+      id: 'riemann-sum',
+      title: 'Riemann Sum',
+      description: 'Finite partition approximation — highlight Δxᵢ and f(ξᵢ) for each rectangle, showing how Aᵢ = f(ξᵢ)·Δx builds the total area.',
+      path: '/mathematics/2-calculus/summation/riemann-sum'
     }
   ];
 
