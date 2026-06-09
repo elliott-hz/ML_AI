@@ -15,6 +15,10 @@
 
 export const ASPECT_RATIO_OPTIONS = ['auto', '16:9', '4:3', '1:1'];
 
+export const LEGEND_POSITION_CONFIG = [
+  { name: 'legendPosition', label: 'Legend Position', type: 'select', options: ['None', 'top-right', 'top-left', 'bottom-left', 'bottom-right'] }
+];
+
 // ──────────────────────────────────────────────
 // L2: Plot layout colors
 // ──────────────────────────────────────────────
