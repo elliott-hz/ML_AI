@@ -12,7 +12,7 @@ import {
   ContentLayout, ControlsPanel, PlotPanel,
   FormulaBox, FormulaTitle, Formula
 } from '../../../components/common/LayoutStyled';
-import { plotStyleConfig, legendPositionConfig } from '../../../constants/partialDerivativeConfig';
+import { plotStyleConfig, legendPositionConfig } from '../../../constants/gradientConfig';
 
 /**
  * MotivationUnary — Unary Single-Variable Function
