@@ -130,7 +130,7 @@ const Note = styled.p`
   margin-top: ${({ theme }) => theme?.spacing?.sm || '0.5rem'};
 `;
 
-// ── Arrowhead helper (2D) ─────────────────────────────────
+// ── Arrowhead helpers ────────────────────────────────────
 const arrowHeadPoints = (x0, y0, x1, y1, headSize = 0.15) => {
   const angle = Math.atan2(y1 - y0, x1 - x0);
   const lx = x1 - headSize * Math.cos(angle - Math.PI / 6);
@@ -138,6 +138,21 @@ const arrowHeadPoints = (x0, y0, x1, y1, headSize = 0.15) => {
   const rx = x1 - headSize * Math.cos(angle + Math.PI / 6);
   const ry = y1 - headSize * Math.sin(angle + Math.PI / 6);
   return [lx, ly, rx, ry];
+};
+// 3D arrowhead — computes two wing points (lx,ly,lz) and (rx,ry,rz) from tip (x1,y1,z1)
+// back toward shaft start (x0,y0,z0), splayed ±30° in the horizontal projection plane
+const arrowHead3D = (x0, y0, z0, x1, y1, z1, headSize = 0.12) => {
+  const angle = Math.atan2(y1 - y0, x1 - x0);
+  const dx = x1 - x0, dy = y1 - y0, dz = z1 - z0;
+  const len = Math.sqrt(dx*dx + dy*dy + dz*dz) || 1;
+  const lx = x1 - headSize * Math.cos(angle - Math.PI / 6);
+  const ly = y1 - headSize * Math.sin(angle - Math.PI / 6);
+  const rx = x1 - headSize * Math.cos(angle + Math.PI / 6);
+  const ry = y1 - headSize * Math.sin(angle + Math.PI / 6);
+  const t = headSize / len;
+  const lz = z1 - t * dz;
+  const rz = z1 - t * dz;
+  return [lx, ly, lz, rx, ry, rz];
 };
 
 /**
@@ -282,11 +297,12 @@ const GradientVector = () => {
         [[x0, y0, zO], gTip],
         gColor, 4
       ));
-      // Tip marker (diamond for arrowhead)
+      // Arrowhead (two line segments)
+      const [gAhLx, gAhLy, gAhLz, gAhRx, gAhRy, gAhRz] = arrowHead3D(x0, y0, zO, gEndX, gEndY, g3Dz);
       traces.push({
-        type: 'scatter3d', mode: 'markers',
-        x: [gEndX], y: [gEndY], z: [g3Dz],
-        marker: { color: gColor, size: 10, symbol: 'diamond' },
+        type: 'scatter3d', mode: 'lines',
+        x: [gEndX, gAhLx, gEndX, gAhRx], y: [gEndY, gAhLy, gEndY, gAhRy], z: [g3Dz, gAhLz, g3Dz, gAhRz],
+        line: { color: gColor, width: 4 },
         showlegend: false, hoverinfo: 'none'
       });
       // Label
@@ -296,6 +312,23 @@ const GradientVector = () => {
         text: ['∇f'],
         textfont: { color: gColor, size: 17, weight: 800 },
         textposition: 'top right',
+        showlegend: false, hoverinfo: 'none'
+      });
+
+      // ── Perpendicular to ∇f (contour tangent in tangent plane) ──
+      const perpLen = scale * 1.2;
+      const uPerpX = -gradY / gradMag, uPerpY = gradX / gradMag;
+      traces.push(line3(
+        [[x0 - perpLen * uPerpX, y0 - perpLen * uPerpY, zO],
+         [x0 + perpLen * uPerpX, y0 + perpLen * uPerpY, zO]],
+        palette.auxTraces.combined, 3, 'dash'
+      ));
+      traces.push({
+        type: 'scatter3d', mode: 'text',
+        x: [(x0 + perpLen * uPerpX * 1.5)], y: [(y0 + perpLen * uPerpY * 1.5)], z: [zO],
+        text: ['⟂'],
+        textfont: { color: palette.auxTraces.combined, size: 16, weight: 800 },
+        textposition: 'middle right',
         showlegend: false, hoverinfo: 'none'
       });
     }
@@ -309,10 +342,12 @@ const GradientVector = () => {
       [[x0, y0, zO], dTip],
       dColor, 4
     ));
+    // Arrowhead (two line segments)
+    const [dAhLx, dAhLy, dAhLz, dAhRx, dAhRy, dAhRz] = arrowHead3D(x0, y0, zO, dEndX, dEndY, d3Dz);
     traces.push({
-      type: 'scatter3d', mode: 'markers',
-      x: [dEndX], y: [dEndY], z: [d3Dz],
-      marker: { color: dColor, size: 10, symbol: 'diamond' },
+      type: 'scatter3d', mode: 'lines',
+      x: [dEndX, dAhLx, dEndX, dAhRx], y: [dEndY, dAhLy, dEndY, dAhRy], z: [d3Dz, dAhLz, d3Dz, dAhRz],
+      line: { color: dColor, width: 4 },
       showlegend: false, hoverinfo: 'none'
     });
     traces.push({
@@ -426,13 +461,16 @@ const GradientVector = () => {
         line: { color: gColor, width: 3.5 },
         showlegend: false, hoverinfo: 'none'
       });
-      // Label
+      // Label — offset along arrow direction
+      const gAngle = Math.atan2(gEndY - y0, gEndX - x0);
+      const gLabelOff = 0.25;
       d.push({
         type: 'scatter', mode: 'text',
-        x: [gEndX], y: [gEndY],
+        x: [gEndX + gLabelOff * Math.cos(gAngle)],
+        y: [gEndY + gLabelOff * Math.sin(gAngle)],
         text: ['∇f'],
         textfont: { color: gColor, size: 16, weight: 800 },
-        textposition: 'top right',
+        textposition: 'middle center',
         showlegend: false, hoverinfo: 'none'
       });
     }
@@ -452,14 +490,35 @@ const GradientVector = () => {
       line: { color: dColor, width: 3.5 },
       showlegend: false, hoverinfo: 'none'
     });
+    // Label — offset along arrow direction
+    const dAngle = Math.atan2(dEndY - y0, dEndX - x0);
+    const dLabelOff = 0.25;
     d.push({
       type: 'scatter', mode: 'text',
-      x: [dEndX], y: [dEndY],
+      x: [dEndX + dLabelOff * Math.cos(dAngle)],
+      y: [dEndY + dLabelOff * Math.sin(dAngle)],
       text: ['\u2192e'],
       textfont: { color: dColor, size: 16, weight: 800 },
-      textposition: 'top right',
+      textposition: 'middle center',
       showlegend: false, hoverinfo: 'none'
     });
+
+    // ── Contour tangent line (⟂ ∇f) through O ──────────────
+    if (hasGradient) {
+      const perpLen = 0.5;
+      const perpX = -gradY, perpY = gradX;
+      const perpMag = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
+      const ux = perpX / perpMag, uy = perpY / perpMag;
+      d.push({
+        type: 'scatter', mode: 'lines',
+        x: [x0 - perpLen * ux, x0 + perpLen * ux],
+        y: [y0 - perpLen * uy, y0 + perpLen * uy],
+        line: { color: palette.auxTraces.combined, width: 2, dash: 'dash' },
+        name: '⟂ ∇f (contour tangent)',
+        showlegend: true,
+        hoverinfo: 'none'
+      });
+    }
 
     // ── θ arc (from x-axis to direction e⃗) ───────────────
     const arcR = Math.min(xRange[1] - xRange[0], yRange[1] - yRange[0]) * 0.06;

@@ -145,10 +145,10 @@ const Gradient = () => {
         ))}
       </CardGrid>
 
-      {/* Group 2: Gradient Vector */}
-      <GroupTitle>Gradient Vector</GroupTitle>
+      {/* Group 2: Directional Derivative */}
+      <GroupTitle>Directional Derivative</GroupTitle>
       <CardGrid>
-        {gradientVectorCards.map((feature) => (
+        {directionalDerivativeCards.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => navigate(feature.path)}
@@ -159,10 +159,10 @@ const Gradient = () => {
         ))}
       </CardGrid>
 
-      {/* Group 3: Directional Derivative */}
-      <GroupTitle>Directional Derivative</GroupTitle>
+      {/* Group 3: Gradient Vector */}
+      <GroupTitle>Gradient Vector</GroupTitle>
       <CardGrid>
-        {directionalDerivativeCards.map((feature) => (
+        {gradientVectorCards.map((feature) => (
           <FeatureButton
             key={feature.id}
             onClick={() => navigate(feature.path)}
