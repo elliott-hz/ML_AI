@@ -26,6 +26,22 @@ const ContourWrapper = styled.div`
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 `;
 
+const DualPlotRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+`;
+
+const PlotHalf = styled.div`
+  flex: 1;
+  background: ${({ theme }) => theme?.colors?.cardBg || '#1e293b'};
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+`;
+
 /**
  * GaussianBellPoints — 2D Gaussian bell with adjustable points O, Q
  *
@@ -50,6 +66,8 @@ const DirectionalDerivative = () => {
 
   const contourRef = useRef(null);
   const hasInitContour = useRef(false);
+  const tangentRef = useRef(null);
+  const hasInitTangent = useRef(false);
   const themeMode = useThemeMode();
   const palette = getTracePalette(themeMode);
   const plotLayout = getPlotLayout(themeMode);
@@ -382,6 +400,135 @@ const DirectionalDerivative = () => {
     return { contourData: d, contourLayout: l };
   }, [res, xRange, yRange, x1, y1, x2, y2, xP, yP, thetaRad, params.legendPosition, plotLayout, palette]);
 
+  // ── Tangent 3D visualization (∂f/∂x, ∂f/∂y, tangent plane) ──
+  const dzDx = -x1 * zO;
+  const dzDy = -y1 * zO;
+  const tLen = 0.8;
+
+  const tangentPlotData = useMemo(() => {
+    const tSize = 0.7;
+    const tRes = 25;
+    const tStep = 2 * tSize / tRes;
+    const txVals = Array.from({ length: tRes + 1 }, (_, i) => x1 - tSize + i * tStep);
+    const tyVals = Array.from({ length: tRes + 1 }, (_, i) => y1 - tSize + i * tStep);
+
+    const surfZVals = tyVals.map(ty => txVals.map(tx => fn(tx, ty)));
+    const planeZVals = tyVals.map(ty => txVals.map(tx => zO + dzDx * (tx - x1) + dzDy * (ty - y1)));
+
+    const traces = [];
+
+    // Gaussian surface patch (semi-transparent)
+    traces.push({
+      type: 'surface',
+      x: txVals, y: tyVals, z: surfZVals,
+      colorscale: [
+        [0, '#0c2d4d'], [0.2, '#1b5e8a'], [0.4, '#2d8bbd'],
+        [0.6, '#5ec0c0'], [0.8, '#d4b84c'], [1, '#e86e3a']
+      ],
+      opacity: 0.35, showscale: false,
+      name: 'Surface (patch)',
+      hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.4f}<extra></extra>'
+    });
+
+    // Point O
+    traces.push({
+      type: 'scatter3d', mode: 'markers',
+      x: [x1], y: [y1], z: [zO],
+      marker: { color: palette.mainTraces.primary, size: 12, symbol: 'circle', line: { color: '#fff', width: 2 } },
+      name: 'O', showlegend: true
+    });
+    traces.push({
+      type: 'scatter3d', mode: 'text',
+      x: [x1], y: [y1], z: [zO],
+      text: ['O'], textfont: { color: palette.mainTraces.primary, size: 18, weight: 800 },
+      textposition: 'top right', showlegend: false, hoverinfo: 'none'
+    });
+
+    // X tangent line at O (∂f/∂x direction)
+    traces.push({
+      type: 'scatter3d', mode: 'lines',
+      x: [x1 - tLen, x1 + tLen], y: [y1, y1],
+      z: [zO - tLen * dzDx, zO + tLen * dzDx],
+      line: { color: palette.mainTraces.primary, width: 3.5 },
+      name: '∂f/∂x', showlegend: true
+    });
+
+    // Y tangent line at O (∂f/∂y direction)
+    traces.push({
+      type: 'scatter3d', mode: 'lines',
+      x: [x1, x1], y: [y1 - tLen, y1 + tLen],
+      z: [zO - tLen * dzDy, zO + tLen * dzDy],
+      line: { color: palette.auxTraces.tangent, width: 3.5 },
+      name: '∂f/∂y', showlegend: true
+    });
+
+    // Tangent plane (semi-transparent)
+    traces.push({
+      type: 'surface',
+      x: txVals, y: tyVals, z: planeZVals,
+      opacity: 0.25,
+      colorscale: [[0, '#facc15'], [1, '#facc15']],
+      showscale: false,
+      name: 'Tangent Plane',
+      hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.4f}<extra></extra>'
+    });
+
+    return traces;
+  }, [x1, y1, zO, dzDx, dzDy, tLen, palette]);
+
+  const tangentPlotLayout = useMemo(() => {
+    const zMin = Math.min(zO - tLen * Math.abs(dzDx), zO - tLen * Math.abs(dzDy), 0);
+    const zMax = Math.max(zO + tLen * Math.abs(dzDx), zO + tLen * Math.abs(dzDy), zO + 0.02);
+
+    return {
+      scene: {
+        xaxis: {
+          title: 'x', range: [x1 - 1.2, x1 + 1.2],
+          gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
+          tickfont: { color: plotLayout.tickFontColor, size: 10 },
+          titlefont: { color: plotLayout.axisLabelColor, size: 11 },
+          showspikes: false
+        },
+        yaxis: {
+          title: 'y', range: [y1 - 1.2, y1 + 1.2],
+          gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
+          tickfont: { color: plotLayout.tickFontColor, size: 10 },
+          titlefont: { color: plotLayout.axisLabelColor, size: 11 },
+          showspikes: false
+        },
+        zaxis: {
+          title: 'z', range: [zMin - 0.02, zMax + 0.02],
+          gridcolor: plotLayout.gridcolor, zerolinecolor: plotLayout.zerolinecolor,
+          tickfont: { color: plotLayout.tickFontColor, size: 10 },
+          titlefont: { color: plotLayout.axisLabelColor, size: 11 },
+          showspikes: false
+        },
+        camera: {
+          eye: { x: 2.0, y: -2.0, z: 1.0 },
+          center: { x: 0, y: 0, z: 0 },
+          up: { x: 0, y: 0, z: 1 }
+        },
+        aspectmode: 'manual',
+        aspectratio: { x: 1, y: 1, z: 0.6 }
+      },
+      title: { text: 'Tangent Lines & Plane', font: { color: plotLayout.titleFontColor, size: 14 } },
+      paper_bgcolor: plotLayout.paper_bgcolor,
+      margin: { l: 0, r: 0, t: 40, b: 0 },
+      showlegend: true,
+      legend: {
+        font: { color: plotLayout.legend.fontColor, size: 10 },
+        bgcolor: plotLayout.legend.bgcolor,
+        bordercolor: plotLayout.legend.bordercolor,
+        borderwidth: 1,
+        orientation: 'h',
+        y: 1.12,
+        x: 0.5,
+        xanchor: 'center',
+        yanchor: 'bottom'
+      }
+    };
+  }, [x1, y1, zO, dzDx, dzDy, tLen, plotLayout]);
+
   // ── Render contour ──────────────────────────────────────
   const config = {
     displayModeBar: true, displaylogo: false,
@@ -406,6 +553,19 @@ const DirectionalDerivative = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // ── Render tangent 3D plot ───────────────────────────────
+  useEffect(() => {
+    if (!tangentRef.current) return;
+    const gd = tangentRef.current;
+    if (!hasInitTangent.current) {
+      Plotly.newPlot(gd, tangentPlotData, tangentPlotLayout, config).then(() => { hasInitTangent.current = true; });
+    } else {
+      Plotly.react(gd, tangentPlotData, tangentPlotLayout, config);
+    }
+    return () => { if (tangentRef.current) Plotly.purge(tangentRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tangentPlotData, tangentPlotLayout]);
 
   return (
     <PageContainer>
@@ -503,12 +663,17 @@ const DirectionalDerivative = () => {
               legendPosition={params.legendPosition}
             />
           </div>
-
-          <ContourWrapper>
-            <div ref={contourRef} style={{ width: '100%', height: '100%' }} />
-          </ContourWrapper>
         </PlotPanel>
       </ContentLayout>
+
+      <DualPlotRow>
+        <PlotHalf>
+          <div ref={contourRef} style={{ width: '100%', height: '100%', aspectRatio: '4/3' }} />
+        </PlotHalf>
+        <PlotHalf>
+          <div ref={tangentRef} style={{ width: '100%', height: '100%', aspectRatio: '4/3' }} />
+        </PlotHalf>
+      </DualPlotRow>
     </PageContainer>
   );
 };
