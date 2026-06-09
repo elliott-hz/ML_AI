@@ -39,8 +39,8 @@ const AreaUnderCurve = () => {
   const [params, setParams] = useState({
     mu: 0,
     sigma: 1,
-    a: 0.5,
-    b: 2.5,
+    a: -2,
+    b: 2,
     n: 5,
     xRange: [-4, 4],
     aspectRatio: 'auto',
@@ -113,18 +113,19 @@ const AreaUnderCurve = () => {
     });
 
     // 3. Vertical dashed lines at x=a, x=b (full plot height)
+    const auxColor = palette.auxTraces.tangent;
     const yPeak = 1 / (sigma * Math.sqrt(2 * Math.PI));
     const yMax = yPeak * 1.15;
     t.push({
       type: 'scatter', mode: 'lines',
       x: [aClamp, aClamp], y: [-yMax * 0.05, yMax],
-      line: { color: palette.auxTraces.tangent, width: 2, dash: 'dash' },
+      line: { color: auxColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bClamp, bClamp], y: [-yMax * 0.05, yMax],
-      line: { color: palette.auxTraces.combined, width: 2, dash: 'dash' },
+      line: { color: auxColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
 

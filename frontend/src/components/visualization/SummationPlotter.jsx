@@ -39,11 +39,26 @@ const SummationPlotter = ({
 
   const plotLayout = getPlotLayout(themeMode);
 
+  // ── Apply plot style to trace data ──────────────────────
+  const styledData = useMemo(() => {
+    if (!data || data.length === 0) return data;
+    return data.map(trace => {
+      const newTrace = { ...trace };
+      if (newTrace.line && typeof newTrace.line.width === 'number') {
+        newTrace.line = { ...newTrace.line, width: styleConfig.lineWidth };
+      }
+      if (newTrace.marker && typeof newTrace.marker.size === 'number') {
+        newTrace.marker = { ...newTrace.marker, size: styleConfig.pointSize };
+      }
+      return newTrace;
+    });
+  }, [data, styleConfig]);
+
   // Auto y range
   const autoYRange = useMemo(() => {
     if (yRange) return yRange;
     let minY = Infinity, maxY = -Infinity;
-    for (const trace of data) {
+    for (const trace of styledData) {
       if (trace.y) {
         for (const v of trace.y) {
           if (v < minY) minY = v;
@@ -54,7 +69,7 @@ const SummationPlotter = ({
     if (!isFinite(minY)) return [-0.1, 1];
     const pad = (maxY - minY) * 0.1 || 0.5;
     return [Math.min(minY - pad, 0), maxY + pad];
-  }, [data, yRange]);
+  }, [styledData, yRange]);
 
   const legX = legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 0.98 : 0.02;
   const legY = legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02;
@@ -93,20 +108,25 @@ const SummationPlotter = ({
       borderwidth: 1, x: legX, y: legY, xanchor: legXa, yanchor: legYa
     } : undefined,
     hovermode: 'closest',
-    annotations: annotations.length > 0 ? annotations : undefined
+    annotations: annotations.length > 0
+      ? annotations.map(a => ({
+          ...a,
+          font: a.font ? { ...a.font, size: Math.round((a.font.size || 12) * styleConfig.fontSize / 12) } : undefined
+        }))
+      : undefined
   }), [title, xRange, autoYRange, plotLayout, styleConfig, legendPosition, annotations]);
 
   useEffect(() => {
     if (!plotRef.current) return;
     const gd = plotRef.current;
     if (!hasInit.current) {
-      Plotly.newPlot(gd, data, layout, config).then(() => { hasInit.current = true; });
+      Plotly.newPlot(gd, styledData, layout, config).then(() => { hasInit.current = true; });
     } else {
-      Plotly.react(gd, data, layout, config);
+      Plotly.react(gd, styledData, layout, config);
     }
     return () => { if (plotRef.current) Plotly.purge(plotRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, layout, config]);
+  }, [styledData, layout, config]);
 
   useEffect(() => {
     const handleResize = () => { if (plotRef.current) Plotly.Plots.resize(plotRef.current); };
