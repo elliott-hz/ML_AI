@@ -56,6 +56,7 @@ import MotivationUnary from '../pages/gradient/partial-derivative/MotivationUnar
 import MotivationBinary from '../pages/gradient/partial-derivative/MotivationBinary';
 import PartialDerivativePage from '../pages/gradient/partial-derivative/PartialDerivative';
 import DirectionalDerivative from '../pages/gradient/directional-derivative/DirectionalDerivative';
+import GradientVector from '../pages/gradient/gradient/GradientVector';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -154,6 +155,7 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/gradient/partial-derivative/binary" element={<MotivationBinary />} />
         <Route path="/mathematics/1-fundamentals/gradient/partial-derivative" element={<PartialDerivativePage />} />
         <Route path="/mathematics/1-fundamentals/gradient/directional-derivative" element={<DirectionalDerivative />} />
+        <Route path="/mathematics/1-fundamentals/gradient/gradient-vector" element={<GradientVector />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />

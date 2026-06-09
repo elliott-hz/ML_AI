@@ -97,7 +97,18 @@ const Gradient = () => {
     }
   ];
 
-  // Group 2: Directional Derivative
+  // Group 2: Gradient Vector (new)
+  const gradientVectorCards = [
+    {
+      id: 'gradient-vector',
+      icon: '',
+      title: <>Gradient Vector: ∇f·→e = |∇f|·cos ρ</>,
+      description: 'The gradient ∇f points in the direction of steepest ascent with magnitude |∇f|. A direction unit vector →e = (cosθ, sinθ) defines an arbitrary direction. Explore how the directional derivative ∂f/∂l = ∇f·→e = |∇f|·cos ρ depends on the angle ρ between ∇f and →e.',
+      path: '/mathematics/1-fundamentals/gradient/gradient-vector'
+    }
+  ];
+
+  // Group 3: Directional Derivative
   const directionalDerivativeCards = [
     {
       id: 'directional-derivative',
@@ -134,7 +145,21 @@ const Gradient = () => {
         ))}
       </CardGrid>
 
-      {/* Group 2: Directional Derivative */}
+      {/* Group 2: Gradient Vector */}
+      <GroupTitle>Gradient Vector</GroupTitle>
+      <CardGrid>
+        {gradientVectorCards.map((feature) => (
+          <FeatureButton
+            key={feature.id}
+            onClick={() => navigate(feature.path)}
+          >
+            <ButtonTitle>{feature.title}</ButtonTitle>
+            <ButtonDescription>{feature.description}</ButtonDescription>
+          </FeatureButton>
+        ))}
+      </CardGrid>
+
+      {/* Group 3: Directional Derivative */}
       <GroupTitle>Directional Derivative</GroupTitle>
       <CardGrid>
         {directionalDerivativeCards.map((feature) => (
