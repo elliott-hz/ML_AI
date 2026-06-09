@@ -156,8 +156,8 @@ const SummationPlotter = ({
 
   const fullscreenBtnStyle = {
     position: 'absolute',
-    top: '20px',
-    right: '10px',
+    top: '12px',
+    right: '55px',
     zIndex: 10,
     background: palette.mainTraces.primary,
     border: 'none',

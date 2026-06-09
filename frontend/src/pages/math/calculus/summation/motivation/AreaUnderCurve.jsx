@@ -73,7 +73,7 @@ const AreaUnderCurve = () => {
     t.push({
       x: xs, y: ys,
       type: 'scatter', mode: 'lines',
-      name: `N(${mu.toFixed(1)}, ${sigma.toFixed(1)})`,
+      name: `f(x) = N(${mu.toFixed(1)}, ${sigma.toFixed(1)})`,
       line: { color: palette.mainTraces.primary, width: 3 },
       hovertemplate: 'x: %{x:.2f}<br>f(x): %{y:.4f}<extra></extra>'
     });
@@ -82,6 +82,20 @@ const AreaUnderCurve = () => {
     const aClamp = Math.max(xMin, Math.min(xMax, a));
     const bClamp = Math.max(xMin, Math.min(xMax, b));
     if (aClamp >= bClamp) return t;
+
+    // ── Exact area under curve [a, b] (semi-transparent fill) ──
+    const fillStep = (bClamp - aClamp) / 100;
+    const fillXs = Array.from({ length: 101 }, (_, i) => aClamp + i * fillStep);
+    const fillYs = fillXs.map(normalPDF);
+    t.push({
+      x: fillXs, y: fillYs,
+      type: 'scatter', mode: 'lines',
+      fill: 'tozeroy',
+      fillcolor: palette.fills.highlight,
+      line: { width: 0 },
+      showlegend: false,
+      hoverinfo: 'none'
+    });
 
     const deltaX = (bClamp - aClamp) / n;
     const rectColor = palette.fills.primary;
@@ -271,7 +285,7 @@ const AreaUnderCurve = () => {
           <SummationPlotter
             data={traces}
             xRange={xRange}
-            title={`N(${fmt(mu)}, ${fmt(sigma)}²) — Area ≈ ${fmt(approxArea)}`}
+            title={`Normal Distribution — Area ≈ ${fmt(approxArea)}`}
             showExportButton={false}
             plotStyle={params.plotStyle}
             aspectRatio={params.aspectRatio}
