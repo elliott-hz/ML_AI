@@ -48,7 +48,7 @@
               "id": "math_2_1",
               "name": "Summation",
               "path": "/mathematics/2-calculus/summation",
-              "component": "summation"
+              "component": "Summation"
             }
           ]
         }

@@ -58,6 +58,12 @@ import PartialDerivativePage from '../pages/math/fundamental/gradient/partial-de
 import DirectionalDerivative from '../pages/math/fundamental/gradient/directional-derivative/DirectionalDerivative';
 import GradientVector from '../pages/math/fundamental/gradient/gradient/GradientVector';
 
+// 数学模块 - Calculus / Summation
+import Summation from '../pages/math/calculus/Summation';
+import AreaUnderCurve from '../pages/math/calculus/summation/motivation/AreaUnderCurve';
+import FinityPartition from '../pages/math/calculus/summation/summation/FinityPartition';
+import LimitApproximation from '../pages/math/calculus/summation/summation/LimitApproximation';
+
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
   // 这里可以根据 component name 动态导入对应的页面组件
@@ -157,8 +163,13 @@ const AppRoutes = () => {
         <Route path="/mathematics/1-fundamentals/gradient/directional-derivative" element={<DirectionalDerivative />} />
         <Route path="/mathematics/1-fundamentals/gradient/gradient-vector" element={<GradientVector />} />
 
-        {/* 其他数学模块路由 - 示例 */}
-        <Route path="/mathematics/2-calculus/summation" element={<div>Summation Page - Coming Soon</div>} />
+        {/* 数学模块 - Calculus / Summation 主页面 */}
+        <Route path="/mathematics/2-calculus/summation" element={<Summation />} />
+
+        {/* 数学模块 - Calculus / Summation 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/2-calculus/summation/area-under-curve" element={<AreaUnderCurve />} />
+        <Route path="/mathematics/2-calculus/summation/finity-partition" element={<FinityPartition />} />
+        <Route path="/mathematics/2-calculus/summation/limit-approximation" element={<LimitApproximation />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/deep-learning/1-neural-networks/perceptron" element={<div>Perceptron Page - Coming Soon</div>} />

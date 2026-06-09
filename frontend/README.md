@@ -63,7 +63,8 @@ frontend/
 │   │       │   ├── derivative/        # 导数     (11 子页面)
 │   │       │   ├── gradient/          # 梯度     (5 子页面)
 │   │       │   └── partial-derivative/# 偏导数   (2 子页面)
-│   │       └── calculus/     # 微积分模块（即将添加）
+│   │       └── calculus/     # 微积分模块
+│   │           └── summation/        # 求和 / 积分入门 (3 子页面)
 │   ├── routes/
 │   │   └── AppRoutes.jsx      # 路由定义 (扁平结构，虚拟层级路径)
 │   ├── styles/
