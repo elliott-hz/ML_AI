@@ -111,10 +111,11 @@ const GeometricMeaningOfDifferential = () => {
       hovertemplate: 'C: (%{x:.2f}, %{y:.4f})<extra></extra>'
     });
 
-    // Tangent line at point A (dashed, same color as AC)
+    // Tangent line at point A (dashed, same color as AC), left to y=0, right to D
     const slope = normalPDFDerivative(x0, mu, sigma);
-    const tanExtent = 1.5;
-    const tanXs = [x0 - tanExtent, x0 + tanExtent];
+    const xIntercept = slope !== 0 ? x0 - yA / slope : -Infinity;
+    const tanXL = Math.max(x0 - 1.5, Math.min(x0, xIntercept));
+    const tanXs = [tanXL, x1];
     const tanYs = tanXs.map(x => slope * (x - x0) + yA);
     t.push({
       type: 'scatter', mode: 'lines',
@@ -164,65 +165,78 @@ const GeometricMeaningOfDifferential = () => {
       showlegend: false, hovertemplate: ''
     });
 
-    // dy bracket (vertical dashed line on the right side of CD, with tick marks)
-    const bracketXOffset = (xMax - xMin) * 0.035;
-    const bracketX = x1 + bracketXOffset;
+    // ── Dynamic bracket positioning ──
+    // Whichever is longer (|dy| or |Δy|) goes to the outer right;
+    // the shorter one goes to the inner left with o(Δx).
+    const dyLen = Math.abs(yD - yA);
+    const deltaYLen = Math.abs(y1 - yA);
+    const dyIsLonger = dyLen >= deltaYLen;
+
+    // inner bracket position (closer to x₁)
+    const bracketXInner = x1 + (xMax - xMin) * 0.035;
+    // outer bracket position (further right)
+    const bracketXOuter = x1 + (xMax - xMin) * 0.10;
+
+    // Short segment (inner) — from C to whichever endpoint is closer
+    const shortEnd = dyIsLonger ? y1 : yD;
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketX, bracketX], y: [yA, yD],
+      x: [bracketXInner, bracketXInner], y: [yA, shortEnd],
       line: { color: combinedColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     // Top tick
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketX - tickOff, bracketX + tickOff], y: [yD, yD],
+      x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [shortEnd, shortEnd],
       line: { color: combinedColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
     // Bottom tick
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketX - tickOff, bracketX + tickOff], y: [yA, yA],
+      x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [yA, yA],
       line: { color: combinedColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
 
-    // o(Δx) bracket (same vertical line as dy, from D to B — the remainder)
+    // Long segment (outer) — from C to whichever endpoint is farther
+    const longEnd = dyIsLonger ? yD : y1;
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketX, bracketX], y: [yD, y1],
-      line: { color: combinedColor, width: 2, dash: 'dash' },
-      showlegend: false, hovertemplate: ''
-    });
-    // Top tick at B
-    t.push({
-      type: 'scatter', mode: 'lines',
-      x: [bracketX - tickOff, bracketX + tickOff], y: [y1, y1],
-      line: { color: combinedColor, width: 2 },
-      showlegend: false, hovertemplate: ''
-    });
-
-    // Δy bracket (vertical dashed line further right, from C to B — actual change)
-    const bracketXOffset2 = (xMax - xMin) * 0.10;
-    const bracketX2 = x1 + bracketXOffset2;
-    t.push({
-      type: 'scatter', mode: 'lines',
-      x: [bracketX2, bracketX2], y: [yA, y1],
+      x: [bracketXOuter, bracketXOuter], y: [yA, longEnd],
       line: { color: combinedColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     // Top tick
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketX2 - tickOff, bracketX2 + tickOff], y: [y1, y1],
+      x: [bracketXOuter - tickOff, bracketXOuter + tickOff], y: [longEnd, longEnd],
       line: { color: combinedColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
     // Bottom tick
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketX2 - tickOff, bracketX2 + tickOff], y: [yA, yA],
+      x: [bracketXOuter - tickOff, bracketXOuter + tickOff], y: [yA, yA],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // o(Δx) always on the inner line — from the short endpoint to the long endpoint
+    // Span from min(shortEnd, longEnd) to max(shortEnd, longEnd) minus the short segment
+    const oBottom = Math.min(shortEnd, longEnd);
+    const oTop = Math.max(shortEnd, longEnd);
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketXInner, bracketXInner], y: [oBottom, oTop],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Top tick at oTop
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [oTop, oTop],
       line: { color: combinedColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
@@ -236,10 +250,19 @@ const GeometricMeaningOfDifferential = () => {
     const y1 = fn(x1);
     const slope = normalPDFDerivative(x0, mu, sigma);
     const yD = slope * dx + y0;
-    const bracketXOffset = (xMax - xMin) * 0.035;
-    const bracketX = x1 + bracketXOffset;
-    const bracketXOffset2 = (xMax - xMin) * 0.10;
-    const bracketX2 = x1 + bracketXOffset2;
+    const yA = y0;
+    const dyLen = Math.abs(yD - yA);
+    const deltaYLen = Math.abs(y1 - yA);
+    const dyIsLonger = dyLen >= deltaYLen;
+
+    const shortEnd = dyIsLonger ? y1 : yD;
+    const longEnd = dyIsLonger ? yD : y1;
+    const shortLabel = dyIsLonger ? 'Δy' : 'dy';
+    const longLabel = dyIsLonger ? 'dy' : 'Δy';
+
+    const bracketXInner = x1 + (xMax - xMin) * 0.035;
+    const bracketXOuter = x1 + (xMax - xMin) * 0.10;
+
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: x1, y: 0, text: 'x₁', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
@@ -250,12 +273,12 @@ const GeometricMeaningOfDifferential = () => {
       // C and D labels (right side of the points)
       { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
       { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
-      // dy label to the right of the dy bracket
-      { x: bracketX, y: (y0 + yD) / 2, text: 'dy', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
-      // o(Δx) label on the same line as dy, at BD midpoint
-      { x: bracketX, y: (yD + y1) / 2, text: 'o(Δx)', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
-      // Δy label to the right of the Δy bracket
-      { x: bracketX2, y: (y0 + y1) / 2, text: 'Δy', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
+      // Short segment label (inner, left)
+      { x: bracketXInner, y: (y0 + shortEnd) / 2, text: shortLabel, showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      // o(Δx) label on the same inner line
+      { x: bracketXInner, y: (shortEnd + longEnd) / 2, text: 'o(Δx)', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      // Long segment label (outer, right)
+      { x: bracketXOuter, y: (y0 + longEnd) / 2, text: longLabel, showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
     ];
   }, [x0, x1, dx, mu, sigma, fn, palette, xRange, xMin, xMax]);
 
