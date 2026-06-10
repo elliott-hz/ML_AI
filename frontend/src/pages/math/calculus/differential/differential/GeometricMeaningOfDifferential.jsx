@@ -63,6 +63,7 @@ const GeometricMeaningOfDifferential = () => {
     const y0 = fn(x0);
     const y1 = fn(x1);
     const combinedColor = palette.auxTraces.combined;
+    const bracketColor = palette.auxTraces.tangent;
 
     t.push({
       type: 'scatter', mode: 'lines',
@@ -147,21 +148,21 @@ const GeometricMeaningOfDifferential = () => {
     t.push({
       type: 'scatter', mode: 'lines',
       x: [x0, x1], y: [0, 0],
-      line: { color: combinedColor, width: 2, dash: 'dash' },
+      line: { color: bracketColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     // Left tick
     t.push({
       type: 'scatter', mode: 'lines',
       x: [x0, x0], y: [-tickOff, tickOff],
-      line: { color: combinedColor, width: 2 },
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
     // Right tick
     t.push({
       type: 'scatter', mode: 'lines',
       x: [x1, x1], y: [-tickOff, tickOff],
-      line: { color: combinedColor, width: 2 },
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
 
@@ -175,28 +176,28 @@ const GeometricMeaningOfDifferential = () => {
     // inner bracket position (closer to x₁)
     const bracketXInner = x1 + (xMax - xMin) * 0.035;
     // outer bracket position (further right)
-    const bracketXOuter = x1 + (xMax - xMin) * 0.13;
+    const bracketXOuter = x1 + (xMax - xMin) * 0.16;
 
     // Short segment (inner) — from C to whichever endpoint is closer
     const shortEnd = dyIsLonger ? y1 : yD;
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXInner, bracketXInner], y: [yA, shortEnd],
-      line: { color: combinedColor, width: 2, dash: 'dash' },
+      line: { color: bracketColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     // Top tick
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [shortEnd, shortEnd],
-      line: { color: combinedColor, width: 2 },
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
     // Bottom tick
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [yA, yA],
-      line: { color: combinedColor, width: 2 },
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
 
@@ -205,21 +206,21 @@ const GeometricMeaningOfDifferential = () => {
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXOuter, bracketXOuter], y: [yA, longEnd],
-      line: { color: combinedColor, width: 2, dash: 'dash' },
+      line: { color: bracketColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
-    // Top tick
+    // Top solid line: bracket → inner bracket (past x₁) at longEnd
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketXOuter - tickOff, bracketXOuter + tickOff], y: [longEnd, longEnd],
-      line: { color: combinedColor, width: 2 },
+      x: [bracketXOuter, bracketXInner], y: [longEnd, longEnd],
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
-    // Bottom tick
+    // Bottom solid line: bracket → inner bracket (past x₁) at yA (connects to C)
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketXOuter - tickOff, bracketXOuter + tickOff], y: [yA, yA],
-      line: { color: combinedColor, width: 2 },
+      x: [bracketXOuter, bracketXInner], y: [yA, yA],
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
 
@@ -230,14 +231,14 @@ const GeometricMeaningOfDifferential = () => {
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXInner, bracketXInner], y: [oBottom, oTop],
-      line: { color: combinedColor, width: 2, dash: 'dash' },
+      line: { color: bracketColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     // Top tick at oTop
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [oTop, oTop],
-      line: { color: combinedColor, width: 2 },
+      line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
 
@@ -261,12 +262,12 @@ const GeometricMeaningOfDifferential = () => {
     const longLabel = dyIsLonger ? 'dy' : 'Δy';
 
     const bracketXInner = x1 + (xMax - xMin) * 0.035;
-    const bracketXOuter = x1 + (xMax - xMin) * 0.13;
+    const bracketXOuter = x1 + (xMax - xMin) * 0.16;
 
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: x1, y: 0, text: 'x₁', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
-      { x: (x0 + x1) / 2, y: 0, text: 'dx = Δx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      { x: (x0 + x1) / 2, y: 0, text: 'dx = Δx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       // Point labels on the curve
       { x: x0, y: y0, text: 'A', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
       { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'left', yanchor: 'top', xshift: 6, yshift: -6, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
@@ -274,11 +275,11 @@ const GeometricMeaningOfDifferential = () => {
       { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
       { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
       // Short segment label (inner, left)
-      { x: bracketXInner, y: (y0 + shortEnd) / 2, text: shortLabel, showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      { x: bracketXInner, y: (y0 + shortEnd) / 2, text: shortLabel, showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       // o(Δx) label on the same inner line
-      { x: bracketXInner, y: (shortEnd + longEnd) / 2, text: 'o(Δx)', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      { x: bracketXInner, y: (shortEnd + longEnd) / 2, text: 'o(Δx)', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       // Long segment label (outer, right)
-      { x: bracketXOuter, y: (y0 + longEnd) / 2, text: longLabel, showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
+      { x: bracketXOuter, y: (y0 + longEnd) / 2, text: longLabel, showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } }
     ];
   }, [x0, x1, dx, mu, sigma, fn, palette, xRange, xMin, xMax]);
 
