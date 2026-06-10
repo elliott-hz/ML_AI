@@ -49,6 +49,12 @@
               "name": "Summation",
               "path": "/mathematics/2-calculus/summation",
               "component": "Summation"
+            },
+            {
+              "id": "math_2_2",
+              "name": "Differential",
+              "path": "/mathematics/2-calculus/differential",
+              "component": "Differential"
             }
           ]
         }

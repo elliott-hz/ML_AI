@@ -63,6 +63,10 @@ import Summation from '../pages/math/calculus/Summation';
 import AreaUnderCurve from '../pages/math/calculus/summation/motivation/AreaUnderCurve';
 import RiemannSum from '../pages/math/calculus/summation/summation/RiemannSum';
 
+// 数学模块 - Calculus / Differential
+import Differential from '../pages/math/calculus/Differential';
+import GeometricMeaningOfDifferential from '../pages/math/calculus/differential/differential/GeometricMeaningOfDifferential';
+
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
   // 这里可以根据 component name 动态导入对应的页面组件
@@ -168,6 +172,12 @@ const AppRoutes = () => {
         {/* 数学模块 - Calculus / Summation 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/2-calculus/summation/area-under-curve" element={<AreaUnderCurve />} />
         <Route path="/mathematics/2-calculus/summation/riemann-sum" element={<RiemannSum />} />
+
+        {/* 数学模块 - Calculus / Differential 主页面 */}
+        <Route path="/mathematics/2-calculus/differential" element={<Differential />} />
+
+        {/* 数学模块 - Calculus / Differential 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/2-calculus/differential/geometric-meaning" element={<GeometricMeaningOfDifferential />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/deep-learning/1-neural-networks/perceptron" element={<div>Perceptron Page - Coming Soon</div>} />
