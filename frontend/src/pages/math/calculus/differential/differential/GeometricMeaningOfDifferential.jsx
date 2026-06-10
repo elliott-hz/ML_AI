@@ -28,7 +28,7 @@ const GeometricMeaningOfDifferential = () => {
     mu: 1.0,
     sigma: 0.5,
     x0: 0.5,
-    dx: 0.35,
+    dx: 0.45,
     xRange: [-4, 4],
     aspectRatio: 'auto',
     legendPosition: 'top-right',
@@ -62,18 +62,18 @@ const GeometricMeaningOfDifferential = () => {
     // Vertical dashed lines from x-axis to curve at x0 and x1
     const y0 = fn(x0);
     const y1 = fn(x1);
-    const auxColor = palette.auxTraces.tangent;
+    const combinedColor = palette.auxTraces.combined;
 
     t.push({
       type: 'scatter', mode: 'lines',
       x: [x0, x0], y: [0, y0],
-      line: { color: auxColor, width: 2, dash: 'dash' },
+      line: { color: combinedColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     t.push({
       type: 'scatter', mode: 'lines',
       x: [x1, x1], y: [0, y1],
-      line: { color: auxColor, width: 2, dash: 'dash' },
+      line: { color: combinedColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
 
@@ -94,7 +94,6 @@ const GeometricMeaningOfDifferential = () => {
     });
 
     // Horizontal dashed line from A to the right, intersecting x₁ vertical at C
-    const combinedColor = palette.auxTraces.combined;
     const yA = y0;
     t.push({
       type: 'scatter', mode: 'lines',
@@ -124,35 +123,30 @@ const GeometricMeaningOfDifferential = () => {
       showlegend: false, hovertemplate: ''
     });
 
-    // Vertical dashed line from C up to B (same color)
+    // Secant line AB (solid, connecting A and B)
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [x1, x1], y: [yA, y1],
+      x: [x0, x1], y: [yA, y1],
+      line: { color: palette.auxTraces.secant, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // Vertical dashed line from D (tangent line) up through C to B (same color)
+    const yD = slope * dx + yA;
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [x1, x1], y: [yD, y1],
       line: { color: combinedColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
 
-    // dx bracket (dashed horizontal line with tick marks on x-axis)
-    const tickOff = (xMax - xMin) * 0.008;
+    // Marker D at intersection of tangent line and x₁ vertical
     t.push({
-      type: 'scatter', mode: 'lines',
-      x: [x0, x1], y: [0, 0],
-      line: { color: palette.auxTraces.combined, width: 2, dash: 'dash' },
-      showlegend: false, hovertemplate: ''
-    });
-    // Left tick
-    t.push({
-      type: 'scatter', mode: 'lines',
-      x: [x0, x0], y: [-tickOff, tickOff],
-      line: { color: palette.auxTraces.combined, width: 2 },
-      showlegend: false, hovertemplate: ''
-    });
-    // Right tick
-    t.push({
-      type: 'scatter', mode: 'lines',
-      x: [x1, x1], y: [-tickOff, tickOff],
-      line: { color: palette.auxTraces.combined, width: 2 },
-      showlegend: false, hovertemplate: ''
+      type: 'scatter', mode: 'markers',
+      x: [x1], y: [yD],
+      marker: { color: palette.mainTraces.tertiary, size: 9, symbol: 'circle' },
+      name: 'D', showlegend: false,
+      hovertemplate: 'D: (%{x:.2f}, %{y:.4f})<extra></extra>'
     });
 
     return t;
@@ -162,17 +156,20 @@ const GeometricMeaningOfDifferential = () => {
   const annotations = useMemo(() => {
     const y0 = fn(x0);
     const y1 = fn(x1);
+    const slope = normalPDFDerivative(x0, mu, sigma);
+    const yD = slope * dx + y0;
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: x1, y: 0, text: 'x₁', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: (x0 + x1) / 2, y: 0, text: 'dx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
       // Point labels on the curve
       { x: x0, y: y0, text: 'A', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
-      { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
-      // C label (right side of the intersection point)
-      { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } }
+      { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'left', yanchor: 'top', xshift: 6, yshift: -6, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
+      // C and D labels (right side of the points)
+      { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
+      { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } }
     ];
-  }, [x0, x1, fn, palette]);
+  }, [x0, x1, dx, mu, sigma, fn, palette]);
 
   return (
     <PageContainer>
