@@ -31,12 +31,12 @@ function normalPDF(x, mu = 0, sigma = 1) {
  */
 const RiemannSum = () => {
   const [params, setParams] = useState({
-    mu: 0,
-    sigma: 1,
-    a: -2,
-    b: 2,
-    n: 5,
-    xRange: [-4, 4],
+    mu: 1.4,
+    sigma: 3.0,
+    a: 1.3,
+    b: 7.7,
+    n: 22,
+    xRange: [1, 8],
     aspectRatio: 'auto',
     legendPosition: 'top-right',
     plotStyle: 'medium'
@@ -111,27 +111,29 @@ const RiemannSum = () => {
     const midIdx = Math.min(Math.floor(n / 2), rectData.length - 1);
     const { xLeft, xRight, xMid, h } = rectData[midIdx];
     const highlightColor = palette.auxTraces.combined;
+    const yPeak = 1 / (sigma * Math.sqrt(2 * Math.PI));
+    const yMax = yPeak * 1.15;
 
-    // Δx_i bracket (horizontal double-headed line on x-axis)
-    const bracketY = 0;
-    const bracketOff = (xMax - xMin) * 0.015;
+    // Δx_i bracket (dashed horizontal line below x-axis, same level as a/b labels)
+    const bracketY = -yMax * 0.03;
+    const tickHalf = deltaX * 0.008;
     t.push({
       type: 'scatter', mode: 'lines',
       x: [xLeft, xRight], y: [bracketY, bracketY],
-      line: { color: highlightColor, width: 2.5 },
+      line: { color: highlightColor, width: 2.5, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
     // Left tick
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [xLeft, xLeft], y: [-bracketOff * 2, bracketOff * 2],
+      x: [xLeft, xLeft], y: [bracketY - tickHalf, bracketY + tickHalf],
       line: { color: highlightColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
     // Right tick
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [xRight, xRight], y: [-bracketOff * 2, bracketOff * 2],
+      x: [xRight, xRight], y: [bracketY - tickHalf, bracketY + tickHalf],
       line: { color: highlightColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
@@ -145,8 +147,6 @@ const RiemannSum = () => {
     });
 
     // 3. Vertical lines at a, b
-    const yPeak = 1 / (sigma * Math.sqrt(2 * Math.PI));
-    const yMax = yPeak * 1.15;
     const auxColor = palette.auxTraces.tangent;
     t.push({
       type: 'scatter', mode: 'lines',
@@ -174,19 +174,19 @@ const RiemannSum = () => {
     const midIdx = Math.min(Math.floor(n / 2), n - 1);
     const xLeft = aClamp + midIdx * deltaX;
     const xRight = xLeft + deltaX;
-    const xMid = (xLeft + xRight) / 2;
-    const h = fn(xMid);
     const highlightColor = palette.auxTraces.combined;
     const yPeak = 1 / (sigma * Math.sqrt(2 * Math.PI));
     const yMax = yPeak * 1.15;
+    const xMid = (xLeft + xRight) / 2;
+    const h = fn(xMid);
 
     return [
       // a label
       { x: aClamp, y: 0, text: 'a', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       // b label
       { x: bClamp, y: 0, text: 'b', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
-      // Δx_i label above the bracket
-      { x: (xLeft + xRight) / 2, y: 0, text: 'Δxᵢ', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 10, font: { color: highlightColor, size: 14, weight: 700 } },
+      // Δx_i label below the bracket (same level as a/b)
+      { x: (xLeft + xRight) / 2, y: -yMax * 0.03, text: 'Δxᵢ', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: highlightColor, size: 14, weight: 700 } },
       // f(ξ_i) label at top of vertical guide
       { x: xMid, y: h, text: 'f(ξᵢ)', showarrow: true, arrowhead: 2, arrowcolor: highlightColor, ax: 35, ay: -30, font: { color: highlightColor, size: 13, weight: 700 } }
     ];
@@ -267,8 +267,8 @@ const RiemannSum = () => {
               parameters={params}
               onChange={setParams}
               config={[
-                { name: 'a', label: 'a (left)', min: -4, max: 4, step: 0.1 },
-                { name: 'b', label: 'b (right)', min: -4, max: 4, step: 0.1 },
+                { name: 'a', label: 'a (left)', min: -8, max: 8, step: 0.1 },
+                { name: 'b', label: 'b (right)', min: -8, max: 8, step: 0.1 },
                 { name: 'n', label: 'n (rectangles)', min: 1, max: 50, step: 1 }
               ]}
             />
