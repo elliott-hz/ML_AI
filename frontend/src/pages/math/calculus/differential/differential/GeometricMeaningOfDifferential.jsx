@@ -73,20 +73,39 @@ const GeometricMeaningOfDifferential = () => {
       showlegend: false, hovertemplate: ''
     });
 
-    // Marker points on the curve
+    // Marker points on the curve — A (at x₀) and B (at x₁)
     t.push({
       type: 'scatter', mode: 'markers',
       x: [x0], y: [y0],
       marker: { color: palette.mainTraces.secondary, size: 10, symbol: 'circle' },
-      name: `P(x₀, f(x₀))`, showlegend: false,
-      hovertemplate: 'x₀: %{x:.2f}<br>f(x₀): %{y:.4f}<extra></extra>'
+      name: 'A', showlegend: false,
+      hovertemplate: 'A: (%{x:.2f}, %{y:.4f})<extra></extra>'
     });
     t.push({
       type: 'scatter', mode: 'markers',
       x: [x1], y: [y1],
       marker: { color: palette.mainTraces.secondary, size: 10, symbol: 'circle' },
-      name: `Q(x₁, f(x₁))`, showlegend: false,
-      hovertemplate: 'x₁: %{x:.2f}<br>f(x₁): %{y:.4f}<extra></extra>'
+      name: 'B', showlegend: false,
+      hovertemplate: 'B: (%{x:.2f}, %{y:.4f})<extra></extra>'
+    });
+
+    // Horizontal dashed line from A to the right, intersecting x₁ vertical at C
+    const combinedColor = palette.auxTraces.combined;
+    const yA = y0;
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [x0, x1], y: [yA, yA],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // Marker C at intersection (x₁, y₀)
+    t.push({
+      type: 'scatter', mode: 'markers',
+      x: [x1], y: [yA],
+      marker: { color: palette.mainTraces.tertiary, size: 9, symbol: 'circle' },
+      name: 'C', showlegend: false,
+      hovertemplate: 'C: (%{x:.2f}, %{y:.4f})<extra></extra>'
     });
 
     // dx bracket (dashed horizontal line with tick marks on x-axis)
@@ -117,12 +136,19 @@ const GeometricMeaningOfDifferential = () => {
 
   // ── Annotations ──────────────────────────────────────────
   const annotations = useMemo(() => {
+    const y0 = fn(x0);
+    const y1 = fn(x1);
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: x1, y: 0, text: 'x₁', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
-      { x: (x0 + x1) / 2, y: 0, text: 'dx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
+      { x: (x0 + x1) / 2, y: 0, text: 'dx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      // Point labels on the curve
+      { x: x0, y: y0, text: 'A', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
+      { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
+      // C label (right side of the intersection point)
+      { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } }
     ];
-  }, [x0, x1, palette]);
+  }, [x0, x1, fn, palette]);
 
   return (
     <PageContainer>
