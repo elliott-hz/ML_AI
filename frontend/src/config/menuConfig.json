@@ -61,6 +61,12 @@
               "name": "Definite Integral",
               "path": "/mathematics/2-calculus/definite-integral",
               "component": "DefiniteIntegral"
+            },
+            {
+              "id": "math_2_4",
+              "name": "Integral Function",
+              "path": "/mathematics/2-calculus/integral-function",
+              "component": "IntegralFunction"
             }
           ]
         }

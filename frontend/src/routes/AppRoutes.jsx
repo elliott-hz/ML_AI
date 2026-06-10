@@ -75,6 +75,11 @@ import ConstantMultipleProperty from '../pages/math/calculus/definite-integral/p
 import IntegralAdditivityProperty from '../pages/math/calculus/definite-integral/properties/IntegralAdditivityProperty';
 import SignPreservingProperty from '../pages/math/calculus/definite-integral/properties/SignPreservingProperty';
 
+// 数学模块 - Calculus / Integral Function
+import IntegralFunction from '../pages/math/calculus/IntegralFunction';
+import GeometricMeaning from '../pages/math/calculus/integral-function/GeometricMeaning';
+import FundamentalTheorem from '../pages/math/calculus/integral-function/anti-derivative/FundamentalTheorem';
+
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
   // 这里可以根据 component name 动态导入对应的页面组件
@@ -196,6 +201,13 @@ const AppRoutes = () => {
         <Route path="/mathematics/2-calculus/definite-integral/constant-multiple" element={<ConstantMultipleProperty />} />
         <Route path="/mathematics/2-calculus/definite-integral/integral-additivity" element={<IntegralAdditivityProperty />} />
         <Route path="/mathematics/2-calculus/definite-integral/sign-preserving" element={<SignPreservingProperty />} />
+
+        {/* 数学模块 - Calculus / Integral Function 主页面 */}
+        <Route path="/mathematics/2-calculus/integral-function" element={<IntegralFunction />} />
+
+        {/* 数学模块 - Calculus / Integral Function 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/2-calculus/integral-function/geometric-meaning" element={<GeometricMeaning />} />
+        <Route path="/mathematics/2-calculus/integral-function/fundamental-theorem" element={<FundamentalTheorem />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/deep-learning/1-neural-networks/perceptron" element={<div>Perceptron Page - Coming Soon</div>} />
