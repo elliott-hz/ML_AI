@@ -209,17 +209,17 @@ const GeometricMeaningOfDifferential = () => {
       line: { color: bracketColor, width: 2, dash: 'dash' },
       showlegend: false, hovertemplate: ''
     });
-    // Top solid line: bracket → inner bracket (past x₁) at longEnd
+    // Top solid line: spans from inner bracket past outer bracket to the right
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketXOuter, bracketXInner], y: [longEnd, longEnd],
+      x: [bracketXInner, bracketXOuter + tickOff * 3], y: [longEnd, longEnd],
       line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
-    // Bottom solid line: bracket → inner bracket (past x₁) at yA (connects to C)
+    // Bottom solid line: spans from inner bracket past outer bracket to the right
     t.push({
       type: 'scatter', mode: 'lines',
-      x: [bracketXOuter, bracketXInner], y: [yA, yA],
+      x: [bracketXInner, bracketXOuter + tickOff * 3], y: [yA, yA],
       line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
@@ -238,6 +238,13 @@ const GeometricMeaningOfDifferential = () => {
     t.push({
       type: 'scatter', mode: 'lines',
       x: [bracketXInner - tickOff, bracketXInner + tickOff], y: [oTop, oTop],
+      line: { color: bracketColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+    // Bottom tick at oBottom — extends further right
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketXInner - tickOff, bracketXInner + tickOff * 5], y: [oBottom, oBottom],
       line: { color: bracketColor, width: 2 },
       showlegend: false, hovertemplate: ''
     });
@@ -270,7 +277,7 @@ const GeometricMeaningOfDifferential = () => {
       { x: (x0 + x1) / 2, y: 0, text: 'dx = Δx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       // Point labels on the curve
       { x: x0, y: y0, text: 'A', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
-      { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'left', yanchor: 'top', xshift: 6, yshift: -6, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
+      { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'right', yanchor: 'top', xshift: -6, yshift: -6, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
       // C and D labels (right side of the points)
       { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
       { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
