@@ -47,12 +47,12 @@ const FUNCTIONS = {
 const IntegralDefinitionViaLimit = () => {
   const [params, setParams] = useState({
     funcKey: 'f(x) = x²/4 + 1',
-    a: 0,
-    b: 4,
+    a: 0.2,
+    b: 4.8,
     n: 5,
     rectType: 'midpoint',
     showError: true,
-    xRange: [-1, 5],
+    xRange: [0, 5],
     aspectRatio: 'auto',
     legendPosition: 'top-right',
     plotStyle: 'medium'
@@ -161,41 +161,35 @@ const IntegralDefinitionViaLimit = () => {
       hovertemplate: ''
     });
 
-    // 4. Error region (difference between rectangles and curve)
+    // 4. Error regions (one per rectangle — handles crossing correctly)
     if (showError) {
-      // Build step-function polygon for the Riemann sum
-      const errorPts = [];
       for (let i = 0; i < n; i++) {
         const { xLeft, xRight, height } = riemann.rects[i];
-        const curveYLeft = fn(xLeft);
-        const curveYRight = fn(xRight);
-        // At each x, the "error" is |curve - rectangle|
-        // For the polygon, we trace the top of rectangles then the curve back
-        if (i === 0) {
-          errorPts.push({ x: xLeft, y: height });
+        // Fine-sample the curve within this rectangle
+        const samples = 50;
+        const polyPts = [];
+        // Rectangle top (left → right)
+        polyPts.push({ x: xLeft, y: height });
+        polyPts.push({ x: xRight, y: height });
+        // Curve back (right → left)
+        for (let j = samples; j >= 0; j--) {
+          const xi = xLeft + (xRight - xLeft) * j / samples;
+          polyPts.push({ x: xi, y: fn(xi) });
         }
-        errorPts.push({ x: xRight, y: height });
-      }
-      // Now trace the curve back from right to left
-      const errorCurveXs = Array.from({ length: 101 }, (_, i) => bClamp - i * (bClamp - aClamp) / 100);
-      const errorCurveYs = errorCurveXs.map(fn);
-      for (const ex of errorCurveXs) {
-        errorPts.push({ x: ex, y: fn(ex) });
-      }
-      // Close polygon
-      if (errorPts.length > 0) {
-        errorPts.push(errorPts[0]);
-      }
+        // Close polygon
+        polyPts.push(polyPts[0]);
 
-      t.push({
-        x: errorPts.map(p => p.x), y: errorPts.map(p => p.y),
-        type: 'scatter', mode: 'lines',
-        fill: 'toself',
-        fillcolor: 'rgba(239, 68, 68, 0.25)',  // red translucent error
-        line: { width: 0 },
-        name: 'Error region',
-        hovertemplate: ''
-      });
+        t.push({
+          x: polyPts.map(p => p.x), y: polyPts.map(p => p.y),
+          type: 'scatter', mode: 'lines',
+          fill: 'toself',
+          fillcolor: 'rgba(239, 68, 68, 0.25)',
+          line: { width: 0 },
+          showlegend: i === 0,
+          name: i === 0 ? 'Error region' : undefined,
+          hovertemplate: ''
+        });
+      }
     }
 
     // 5. Sample point markers (for current rectType)
