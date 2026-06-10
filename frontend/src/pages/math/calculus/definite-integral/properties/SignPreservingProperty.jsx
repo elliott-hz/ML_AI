@@ -63,6 +63,16 @@ const SignPreservingProperty = () => {
   const themeMode = useThemeMode();
   const palette = getTracePalette(themeMode);
 
+  // Style config matching DefiniteIntegralPlotter's mapping
+  const styleConfig = useMemo(() => {
+    switch (params.plotStyle) {
+      case 'thin': return { fontSize: 10 };
+      case 'thick': return { fontSize: 16 };
+      case 'extra-thick': return { fontSize: 18 };
+      default: return { fontSize: 12 };
+    }
+  }, [params.plotStyle]);
+
   const { funcPair, a, b, xRange } = params;
   const xMin = xRange[0], xMax = xRange[1];
   const pair = FUNCTIONS[funcPair];
@@ -157,10 +167,10 @@ const SignPreservingProperty = () => {
     const bClamp = Math.max(xMin, Math.min(xMax, b));
     const auxColor = palette.auxTraces.tangent;
     return [
-      { x: aClamp, y: 0, text: 'a', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: 14, weight: 700 } },
-      { x: bClamp, y: 0, text: 'b', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: 14, weight: 700 } }
+      { x: aClamp, y: 0, text: 'a', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } },
+      { x: bClamp, y: 0, text: 'b', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } }
     ];
-  }, [a, b, xRange, xMin, xMax, palette]);
+  }, [a, b, xRange, xMin, xMax, palette, styleConfig]);
 
   const fmt = (v, d = 4) => Number(v.toFixed(d)).toString();
 

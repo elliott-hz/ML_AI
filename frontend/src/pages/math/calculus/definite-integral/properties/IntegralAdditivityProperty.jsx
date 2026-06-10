@@ -55,6 +55,16 @@ const IntegralAdditivityProperty = () => {
   const themeMode = useThemeMode();
   const palette = getTracePalette(themeMode);
 
+  // Style config matching DefiniteIntegralPlotter's mapping
+  const styleConfig = useMemo(() => {
+    switch (params.plotStyle) {
+      case 'thin': return { fontSize: 10 };
+      case 'thick': return { fontSize: 16 };
+      case 'extra-thick': return { fontSize: 18 };
+      default: return { fontSize: 12 };
+    }
+  }, [params.plotStyle]);
+
   const { funcKey, a, b, c, xRange } = params;
   const xMin = xRange[0], xMax = xRange[1];
   const funcDef = FUNCTIONS[funcKey];
@@ -144,11 +154,11 @@ const IntegralAdditivityProperty = () => {
     const cClamp = Math.max(xMin, Math.min(xMax, c));
     const auxColor = palette.auxTraces.tangent;
     return [
-      { x: aClamp, y: 0, text: 'a', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: 14, weight: 700 } },
-      { x: bClamp, y: 0, text: 'b', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: 14, weight: 700 } },
-      { x: cClamp, y: 0, text: 'c', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: 14, weight: 700 } }
+      { x: aClamp, y: 0, text: 'a', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } },
+      { x: bClamp, y: 0, text: 'b', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } },
+      { x: cClamp, y: 0, text: 'c', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } }
     ];
-  }, [a, b, c, xRange, xMin, xMax, palette]);
+  }, [a, b, c, xRange, xMin, xMax, palette, styleConfig]);
 
   const fmt = (v, d = 4) => Number(v.toFixed(d)).toString();
 

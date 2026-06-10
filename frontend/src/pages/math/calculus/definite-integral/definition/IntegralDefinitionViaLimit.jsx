@@ -67,6 +67,16 @@ const IntegralDefinitionViaLimit = () => {
   const fn = funcDef.fn;
   const antiderivative = funcDef.antiderivative;
 
+  // Style config matching DefiniteIntegralPlotter's mapping
+  const styleConfig = useMemo(() => {
+    switch (params.plotStyle) {
+      case 'thin': return { fontSize: 10 };
+      case 'thick': return { fontSize: 16 };
+      case 'extra-thick': return { fontSize: 18 };
+      default: return { fontSize: 12 };
+    }
+  }, [params.plotStyle]);
+
   // ── Exact integral ──────────────────────────────────────
   const exactIntegral = useMemo(() => {
     return antiderivative(b) - antiderivative(a);
@@ -208,6 +218,19 @@ const IntegralDefinitionViaLimit = () => {
       hovertemplate: 'ξ: %{x:.2f}<br>f(ξ): %{y:.4f}<extra></extra>'
     });
 
+    // 5b. Dashed vertical lines from each ξᵢ down to x-axis
+    const tertiaryColor = palette.mainTraces.tertiary;
+    for (let i = 0; i < sampleXs.length; i++) {
+      const xi = sampleXs[i];
+      const yi = sampleYs[i];
+      t.push({
+        type: 'scatter', mode: 'lines',
+        x: [xi, xi], y: [0, yi],
+        line: { color: tertiaryColor, width: 1.5, dash: 'dot' },
+        showlegend: false, hovertemplate: ''
+      });
+    }
+
     // 6. Vertical lines at a, b
     const auxColor = palette.auxTraces.tangent;
     const allYs = xs.map(fn);
@@ -248,8 +271,9 @@ const IntegralDefinitionViaLimit = () => {
     const aClamp = Math.max(xMin, Math.min(xMax, a));
     const bClamp = Math.max(xMin, Math.min(xMax, b));
     const auxColor = palette.auxTraces.tangent;
+    const tertiaryColor = palette.mainTraces.tertiary;
 
-    return [
+    const result = [
       { x: aClamp, y: 0, text: 'a', showarrow: false,
         xanchor: 'center', yanchor: 'top', yshift: -10,
         font: { color: auxColor, size: 16, weight: 700 } },
@@ -257,7 +281,22 @@ const IntegralDefinitionViaLimit = () => {
         xanchor: 'center', yanchor: 'top', yshift: -10,
         font: { color: auxColor, size: 16, weight: 700 } }
     ];
-  }, [a, b, xRange, xMin, xMax, palette]);
+
+    // ξᵢ labels below x-axis (only for n ≤ 20 to avoid clutter)
+    if (n <= 20 && riemann.rects.length > 0) {
+      for (let i = 0; i < riemann.rects.length; i++) {
+        const xi = riemann.rects[i].sampleX;
+        result.push({
+          x: xi, y: 0,
+          text: `ξ${i + 1}`, showarrow: false,
+          xanchor: 'center', yanchor: 'top', yshift: -8,
+          font: { color: tertiaryColor, size: styleConfig.fontSize, weight: 500 }
+        });
+      }
+    }
+
+    return result;
+  }, [a, b, xRange, xMin, xMax, palette, n, riemann, styleConfig]);
 
   const fmt = (v, d = 4) => Number(v.toFixed(d)).toString();
 
