@@ -175,7 +175,7 @@ const GeometricMeaningOfDifferential = () => {
     // inner bracket position (closer to x₁)
     const bracketXInner = x1 + (xMax - xMin) * 0.035;
     // outer bracket position (further right)
-    const bracketXOuter = x1 + (xMax - xMin) * 0.10;
+    const bracketXOuter = x1 + (xMax - xMin) * 0.13;
 
     // Short segment (inner) — from C to whichever endpoint is closer
     const shortEnd = dyIsLonger ? y1 : yD;
@@ -261,7 +261,7 @@ const GeometricMeaningOfDifferential = () => {
     const longLabel = dyIsLonger ? 'dy' : 'Δy';
 
     const bracketXInner = x1 + (xMax - xMin) * 0.035;
-    const bracketXOuter = x1 + (xMax - xMin) * 0.10;
+    const bracketXOuter = x1 + (xMax - xMin) * 0.13;
 
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
