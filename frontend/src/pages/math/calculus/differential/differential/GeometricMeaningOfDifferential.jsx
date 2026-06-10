@@ -29,7 +29,7 @@ const GeometricMeaningOfDifferential = () => {
     sigma: 0.5,
     x0: 0.5,
     dx: 0.45,
-    xRange: [-4, 4],
+    xRange: [-1, 2],
     aspectRatio: 'auto',
     legendPosition: 'top-right',
     plotStyle: 'medium'
