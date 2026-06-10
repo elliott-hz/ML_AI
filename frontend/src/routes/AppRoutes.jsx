@@ -67,6 +67,14 @@ import RiemannSum from '../pages/math/calculus/summation/summation/RiemannSum';
 import Differential from '../pages/math/calculus/Differential';
 import GeometricMeaningOfDifferential from '../pages/math/calculus/differential/differential/GeometricMeaningOfDifferential';
 
+// 数学模块 - Calculus / Definite Integral
+import DefiniteIntegral from '../pages/math/calculus/DefiniteIntegral';
+import IntegralDefinitionViaLimit from '../pages/math/calculus/definite-integral/definition/IntegralDefinitionViaLimit';
+import SumOrDifferenceProperty from '../pages/math/calculus/definite-integral/properties/SumOrDifferenceProperty';
+import ConstantMultipleProperty from '../pages/math/calculus/definite-integral/properties/ConstantMultipleProperty';
+import IntegralAdditivityProperty from '../pages/math/calculus/definite-integral/properties/IntegralAdditivityProperty';
+import SignPreservingProperty from '../pages/math/calculus/definite-integral/properties/SignPreservingProperty';
+
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
   // 这里可以根据 component name 动态导入对应的页面组件
@@ -178,6 +186,16 @@ const AppRoutes = () => {
 
         {/* 数学模块 - Calculus / Differential 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/2-calculus/differential/geometric-meaning" element={<GeometricMeaningOfDifferential />} />
+
+        {/* 数学模块 - Calculus / Definite Integral 主页面 */}
+        <Route path="/mathematics/2-calculus/definite-integral" element={<DefiniteIntegral />} />
+
+        {/* 数学模块 - Calculus / Definite Integral 四级子页面（不在菜单中显示） */}
+        <Route path="/mathematics/2-calculus/definite-integral/definition-via-limit" element={<IntegralDefinitionViaLimit />} />
+        <Route path="/mathematics/2-calculus/definite-integral/sum-or-difference" element={<SumOrDifferenceProperty />} />
+        <Route path="/mathematics/2-calculus/definite-integral/constant-multiple" element={<ConstantMultipleProperty />} />
+        <Route path="/mathematics/2-calculus/definite-integral/integral-additivity" element={<IntegralAdditivityProperty />} />
+        <Route path="/mathematics/2-calculus/definite-integral/sign-preserving" element={<SignPreservingProperty />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/deep-learning/1-neural-networks/perceptron" element={<div>Perceptron Page - Coming Soon</div>} />
