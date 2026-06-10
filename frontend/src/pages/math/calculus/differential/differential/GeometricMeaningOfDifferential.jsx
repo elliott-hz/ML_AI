@@ -123,14 +123,6 @@ const GeometricMeaningOfDifferential = () => {
       showlegend: false, hovertemplate: ''
     });
 
-    // Secant line AB (solid, connecting A and B)
-    t.push({
-      type: 'scatter', mode: 'lines',
-      x: [x0, x1], y: [yA, y1],
-      line: { color: palette.auxTraces.secant, width: 2 },
-      showlegend: false, hovertemplate: ''
-    });
-
     // Vertical dashed line from D (tangent line) up through C to B (same color)
     const yD = slope * dx + yA;
     t.push({
@@ -149,6 +141,53 @@ const GeometricMeaningOfDifferential = () => {
       hovertemplate: 'D: (%{x:.2f}, %{y:.4f})<extra></extra>'
     });
 
+    // dx bracket (dashed horizontal line with tick marks on x-axis)
+    const tickOff = (xMax - xMin) * 0.004;
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [x0, x1], y: [0, 0],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Left tick
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [x0, x0], y: [-tickOff, tickOff],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+    // Right tick
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [x1, x1], y: [-tickOff, tickOff],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // dy bracket (vertical dashed line on the right side of CD, with tick marks)
+    const bracketXOffset = (xMax - xMin) * 0.035;
+    const bracketX = x1 + bracketXOffset;
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX, bracketX], y: [yA, yD],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Top tick
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX - tickOff, bracketX + tickOff], y: [yD, yD],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+    // Bottom tick
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX - tickOff, bracketX + tickOff], y: [yA, yA],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+
     return t;
   }, [mu, sigma, x0, dx, xRange, fn, curveStep, palette, xMin, xMax]);
 
@@ -158,6 +197,8 @@ const GeometricMeaningOfDifferential = () => {
     const y1 = fn(x1);
     const slope = normalPDFDerivative(x0, mu, sigma);
     const yD = slope * dx + y0;
+    const bracketXOffset = (xMax - xMin) * 0.035;
+    const bracketX = x1 + bracketXOffset;
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: x1, y: 0, text: 'x₁', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
@@ -167,9 +208,11 @@ const GeometricMeaningOfDifferential = () => {
       { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'left', yanchor: 'top', xshift: 6, yshift: -6, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
       // C and D labels (right side of the points)
       { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
-      { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } }
+      { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
+      // dy label to the right of the dy bracket
+      { x: bracketX, y: (y0 + yD) / 2, text: 'dy', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
     ];
-  }, [x0, x1, dx, mu, sigma, fn, palette]);
+  }, [x0, x1, dx, mu, sigma, fn, palette, xRange, xMin, xMax]);
 
   return (
     <PageContainer>
