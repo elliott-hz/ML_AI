@@ -188,6 +188,45 @@ const GeometricMeaningOfDifferential = () => {
       showlegend: false, hovertemplate: ''
     });
 
+    // o(Δx) bracket (same vertical line as dy, from D to B — the remainder)
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX, bracketX], y: [yD, y1],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Top tick at B
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX - tickOff, bracketX + tickOff], y: [y1, y1],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // Δy bracket (vertical dashed line further right, from C to B — actual change)
+    const bracketXOffset2 = (xMax - xMin) * 0.10;
+    const bracketX2 = x1 + bracketXOffset2;
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX2, bracketX2], y: [yA, y1],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Top tick
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX2 - tickOff, bracketX2 + tickOff], y: [y1, y1],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+    // Bottom tick
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bracketX2 - tickOff, bracketX2 + tickOff], y: [yA, yA],
+      line: { color: combinedColor, width: 2 },
+      showlegend: false, hovertemplate: ''
+    });
+
     return t;
   }, [mu, sigma, x0, dx, xRange, fn, curveStep, palette, xMin, xMax]);
 
@@ -199,10 +238,12 @@ const GeometricMeaningOfDifferential = () => {
     const yD = slope * dx + y0;
     const bracketXOffset = (xMax - xMin) * 0.035;
     const bracketX = x1 + bracketXOffset;
+    const bracketXOffset2 = (xMax - xMin) * 0.10;
+    const bracketX2 = x1 + bracketXOffset2;
     return [
       { x: x0, y: 0, text: 'x₀', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
       { x: x1, y: 0, text: 'x₁', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.tangent, size: 14, weight: 700 } },
-      { x: (x0 + x1) / 2, y: 0, text: 'dx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      { x: (x0 + x1) / 2, y: 0, text: 'dx = Δx', showarrow: false, xanchor: 'center', yanchor: 'top', yshift: -10, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
       // Point labels on the curve
       { x: x0, y: y0, text: 'A', showarrow: false, xanchor: 'center', yanchor: 'bottom', yshift: 8, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
       { x: x1, y: y1, text: 'B', showarrow: false, xanchor: 'left', yanchor: 'top', xshift: 6, yshift: -6, font: { color: palette.mainTraces.secondary, size: 15, weight: 700 } },
@@ -210,7 +251,11 @@ const GeometricMeaningOfDifferential = () => {
       { x: x1, y: y0, text: 'C', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
       { x: x1, y: yD, text: 'D', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 8, font: { color: palette.mainTraces.tertiary, size: 15, weight: 700 } },
       // dy label to the right of the dy bracket
-      { x: bracketX, y: (y0 + yD) / 2, text: 'dy', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
+      { x: bracketX, y: (y0 + yD) / 2, text: 'dy', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      // o(Δx) label on the same line as dy, at BD midpoint
+      { x: bracketX, y: (yD + y1) / 2, text: 'o(Δx)', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } },
+      // Δy label to the right of the Δy bracket
+      { x: bracketX2, y: (y0 + y1) / 2, text: 'Δy', showarrow: false, xanchor: 'left', yanchor: 'middle', xshift: 16, font: { color: palette.auxTraces.combined, size: 14, weight: 700 } }
     ];
   }, [x0, x1, dx, mu, sigma, fn, palette, xRange, xMin, xMax]);
 
@@ -239,7 +284,7 @@ const GeometricMeaningOfDifferential = () => {
               onChange={setParams}
               config={[
                 { name: 'x0', label: 'x₀', min: -4, max: 4, step: 0.1 },
-                { name: 'dx', label: 'dx (increment)', min: 0.05, max: 1.0, step: 0.05 }
+                { name: 'dx', label: 'dx = Δx', min: 0.05, max: 1.0, step: 0.05 }
               ]}
             />
           </ParameterSection>
