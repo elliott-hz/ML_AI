@@ -52,7 +52,7 @@ const IntegralDefinitionViaLimit = () => {
     n: 5,
     rectType: 'midpoint',
     showError: true,
-    xRange: [0, 5],
+    xRange: [-0.5, 5.5],
     aspectRatio: 'auto',
     legendPosition: 'top-right',
     plotStyle: 'medium'
@@ -226,6 +226,20 @@ const IntegralDefinitionViaLimit = () => {
       showlegend: false, hovertemplate: ''
     });
 
+    // 7. Markers at (a, f(a)) and (b, f(b)) on the curve
+    const fa = fn(aClamp);
+    const fb = fn(bClamp);
+    t.push({
+      type: 'scatter', mode: 'markers',
+      x: [aClamp, bClamp], y: [fa, fb],
+      marker: {
+        color: auxColor, size: 11,
+        symbol: 'circle', line: { color: '#ffffff', width: 2 }
+      },
+      showlegend: false,
+      hovertemplate: '(%{x:.2f}, %{y:.4f})<extra></extra>'
+    });
+
     return t;
   }, [funcKey, fn, funcDef, a, b, n, rectType, showError, xRange, riemann, curveStep, palette, xMin, xMax]);
 
@@ -235,24 +249,15 @@ const IntegralDefinitionViaLimit = () => {
     const bClamp = Math.max(xMin, Math.min(xMax, b));
     const auxColor = palette.auxTraces.tangent;
 
-    const allYs = Array.from({ length: curvePts + 1 }, (_, i) => xMin + i * curveStep).map(fn);
-    const yMaxPlot = Math.max(...allYs.filter(v => isFinite(v))) * 1.15;
-
     return [
-      {
-        x: aClamp, y: 0,
-        text: 'a', showarrow: false,
+      { x: aClamp, y: 0, text: 'a', showarrow: false,
         xanchor: 'center', yanchor: 'top', yshift: -10,
-        font: { color: auxColor, size: 14, weight: 700 }
-      },
-      {
-        x: bClamp, y: 0,
-        text: 'b', showarrow: false,
+        font: { color: auxColor, size: 16, weight: 700 } },
+      { x: bClamp, y: 0, text: 'b', showarrow: false,
         xanchor: 'center', yanchor: 'top', yshift: -10,
-        font: { color: auxColor, size: 14, weight: 700 }
-      }
+        font: { color: auxColor, size: 16, weight: 700 } }
     ];
-  }, [a, b, xRange, fn, curvePts, curveStep, xMin, xMax, palette]);
+  }, [a, b, xRange, xMin, xMax, palette]);
 
   const fmt = (v, d = 4) => Number(v.toFixed(d)).toString();
 

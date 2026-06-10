@@ -50,6 +50,7 @@ const DefiniteIntegralPlotter = ({
   legendPosition = 'top-right',
   xTickMode = 'auto',
   yTickMode = 'auto',
+  annotations,
   children
 }) => {
   const plotRef = useRef(null);
@@ -231,9 +232,10 @@ const DefiniteIntegralPlotter = ({
         y: legendPosition === 'top-right' || legendPosition === 'top-left' ? 0.98 : 0.02,
         xanchor: legendPosition === 'top-right' || legendPosition === 'bottom-right' ? 'right' : 'left',
         yanchor: legendPosition === 'top-right' || legendPosition === 'top-left' ? 'top' : 'bottom'
-      }
+      },
+      annotations: annotations || []
     };
-  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode]);
+  }, [title, propXRange, autoYRange, themeMode, styleConfig, legendPosition, xTickMode, yTickMode, annotations]);
 
   const config = {
     displayModeBar: true,
