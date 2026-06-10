@@ -11,8 +11,8 @@ import ParameterSection from '../../../../../components/visualization/ParameterS
 import BackButton from '../../../../../components/layout/BackButton';
 import {
   PageContainer, Header, SectionTitleH1, SectionDescription,
-  ContentLayout, ControlsPanel, PlotPanel,
-  FormulaBox, FormulaTitle, Formula
+  FormulaBox, FormulaTitle, Formula,
+  FunctionSection
 } from '../../../../../components/common/LayoutStyled';
 import { legendPositionConfig } from '../../../../../constants/integralFunctionConfig';
 
@@ -66,6 +66,18 @@ function approximateIntegral(fn, a, b, n = 200) {
   }
   return sum * dx;
 }
+
+const ControlsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+
+  & > * {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+`;
 
 /**
  * FundamentalTheorem — visual verification of FTC Parts 1 & 2
@@ -151,6 +163,42 @@ const FundamentalTheorem = () => {
       hovertemplate: 'slope: %{y:.4f}<extra></extra>'
     });
 
+    // Vertical dashed lines at a, b, x from x-axis up to φ curve (T-shape)
+    const aClamp = Math.max(xMin, Math.min(xMax, a));
+    const bClamp = Math.max(xMin, Math.min(xMax, b));
+    const phiA = phi(aClamp);
+    const phiB = phi(bClamp);
+    // Line at a (φ(a)=0 so this is effectively a marker on x-axis)
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [aClamp, aClamp], y: [0, phiA],
+      line: { color: auxColor, width: 1.5, dash: 'dot' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Line at b
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [bClamp, bClamp], y: [0, phiB],
+      line: { color: auxColor, width: 1.5, dash: 'dot' },
+      showlegend: false, hovertemplate: ''
+    });
+    // Line at x
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [xClamp, xClamp], y: [0, phiX],
+      line: { color: auxColor, width: 1.5, dash: 'dot' },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // Marker at (a, φ(a)) = (a, 0)
+    t.push({
+      type: 'scatter', mode: 'markers',
+      x: [aClamp], y: [phiA],
+      marker: { color: auxColor, size: 10, symbol: 'circle', line: { color: '#ffffff', width: 2 } },
+      showlegend: false,
+      hovertemplate: 'φ(%{x:.2f}) = %{y:.4f}<extra></extra>'
+    });
+
     // Marker at (x, φ(x))
     t.push({
       type: 'scatter', mode: 'markers',
@@ -161,7 +209,7 @@ const FundamentalTheorem = () => {
     });
 
     return t;
-  }, [phi, x, xRange, xMin, xMax, curveStep, palette, phiPrimeAtX]);
+  }, [phi, a, b, x, xRange, xMin, xMax, curveStep, palette, phiPrimeAtX]);
 
   // ── Right Plot: f(x) with integral area ─────────────
   const rightTraces = useMemo(() => {
@@ -181,29 +229,51 @@ const FundamentalTheorem = () => {
       hovertemplate: 'x: %{x:.2f}<br>f(x): %{y:.4f}<extra></extra>'
     });
 
-    // Shaded area from a to b
     const aClamp = Math.max(xMin, Math.min(xMax, a));
     const bClamp = Math.max(xMin, Math.min(xMax, b));
-    const left = Math.min(aClamp, bClamp);
-    const right = Math.max(aClamp, bClamp);
-    if (right > left) {
-      const fillPts = Math.max(2, Math.round((right - left) / curveStep));
-      const fillXs = Array.from({ length: fillPts + 1 }, (_, i) => left + i * (right - left) / fillPts);
-      const fillYs = fillXs.map(fn);
+    const xClamp = Math.max(xMin, Math.min(xMax, x));
+
+    // Reference area: a → b (faint neutral fill)
+    const refLeft = Math.min(aClamp, bClamp);
+    const refRight = Math.max(aClamp, bClamp);
+    if (refRight > refLeft) {
+      const refPts = Math.max(2, Math.round((refRight - refLeft) / curveStep));
+      const refXs = Array.from({ length: refPts + 1 }, (_, i) => refLeft + i * (refRight - refLeft) / refPts);
+      const refYs = refXs.map(fn);
       t.push({
-        x: [...fillXs, ...fillXs.slice().reverse()],
-        y: [...fillYs, fillYs.map(() => 0)].flat(),
+        x: [...refXs, ...refXs.slice().reverse()],
+        y: [...refYs, refYs.map(() => 0)].flat(),
+        type: 'scatter', mode: 'lines',
+        fill: 'toself',
+        fillcolor: 'rgba(148, 163, 184, 0.12)',
+        line: { width: 0 },
+        name: '∫ₐᵇ f(x) dx (reference)',
+        showlegend: true,
+        hovertemplate: ''
+      });
+    }
+
+    // Dynamic area: a → x (the integral function value)
+    const dynLeft = Math.min(aClamp, xClamp);
+    const dynRight = Math.max(aClamp, xClamp);
+    if (dynRight > dynLeft) {
+      const dynPts = Math.max(2, Math.round((dynRight - dynLeft) / curveStep));
+      const dynXs = Array.from({ length: dynPts + 1 }, (_, i) => dynLeft + i * (dynRight - dynLeft) / dynPts);
+      const dynYs = dynXs.map(fn);
+      t.push({
+        x: [...dynXs, ...dynXs.slice().reverse()],
+        y: [...dynYs, dynYs.map(() => 0)].flat(),
         type: 'scatter', mode: 'lines',
         fill: 'toself',
         fillcolor: fillColor,
         line: { width: 0 },
-        showlegend: false,
+        name: '∫ₐˣ f(x) dx (dynamic)',
+        showlegend: true,
         hovertemplate: ''
       });
     }
 
     // Marker at current x on f(x)
-    const xClamp = Math.max(xMin, Math.min(xMax, x));
     t.push({
       type: 'scatter', mode: 'markers',
       x: [xClamp], y: [fn(xClamp)],
@@ -217,14 +287,43 @@ const FundamentalTheorem = () => {
 
   // ── Annotations ──────────────────────────────────────────
   const leftAnnotations = useMemo(() => {
+    const aClamp = Math.max(xMin, Math.min(xMax, a));
+    const bClamp = Math.max(xMin, Math.min(xMax, b));
     const xClamp = Math.max(xMin, Math.min(xMax, x));
     const auxColor = palette.auxTraces.tangent;
+    const primaryColor = palette.mainTraces.primary;
+
     return [
+      // Stacked "a / F(a)=0" at the φ(a) = 0 point
+      { x: aClamp, y: 0, text: 'a', showarrow: false,
+        xanchor: 'center', yanchor: 'top', yshift: -10,
+        font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } },
+      // b label
+      { x: bClamp, y: 0, text: 'b', showarrow: false,
+        xanchor: 'center', yanchor: 'top', yshift: -10,
+        font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } },
+      // x label
       { x: xClamp, y: 0, text: 'x', showarrow: false,
         xanchor: 'center', yanchor: 'top', yshift: -10,
-        font: { color: auxColor, size: styleConfig.fontSize + 2, weight: 700 } }
+        font: { color: primaryColor, size: styleConfig.fontSize + 2, weight: 700 } },
+      // F(a)=0 label floating above the (a, 0) marker
+      {
+        x: aClamp, y: phi(aClamp),
+        text: 'F(a) = 0', showarrow: true,
+        arrowhead: 2, arrowcolor: auxColor,
+        ax: -35, ay: -20,
+        font: { color: auxColor, size: styleConfig.fontSize, weight: 600 }
+      },
+      // F(x) label pointing to the curve marker
+      {
+        x: xClamp, y: phi(xClamp),
+        text: 'F(x)', showarrow: true,
+        arrowhead: 2, arrowcolor: auxColor,
+        ax: 35, ay: -25,
+        font: { color: auxColor, size: styleConfig.fontSize + 1, weight: 700 }
+      }
     ];
-  }, [x, xRange, xMin, xMax, palette, styleConfig]);
+  }, [a, b, x, xRange, xMin, xMax, palette, styleConfig, phi]);
 
   const rightAnnotations = useMemo(() => {
     const aClamp = Math.max(xMin, Math.min(xMax, a));
@@ -290,8 +389,8 @@ const FundamentalTheorem = () => {
         </Formula>
       </FormulaBox>
 
-      <ContentLayout>
-        <ControlsPanel>
+      <FunctionSection>
+        <ControlsRow>
           <ParameterSection title="Function">
             <ParameterControls
               parameters={params}
@@ -326,36 +425,35 @@ const FundamentalTheorem = () => {
               ]}
             />
           </ParameterSection>
-        </ControlsPanel>
-        <PlotPanel>
-          <PlotGrid2>
-            <div>
-              <IntegralFunctionPlotter
-                data={leftTraces}
-                xRange={xRange}
-                title={`φ(x) = ∫ₐˣ f(t) dt`}
-                showExportButton={false}
-                plotStyle={params.plotStyle}
-                aspectRatio={params.aspectRatio}
-                legendPosition={params.legendPosition}
-                annotations={leftAnnotations}
-              />
-            </div>
-            <div>
-              <IntegralFunctionPlotter
-                data={rightTraces}
-                xRange={xRange}
-                title={funcDef.label}
-                showExportButton={false}
-                plotStyle={params.plotStyle}
-                aspectRatio={params.aspectRatio}
-                legendPosition={params.legendPosition}
-                annotations={rightAnnotations}
-              />
-            </div>
-          </PlotGrid2>
-        </PlotPanel>
-      </ContentLayout>
+        </ControlsRow>
+      </FunctionSection>
+
+      <PlotGrid2>
+        <div>
+          <IntegralFunctionPlotter
+            data={leftTraces}
+            xRange={xRange}
+            title={`φ(x) = ∫ₐˣ f(t) dt`}
+            showExportButton={false}
+            plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
+            annotations={leftAnnotations}
+          />
+        </div>
+        <div>
+          <IntegralFunctionPlotter
+            data={rightTraces}
+            xRange={xRange}
+            title={funcDef.label}
+            showExportButton={false}
+            plotStyle={params.plotStyle}
+            aspectRatio={params.aspectRatio}
+            legendPosition={params.legendPosition}
+            annotations={rightAnnotations}
+          />
+        </div>
+      </PlotGrid2>
     </PageContainer>
   );
 };
