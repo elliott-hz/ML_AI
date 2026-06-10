@@ -19,6 +19,10 @@ function normalPDF(x, mu = 0, sigma = 1) {
   return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * z * z);
 }
 
+function normalPDFDerivative(x, mu = 0, sigma = 1) {
+  return normalPDF(x, mu, sigma) * (-(x - mu) / (sigma * sigma));
+}
+
 const GeometricMeaningOfDifferential = () => {
   const [params, setParams] = useState({
     mu: 1.0,
@@ -106,6 +110,26 @@ const GeometricMeaningOfDifferential = () => {
       marker: { color: palette.mainTraces.tertiary, size: 9, symbol: 'circle' },
       name: 'C', showlegend: false,
       hovertemplate: 'C: (%{x:.2f}, %{y:.4f})<extra></extra>'
+    });
+
+    // Tangent line at point A (dashed, same color as AC)
+    const slope = normalPDFDerivative(x0, mu, sigma);
+    const tanExtent = 1.5;
+    const tanXs = [x0 - tanExtent, x0 + tanExtent];
+    const tanYs = tanXs.map(x => slope * (x - x0) + yA);
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: tanXs, y: tanYs,
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
+    });
+
+    // Vertical dashed line from C up to B (same color)
+    t.push({
+      type: 'scatter', mode: 'lines',
+      x: [x1, x1], y: [yA, y1],
+      line: { color: combinedColor, width: 2, dash: 'dash' },
+      showlegend: false, hovertemplate: ''
     });
 
     // dx bracket (dashed horizontal line with tick marks on x-axis)
