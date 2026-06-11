@@ -76,9 +76,9 @@
           "children": [
             {
               "id": "math_3_1",
-              "name": "Polynomial Approximation",
-              "path": "/mathematics/3-taylor-formula/polynomial-approximation",
-              "component": "PolynomialApproximation"
+              "name": "Derivative Local Approximation",
+              "path": "/mathematics/3-taylor-formula/derivative-local-approximation",
+              "component": "DerivativeLocalApproximation"
             },
             {
               "id": "math_3_2",

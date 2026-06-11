@@ -81,9 +81,11 @@ import GeometricMeaning from '../pages/math/calculus/integral-function/Geometric
 import FundamentalTheorem from '../pages/math/calculus/integral-function/anti-derivative/FundamentalTheorem';
 
 // 数学模块 - Taylor Formula and Lagrange
-import PolynomialApproximation from '../pages/math/taylor-formula/PolynomialApproximation';
+import DerivativeLocalApproximation from '../pages/math/taylor-formula/DerivativeLocalApproximation';
 import TaylorPolynomial from '../pages/math/taylor-formula/TaylorPolynomial';
 import LagrangeMultiplier from '../pages/math/taylor-formula/LagrangeMultiplier';
+import FirstOrderApproximation from '../pages/math/taylor-formula/derivative-local-approximation/FirstOrderApproximation';
+import FirstVsSecondOrderApproximation from '../pages/math/taylor-formula/derivative-local-approximation/FirstVsSecondOrderApproximation';
 
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
@@ -215,7 +217,9 @@ const AppRoutes = () => {
         <Route path="/mathematics/2-calculus/integral-function/fundamental-theorem" element={<FundamentalTheorem />} />
 
         {/* 数学模块 - Taylor Formula and Lagrange */}
-        <Route path="/mathematics/3-taylor-formula/polynomial-approximation" element={<PolynomialApproximation />} />
+        <Route path="/mathematics/3-taylor-formula/derivative-local-approximation" element={<DerivativeLocalApproximation />} />
+        <Route path="/mathematics/3-taylor-formula/derivative-local-approximation/first-order-approximation" element={<FirstOrderApproximation />} />
+        <Route path="/mathematics/3-taylor-formula/derivative-local-approximation/first-vs-second-order" element={<FirstVsSecondOrderApproximation />} />
         <Route path="/mathematics/3-taylor-formula/taylor-polynomial" element={<TaylorPolynomial />} />
         <Route path="/mathematics/3-taylor-formula/lagrange-multiplier" element={<LagrangeMultiplier />} />
 
