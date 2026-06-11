@@ -80,6 +80,11 @@ import IntegralFunction from '../pages/math/calculus/IntegralFunction';
 import GeometricMeaning from '../pages/math/calculus/integral-function/GeometricMeaning';
 import FundamentalTheorem from '../pages/math/calculus/integral-function/anti-derivative/FundamentalTheorem';
 
+// 数学模块 - Taylor Formula and Lagrange
+import PolynomialApproximation from '../pages/math/taylor-formula/PolynomialApproximation';
+import TaylorPolynomial from '../pages/math/taylor-formula/TaylorPolynomial';
+import LagrangeMultiplier from '../pages/math/taylor-formula/LagrangeMultiplier';
+
 // 动态导入页面组件的辅助函数
 const importPageComponent = (componentName) => {
   // 这里可以根据 component name 动态导入对应的页面组件
@@ -208,6 +213,11 @@ const AppRoutes = () => {
         {/* 数学模块 - Calculus / Integral Function 四级子页面（不在菜单中显示） */}
         <Route path="/mathematics/2-calculus/integral-function/geometric-meaning" element={<GeometricMeaning />} />
         <Route path="/mathematics/2-calculus/integral-function/fundamental-theorem" element={<FundamentalTheorem />} />
+
+        {/* 数学模块 - Taylor Formula and Lagrange */}
+        <Route path="/mathematics/3-taylor-formula/polynomial-approximation" element={<PolynomialApproximation />} />
+        <Route path="/mathematics/3-taylor-formula/taylor-polynomial" element={<TaylorPolynomial />} />
+        <Route path="/mathematics/3-taylor-formula/lagrange-multiplier" element={<LagrangeMultiplier />} />
 
         {/* 其他数学模块路由 - 示例 */}
         <Route path="/deep-learning/1-neural-networks/perceptron" element={<div>Perceptron Page - Coming Soon</div>} />

@@ -69,6 +69,30 @@
               "component": "IntegralFunction"
             }
           ]
+        },
+        {
+          "id": "math_3",
+          "name": "Taylor Formula and Lagrange",
+          "children": [
+            {
+              "id": "math_3_1",
+              "name": "Polynomial Approximation",
+              "path": "/mathematics/3-taylor-formula/polynomial-approximation",
+              "component": "PolynomialApproximation"
+            },
+            {
+              "id": "math_3_2",
+              "name": "Taylor Polynomial",
+              "path": "/mathematics/3-taylor-formula/taylor-polynomial",
+              "component": "TaylorPolynomial"
+            },
+            {
+              "id": "math_3_3",
+              "name": "Lagrange Multiplier Method",
+              "path": "/mathematics/3-taylor-formula/lagrange-multiplier",
+              "component": "LagrangeMultiplier"
+            }
+          ]
         }
       ]
     },
