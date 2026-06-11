@@ -145,7 +145,6 @@ const FirstOrderApproximation = () => {
     const fs = 12;
     return [
       { x: 0, y: 1, text: '(0, 1)', showarrow: true, arrowhead: 2, arrowcolor: primaryColor, ax: 30, ay: -30, font: { color: primaryColor, size: fs + 2, weight: 600 } },
-      { x: 0.8, y: 1.8, text: "f'(0) = 1", showarrow: false, font: { color: tangentColor, size: fs, weight: 600 } },
       { x: 0.8, y: 1.5, text: 'y = 1 + x', showarrow: false, font: { color: tangentColor, size: fs, weight: 600 } }
     ];
   }, [palette]);
@@ -224,7 +223,6 @@ const FirstOrderApproximation = () => {
     const fs = 12;
     return [
       { x: 0, y: 0, text: '(0, 0)', showarrow: true, arrowhead: 2, arrowcolor: tertiaryColor, ax: -30, ay: -30, font: { color: tertiaryColor, size: fs + 2, weight: 600 } },
-      { x: 1, y: 1, text: "f'(0) = 1", showarrow: false, font: { color: tangentColor, size: fs, weight: 600 } },
       { x: 1, y: 0.7, text: 'y = x', showarrow: false, font: { color: tangentColor, size: fs, weight: 600 } }
     ];
   }, [palette]);
