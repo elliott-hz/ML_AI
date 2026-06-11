@@ -147,8 +147,28 @@ const FundamentalTheorem = () => {
       hovertemplate: 'x: %{x:.2f}<br>φ(x): %{y:.4f}<extra></extra>'
     });
 
-    // Tangent line at x
+    // Clamp bounds
     const xClamp = Math.max(xMin, Math.min(xMax, x));
+    const aClamp = Math.max(xMin, Math.min(xMax, a));
+    const bClamp = Math.max(xMin, Math.min(xMax, b));
+
+    // Highlighted segment on φ(x) between a and x (green, matching right plot fill)
+    const hlLeft = Math.min(aClamp, xClamp);
+    const hlRight = Math.max(aClamp, xClamp);
+    if (hlRight > hlLeft) {
+      const hlStartIdx = Math.max(0, Math.round((hlLeft - xMin) / curveStep));
+      const hlEndIdx = Math.min(curvePts, Math.round((hlRight - xMin) / curveStep));
+      t.push({
+        x: xs.slice(hlStartIdx, hlEndIdx + 1),
+        y: phiYs.slice(hlStartIdx, hlEndIdx + 1),
+        type: 'scatter', mode: 'lines',
+        line: { color: palette.mainTraces.secondary, width: 5 },
+        name: '∫ₐˣ f(t) dt (accumulated)',
+        hovertemplate: 'x: %{x:.2f}<br>φ(x): %{y:.4f}<extra></extra>'
+      });
+    }
+
+    // Tangent line at x
     const phiX = phi(xClamp);
     const slope = phiPrimeAtX;
     const tanSpan = Math.max(1, (xMax - xMin) * 0.2);
@@ -164,8 +184,6 @@ const FundamentalTheorem = () => {
     });
 
     // Vertical dashed lines at a, b, x from x-axis up to φ curve (T-shape)
-    const aClamp = Math.max(xMin, Math.min(xMax, a));
-    const bClamp = Math.max(xMin, Math.min(xMax, b));
     const phiA = phi(aClamp);
     const phiB = phi(bClamp);
     // Line at a (φ(a)=0 so this is effectively a marker on x-axis)
