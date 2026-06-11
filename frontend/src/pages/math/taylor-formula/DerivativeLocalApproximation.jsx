@@ -78,6 +78,12 @@ const DerivativeLocalApproximation = () => {
       title: 'First-Order Approximation',
       description: 'Approximate eˣ by 1+x and ln(1+x) by x near x=0 — see how the tangent line (linear approximation) captures function behavior in a tiny neighborhood.',
       path: '/mathematics/3-taylor-formula/derivative-local-approximation/first-order-approximation'
+    },
+    {
+      id: 'errors-of-first-order',
+      title: 'Errors of First Order Approximation',
+      description: 'See how the linear approximation error grows as dx increases, and how different functions sharing the same tangent can behave very differently — revealing the limitations of first-order approximation.',
+      path: '/mathematics/3-taylor-formula/derivative-local-approximation/errors-of-first-order'
     }
   ];
 
